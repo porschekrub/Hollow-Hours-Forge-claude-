@@ -27,7 +27,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtils;
 
@@ -232,7 +231,7 @@ public final class Jumpscare {
 
         FaceRenderer(int who) {
             super(new FaceModel(who));
-            addRenderLayer(new AutoGlowingGeoLayer<>(this));
+            addRenderLayer(new com.hollowhours.client.render.EmissiveLayer<>(this, r -> com.hollowhours.client.render.EmissiveLayer.glowOf(getTextureLocation(r))));
         }
 
         @Override

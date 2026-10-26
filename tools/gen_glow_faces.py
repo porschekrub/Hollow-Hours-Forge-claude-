@@ -54,9 +54,10 @@ def glow_rule(kind):
                 k = np.where((r > 140) & (g < 80) & (b < 80), 1.0, 0.0)
                 k = np.maximum(k, np.where(L > 228, 0.9, 0))
         k = k * on
+        # emissive texture for the additive "eyes" pass: glow colour premultiplied, black/transparent elsewhere
         gl = np.zeros((len(o), 4))
-        gl[:, :3] = o[:, :3]
-        gl[:, 3] = 255 * k
+        gl[:, :3] = np.round(o[:, :3] * k[:, None])
+        gl[:, 3] = np.where(k > 0, 255, 0)
         return o, gl
     return mat
 
@@ -66,13 +67,13 @@ def glowmasks():
         geo = Geo.load(os.path.join(GEO, "ghost_%d.geo.json" % n))
         base = Image.open(os.path.join(TEX, "ghost_%d.png" % n))
         _, gl = paint(geo, glow_rule(n), base=base)
-        gl.save(os.path.join(TEX, "ghost_%d_glowmask.png" % n))
+        gl.save(os.path.join(TEX, "ghost_%d_glow.png" % n))
         print("ghost %d glow texels: %d" % (n, (np.asarray(gl)[..., 3] > 0).sum()))
     for n in range(1, 4):
         geo = Geo.load(os.path.join(GEO, "stalker_%d.geo.json" % n))
         base = Image.open(os.path.join(TEX, "stalker_%d.png" % n))
         _, gl = paint(geo, glow_rule(10 + n), base=base)
-        gl.save(os.path.join(TEX, "stalker_%d_glowmask.png" % n))
+        gl.save(os.path.join(TEX, "stalker_%d_glow.png" % n))
 
 
 # ----------------------------------------------------------------------------- face rigs
@@ -107,11 +108,11 @@ def faces():
     for n in range(1, 6):
         face_rig(os.path.join(GEO, "ghost_%d.geo.json" % n), FACE_BONES, "face_g%d" % n, 0.5 if n == 5 else 0.58)
         Image.open(os.path.join(TEX, "ghost_%d.png" % n)).save(os.path.join(A, "textures", "face", "face_g%d.png" % n))
-        Image.open(os.path.join(TEX, "ghost_%d_glowmask.png" % n)).save(os.path.join(A, "textures", "face", "face_g%d_glowmask.png" % n))
+        Image.open(os.path.join(TEX, "ghost_%d_glow.png" % n)).save(os.path.join(A, "textures", "face", "face_g%d_glow.png" % n))
     for n in range(1, 4):
         face_rig(os.path.join(GEO, "stalker_%d.geo.json" % n), STALKER_FACE[n], "face_s%d" % n, 0.55)
         Image.open(os.path.join(TEX, "stalker_%d.png" % n)).save(os.path.join(A, "textures", "face", "face_s%d.png" % n))
-        Image.open(os.path.join(TEX, "stalker_%d_glowmask.png" % n)).save(os.path.join(A, "textures", "face", "face_s%d_glowmask.png" % n))
+        Image.open(os.path.join(TEX, "stalker_%d_glow.png" % n)).save(os.path.join(A, "textures", "face", "face_s%d_glow.png" % n))
     # animations: the face snaps toward you, the mouth tears open, arms come up at the camera
     anims = {}
     for name, tilt, jaw in (("scream", 18, 82), ("scream2", -65, 95)):

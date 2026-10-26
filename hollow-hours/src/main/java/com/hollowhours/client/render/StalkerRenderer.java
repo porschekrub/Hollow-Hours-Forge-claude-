@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +17,7 @@ public class StalkerRenderer extends GeoEntityRenderer<StalkerEntity> {
     public StalkerRenderer(EntityRendererProvider.Context ctx, StalkerKind kind) {
         super(ctx, new Model(kind));
         this.shadowRadius = 0f;
-        addRenderLayer(new AutoGlowingGeoLayer<>(this));
+        addRenderLayer(new EmissiveLayer<>(this, e -> EmissiveLayer.glowOf(getTextureLocation(e))));
     }
 
     @Override

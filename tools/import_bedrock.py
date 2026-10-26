@@ -76,6 +76,23 @@ def fix_molang(text):
     return text
 
 
+def geckolib_channels(d):
+    """GeckoLib only reads vectors: a channel written as one number/expression ("scale": "q ? 0 : 1") becomes [v, v, v]."""
+    def vec(v):
+        if isinstance(v, (str, int, float)):
+            return [v, v, v]
+        if isinstance(v, dict) and "vector" not in v and not any(k in v for k in ("pre", "post")):
+            return {k: vec(x) for k, x in v.items()}
+        if isinstance(v, dict):
+            return {k: (vec(x) if k in ("pre", "post", "vector") else x) for k, x in v.items()}
+        return v
+    for a in d["animations"].values():
+        for b in a.get("bones", {}).values():
+            for ch in ("rotation", "position", "scale"):
+                if ch in b:
+                    b[ch] = vec(b[ch])
+
+
 def copy_json(src, dst, fix=False, rename=None):
     t = open(src).read()
     if fix:
@@ -84,6 +101,8 @@ def copy_json(src, dst, fix=False, rename=None):
         for a, b in rename.items():
             t = t.replace(a, b)
     d = json.loads(t)
+    if isinstance(d, dict) and "animations" in d:
+        geckolib_channels(d)
     with open(ensure(dst), "w") as f:
         json.dump(d, f, separators=(",", ":"))
 

@@ -13,11 +13,10 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 import javax.annotation.Nullable;
 
-/** Ghost renderer: per-ghost scale, glowing eyes/mouth (…_glowmask.png), no shadow, a cold flicker up close. */
+/** Ghost renderer: per-ghost scale, glowing eyes/mouth (…_glow.png), no shadow, a cold flicker up close. */
 public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     private final GhostKind kind;
 
@@ -26,7 +25,7 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         this.kind = kind;
         this.shadowRadius = 0f;
         withScale(kind.scaleXZ, kind.scaleY);
-        addRenderLayer(new AutoGlowingGeoLayer<>(this));
+        addRenderLayer(new EmissiveLayer<>(this, g -> EmissiveLayer.glowOf(getTextureLocation(g))));
     }
 
     @Override

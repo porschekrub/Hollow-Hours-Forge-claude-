@@ -95,7 +95,7 @@ public final class ClientEvents {
         if (id.equals(VanillaGuiOverlay.HOTBAR.id()) || id.equals(VanillaGuiOverlay.CROSSHAIR.id()) || id.equals(VanillaGuiOverlay.PLAYER_HEALTH.id())
                 || id.equals(VanillaGuiOverlay.FOOD_LEVEL.id()) || id.equals(VanillaGuiOverlay.ARMOR_LEVEL.id()) || id.equals(VanillaGuiOverlay.EXPERIENCE_BAR.id())
                 || id.equals(VanillaGuiOverlay.AIR_LEVEL.id()) || id.equals(VanillaGuiOverlay.MOUNT_HEALTH.id()) || id.equals(VanillaGuiOverlay.JUMP_BAR.id())
-                || id.equals(VanillaGuiOverlay.ITEM_NAME.id()))
+                || id.equals(VanillaGuiOverlay.ITEM_NAME.id()) || id.equals(VanillaGuiOverlay.RECORD_OVERLAY.id()))
             e.setCanceled(true);
     }
 

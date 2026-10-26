@@ -37,7 +37,7 @@ def main():
     frames = int(sys.argv[4]) if len(sys.argv) > 4 else 8
     model = Model(os.path.join(A, "geo", "entity", "ghost_%d.geo.json" % n))
     tex = Image.open(os.path.join(A, "textures", "entity", "ghost_%d.png" % n))
-    glow_p = os.path.join(A, "textures", "entity", "ghost_%d_glowmask.png" % n)
+    glow_p = os.path.join(A, "textures", "entity", "ghost_%d_glow.png" % n)
     glow = Image.open(glow_p) if os.path.exists(glow_p) else None
     anims = json.load(open(os.path.join(A, "animations", "entity", "ghost.animation.json")))["animations"]
     tracks = {t["name"]: t for t in json.load(open(os.path.join(RES, "data", "hollowhours", "kill_tracks.json")))["tracks"]}
