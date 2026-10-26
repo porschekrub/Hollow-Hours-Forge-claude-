@@ -22,6 +22,7 @@ public final class KillCam {
     static float lastT;
     static long startedAt, endedAt = -100000;
     static float hurtTilt;
+    static boolean prone;
 
     public static boolean active() {
         return phase >= 0 && phase != S2CKill.END && phase != S2CKill.RELEASE;
@@ -36,6 +37,7 @@ public final class KillCam {
                 phase = m.phase();
                 track = -1;
                 ghostId = -1;
+                unprone();
                 if (mc.screen instanceof BetrayalScreen) mc.setScreen(null);
                 return;
             }
@@ -55,7 +57,6 @@ public final class KillCam {
         } else if (m.phase() == S2CKill.SCREAM) {
             ClientFx.addShake(1.8f, Math.max(20, m.ticks()));
             ClientFx.addStatic(0.35f, m.ticks());
-            if (HHClientConfig.FACE_CLOSEUPS.get()) Jumpscare.start(kind, Jumpscare.FLASH, 7);
         } else if (m.phase() == S2CKill.KILL) {
             ClientFx.addBlood(0.35f, 40);
         }
@@ -79,6 +80,15 @@ public final class KillCam {
         KillTracks.Track tr = KillTracks.get(track);
         if (tr == null) return;
         float t = g.trackTime(0);
+        // pinned to the floor: lie flat (the server does the same)
+        var pl = net.minecraft.client.Minecraft.getInstance().player;
+        if (pl != null) {
+            boolean pr = tr.proneAt(t);
+            if (pr != prone) {
+                prone = pr;
+                pl.setForcedPose(pr ? net.minecraft.world.entity.Pose.SWIMMING : null);
+            }
+        }
         if (t + 0.05f < lastT) nextEvent = 0;
         lastT = t;
         while (nextEvent < tr.events.size() && tr.events.get(nextEvent).t() <= t) {
@@ -144,7 +154,16 @@ public final class KillCam {
         return new float[]{camYaw, camPitch, roll + hurtTilt * (float) Math.sin(ClientFx.now() * 0.9)};
     }
 
+    static void unprone() {
+        if (prone) {
+            prone = false;
+            var pl = net.minecraft.client.Minecraft.getInstance().player;
+            if (pl != null) pl.setForcedPose(null);
+        }
+    }
+
     static void reset() {
+        unprone();
         phase = -1;
         track = -1;
         ghostId = -1;

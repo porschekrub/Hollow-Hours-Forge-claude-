@@ -75,6 +75,17 @@ def col(hexstr):
     return np.array([int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)], float)
 
 
+def box_to_faces(c):
+    """Bedrock box UV -> per-face UV (GeckoLib's own mapping)."""
+    u0, v0 = c["uv"]
+    fx, fy, fz = (math.floor(v) for v in c["size"])
+    return {
+        "west": {"uv": [u0 + fz + fx, v0 + fz], "uv_size": [fz, fy]}, "east": {"uv": [u0, v0 + fz], "uv_size": [fz, fy]},
+        "north": {"uv": [u0 + fz, v0 + fz], "uv_size": [fx, fy]}, "south": {"uv": [u0 + fz + fx + fz, v0 + fz], "uv_size": [fx, fy]},
+        "up": {"uv": [u0 + fz, v0], "uv_size": [fx, fz]}, "down": {"uv": [u0 + fz + fx, v0 + fz], "uv_size": [fx, -fz]},
+    }
+
+
 # ----------------------------------------------------------------------------- geometry
 class Geo:
     def __init__(self, identifier="geometry.unknown"):
@@ -102,7 +113,10 @@ class Geo:
             if b.get("rotation"):
                 nb["rotation"] = list(b["rotation"])
             for c in b.get("cubes", []):
-                nb["cubes"].append(copy.deepcopy(c))
+                c = copy.deepcopy(c)
+                if isinstance(c.get("uv"), list):
+                    c["uv"] = box_to_faces(c)
+                nb["cubes"].append(c)
             geo.bones.append(nb)
         return geo
 
@@ -268,14 +282,16 @@ class Geo:
 
 
 # ----------------------------------------------------------------------------- painting
-def paint(geo, material, seed=0):
-    """material(ctx) -> (rgba (N,4) 0..255, glow rgba (N,4) or None). Returns (tex, glow) uint8 images."""
+def paint(geo, material, seed=0, base=None, base_glow=None):
+    """material(ctx) -> (rgba (N,4) 0..255, glow rgba (N,4) or None). Returns (tex, glow) uint8 images.
+    base / base_glow: start from existing images (ctx["orig"] holds the original texels of each face)."""
     from PIL import Image
     d = geo.to_dict()
     model = Model(d)
     mats, _ = bone_matrices(model, {})
-    tex = np.zeros((geo.th, geo.tw, 4), np.float64)
-    glow = np.zeros((geo.th, geo.tw, 4), np.float64)
+    tex = np.zeros((geo.th, geo.tw, 4), np.float64) if base is None else np.asarray(base.convert("RGBA"), np.float64).copy()
+    glow = np.zeros((geo.th, geo.tw, 4), np.float64) if base_glow is None else np.asarray(base_glow.convert("RGBA"), np.float64).copy()
+    orig = tex.copy()
     rng = np.random.default_rng(seed)
     for b in geo.bones:
         mb = model.bones[b["name"]]
@@ -287,8 +303,9 @@ def paint(geo, material, seed=0):
             lo, hi = allv.min(0), allv.max(0)
             ext = np.maximum(hi - lo, 1e-6)
             centre = (cm @ np.append((lo + hi) / 2, 1))[:3]
+            present = [f for f in FACES if not isinstance(craw.get("uv"), dict) or f in craw["uv"]]
             for qi, (verts, uvs) in enumerate(c["quads"]):
-                face = FACES[qi]
+                face = present[qi]
                 r = craw["uv"][face]
                 u0, v0 = r["uv"]
                 us, vs = r["uv_size"]
@@ -318,7 +335,8 @@ def paint(geo, material, seed=0):
                 ctx = {
                     "bone": b["name"], "tag": craw.get("_tag", "skin"), "face": face, "p": W, "n": nw, "lp": lp,
                     "centre": centre, "size": np.array(craw["size"]), "edge": edge, "n_tex": len(W), "rng": rng,
-                    "cube": craw, "uvw": (us, vs),
+                    "cube": craw, "uvw": (us, vs), "rect": (u0, v0, us, vs),
+                    "orig": orig[v0:v0 + vs, u0:u0 + us].reshape(-1, 4) if v0 + vs <= orig.shape[0] and u0 + us <= orig.shape[1] else np.zeros((us * vs, 4)),
                 }
                 rgba, g = material(ctx)
                 rgba = np.asarray(rgba, float).reshape(vs, us, 4)

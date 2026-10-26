@@ -118,9 +118,9 @@ public final class Jumpscare {
         // the face: rushes from the dark into the lens in ~0.12 s, then shudders right in front of you
         float lunge = Mth.clamp(t / 0.12f, 0, 1);
         lunge = 1 - (1 - lunge) * (1 - lunge) * (1 - lunge);
-        float dist = Mth.lerp(lunge, 7.5f, strength == FLASH ? 1.15f : 0.95f);
-        if (strength == DRAG) dist = Mth.lerp(lunge, 3f, 0.8f);
-        float pulse = t > 0.12f ? 0.06f * Mth.sin(t * 60f) * k : 0;
+        float dist = Mth.lerp(lunge, 7.5f, strength == FLASH ? 0.78f : 0.6f);
+        if (strength == DRAG) dist = Mth.lerp(lunge, 3f, 0.55f);
+        float pulse = t > 0.12f ? 0.04f * Mth.sin(t * 60f) * k : 0;
         dist += pulse;
         float jx = (float) (Math.random() - 0.5) * 0.06f * k, jy = (float) (Math.random() - 0.5) * 0.06f * k;
         float tilt = (float) Math.sin(t * 37) * 6f * k + (variant % 3 - 1) * 7f;

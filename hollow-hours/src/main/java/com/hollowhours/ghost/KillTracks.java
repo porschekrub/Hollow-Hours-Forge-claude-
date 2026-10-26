@@ -48,6 +48,14 @@ public final class KillTracks {
         public final List<Key> head = new ArrayList<>();
         public final List<Key> roll = new ArrayList<>();
         public final List<Event> events = new ArrayList<>();
+        /** time ranges in which the victim lies flat on the floor */
+        public final List<float[]> prone = new ArrayList<>();
+
+        public boolean proneAt(float t) {
+            float lt = local(t);
+            for (float[] r : prone) if (lt >= r[0] && lt <= r[1]) return true;
+            return false;
+        }
 
         Track(String name, int index, float length) {
             this.name = name;
@@ -115,6 +123,10 @@ public final class KillTracks {
                 readKeys(o.getAsJsonArray("victim"), tr.victim);
                 readKeys(o.getAsJsonArray("head"), tr.head);
                 if (o.has("roll")) readKeys(o.getAsJsonArray("roll"), tr.roll);
+                if (o.has("prone")) for (JsonElement pr : o.getAsJsonArray("prone")) {
+                    JsonArray r = pr.getAsJsonArray();
+                    tr.prone.add(new float[]{r.get(0).getAsFloat(), r.get(1).getAsFloat()});
+                }
                 if (o.has("events")) {
                     for (JsonElement ev : o.getAsJsonArray("events")) {
                         JsonObject eo = ev.getAsJsonObject();

@@ -1,0 +1,1269 @@
+{
+ "ghost.g1.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g1_spawn"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g1.spawn"
+ },
+ "ghost.g1.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g1_chase"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g1.chase"
+ },
+ "ghost.g2.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g2_spawn"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g2.spawn"
+ },
+ "ghost.g2.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g2_chase"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g2.chase"
+ },
+ "ghost.g3.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g3_spawn"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g3.spawn"
+ },
+ "ghost.g3.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g3_chase"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g3.chase"
+ },
+ "ghost.g4.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g4_spawn"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g4.spawn"
+ },
+ "ghost.g4.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g4_chase"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g4.chase"
+ },
+ "ghost.g5.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g5_spawn"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g5.spawn"
+ },
+ "ghost.g5.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/g5_chase"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.g5.chase"
+ },
+ "ghost.snap": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/snap1"
+   },
+   {
+    "name": "hollowhours:ghost/snap2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.snap"
+ },
+ "ghost.creak": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/creak"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.creak"
+ },
+ "ghost.growl": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/growl"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.growl"
+ },
+ "ghost.music.ambient1": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/music_ambient1",
+    "stream": true
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.music.ambient1"
+ },
+ "ghost.music.ambient2": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/music_ambient2",
+    "stream": true
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.music.ambient2"
+ },
+ "ghost.music.spawn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/music_spawn",
+    "stream": true
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.music.spawn"
+ },
+ "ghost.music.chase": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/music_chase",
+    "stream": true
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.music.chase"
+ },
+ "ghost.jumpscare": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/jumpscare1"
+   },
+   {
+    "name": "hollowhours:ghost/jumpscare2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.jumpscare"
+ },
+ "ghost.knock.wood": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/knock_wood1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/knock_wood2"
+   },
+   {
+    "name": "hollowhours:ghost/fx/knock_wood3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.knock.wood"
+ },
+ "ghost.knock.metal": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/knock_metal1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/knock_metal2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.knock.metal"
+ },
+ "ghost.knock.glass": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/knock_glass1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/knock_glass2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.knock.glass"
+ },
+ "ghost.bang.wood": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/bang_wood1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/bang_wood2"
+   },
+   {
+    "name": "hollowhours:ghost/fx/bang_wood3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.bang.wood"
+ },
+ "ghost.bang.metal": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/bang_metal1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/bang_metal2"
+   },
+   {
+    "name": "hollowhours:ghost/fx/bang_metal3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.bang.metal"
+ },
+ "ghost.bang.stone": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/bang_stone1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/bang_stone2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.bang.stone"
+ },
+ "ghost.glass.crack": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/crack_glass1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/crack_glass2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.glass.crack"
+ },
+ "ghost.glass.shatter": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/shatter1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/shatter2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.glass.shatter"
+ },
+ "ghost.burst": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/burst1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/burst2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.burst"
+ },
+ "ghost.repair": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/repair1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/repair2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.repair"
+ },
+ "ghost.scratch": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scratch1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scratch"
+ },
+ "ghost.breath": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/breath1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.breath"
+ },
+ "ghost.closet.open": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/closet_open1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/closet_open2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.closet.open"
+ },
+ "ghost.closet.close": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/closet_close1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/closet_close2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.closet.close"
+ },
+ "ghost.closet.yank": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/closet_yank1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/closet_yank2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.closet.yank"
+ },
+ "ghost.sniff": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/sniff1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/sniff2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.sniff"
+ },
+ "ghost.gasp": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/gasp1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.gasp"
+ },
+ "ghost.breath_hold": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/breath_shaky1",
+    "volume": 0.8
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.breath_hold"
+ },
+ "ghost.hammer": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/hammer1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/hammer2"
+   },
+   {
+    "name": "hollowhours:ghost/fx/hammer3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.hammer"
+ },
+ "ghost.board.place": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/board_place1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.board.place"
+ },
+ "ghost.board.pry": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/board_pry1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/board_pry2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.board.pry"
+ },
+ "ghost.board.snap": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/board_snap1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/board_snap2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.board.snap"
+ },
+ "ghost.flashlight.on": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_on1",
+    "volume": 0.8
+   },
+   {
+    "name": "hollowhours:ghost/fx/flash_on2",
+    "volume": 0.8
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.on"
+ },
+ "ghost.flashlight.off": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_off1",
+    "volume": 0.8
+   },
+   {
+    "name": "hollowhours:ghost/fx/flash_off2",
+    "volume": 0.8
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.off"
+ },
+ "ghost.flashlight.click": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_off1",
+    "volume": 0.7
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.click"
+ },
+ "ghost.flashlight.reload": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_reload1",
+    "volume": 0.9
+   },
+   {
+    "name": "hollowhours:ghost/fx/flash_reload2",
+    "volume": 0.9
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.reload"
+ },
+ "ghost.flashlight.flicker": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_flicker1",
+    "volume": 0.7
+   },
+   {
+    "name": "hollowhours:ghost/fx/flash_flicker2",
+    "volume": 0.7
+   },
+   {
+    "name": "hollowhours:ghost/fx/flash_flicker3",
+    "volume": 0.7
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.flicker"
+ },
+ "ghost.flashlight.dead": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/flash_dead1",
+    "volume": 0.8
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flashlight.dead"
+ },
+ "ghost.voice.g1.s": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g1_s1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_s2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_s3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g1.s"
+ },
+ "ghost.voice.g1.m": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g1_m1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_m2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_m3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g1.m"
+ },
+ "ghost.voice.g1.l": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g1_l1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_l2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_l3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g1.l"
+ },
+ "ghost.voice.g1.rage": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g1_rage1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g1_rage2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g1.rage"
+ },
+ "ghost.voice.g2.s": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g2_s1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_s2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_s3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g2.s"
+ },
+ "ghost.voice.g2.m": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g2_m1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_m2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_m3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g2.m"
+ },
+ "ghost.voice.g2.l": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g2_l1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_l2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_l3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g2.l"
+ },
+ "ghost.voice.g2.rage": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g2_rage1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g2_rage2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g2.rage"
+ },
+ "ghost.voice.g3.s": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g3_s1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_s2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_s3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g3.s"
+ },
+ "ghost.voice.g3.m": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g3_m1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_m2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_m3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g3.m"
+ },
+ "ghost.voice.g3.l": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g3_l1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_l2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_l3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g3.l"
+ },
+ "ghost.voice.g3.rage": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g3_rage1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g3_rage2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g3.rage"
+ },
+ "ghost.voice.g4.s": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g4_s1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_s2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_s3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g4.s"
+ },
+ "ghost.voice.g4.m": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g4_m1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_m2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_m3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g4.m"
+ },
+ "ghost.voice.g4.l": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g4_l1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_l2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_l3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g4.l"
+ },
+ "ghost.voice.g4.rage": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g4_rage1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g4_rage2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g4.rage"
+ },
+ "ghost.voice.g5.s": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g5_s1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_s2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_s3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g5.s"
+ },
+ "ghost.voice.g5.m": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g5_m1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_m2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_m3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g5.m"
+ },
+ "ghost.voice.g5.l": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g5_l1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_l2"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_l3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g5.l"
+ },
+ "ghost.voice.g5.rage": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/voice/g5_rage1"
+   },
+   {
+    "name": "hollowhours:ghost/voice/g5_rage2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.voice.g5.rage"
+ },
+ "ghost.pant": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/pant1",
+    "volume": 0.9
+   },
+   {
+    "name": "hollowhours:ghost/fx/pant2",
+    "volume": 0.9
+   },
+   {
+    "name": "hollowhours:ghost/fx/pant3",
+    "volume": 0.9
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.pant"
+ },
+ "ghost.pant.heavy": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/pant_heavy1"
+   },
+   {
+    "name": "hollowhours:ghost/fx/pant_heavy2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.pant.heavy"
+ },
+ "ghost.dash": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/dash1",
+    "volume": 0.9
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.dash"
+ },
+ "ghost.scare.giggle": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_giggle"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.giggle"
+ },
+ "ghost.scare.musicbox": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_musicbox"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.musicbox"
+ },
+ "ghost.scare.scream": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_scream"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.scream"
+ },
+ "ghost.scare.glass": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_glass"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.glass"
+ },
+ "ghost.scare.roof": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_roof"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.roof"
+ },
+ "ghost.scare.whisper": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_whisper"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.whisper"
+ },
+ "ghost.scare.wetbreath": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_wetbreath"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.wetbreath"
+ },
+ "ghost.scare.wallknock": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_wallknock"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.wallknock"
+ },
+ "ghost.scare.bell": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_bell"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.bell"
+ },
+ "ghost.scare.sob": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_sob"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.sob"
+ },
+ "ghost.scare.chains": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_chains"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.chains"
+ },
+ "ghost.scare.creak": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/fx/scare_creak"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scare.creak"
+ },
+ "ghost.stalker.scare1": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/stalker/scream_lanky1"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/scream_lanky2"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/roar_lanky"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.stalker.scare1"
+ },
+ "ghost.stalker.scare2": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/stalker/scream_child1"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/scream_child2"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/shriek_child"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.stalker.scare2"
+ },
+ "ghost.stalker.scare3": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/stalker/wail_veil"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/screech_veil"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/scream_veil"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.stalker.scare3"
+ },
+ "ghost.stalker.hit": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/stalker/hit1"
+   },
+   {
+    "name": "hollowhours:ghost/stalker/hit2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.stalker.hit"
+ },
+ "ghost.horror.sting": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/horror/sting1"
+   },
+   {
+    "name": "hollowhours:ghost/horror/sting2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.horror.sting"
+ },
+ "ghost.horror.choir": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/horror/choir1"
+   },
+   {
+    "name": "hollowhours:ghost/horror/choir2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.horror.choir"
+ },
+ "ghost.horror.whisper": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/horror/whisper1"
+   },
+   {
+    "name": "hollowhours:ghost/horror/whisper2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.horror.whisper"
+ },
+ "ghost.horror.drone": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/horror/drone",
+    "volume": 0.9
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.horror.drone"
+ },
+ "ghost.horror.heart": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/horror/heart"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.horror.heart"
+ },
+ "ghost.scream.g1": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_g1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.g1"
+ },
+ "ghost.scream.g2": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_g2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.g2"
+ },
+ "ghost.scream.g3": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_g3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.g3"
+ },
+ "ghost.scream.g4": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_g4"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.g4"
+ },
+ "ghost.scream.g5": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_g5"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.g5"
+ },
+ "ghost.scream.stalker1": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_stalker1"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.stalker1"
+ },
+ "ghost.scream.stalker2": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_stalker2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.stalker2"
+ },
+ "ghost.scream.stalker3": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/scream_stalker3"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.scream.stalker3"
+ },
+ "ghost.jumpscare.hit": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/jumpscare_hit"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.jumpscare.hit"
+ },
+ "ghost.jumpscare.static": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/jumpscare_static"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.jumpscare.static"
+ },
+ "ghost.jumpscare.ring": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/jumpscare_ring"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.jumpscare.ring"
+ },
+ "ghost.jumpscare.boom": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/jumpscare_boom"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.jumpscare.boom"
+ },
+ "ghost.kill.grab": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_grab1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_grab2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.grab"
+ },
+ "ghost.kill.punch": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_punch1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_punch2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.punch"
+ },
+ "ghost.kill.crunch": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_crunch1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_crunch2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.crunch"
+ },
+ "ghost.kill.slam": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_slam1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_slam2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.slam"
+ },
+ "ghost.kill.tear": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_tear1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_tear2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.tear"
+ },
+ "ghost.kill.choke": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_choke1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_choke2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.choke"
+ },
+ "ghost.kill.bite": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_bite1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_bite2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.bite"
+ },
+ "ghost.kill.burn": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_burn1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_burn2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.burn"
+ },
+ "ghost.kill.drown": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_drown1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_drown2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.drown"
+ },
+ "ghost.kill.neck": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_neck1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_neck2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.neck"
+ },
+ "ghost.kill.stab": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_stab1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_stab2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.stab"
+ },
+ "ghost.kill.stomp": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_stomp1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_stomp2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.stomp"
+ },
+ "ghost.kill.splat": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_splat1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_splat2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.splat"
+ },
+ "ghost.kill.final": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/kill_final1"
+   },
+   {
+    "name": "hollowhours:ghost/new/kill_final2"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.kill.final"
+ },
+ "ghost.betray.whisper": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/betray_whisper"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.betray.whisper"
+ },
+ "ghost.betray.tick": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/betray_tick"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.betray.tick"
+ },
+ "ghost.betray.laugh": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/betray_laugh"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.betray.laugh"
+ },
+ "ghost.betray.sold": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/betray_sold"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.betray.sold"
+ },
+ "ghost.heart.slow": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/heart_slow"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.heart.slow"
+ },
+ "ghost.flatline": {
+  "sounds": [
+   {
+    "name": "hollowhours:ghost/new/flatline"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ghost.flatline"
+ }
+}

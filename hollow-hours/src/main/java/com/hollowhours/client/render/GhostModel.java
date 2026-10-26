@@ -56,6 +56,12 @@ public class GhostModel extends GeoModel<GhostEntity> {
         }
         p.setValue("variable.rage", () -> g.isRaged() ? 1 : 0);
         p.setValue("variable.seed", () -> g.seed);
+        // Bedrock's query.modified_distance_moved (metres walked) and the entity's pre_animation script
+        float partial = net.minecraft.client.Minecraft.getInstance().getFrameTime();
+        double dist = g.walkAnimation.position(partial) / 4.0;
+        double life = (g.tickCount + partial) / 20.0;
+        p.setValue("variable.dist_moved", () -> dist);
+        p.setValue("variable.cph", () -> dist * 45.0 + life * 90.0);
     }
 
     @Override

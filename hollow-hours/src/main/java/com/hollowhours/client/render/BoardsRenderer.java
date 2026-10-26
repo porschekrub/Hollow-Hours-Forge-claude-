@@ -44,6 +44,15 @@ public class BoardsRenderer extends GeoEntityRenderer<BoardsEntity> {
             public ResourceLocation getAnimationResource(BoardsEntity e) {
                 return anims;
             }
+
+            @Override
+            public void applyMolangQueries(BoardsEntity e, double animTime) {
+                super.applyMolangQueries(e, animTime);
+                double kind = e.kind(), n = e.count(), side = e.side();
+                software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bkind", () -> kind);
+                software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bn", () -> n);
+                software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bside", () -> side);
+            }
         });
         this.shadowRadius = 0f;
     }

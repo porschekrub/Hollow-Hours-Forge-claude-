@@ -56,6 +56,7 @@ public final class KillSequence {
         long betrayEnd;
         List<UUID> offered = new ArrayList<>();
         boolean released;
+        boolean prone;
         long lastTick;
 
         Session(GhostBrain b, UUID victim) {
@@ -157,14 +158,18 @@ public final class KillSequence {
         g.setDeltaMovement(0, Math.min(0, g.getDeltaMovement().y), 0);
         g.getNavigation().stop();
         float t = (now - s.phaseStart) / 20f;
+        boolean pr = s.track != null && s.track.proneAt(t);
+        if (pr != s.prone) {
+            s.prone = pr;
+            p.setForcedPose(pr ? net.minecraft.world.entity.Pose.SWIMMING : null);
+        }
         fireEvents(s, p, t);
         switch (s.phase) {
             case GRAB -> {
                 if (t >= s.track.length) {
                     KillTracks.Track scream = KillTracks.phase("scream", b.kind.n);
                     if (scream != null) {
-                        setPhase(s, Phase.SCREAM, scream, p);
-                        Fx.sound(g.level(), "ghost.scream.g" + b.kind.n, g.eye(), 3f, R.pitch(0.95, 1.05), 64);
+                        setPhase(s, Phase.SCREAM, scream, p); // the scream itself is an event in the track
                     } else startKill(s, p);
                 }
             }
@@ -299,6 +304,7 @@ public final class KillSequence {
     }
 
     private static void release(Session s, ServerPlayer p) {
+        p.setForcedPose(null);
         s.released = true;
         GhostEntity g = s.b.g;
         BY_VICTIM.remove(p.getUUID());
@@ -321,6 +327,7 @@ public final class KillSequence {
     }
 
     private static void killNow(Session s, ServerPlayer p) {
+        p.setForcedPose(null);
         if (s.phase == Phase.DONE) return;
         s.phase = Phase.DONE;
         GhostEntity g = s.b.g;
@@ -363,6 +370,7 @@ public final class KillSequence {
     }
 
     private static void finish(Session s, @Nullable ServerPlayer p, boolean killed) {
+        if (p != null) p.setForcedPose(null);
         s.phase = Phase.DONE;
         BY_VICTIM.remove(s.victim);
         GhostEntity g = s.b.g;
