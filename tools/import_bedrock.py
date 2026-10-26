@@ -78,9 +78,17 @@ def fix_molang(text):
 
 def geckolib_channels(d):
     """GeckoLib only reads vectors: a channel written as one number/expression ("scale": "q ? 0 : 1") becomes [v, v, v]."""
+    def fixexpr(x):
+        # GeckoLib's molang cannot read a negative number right after "?" or ":" ("a ? -4.9 : -7")
+        return re.sub(r"([?:]\s*)-(\d+(?:\.\d+)?)", r"\1(0-\2)", x) if isinstance(x, str) else x
+
     def vec(v):
+        if isinstance(v, str):
+            v = fixexpr(v)
         if isinstance(v, (str, int, float)):
             return [v, v, v]
+        if isinstance(v, list):
+            return [fixexpr(x) for x in v]
         if isinstance(v, dict) and "vector" not in v and not any(k in v for k in ("pre", "post")):
             return {k: vec(x) for k, x in v.items()}
         if isinstance(v, dict):

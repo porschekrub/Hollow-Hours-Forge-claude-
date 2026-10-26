@@ -222,7 +222,7 @@ class Anim:
     # --- track
     def track(self, model, eye_local, name=None, fps=20, phase_sounds=None):
         """Measures victim / camera keys on the posed model."""
-        victim, head, rolls, clips = [], [], [], []
+        victim, head, rolls, clips, pushes = [], [], [], [], []
         ts = self.times(fps)
         hold_bone_cache = {}
         for t in ts:
@@ -254,13 +254,33 @@ class Anim:
                 v = self._sample(ks, t)
             if v is None:
                 v = np.array([1.2, 0.0, 0.0])
-            victim.append([round(t, 3)] + [round(float(x), 3) for x in v])
-            # is the victim's camera inside the ghost's body?
-            camp = t2g(v + np.array([0, 0.4 if self.is_prone(t) else 1.62, 0]))
+            # keep the victim's camera out of the ghost's body: Minecraft's near plane shows the inside of a cube
+            # long before the eye is actually in it, so we want ~0.3 blocks of air around the eye. When the pose
+            # would put the face (or a shoulder) through the camera, the victim is pushed back a little.
+            eye_h = np.array([0, 0.4 if self.is_prone(t) else 1.62, 0])
             holding = {seg[2] for seg in self.attach if seg[0] - 1e-6 <= t <= seg[1] + 1e-6}
+            push = 0.0
+            for push in np.arange(0.0, 0.81, 0.05):
+                camp = t2g(v + np.array([push, 0, 0]) + eye_h)
+                if not inside_any(model, mats, camp, CLEAR_PX, skip=holding):
+                    break
+            pushes.append(push)
+            victim.append([round(t, 3)] + [round(float(x), 3) for x in v])
+            camp = t2g(v + np.array([push, 0, 0]) + eye_h)
             hit = inside_any(model, mats, camp, 0.8, skip=holding)
             if hit:
                 clips.append((round(t, 2), hit))
+        if any(p > 0 for p in pushes):
+            n_ = len(pushes)
+            w = 4  # frames: start backing off a little before the face arrives, release slowly
+            mx = [max(pushes[max(0, i - w):min(n_, i + w + 1)]) for i in range(n_)]
+            sm = [sum(mx[max(0, i - 2):min(n_, i + 3)]) / len(mx[max(0, i - 2):min(n_, i + 3)]) for i in range(n_)]
+            sm = [max(a_, b_) for a_, b_ in zip(sm, pushes)]
+            for i in range(n_):
+                victim[i][1] = round(victim[i][1] + sm[i], 3)
+            self.pushed = round(max(sm), 2)
+        else:
+            self.pushed = 0.0
         if self.rolls:
             ks = [(r[0], (r[1], 0, 0), r[2]) for r in self.rolls]
             for t in ts:
@@ -280,6 +300,9 @@ class Anim:
 def _tk(t):
     s = ("%.4f" % t).rstrip("0").rstrip(".")
     return s if "." in s else s + ".0"
+
+
+CLEAR_PX = 4.5  # air kept around the victim's eye (model pixels, 16 = one block)
 
 
 def inside_any(model, mats, p, pad=0.0, skip=()):

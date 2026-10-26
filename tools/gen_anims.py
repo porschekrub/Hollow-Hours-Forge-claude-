@@ -622,6 +622,8 @@ BONES_ST = {}
 
 
 def report(a):
+    if getattr(a, "pushed", 0):
+        print("   %s: victim eased back up to %.2f blocks to keep the camera out of the body" % (a.name, a.pushed))
     if a.clips:
         print("   ! %s: camera inside the ghost at %s" % (a.name, a.clips[:8]))
 
