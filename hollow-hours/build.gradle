@@ -36,6 +36,11 @@ minecraft {
             }
         }
         client {
+            // CI client smoke test: opens the world "smoke", shows every ghost / jumpscare / kill and takes screenshots
+            property 'hollowhours.clientsmoke', System.getenv('HOLLOW_CLIENTSMOKE') ?: 'false'
+            if (System.getenv('HOLLOW_CLIENTSMOKE')) {
+                args '--quickPlaySingleplayer', 'smoke', '--width', '960', '--height', '540'
+            }
         }
         server {
             args '--nogui'

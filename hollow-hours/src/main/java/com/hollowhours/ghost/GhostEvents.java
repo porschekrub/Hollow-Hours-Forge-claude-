@@ -93,11 +93,11 @@ public final class GhostEvents {
             safe("soul", () -> Soul.tick(server, now));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
-        if (now % 40 == 0) {
+        if (now % 40 == 0 && !CLIENT_SMOKE) {
             safe("director", () -> Director.spawnTick(server, now));
             for (ServerLevel level : server.getAllLevels()) safe("cracks", () -> Breach.maintain(level));
         }
-        if (now % 100 == 0) {
+        if (now % 100 == 0 && !CLIENT_SMOKE) {
             safe("variety", () -> Variety.tick(server, now));
             safe("stalker schedule", () -> Stalkers.schedule(server, now));
         }
@@ -106,6 +106,9 @@ public final class GhostEvents {
             SmokeTest.run(server);
         }
     }
+
+    /** CI client screenshots: no natural ghosts or stalkers interrupting the tour */
+    static final boolean CLIENT_SMOKE = Boolean.getBoolean("hollowhours.clientsmoke");
 
     static void safe(String what, Runnable r) {
         try {

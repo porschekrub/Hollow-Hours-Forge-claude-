@@ -10,6 +10,7 @@ import re
 import sys
 
 path = sys.argv[1]
+marker = sys.argv[2] if len(sys.argv) > 2 else "SMOKE TEST OK"
 try:
     text = open(path, encoding="utf-8", errors="replace").read()
 except OSError as e:
@@ -17,8 +18,8 @@ except OSError as e:
     sys.exit(1)
 
 problems = []
-if "SMOKE TEST OK" not in text:
-    problems.append("server never reached 'SMOKE TEST OK'")
+if marker not in text:
+    problems.append(f"never reached '{marker}'")
 
 OUR = re.compile(r"(com\.hollowhours|com\.helperbuddy|hollowhours:|helperbuddy:)")
 BAD = re.compile(r"(Exception|Error|Couldn't parse|Parsing error|Failed to load|Unknown|Couldn't load)", re.I)
@@ -33,6 +34,12 @@ for i, line in enumerate(lines):
     exception = "Exception" in line and "WARN" not in line[:80]
     if level_error or exception:
         problems.append(window)
+
+# resource problems (missing sounds/textures/models) are warnings, shown in the run summary
+WARN = re.compile(r"(Missing|Unable to|Invalid|Couldn't|Failed|not found)", re.I)
+for line in lines:
+    if "/WARN]" in line and OUR.search(line) and WARN.search(line):
+        print("::warning::" + line[:600])
 
 if problems:
     for p in problems[:40]:

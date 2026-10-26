@@ -199,10 +199,13 @@ public class GhostEntity extends Monster implements GeoEntity {
         return brain;
     }
 
+    /** CI screenshots: stand still and pose instead of hunting */
+    public boolean showcase;
+
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
-        brain().tick();
+        if (!showcase) brain().tick();
     }
 
     @Override

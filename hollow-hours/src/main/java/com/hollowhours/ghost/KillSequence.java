@@ -66,6 +66,8 @@ public final class KillSequence {
     }
 
     private static final Map<UUID, Session> BY_VICTIM = new HashMap<>();
+    /** CI screenshots: the next kill uses this kill track (index into killsFor), -1 = random */
+    public static int forceKill = -1;
 
     private KillSequence() {}
 
@@ -93,7 +95,8 @@ public final class KillSequence {
         if (p.isSleeping()) p.stopSleeping();
 
         Session s = new Session(b, p.getUUID());
-        s.killTrack = kills.get(R.randInt(0, kills.size() - 1));
+        s.killTrack = kills.get(forceKill >= 0 ? forceKill % kills.size() : R.randInt(0, kills.size() - 1));
+        forceKill = -1;
         BY_VICTIM.put(p.getUUID(), s);
         b.mode = GhostBrain.Mode.KILL;
         b.search = null;
