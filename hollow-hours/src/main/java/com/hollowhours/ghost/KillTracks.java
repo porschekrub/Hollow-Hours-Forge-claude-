@@ -41,6 +41,9 @@ public final class KillTracks {
         public final String name;
         public final int index;
         public final float length;
+        /** animation to play on the ghost ("animation.ghost.<anim>") and whether it loops (the betrayal hold) */
+        public String anim;
+        public boolean loop;
         public final List<Key> victim = new ArrayList<>();
         public final List<Key> head = new ArrayList<>();
         public final List<Key> roll = new ArrayList<>();
@@ -52,16 +55,20 @@ public final class KillTracks {
             this.length = length;
         }
 
+        float local(float t) {
+            return loop && length > 0 ? t % length : t;
+        }
+
         public Vec3 victimAt(float t) {
-            return sample(victim, t, new Vec3(1.2, 0.0, 0.0));
+            return sample(victim, local(t), new Vec3(1.2, 0.0, 0.0));
         }
 
         public Vec3 headAt(float t) {
-            return sample(head, t, new Vec3(0, 3, 0));
+            return sample(head, local(t), new Vec3(0, 3, 0));
         }
 
         public float rollAt(float t) {
-            return (float) sample(roll, t, Vec3.ZERO).x;
+            return (float) sample(roll, local(t), Vec3.ZERO).x;
         }
 
         public int ticks() {
@@ -103,6 +110,8 @@ public final class KillTracks {
             for (JsonElement e : arr) {
                 JsonObject o = e.getAsJsonObject();
                 Track tr = new Track(o.get("name").getAsString(), ALL.size(), o.get("length").getAsFloat());
+                tr.anim = o.has("anim") ? o.get("anim").getAsString() : tr.name;
+                tr.loop = o.has("loop") && o.get("loop").getAsBoolean();
                 readKeys(o.getAsJsonArray("victim"), tr.victim);
                 readKeys(o.getAsJsonArray("head"), tr.head);
                 if (o.has("roll")) readKeys(o.getAsJsonArray("roll"), tr.roll);
@@ -145,6 +154,12 @@ public final class KillTracks {
     public static int indexOf(String name) {
         Track t = get(name);
         return t == null ? -1 : t.index;
+    }
+
+    /** A shared phase (grab / scream / hold) as fitted to ghost n: "grab_g3", falling back to "grab". */
+    public static Track phase(String phase, int n) {
+        Track t = get(phase + "_g" + n);
+        return t != null ? t : get(phase);
     }
 
     /** The kill animations available for ghost n (kill_n_1, kill_n_2, ...). */

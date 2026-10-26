@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "hollowhours:ghost_hit",
+    "hollowhours:ghost_kill",
+    "hollowhours:curse"
+  ]
+}

@@ -36,7 +36,8 @@ final class SmokeTest {
                 check(!KillTracks.killsFor(k.n).isEmpty(), "kill tracks for ghost " + k.n);
                 check(!GhostTalk.pool("en", k.n, "greet").isEmpty() && !GhostTalk.pool("th", k.n, "greet").isEmpty(), "lines for ghost " + k.n);
             }
-            check(KillTracks.get("grab") != null && KillTracks.get("scream") != null && KillTracks.get("hold") != null, "core kill tracks");
+            for (GhostKind k : GhostKind.values())
+                check(KillTracks.phase("grab", k.n) != null && KillTracks.phase("scream", k.n) != null && KillTracks.phase("hold", k.n) != null, "core kill tracks " + k.n);
             for (String s : HHSounds.NAMES) check(HHSounds.get(s) != null, "sound " + s);
             check(GhostTalk.classify("you are so stupid").intent().equals("taunt"), "intent taunt");
             check(GhostTalk.classify("ขอร้องอย่าทำร้ายฉัน").intent().equals("plead"), "intent plead th");

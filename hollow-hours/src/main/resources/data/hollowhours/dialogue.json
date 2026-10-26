@@ -1,0 +1,2643 @@
+{
+ "lines": {
+  "en": {
+   "1": {
+    "greet": [
+     "hello... hello... hello...",
+     "{n}... {n}... is that you?",
+     "hello? hello? ...that's my voice now",
+     "you came down here... to cry with me?"
+    ],
+    "question": [
+     "i was somebody once. i forgot who",
+     "you ask what you already know",
+     "questions echo... answers don't",
+     "ask the dark. it answers in my voice"
+    ],
+    "plead": [
+     "beg louder... i love that sound",
+     "crying sounds the same in every voice",
+     "please... please... i said that too. nobody came",
+     "your begging echoes so nicely down here"
+    ],
+    "bargain": [
+     "{item}? i already lost everything",
+     "nothing you hold is yours to give",
+     "you want to trade? trade me your voice",
+     "keep your {item}... give me your scream"
+    ],
+    "taunt": [
+     "i'll keep that laugh. i'll use it later",
+     "say it again. i learn quickly",
+     "laugh... laugh... it bounces off the walls",
+     "brave words... they shake at the end"
+    ],
+    "other": [
+     "{echo}... {echo}...",
+     "'{echo}'... so that's how you sound",
+     "{echo}... {echo}... i'll say it in your voice tonight",
+     "...{echo}... i'll remember that"
+    ],
+    "success": [
+     "enough crying... i'll be quiet now",
+     "fine... you sound so tired. go",
+     "the crying stops... for now... go",
+     "you sound like her... i'll let you go"
+    ],
+    "rage": [
+     "STOP TALKING!! I'LL MAKE YOU SCREAM!",
+     "YOUR VOICE... I'LL TAKE IT!",
+     "I'LL WEAR YOUR VOICE!!",
+     "SCREAM FOR ME! SCREAM!!"
+    ],
+    "who": [
+     "i was a miner. i heard the crying. now i cry",
+     "call me what you cry out in the dark",
+     "i'm the one you hear crying at night",
+     "a miner... a voice... a hole in the dark"
+    ],
+    "bye": [
+     "don't go... go... go...",
+     "bye bye bye bye...",
+     "bye... bye... i'll call you back in your mother's voice",
+     "go... i'll follow the footsteps"
+    ],
+    "kind": [
+     "you're kind... that hurts more",
+     "nobody pities a mimic. thank you",
+     "no one said kind things down there",
+     "kind... kind... the word hurts"
+    ],
+    "fear": [
+     "good... fear sounds like music",
+     "shaking? i can copy that",
+     "your heart is so loud",
+     "i can hear you shaking"
+    ],
+    "threat": [
+     "i'll learn your last scream first",
+     "come then. i'll be you",
+     "you can't hit an echo",
+     "hurt me? i'm already crying"
+    ],
+    "repeat": [
+     "{echo}... you said that... said that..."
+    ],
+    "plead_many": [
+     "so much begging. my favorite song"
+    ],
+    "taunt_many": [
+     "you keep laughing. i'm keeping every laugh"
+    ],
+    "hurt": [
+     "you sound hurt... that sounds good"
+    ],
+    "cave": [
+     "it's quiet down here. my voice carries"
+    ],
+    "water": [
+     "i hear splashing. i can splash too"
+    ],
+    "night": [
+     "night is when voices carry farthest"
+    ],
+    "nothave": [
+     "{item}? you hold nothing... i hear the lie",
+     "empty pockets... the lie echoes... lie... lie...",
+     "{item}? your pockets are empty... i heard them",
+     "lies echo the loudest"
+    ],
+    "refuse": [
+     "i'll keep your {item}... i still won't stop",
+     "{item}... it echoes. it isn't enough",
+     "the {item} fell into the dark... i'm still here",
+     "{item}... not what i wanted"
+    ],
+    "why": [
+     "because you made a sound",
+     "because the crying never stops... and now you hear it too"
+    ],
+    "want": [
+     "your voice. i lost mine",
+     "someone to cry with... forever"
+    ],
+    "ask_give": [
+     "take it... it was down here with me",
+     "this was in the dark... now it's yours",
+     "take it... and listen... it hums"
+    ],
+    "ask_refuse": [
+     "no... no... no...",
+     "ask again... i like hearing you ask",
+     "the dark keeps it"
+    ],
+    "ask_unknown": [
+     "what is that? ...what is that?",
+     "i don't know that word... say it again..."
+    ],
+    "ask_limit": [
+     "no more... you've taken enough from the dark",
+     "nothing left... only crying"
+    ]
+   },
+   "2": {
+    "greet": [
+     "you came... the water is cold",
+     "have you seen my husband?",
+     "you came... you finally came...",
+     "my love? ...no. not you. but you'll do"
+    ],
+    "question": [
+     "i was a bride... the lake was the aisle",
+     "he never answered me either",
+     "ask the lake. it took my answers",
+     "i only remember the water, and the waiting"
+    ],
+    "plead": [
+     "i begged too. it didn't help",
+     "stay... drowning isn't so bad",
+     "he begged too, in my dreams... he never came",
+     "shh... shh... the water is calm. let it take you"
+    ],
+    "bargain": [
+     "{item}? i wanted a ring",
+     "bring back my wedding day",
+     "a gift for the bride? {item}... it isn't a ring",
+     "the lake doesn't trade. it keeps"
+    ],
+    "taunt": [
+     "you laugh above the water",
+     "cruel... he laughed as well",
+     "laugh at the bride... everyone did",
+     "you'll stop laughing underwater"
+    ],
+    "other": [
+     "{n}... come closer to the water",
+     "i hear you through the water",
+     "'{echo}'... he used to say things like that",
+     "speak softer... the water listens"
+    ],
+    "success": [
+     "...you spoke so kindly. i'll sink away",
+     "thank you... i'll rest in the water",
+     "go... before i change my mind and keep you",
+     "you remind me of him... leave, quickly"
+    ],
+    "rage": [
+     "YOU'LL DROWN WITH ME!",
+     "NO MORE KIND WORDS!!",
+     "I'LL HOLD YOU UNDER UNTIL YOU'RE QUIET!"
+    ],
+    "who": [
+     "i was a bride. i drowned before the vows",
+     "they called me the widow of the lake",
+     "the bride nobody came for",
+     "i waited at the lake in white... i'm still waiting"
+    ],
+    "bye": [
+     "don't leave me by the water...",
+     "go if you must. the lake keeps its guests",
+     "don't leave me at the altar again",
+     "go... the water will bring you back to me"
+    ],
+    "kind": [
+     "your voice is warm. the water isn't",
+     "no one spoke kindly to me. not once",
+     "no one has been kind to me in so long... stay",
+     "kind... like his promises"
+    ],
+    "fear": [
+     "don't shake. the water will notice",
+     "your fear ripples like a lake",
+     "don't be afraid... it only hurts until you breathe in",
+     "your hands are cold. like mine"
+    ],
+    "threat": [
+     "you can't kill what already drowned",
+     "come into the water. let's see",
+     "violence on my wedding day?"
+    ],
+    "repeat": [
+     "you said that already. the lake remembers"
+    ],
+    "plead_many": [
+     "so many pleas... the lake fills with them"
+    ],
+    "taunt_many": [
+     "you keep mocking my grief"
+    ],
+    "hurt": [
+     "you're bleeding... the water heals nothing"
+    ],
+    "cave": [
+     "even down here i smell water"
+    ],
+    "water": [
+     "you're in the water... now you understand"
+    ],
+    "night": [
+     "it was night when the lake took me"
+    ],
+    "nothave": [
+     "you offer {item} but your hands are empty",
+     "liar... the lake knows what you hold"
+    ],
+    "refuse": [
+     "your {item} sinks. so do you",
+     "i took your {item}... it was never a ring"
+    ],
+    "why": [
+     "because you're alone... like me",
+     "because i need someone to stay"
+    ],
+    "want": [
+     "a groom. a ring. a hand to hold under the water",
+     "you... to stay. forever"
+    ],
+    "ask_give": [
+     "a wedding gift... take it",
+     "from the bottom of the lake... it's yours now",
+     "take it... and don't forget me"
+    ],
+    "ask_refuse": [
+     "the lake won't give that back",
+     "tonight i give nothing to no one",
+     "he never gave me anything either"
+    ],
+    "ask_unknown": [
+     "underwater... i can't hear that name",
+     "that word sank"
+    ],
+    "ask_limit": [
+     "the lake has nothing more for you",
+     "you've taken enough from me..."
+    ]
+   },
+   "3": {
+    "greet": [
+     "WHO WAKES ME?",
+     "{n}...",
+     "IT'S SO HOT IN HERE! ISN'T IT HOT?!",
+     "YOU! COME CLOSER! I'M COLD INSIDE!"
+    ],
+    "question": [
+     "I BURNED. THAT'S ALL I KNOW",
+     "ASK THE ASHES",
+     "QUESTIONS DON'T PUT OUT FIRES!",
+     "ASK THE SMOKE! IT WAS THERE!"
+    ],
+    "plead": [
+     "I SCREAMED TOO. NOBODY CAME",
+     "MERCY TURNED TO ASH LONG AGO",
+     "I BEGGED THEM TO OPEN THE DOOR! THEY DIDN'T!",
+     "BEG! BEG LOUDER THAN THE FIRE!"
+    ],
+    "bargain": [
+     "{item}? IT MELTS. EVERYTHING MELTS",
+     "I WANT NOTHING THAT BURNS",
+     "{item}?! IT'LL MELT! EVERYTHING MELTS!",
+     "I DON'T WANT THINGS! I WANT TO STOP BURNING!"
+    ],
+    "taunt": [
+     "BIG WORDS FOR SOMETHING FLAMMABLE",
+     "LAUGH. I'LL REMEMBER YOUR SMOKE",
+     "LAUGH! I LAUGHED TOO, UNTIL THE ROOF FELL!",
+     "YOU THINK THAT'S FUNNY?! FEEL THIS!"
+    ],
+    "other": [
+     "LOUDER. I CAN'T HEAR OVER THE FIRE",
+     "YOUR WORDS TURN TO SMOKE",
+     "'{echo}'?! WHAT DOES THAT MEAN?! IT BURNS!",
+     "TALK! TALK WHILE YOU STILL HAVE LIPS!"
+    ],
+    "success": [
+     "...ENOUGH. I'LL COOL DOWN. GO",
+     "FINE. I'LL GO BACK TO THE ASH",
+     "FINE! FINE! GO! BEFORE I CATCH YOU!",
+     "THE FIRE'S DYING... GO WHILE IT IS..."
+    ],
+    "rage": [
+     "BURN!! BURN WITH ME!!",
+     "I'LL TURN YOUR HOME TO ASH!",
+     "I'LL BURN YOU DOWN TO THE BONE!",
+     "SMELL THAT?! THAT'S YOU SOON!"
+    ],
+    "who": [
+     "I WAS A COOK. THE KITCHEN BURNED",
+     "ASH. THAT'S MY NAME NOW",
+     "I WAS A FATHER! NOW I'M ASH!",
+     "THE MAN WHO COULDN'T GET OUT!"
+    ],
+    "bye": [
+     "GO. THE SMOKE FOLLOWS",
+     "LEAVE. I'LL BURN WITHOUT AN AUDIENCE",
+     "DON'T TURN YOUR BACK ON A FIRE!",
+     "RUN! THE SMOKE IS FASTER!"
+    ],
+    "kind": [
+     "KINDNESS BURNS TOO...",
+     "NOBODY PUT OUT THE FIRE. NOBODY",
+     "KIND?! KINDNESS DOESN'T COOL ANYTHING!",
+     "...nobody... said that... IT STILL BURNS!"
+    ],
+    "fear": [
+     "GOOD. FEAR IS FUEL",
+     "YOUR FEAR SMELLS LIKE SMOKE",
+     "GOOD! FEAR IS HOT! I CAN FEEL IT!",
+     "YOUR SWEAT IS BOILING!"
+    ],
+    "threat": [
+     "TRY IT. I'M ALREADY BURNING",
+     "I'VE DIED ONCE. COME ON",
+     "YOU CAN'T BURN WHAT'S ALREADY ASH!",
+     "HIT ME! I'LL CRUMBLE AND COME BACK!"
+    ],
+    "repeat": [
+     "YOU SAID THAT ALREADY. I HEARD IT BURN"
+    ],
+    "plead_many": [
+     "ENOUGH BEGGING. IT SOUNDS LIKE CRACKLING"
+    ],
+    "taunt_many": [
+     "MORE INSULTS... MORE FIRE"
+    ],
+    "hurt": [
+     "YOU BLEED. I SMELL IT FROM HERE"
+    ],
+    "cave": [
+     "DARK. FINALLY, SHADOWS"
+    ],
+    "water": [
+     "WATER. HOW CRUEL. KEEP IT AWAY"
+    ],
+    "night": [
+     "THE FIRE WAS BRIGHTEST AT NIGHT"
+    ],
+    "nothave": [
+     "YOU HAVE NO {item}. LIAR. LIAR.",
+     "EMPTY HANDS AND A LIE. BURN."
+    ],
+    "refuse": [
+     "YOUR {item} IS ASH NOW. I WANT MORE",
+     "I TOOK THE {item}. IT DID NOT HELP"
+    ],
+    "why": [
+     "BECAUSE YOU'RE WARM AND I'M NOT!",
+     "BECAUSE NOBODY CAME FOR ME!"
+    ],
+    "want": [
+     "WATER! NO! YOU! YOUR WARMTH!",
+     "TO STOP BURNING! AND YOU TO START!"
+    ],
+    "ask_give": [
+     "TAKE IT! IT'S STILL HOT!",
+     "FROM THE ASHES! TAKE IT!",
+     "IT BURNED ME FOR YEARS! YOUR TURN!"
+    ],
+    "ask_refuse": [
+     "NO! I GIVE NOTHING!",
+     "ASK AND IT TURNS TO SMOKE!",
+     "NOTHING SURVIVES THE FIRE!"
+    ],
+    "ask_unknown": [
+     "WHAT IS THAT?! THE FIRE ATE IT!",
+     "SAY IT CLEARER!"
+    ],
+    "ask_limit": [
+     "NO! NO MORE! BURN!",
+     "ENOUGH! NOW YOU PAY!"
+    ]
+   },
+   "4": {
+    "greet": [
+     "hello, friend :) you look delicious",
+     "oh, a guest! how lovely",
+     "hiii :) i've been waiting right behind you",
+     "you're awake! i love when they're awake :)"
+    ],
+    "question": [
+     "i'm the one who always smiles",
+     "i'd tell you, but surprises are fun",
+     "so many questions! ask me in the dark :)",
+     "the answer is behind you :)"
+    ],
+    "plead": [
+     "such manners! still no :)",
+     "oh, begging. my favorite :)",
+     "say please again :) it tickles",
+     "begging is so cute on you :)"
+    ],
+    "bargain": [
+     "{item}? how generous :) no",
+     "i'll take it... and you too :)",
+     "a present? for me? :) still no",
+     "{item}! i'll put it with the others :)"
+    ],
+    "taunt": [
+     "hahaha! do keep going :)",
+     "i'm still smiling. are you?",
+     "ooh, feisty :) i'll remember your face",
+     "rude! but i'm still smiling :)"
+    ],
+    "other": [
+     "how interesting! tell me more :)",
+     "i'm listening. i'm always right behind you",
+     "'{echo}' :) say it slower",
+     "mm-hm :) go on, i'm counting your words"
+    ],
+    "success": [
+     "well, since you asked so nicely... bye :)",
+     "okay! i'll go. don't look back :)",
+     "okay okay :) i'll go. for now. maybe",
+     "you win :) this time. turn off the lights on your way"
+    ],
+    "rage": [
+     "no more smiling. no more game.",
+     "I SAID I WAS SMILING!!",
+     "SMILE. SMILE FOR ME.",
+     "I'LL GIVE YOU A SMILE LIKE MINE."
+    ],
+    "who": [
+     "i'm the friendly one :) the others are rude",
+     "call me whatever makes you smile :)",
+     "your best friend :) i've always been here",
+     "the smile in the dark corner :)"
+    ],
+    "bye": [
+     "leaving already? see you soon :)",
+     "bye bye! i'm right behind you :)",
+     "bye! check under the bed tonight :)",
+     "see you! well, i'll see you :)"
+    ],
+    "kind": [
+     "aww, you're sweet :) still not leaving",
+     "kind words! i'll frame them :)",
+     "you're so nice :) i'll eat you last",
+     "aww :) i'll keep you"
+    ],
+    "fear": [
+     "trembling? adorable :)",
+     "don't be scared :) see? i'm smiling",
+     "shh shh :) fear makes you taste sweeter",
+     "your knees are knocking :) cute"
+    ],
+    "threat": [
+     "how brave! how funny :)",
+     "oh, violence. i'll smile through it :)",
+     "try it :) i have more arms than you",
+     "oh no! :) anyway"
+    ],
+    "repeat": [
+     "you said that already :) say something new?"
+    ],
+    "plead_many": [
+     "so much begging! encore :)"
+    ],
+    "taunt_many": [
+     "still smiling. running out of insults? :)"
+    ],
+    "hurt": [
+     "you're hurt :) shall i kiss it better?"
+    ],
+    "cave": [
+     "cozy down here, isn't it? just us :)"
+    ],
+    "water": [
+     "a swim? don't mind me, i'll watch :)"
+    ],
+    "night": [
+     "night is my favorite :) shall we play?"
+    ],
+    "nothave": [
+     "you don't have that :) naughty naughty",
+     "oh, a fib :) i love fibs"
+    ],
+    "refuse": [
+     "thank you for the {item} :) still no",
+     "a lovely {item}! i'll keep it... and you :)"
+    ],
+    "why": [
+     "because you're fun :)",
+     "why not? :) you were alone"
+    ],
+    "want": [
+     "to play :) hide and seek. you hide",
+     "a smile like mine, on you :)"
+    ],
+    "ask_give": [
+     "sure :) i'm always nice",
+     "here you go :) i'll collect the price later",
+     "take it :) don't forget to smile"
+    ],
+    "ask_refuse": [
+     "nope :) funny, right?",
+     "not this time :) try again",
+     "i smile, but i don't share :)"
+    ],
+    "ask_unknown": [
+     "hm? is that even real? :)",
+     "i don't get it :) cute though"
+    ],
+    "ask_limit": [
+     "that's three :) my turn to take something",
+     "all gone :) but i still want something from you"
+    ]
+   },
+   "5": {
+    "greet": [
+     "...",
+     "...hungry",
+     "...smell.",
+     "...you. ...food."
+    ],
+    "question": [
+     "hunger.",
+     "...i don't remember. only hunger",
+     "...hungry.",
+     "...no words. ...hungry."
+    ],
+    "plead": [
+     "...hungry.",
+     "no words. only food",
+     "...food begs.",
+     "...quiet. ...eat."
+    ],
+    "bargain": [
+     "{item}... not food...",
+     "...food? ...food?",
+     "...{item}. ...not meat.",
+     "...not that. ...you."
+    ],
+    "taunt": [
+     "...",
+     "...i will remember that",
+     "...loud food.",
+     "...remember. ...eat later."
+    ],
+    "other": [
+     "...",
+     "...hungry...",
+     "...{echo}?",
+     "...words. ...hungry."
+    ],
+    "success": [
+     "...tired. i go.",
+     "...later. hungry again",
+     "...full. ...for now.",
+     "...go. ...hungry later."
+    ],
+    "rage": [
+     "HUNGRY!! HUNGRY!!",
+     "...I WILL EAT YOU...",
+     "...EAT!!",
+     "HUNGRY! HUNGRY! HUNGRY!"
+    ],
+    "who": [
+     "...stag. ...no. ...hunger.",
+     "...no name. ...only hunger.",
+     "...forest. ...hunger.",
+     "...was man. ...now hungry."
+    ],
+    "bye": [
+     "...stay.",
+     "...leave. ...i follow.",
+     "...run. ...i follow.",
+     "...smell stays."
+    ],
+    "kind": [
+     "...kind? ...unfamiliar.",
+     "...warm. ...hungry.",
+     "...kind. ...still hungry.",
+     "...soft. ...tender."
+    ],
+    "fear": [
+     "...good.",
+     "...fear smells... like food.",
+     "...fear. ...sweet.",
+     "...heart fast. ...good."
+    ],
+    "threat": [
+     "...try.",
+     "...come. ...i eat.",
+     "...no."
+    ],
+    "repeat": [
+     "...same. ...again."
+    ],
+    "plead_many": [
+     "...noise. ...enough."
+    ],
+    "taunt_many": [
+     "...i remember. ...every word."
+    ],
+    "hurt": [
+     "...blood. ...hunger."
+    ],
+    "cave": [
+     "...dark. ...my place."
+    ],
+    "water": [
+     "...wet. ...still hungry."
+    ],
+    "night": [
+     "...night. ...hunting."
+    ],
+    "nothave": [
+     "...no {item}. ...lie.",
+     "...empty. ...hungry."
+    ],
+    "refuse": [
+     "...{item}. ...not enough. ...hungry.",
+     "...took {item}. ...still hungry."
+    ],
+    "why": [
+     "...hungry.",
+     "...you ran. ...i follow."
+    ],
+    "want": [
+     "...food.",
+     "...you. ...hungry."
+    ],
+    "ask_give": [
+     "...take.",
+     "...thing. ...take. ...stop looking.",
+     "...yes. ...but hungry."
+    ],
+    "ask_refuse": [
+     "...no.",
+     "...hungry. ...not kind.",
+     "...nothing. ...stand still."
+    ],
+    "ask_unknown": [
+     "...don't know...",
+     "...what word..."
+    ],
+    "ask_limit": [
+     "...gone.",
+     "...no more. ...eat."
+    ]
+   }
+  },
+  "th": {
+   "1": {
+    "greet": [
+     "สวัสดี... สวัสดี... สวัสดี...",
+     "{n}... {n}... ใช่เธอหรือเปล่า",
+     "ฮัลโหล? ฮัลโหล? ...นั่นเสียงฉันแล้วนะ",
+     "เธอลงมาที่นี่... เพื่อร้องไห้กับฉันเหรอ?"
+    ],
+    "question": [
+     "ฉันเคยเป็นใครบางคน... ลืมแล้ว",
+     "เธอถามสิ่งที่เธอรู้อยู่แล้ว",
+     "คำถามมีเสียงก้อง... คำตอบไม่มี",
+     "ถามความมืดสิ มันจะตอบเป็นเสียงฉัน"
+    ],
+    "plead": [
+     "อ้อนวอนให้ดังกว่านี้... ฉันชอบเสียงนั้น",
+     "เสียงร้องไห้ฟังเหมือนกันทุกเสียง",
+     "ขอร้อง... ขอร้อง... ฉันก็เคยพูดแบบนั้น ไม่มีใครมา",
+     "เสียงอ้อนวอนของเธอก้องสวยดีนะ"
+    ],
+    "bargain": [
+     "{item}? ฉันเสียทุกอย่างไปหมดแล้ว",
+     "ของที่เธอถืออยู่ ไม่ใช่ของเธอที่จะให้",
+     "อยากแลกเหรอ? แลกเสียงของเธอมาสิ",
+     "เก็บ{item}ไว้เถอะ... เอาเสียงกรีดร้องมาแทน"
+    ],
+    "taunt": [
+     "ฉันจะเก็บเสียงหัวเราะนั้นไว้ใช้ทีหลัง",
+     "พูดอีกสิ ฉันเรียนรู้เร็ว",
+     "หัวเราะสิ... หัวเราะ... เสียงมันกระเด้งไปทั่วผนัง",
+     "พูดกล้าดีนะ... แต่ท้ายเสียงสั่น"
+    ],
+    "other": [
+     "{echo}... {echo}...",
+     "'{echo}'... เสียงเธอเป็นแบบนี้เอง",
+     "{echo}... {echo}... คืนนี้ฉันจะพูดมันด้วยเสียงเธอ",
+     "...{echo}... ฉันจะจำไว้"
+    ],
+    "success": [
+     "พอแล้วกับการร้องไห้... ฉันจะเงียบ",
+     "ก็ได้... เสียงเธอดูเหนื่อยจัง ไปเถอะ",
+     "เสียงร้องไห้เงียบลงแล้ว... ตอนนี้... ไปเถอะ",
+     "เสียงเธอเหมือนลูกสาวฉัน... ฉันจะปล่อยไป"
+    ],
+    "rage": [
+     "เงียบนะ!! ฉันจะทำให้เธอกรีดร้อง!",
+     "เสียงของเธอ... ฉันจะเอาไป!",
+     "ฉันจะสวมเสียงของเธอ!!",
+     "กรีดร้องให้ฉันฟัง! กรีดร้อง!!"
+    ],
+    "who": [
+     "ฉันเคยเป็นคนขุดแร่ ฉันได้ยินเสียงร้องไห้ ตอนนี้ฉันก็ร้อง",
+     "เรียกฉันว่าอะไรก็ได้ที่เธอร้องออกมาในความมืด",
+     "ฉันคือเสียงร้องไห้ที่เธอได้ยินตอนกลางคืน",
+     "คนขุดเหมือง... เสียง... หลุมในความมืด"
+    ],
+    "bye": [
+     "อย่าไป... ไป... ไป...",
+     "ลาก่อน ลาก่อน ลาก่อน...",
+     "บาย... บาย... เดี๋ยวฉันจะเรียกเธอด้วยเสียงแม่เธอ",
+     "ไปสิ... ฉันจะตามเสียงฝีเท้าไป"
+    ],
+    "kind": [
+     "เธอใจดี... มันเจ็บกว่าเดิม",
+     "ไม่มีใครสงสารตัวเลียนเสียง ขอบคุณ",
+     "ข้างล่างนั่นไม่มีใครพูดดีกับฉันเลย",
+     "ใจดี... ใจดี... คำนี้มันเจ็บ"
+    ],
+    "fear": [
+     "ดี... ความกลัวฟังเหมือนดนตรี",
+     "ตัวสั่นเหรอ ฉันเลียนแบบได้",
+     "หัวใจเธอเต้นดังมาก",
+     "ฉันได้ยินเธอตัวสั่นนะ"
+    ],
+    "threat": [
+     "ฉันจะเรียนรู้เสียงกรีดร้องสุดท้ายของเธอก่อน",
+     "มาเลย ฉันจะกลายเป็นเธอ",
+     "เธอตีเสียงสะท้อนไม่ได้หรอก",
+     "ทำร้ายฉัน? ฉันร้องไห้อยู่แล้ว"
+    ],
+    "repeat": [
+     "{echo}... เธอพูดไปแล้ว... พูดไปแล้ว..."
+    ],
+    "plead_many": [
+     "อ้อนวอนเยอะจัง เพลงโปรดฉันเลย"
+    ],
+    "taunt_many": [
+     "เธอหัวเราะไม่หยุด ฉันเก็บทุกเสียงไว้"
+    ],
+    "hurt": [
+     "เสียงเธอเหมือนเจ็บ... ฟังดีจัง"
+    ],
+    "cave": [
+     "ข้างล่างนี่เงียบ เสียงฉันก้องไกล"
+    ],
+    "water": [
+     "ได้ยินเสียงน้ำกระเซ็น ฉันกระเซ็นได้เหมือนกัน"
+    ],
+    "night": [
+     "กลางคืนคือเวลาที่เสียงไปไกลที่สุด"
+    ],
+    "nothave": [
+     "{item}? เธอไม่มีอะไรเลย... ฉันได้ยินเสียงโกหก",
+     "กระเป๋าว่างเปล่า... คำโกหกก้องอยู่... โกหก... โกหก...",
+     "{item}? กระเป๋าเธอว่างเปล่า... ฉันได้ยิน",
+     "คำโกหกก้องดังที่สุด"
+    ],
+    "refuse": [
+     "ฉันจะเก็บ{item}ของเธอไว้... แต่ฉันยังไม่หยุด",
+     "{item}... เสียงก้อง มันยังไม่พอ",
+     "{item}ตกลงไปในความมืดแล้ว... ฉันยังอยู่ตรงนี้",
+     "{item}... ไม่ใช่สิ่งที่ฉันต้องการ"
+    ],
+    "why": [
+     "เพราะเธอร้องไห้... ฉันตามเสียงนั้นมา",
+     "ฉันไม่ได้ไล่... ฉันแค่เดินตามเสียงเธอ",
+     "เพราะเธอส่งเสียง",
+     "เพราะเสียงร้องไม่เคยหยุด... ตอนนี้เธอก็ได้ยินแล้ว"
+    ],
+    "want": [
+     "ฉันอยากได้เสียงของเธอ... ทุกเสียง",
+     "อยากให้เธอร้องอีกครั้ง... ฉันจะจำไว้",
+     "เสียงของเธอ ฉันเสียของฉันไปแล้ว",
+     "ใครสักคนมาร้องไห้ด้วยกัน... ตลอดไป"
+    ],
+    "ask_give": [
+     "เอาไปสิ... ฉันไม่ต้องการมันแล้ว",
+     "ของนี้ไม่ใช่ของฉันตั้งแต่แรก... รับไป",
+     "ได้... แต่มันจะจำเธอไว้"
+    ],
+    "ask_refuse": [
+     "ไม่มี... ฉันไม่มีอะไรเหลือให้เธอ",
+     "ขอดังกว่านี้... ฉันยังไม่ได้ยิน",
+     "ครั้งนี้ ฉันขอเก็บไว้"
+    ],
+    "ask_unknown": [
+     "สิ่งนั้น... ฉันไม่รู้จัก",
+     "พูดใหม่อีกครั้ง... ฉันได้ยินแต่เสียงร้องไห้"
+    ],
+    "ask_limit": [
+     "พอแล้ว... ฉันให้เธอมากพอแล้ว",
+     "ไม่มีอีกแล้ว... ไม่มีวันมีอีก"
+    ]
+   },
+   "2": {
+    "greet": [
+     "เธอมาแล้ว... น้ำเย็นจัง",
+     "เธอเห็นสามีฉันไหม",
+     "เธอมาแล้ว... ในที่สุดเธอก็มา...",
+     "ที่รัก? ...ไม่ใช่ ไม่ใช่เธอ แต่เธอก็พอได้"
+    ],
+    "question": [
+     "ฉันเป็นเจ้าสาว... ทะเลสาบคือทางเดินพิธี",
+     "เขาไม่เคยตอบฉันเหมือนกัน",
+     "ถามทะเลสาบสิ มันเอาคำตอบของฉันไปหมดแล้ว",
+     "ฉันจำได้แค่น้ำ กับการรอคอย"
+    ],
+    "plead": [
+     "ฉันก็เคยอ้อนวอน... ไม่ช่วยอะไรเลย",
+     "อยู่ต่อสิ... จมน้ำไม่ได้แย่ขนาดนั้น",
+     "เขาก็เคยอ้อนวอนแบบนี้ในความฝัน... แต่เขาไม่เคยมา",
+     "ชู่... ชู่... น้ำนิ่งแล้ว ปล่อยให้มันพาเธอไป"
+    ],
+    "bargain": [
+     "{item}? ฉันอยากได้แหวน",
+     "คืนวันแต่งงานของฉันมาสิ",
+     "ของขวัญให้เจ้าสาวเหรอ? {item}... มันไม่ใช่แหวนนี่",
+     "ทะเลสาบไม่แลกเปลี่ยน มันเก็บไว้อย่างเดียว"
+    ],
+    "taunt": [
+     "เธอหัวเราะอยู่เหนือผิวน้ำ",
+     "โหดร้าย... เขาก็หัวเราะเหมือนกัน",
+     "หัวเราะเยาะเจ้าสาวสิ... ทุกคนก็ทำ",
+     "ใต้น้ำเธอจะหัวเราะไม่ออกหรอก"
+    ],
+    "other": [
+     "{n}... เข้ามาใกล้น้ำหน่อยสิ",
+     "ฉันได้ยินเธอผ่านผิวน้ำ",
+     "'{echo}'... เขาเคยพูดแบบนั้น",
+     "พูดเบา ๆ... น้ำกำลังฟังอยู่"
+    ],
+    "success": [
+     "...เธอพูดอ่อนโยนจัง ฉันจะจมหายไป",
+     "ขอบคุณ... ฉันจะไปพักในน้ำ",
+     "ไปเถอะ... ก่อนฉันจะเปลี่ยนใจแล้วเก็บเธอไว้",
+     "เธอทำให้ฉันนึกถึงเขา... ไปซะ เร็ว"
+    ],
+    "rage": [
+     "เธอจะจมไปกับฉัน!",
+     "ไม่ต้องมาพูดดี ๆ อีก!!",
+     "เธอต้องจมน้ำไปกับฉัน!",
+     "ฉันจะกดเธอไว้ใต้น้ำจนเธอเงียบ!"
+    ],
+    "who": [
+     "ฉันเป็นเจ้าสาว จมน้ำก่อนได้กล่าวคำสาบาน",
+     "เขาเรียกฉันว่าหญิงม่ายแห่งทะเลสาบ",
+     "เจ้าสาวที่ไม่มีใครมารับ",
+     "ฉันรออยู่ริมทะเลสาบในชุดขาว... ยังรออยู่จนวันนี้"
+    ],
+    "bye": [
+     "อย่าทิ้งฉันไว้ข้างน้ำ...",
+     "ไปก็ไป ทะเลสาบเก็บแขกไว้เสมอ",
+     "อย่าทิ้งฉันไว้ที่หน้าแท่นพิธีอีกเลย",
+     "ไปสิ... เดี๋ยวน้ำก็พาเธอกลับมาหาฉัน"
+    ],
+    "kind": [
+     "เสียงเธออบอุ่น น้ำไม่เป็นอย่างนั้น",
+     "ไม่เคยมีใครพูดดีกับฉัน สักครั้ง",
+     "ไม่มีใครใจดีกับฉันมานานมากแล้ว... อยู่ด้วยกันนะ",
+     "ใจดี... เหมือนคำสัญญาของเขา"
+    ],
+    "fear": [
+     "อย่าสั่น น้ำจะรู้ตัว",
+     "ความกลัวของเธอเป็นคลื่นบนผิวน้ำ",
+     "ไม่ต้องกลัว... มันเจ็บแค่ตอนหายใจเข้าครั้งแรก",
+     "มือเธอเย็นจัง เหมือนมือฉันเลย"
+    ],
+    "threat": [
+     "เธอฆ่าคนที่จมน้ำไปแล้วไม่ได้หรอก",
+     "ลงมาในน้ำสิ มาดูกัน",
+     "เธอฆ่าคนที่จมน้ำตายไปแล้วไม่ได้หรอก",
+     "ใช้ความรุนแรงในวันแต่งงานของฉันเหรอ?"
+    ],
+    "repeat": [
+     "เธอพูดไปแล้ว ทะเลสาบจำได้"
+    ],
+    "plead_many": [
+     "คำอ้อนวอนเยอะแยะ ทะเลสาบเต็มไปหมดแล้ว"
+    ],
+    "taunt_many": [
+     "เธอล้อเลียนความเศร้าของฉันไม่หยุด"
+    ],
+    "hurt": [
+     "เธอเลือดออก... น้ำรักษาอะไรไม่ได้หรอก"
+    ],
+    "cave": [
+     "แม้อยู่ข้างล่างนี่ ฉันก็ได้กลิ่นน้ำ"
+    ],
+    "water": [
+     "เธออยู่ในน้ำ... ตอนนี้เธอเข้าใจฉันแล้ว"
+    ],
+    "night": [
+     "คืนนั้นทะเลสาบพาฉันไป"
+    ],
+    "nothave": [
+     "เธอเสนอ{item} แต่มือเธอว่างเปล่า",
+     "คนโกหก... ทะเลสาบรู้ว่าเธอถืออะไร"
+    ],
+    "refuse": [
+     "{item}ของเธอจมลงแล้ว เธอก็จะจมด้วย",
+     "ฉันรับ{item}ไว้... มันไม่ใช่แหวน"
+    ],
+    "why": [
+     "เพราะเธอเดินอยู่ริมน้ำของฉัน",
+     "ฉันเหงา... ไม่มีใครอยู่กับฉันเลย",
+     "เพราะเธอตัวคนเดียว... เหมือนฉัน",
+     "เพราะฉันต้องการใครสักคนที่อยู่กับฉัน"
+    ],
+    "want": [
+     "ฉันอยากได้แหวนวงนั้นคืน",
+     "อยากให้ใครสักคนอยู่กับฉัน... ที่ก้นทะเลสาบ",
+     "เจ้าบ่าว แหวน มือสักข้างให้จับไว้ใต้น้ำ",
+     "เธอ... อยู่กับฉัน ตลอดไป"
+    ],
+    "ask_give": [
+     "ของขวัญแต่งงาน... เอาไปเถอะ",
+     "จากก้นทะเลสาบ... เป็นของเธอแล้ว",
+     "รับไป... แล้วอย่าลืมฉัน"
+    ],
+    "ask_refuse": [
+     "ทะเลสาบไม่คายของนั้นออกมา",
+     "คืนนี้ ฉันไม่ให้อะไรใครทั้งนั้น",
+     "เขาก็ไม่เคยให้ฉันเหมือนกัน"
+    ],
+    "ask_unknown": [
+     "ใต้น้ำ... ฉันไม่ได้ยินชื่อนั้น",
+     "คำนั้นจมหายไปแล้ว"
+    ],
+    "ask_limit": [
+     "ทะเลสาบไม่ให้อะไรเธออีกแล้ว",
+     "เธอเอาไปจากฉันมากพอแล้ว..."
+    ]
+   },
+   "3": {
+    "greet": [
+     "ใครมาปลุกฉัน?",
+     "{n}...",
+     "ร้อนชะมัด! ไม่ร้อนเหรอ?!",
+     "เธอ! เข้ามาใกล้ ๆ! ข้างในฉันหนาว!"
+    ],
+    "question": [
+     "ฉันถูกเผา แค่นั้นที่รู้",
+     "ไปถามเถ้าถ่านเอาเอง",
+     "คำถามดับไฟไม่ได้!",
+     "ไปถามควันสิ! มันอยู่ที่นั่นด้วย!"
+    ],
+    "plead": [
+     "ฉันก็กรีดร้อง ไม่มีใครมา",
+     "ความเมตตากลายเป็นเถ้าไปนานแล้ว",
+     "ฉันก็อ้อนวอนให้พวกมันเปิดประตู! ไม่มีใครเปิด!",
+     "อ้อนวอนสิ! ให้ดังกว่าเสียงไฟ!"
+    ],
+    "bargain": [
+     "{item}? มันละลาย ทุกอย่างละลาย",
+     "ฉันไม่ต้องการอะไรที่ไหม้ได้",
+     "{item}?! เดี๋ยวก็ละลาย! ทุกอย่างละลาย!",
+     "ฉันไม่ได้อยากได้ของ! ฉันอยากหยุดไหม้!"
+    ],
+    "taunt": [
+     "พูดใหญ่โตสำหรับของที่ติดไฟง่าย",
+     "หัวเราะไปเถอะ ฉันจะจำควันของเธอ",
+     "หัวเราะสิ! ฉันก็เคยหัวเราะ จนหลังคาถล่ม!",
+     "ขำนักเหรอ?! ลองนี่หน่อย!"
+    ],
+    "other": [
+     "ดังกว่านี้ ฉันไม่ได้ยินเพราะเสียงไฟ",
+     "คำของเธอกลายเป็นควัน",
+     "'{echo}'?! หมายความว่าไง?! มันแสบ!",
+     "พูดไป! พูดตอนที่ยังมีปากอยู่!"
+    ],
+    "success": [
+     "...พอแล้ว ฉันจะเย็นลง ไปซะ",
+     "ก็ได้ ฉันจะกลับไปเป็นเถ้า",
+     "ก็ได้! ก็ได้! ไป! ก่อนฉันจะจับได้!",
+     "ไฟกำลังมอด... ไปตอนที่มันยังมอดอยู่..."
+    ],
+    "rage": [
+     "ไหม้ซะ!! ไหม้ไปกับฉัน!!",
+     "ฉันจะเผาบ้านเธอให้เป็นเถ้า!",
+     "ฉันจะเผาเธอจนเหลือแต่กระดูก!",
+     "ได้กลิ่นไหม?! อีกเดี๋ยวนั่นคือเธอ!"
+    ],
+    "who": [
+     "ฉันเคยเป็นพ่อครัว ห้องครัวไหม้",
+     "เถ้า นั่นคือชื่อฉันตอนนี้",
+     "ฉันเคยเป็นพ่อคน! ตอนนี้เป็นเถ้า!",
+     "ผู้ชายที่ออกจากบ้านไม่ทัน!"
+    ],
+    "bye": [
+     "ไปสิ ควันจะตามไป",
+     "ไปซะ ไม่มีคนดู ฉันก็ไหม้ต่อได้",
+     "อย่าหันหลังให้ไฟ!",
+     "วิ่งสิ! ควันเร็วกว่า!"
+    ],
+    "kind": [
+     "ความใจดีก็ไหม้ได้...",
+     "ไม่มีใครดับไฟให้ ไม่มีเลย",
+     "ใจดีเหรอ?! ความใจดีทำให้อะไรเย็นลงไม่ได้!",
+     "...ไม่เคยมีใคร... พูดแบบนั้น... มันยังไหม้อยู่!"
+    ],
+    "fear": [
+     "ดี ความกลัวคือเชื้อเพลิง",
+     "ความกลัวของเธอมีกลิ่นควัน",
+     "ดี! ความกลัวมันร้อน! ฉันรู้สึกได้!",
+     "เหงื่อเธอเดือดแล้ว!"
+    ],
+    "threat": [
+     "ลองดูสิ ฉันไหม้อยู่แล้ว",
+     "ฉันตายมาแล้วครั้งหนึ่ง เข้ามาเลย",
+     "เธอเผาสิ่งที่เป็นเถ้าแล้วไม่ได้!",
+     "ตีมาสิ! ฉันจะแตกเป็นผงแล้วกลับมา!"
+    ],
+    "repeat": [
+     "เธอพูดไปแล้ว ฉันได้ยินมันไหม้"
+    ],
+    "plead_many": [
+     "พอได้แล้ว เสียงอ้อนวอนเหมือนเสียงไฟแตก"
+    ],
+    "taunt_many": [
+     "ด่าอีก... ไฟก็แรงขึ้นอีก"
+    ],
+    "hurt": [
+     "เธอเลือดออก ฉันได้กลิ่นจากตรงนี้"
+    ],
+    "cave": [
+     "มืด ในที่สุดก็มีที่ให้เงาทอดยาว"
+    ],
+    "water": [
+     "น้ำ โหดร้ายจัง เอาไปไกล ๆ"
+    ],
+    "night": [
+     "ไฟสว่างที่สุดตอนกลางคืน"
+    ],
+    "nothave": [
+     "เธอไม่มี{item} โกหก โกหก!",
+     "มือเปล่ากับคำโกหก ไหม้ซะ"
+    ],
+    "refuse": [
+     "{item}ของเธอเป็นเถ้าแล้ว ฉันยังอยากได้อีก",
+     "ฉันรับ{item}ไว้ มันไม่ช่วยอะไร"
+    ],
+    "why": [
+     "เพราะเธอยังไม่ไหม้!",
+     "ฉันไม่ได้ไล่! ฉันแค่อยากอุ่น!",
+     "เพราะเธออุ่น แต่ฉันไม่!",
+     "เพราะไม่มีใครมาช่วยฉัน!"
+    ],
+    "want": [
+     "ไฟ! ฉันต้องการไฟ!",
+     "อยากให้ทุกอย่างรอบตัวเธอเป็นเถ้า!",
+     "น้ำ! ไม่สิ! เธอ! ความอุ่นของเธอ!",
+     "หยุดไหม้! แล้วให้เธอไหม้แทน!"
+    ],
+    "ask_give": [
+     "เอาไป! มันยังร้อนอยู่",
+     "จากกองเถ้า... รับไปซะ",
+     "ของนี้ไหม้ฉันมานานแล้ว! เอาไป"
+    ],
+    "ask_refuse": [
+     "ไม่! ฉันไม่ให้",
+     "ขอไปก็กลายเป็นควัน",
+     "ไม่มีอะไรเหลือรอดจากไฟ"
+    ],
+    "ask_unknown": [
+     "ฉันไม่รู้จักสิ่งนั้น! ไฟกินมันไปแล้ว",
+     "พูดให้ชัดกว่านี้!"
+    ],
+    "ask_limit": [
+     "ไม่! ไม่มีอีกแล้ว! ไหม้ไปให้หมด!",
+     "พอแล้ว! ต่อไปเธอต้องจ่ายเอง!"
+    ]
+   },
+   "4": {
+    "greet": [
+     "สวัสดีเพื่อนรัก :) ดูน่ากินจัง",
+     "โอ้ แขกมาเยือน น่ารักจัง",
+     "หวัดดีจ้า :) ฉันรออยู่ข้างหลังเธอมาตลอดเลย",
+     "เธอตื่นแล้ว! ฉันชอบตอนที่พวกเขาตื่นที่สุด :)"
+    ],
+    "question": [
+     "ฉันคือคนที่ยิ้มอยู่เสมอ",
+     "อยากบอกนะ แต่เซอร์ไพรส์สนุกกว่า",
+     "คำถามเยอะจัง! มาถามฉันในที่มืดสิ :)",
+     "คำตอบอยู่ข้างหลังเธอนะ :)"
+    ],
+    "plead": [
+     "มารยาทดีจัง แต่ไม่นะ :)",
+     "โอ้ อ้อนวอน ที่สุดของฉันเลย :)",
+     "พูดว่าได้โปรดอีกทีสิ :) มันจั๊กจี้ดี",
+     "อ้อนวอนแบบนี้น่ารักจังเลย :)"
+    ],
+    "bargain": [
+     "{item}? ใจกว้างจัง :) ไม่เอา",
+     "ฉันรับไว้... แล้วก็เธอด้วย :)",
+     "ของขวัญ? ให้ฉันเหรอ? :) แต่ก็ยังไม่เอานะ",
+     "{item}! เดี๋ยวฉันเก็บไว้กับชิ้นอื่น ๆ :)"
+    ],
+    "taunt": [
+     "ฮ่า ๆ ๆ พูดต่อสิ :)",
+     "ฉันยังยิ้มอยู่ แล้วเธอล่ะ?",
+     "โอ้โห ดุจัง :) ฉันจะจำหน้าเธอไว้",
+     "หยาบคาย! แต่ฉันก็ยังยิ้มอยู่นะ :)"
+    ],
+    "other": [
+     "น่าสนใจจัง เล่าอีกสิ :)",
+     "ฉันฟังอยู่ ฉันอยู่ข้างหลังเธอเสมอ",
+     "'{echo}' :) พูดช้า ๆ อีกทีสิ",
+     "อืมมม :) พูดต่อเลย ฉันนับคำของเธออยู่"
+    ],
+    "success": [
+     "ก็ได้ ในเมื่อขอดี ๆ... ไปล่ะ :)",
+     "โอเค! ฉันไปก็ได้ อย่าหันกลับมานะ :)",
+     "โอเค ๆ :) ฉันไปก็ได้ ตอนนี้นะ อาจจะ",
+     "เธอชนะ :) ครั้งนี้ ปิดไฟให้ด้วยนะตอนออกไป"
+    ],
+    "rage": [
+     "ไม่ยิ้มแล้ว ไม่เล่นแล้ว",
+     "ฉันบอกว่าฉันยิ้มอยู่ไง!!",
+     "ยิ้ม ยิ้มให้ฉันดูสิ",
+     "ฉันจะให้เธอมีรอยยิ้มแบบฉัน"
+    ],
+    "who": [
+     "ฉันคือตนที่เป็นมิตร :) ตนอื่นหยาบคาย",
+     "เรียกฉันว่าอะไรก็ได้ที่ทำให้เธอยิ้ม :)",
+     "เพื่อนรักของเธอไง :) ฉันอยู่ที่นี่มาตลอด",
+     "รอยยิ้มในมุมมืดไง :)"
+    ],
+    "bye": [
+     "จะไปแล้วเหรอ เดี๋ยวเจอกัน :)",
+     "บ๊ายบาย! ฉันอยู่ข้างหลังเธอนะ :)",
+     "บ๊ายบาย! คืนนี้อย่าลืมดูใต้เตียงนะ :)",
+     "แล้วเจอกัน! ...ฉันจะเห็นเธอแหละ :)"
+    ],
+    "kind": [
+     "โอ๋ น่ารักจัง :) แต่ฉันยังไม่ไป",
+     "คำพูดดี ๆ! ฉันจะใส่กรอบไว้ :)",
+     "เธอใจดีจัง :) ฉันจะกินเธอเป็นคนสุดท้าย",
+     "อุ๊ย :) ฉันจะเก็บเธอไว้"
+    ],
+    "fear": [
+     "ตัวสั่นเหรอ น่ารักจัง :)",
+     "ไม่ต้องกลัวนะ :) ดูสิ ฉันยิ้มอยู่",
+     "ชู่ ๆ :) ความกลัวทำให้เธอหวานขึ้นนะ",
+     "เข่าเธอสั่นกึก ๆ เลย :) น่ารัก"
+    ],
+    "threat": [
+     "กล้าจัง ตลกจัง :)",
+     "โอ้ ความรุนแรง ฉันจะยิ้มสู้ :)",
+     "ลองดูสิ :) ฉันมีแขนมากกว่าเธอนะ",
+     "ตายแล้ว! :) ช่างเถอะ"
+    ],
+    "repeat": [
+     "เธอพูดไปแล้วนะ :) พูดอะไรใหม่ ๆ สิ"
+    ],
+    "plead_many": [
+     "อ้อนวอนเยอะจัง ขออีกรอบ :)"
+    ],
+    "taunt_many": [
+     "ยังยิ้มอยู่ เธอเริ่มหมดคำด่าแล้วนะ :)"
+    ],
+    "hurt": [
+     "เธอเจ็บอยู่ :) ให้ฉันเป่าให้ไหม"
+    ],
+    "cave": [
+     "ข้างล่างอบอุ่นดีนะ มีแค่เราสองคน :)"
+    ],
+    "water": [
+     "ว่ายน้ำเหรอ ไม่ต้องสนใจฉัน ฉันดูอยู่ :)"
+    ],
+    "night": [
+     "กลางคืนคือที่สุดของฉัน :) เล่นกันไหม"
+    ],
+    "nothave": [
+     "เธอไม่มีของนั้นนะ :) ไม่ดีเลย",
+     "โอ้ โกหกหน่อย ๆ :) ฉันชอบ"
+    ],
+    "refuse": [
+     "ขอบคุณสำหรับ{item}นะ :) แต่ยังไม่เอา",
+     "{item}น่ารักจัง! ฉันเก็บไว้... แล้วก็เธอด้วย :)"
+    ],
+    "why": [
+     "ใครบอกว่าฉันไล่ล่ะ :) ฉันแค่เดินเล่นข้างหลังเธอ",
+     "เพราะเธอน่ารักไง :) ฉันอยากอยู่ใกล้ ๆ",
+     "เพราะเธอน่ารักไง :) ฉันอยากได้"
+    ],
+    "want": [
+     "อยากเห็นเธอยิ้มอยู่ตลอดไป :) ในที่ของฉัน",
+     "ฉันอยากได้เธอ :) แค่นี้เอง",
+     "เล่นด้วยกัน :) ซ่อนแอบไง เธอซ่อน",
+     "รอยยิ้มแบบฉัน บนหน้าเธอ :)"
+    ],
+    "ask_give": [
+     "ได้สิ :) ฉันใจดีเสมอ",
+     "นี่ไง :) ราคาเดี๋ยวฉันเก็บทีหลัง",
+     "รับไปเลย :) อย่าลืมยิ้มนะ"
+    ],
+    "ask_refuse": [
+     "ไม่ให้หรอก :) ขำดีใช่ไหม",
+     "ครั้งนี้ไม่ :) ลองใหม่สิ",
+     "ฉันยิ้ม แต่ไม่ให้ :)"
+    ],
+    "ask_unknown": [
+     "หืม? สิ่งนั้นมีอยู่จริงเหรอ :)",
+     "ไม่เข้าใจเลย :) น่ารักจัง"
+    ],
+    "ask_limit": [
+     "ครบสามแล้วนะ :) ทีนี้ถึงตาฉันเอาบ้าง",
+     "ไม่มีให้แล้ว :) แต่ฉันยังอยากได้ของจากเธอ"
+    ]
+   },
+   "5": {
+    "greet": [
+     "...",
+     "...หิว",
+     "...กลิ่น.",
+     "...เธอ. ...อาหาร."
+    ],
+    "question": [
+     "หิว.",
+     "...จำไม่ได้ มีแต่ความหิว",
+     "...หิว.",
+     "...ไม่มีคำ. ...หิว."
+    ],
+    "plead": [
+     "...หิว.",
+     "ไม่มีคำพูด มีแต่อาหาร",
+     "...อาหารอ้อนวอน.",
+     "...เงียบ. ...กิน."
+    ],
+    "bargain": [
+     "{item}... ไม่ใช่อาหาร...",
+     "...อาหาร? ...อาหาร?",
+     "...{item}. ...ไม่ใช่เนื้อ.",
+     "...ไม่เอา. ...เอาเธอ."
+    ],
+    "taunt": [
+     "...",
+     "...ฉันจะจำไว้",
+     "...อาหารเสียงดัง.",
+     "...จำไว้. ...กินทีหลัง."
+    ],
+    "other": [
+     "...",
+     "...หิว...",
+     "...{echo}?",
+     "...คำพูด. ...หิว."
+    ],
+    "success": [
+     "...เหนื่อย ไปล่ะ",
+     "...เดี๋ยวค่อยมา หิวอีกแล้ว",
+     "...อิ่ม. ...ตอนนี้.",
+     "...ไป. ...เดี๋ยวหิวอีก."
+    ],
+    "rage": [
+     "หิว!! หิว!!",
+     "...ฉันจะกินเธอ...",
+     "...กิน!!",
+     "หิว! หิว! หิว!"
+    ],
+    "who": [
+     "...กวาง. ...ไม่. ...ความหิว.",
+     "...ไม่มีชื่อ. ...มีแต่ความหิว.",
+     "...ป่า. ...ความหิว.",
+     "...เคยเป็นคน. ...ตอนนี้หิว."
+    ],
+    "bye": [
+     "...อยู่ก่อน.",
+     "...ไปสิ. ...ฉันตาม.",
+     "...วิ่ง. ...ฉันตาม.",
+     "...กลิ่นยังอยู่."
+    ],
+    "kind": [
+     "...ใจดี? ...ไม่คุ้น.",
+     "...อุ่น. ...หิว.",
+     "...ใจดี. ...ยังหิว.",
+     "...นุ่ม. ...เนื้อนุ่ม."
+    ],
+    "fear": [
+     "...ดี.",
+     "...กลัว มีกลิ่น... เหมือนอาหาร.",
+     "...กลัว. ...หวาน.",
+     "...หัวใจเร็ว. ...ดี."
+    ],
+    "threat": [
+     "...ลองสิ.",
+     "...มา. ...ฉันกิน.",
+     "...ไม่."
+    ],
+    "repeat": [
+     "...เหมือนเดิม. ...อีกแล้ว."
+    ],
+    "plead_many": [
+     "...เสียงดัง. ...พอ."
+    ],
+    "taunt_many": [
+     "...จำได้. ...ทุกคำ."
+    ],
+    "hurt": [
+     "...เลือด. ...หิว."
+    ],
+    "cave": [
+     "...มืด. ...ที่ของฉัน."
+    ],
+    "water": [
+     "...เปียก. ...ยังหิว."
+    ],
+    "night": [
+     "...กลางคืน. ...ล่า."
+    ],
+    "nothave": [
+     "...ไม่มี{item}. ...โกหก.",
+     "...ว่างเปล่า. ...หิว."
+    ],
+    "refuse": [
+     "...{item}. ...ไม่พอ. ...หิว.",
+     "...รับ{item}. ...ยังหิว."
+    ],
+    "why": [
+     "...หิว.",
+     "...เธอวิ่ง. ...ฉันตาม."
+    ],
+    "want": [
+     "...อาหาร.",
+     "...เธอ. ...หิว."
+    ],
+    "ask_give": [
+     "...เอาไป...",
+     "ของ... เอาไป... แล้วหยุดมอง",
+     "ได้... แต่ฉันหิว"
+    ],
+    "ask_refuse": [
+     "...ไม่",
+     "ฉันหิว... ไม่ใช่ใจดี",
+     "ไม่มีให้... ยืนนิ่ง ๆ"
+    ],
+    "ask_unknown": [
+     "...ไม่รู้จัก...",
+     "ฉันไม่เข้าใจคำนั้น..."
+    ],
+    "ask_limit": [
+     "...หมดแล้ว.",
+     "...ไม่ให้. ...กิน."
+    ]
+   }
+  }
+ },
+ "topics": {
+  "en": {
+   "1": {
+    "where": [
+     "I'm {dir} you... {dist} steps away",
+     "Only {dist} steps away... {dir} you"
+    ],
+    "death": [
+     "I dug too deep in the mine... heard crying, and then the rock collapsed",
+     "I was trapped underground for three days, cried until my voice was gone... and never came out again"
+    ],
+    "killme": [
+     "I never wanted to kill... I just want you to cry with me",
+     "If I catch you... you'll cry with me forever"
+    ],
+    "leave": [
+     "I'll leave when the crying quiets... which it never does",
+     "At dawn I go back underground"
+    ],
+    "escape": [
+     "Don't make a sound... I follow sound, not sight",
+     "Hide in the closet and hold your breath... I can hear even breathing"
+    ],
+    "count": [
+     "There are five of us... I hear the other four crying far away",
+     "Five... counting me. Soon maybe six"
+    ],
+    "family": [
+     "I have a daughter... I wonder if she's still waiting for me to come home",
+     "My family never came looking... no one came"
+    ],
+    "real": [
+     "If I'm not real... why do you have goosebumps?",
+     "As real as the crying you hear right now"
+    ],
+    "time": [
+     "It's {time} now... when the underground is quietest",
+     "{time}... I count the hours by the drip of water"
+    ],
+    "know": [
+     "{n}... I remember that name. I heard you talking to yourself",
+     "Your name is {n}... I'll cry that name all night"
+    ],
+    "doing": [
+     "I'm {doing}...",
+     "{doing}... like every night"
+    ],
+    "hungry": [
+     "I'm not hungry... just sad",
+     "I can only eat silence"
+    ],
+    "from": [
+     "From the deep mine under the village... where no one digs any further",
+     "From right under your feet, far below"
+    ],
+    "age": [
+     "I died before this house was built",
+     "So long I forgot my own birthday"
+    ],
+    "whyhere": [
+     "I heard you crying... so I came",
+     "You're too quiet, I want to hear your voice"
+    ],
+    "see": {
+     "hidden": [
+      "I can't see you... but I hear you breathing",
+      "You're hiding close by... I know"
+     ],
+     "seen": [
+      "Of course I see... I'm {dir} you, only {dist} steps away",
+      "I see... and you're trembling"
+     ],
+     "unseen": [
+      "Can't see yet... but I hear your voice",
+      "Not yet... but soon"
+     ]
+    }
+   },
+   "2": {
+    "where": [
+     "I'm {dir} you... {dist} steps away, still dripping wet",
+     "{dist} steps... {dir} you. Hear the water dripping?"
+    ],
+    "death": [
+     "On our wedding night he took me to the lake... and pushed me in",
+     "A wedding dress is so heavy in water... I sank slowly while he stood laughing"
+    ],
+    "killme": [
+     "I just want you to come down and stay with me... in the water",
+     "Not kill... I'll take you to marry me at the bottom of the lake"
+    ],
+    "leave": [
+     "I'll leave when someone returns my ring",
+     "By morning... the water will call me back"
+    ],
+    "escape": [
+     "I'm small, I slip under doors... closing the door alone won't save you",
+     "Go up high... my dress is heavy, I can't climb well"
+    ],
+    "count": [
+     "There are five of us... but none of them talk to me",
+     "Five... and all of them are listening to you"
+    ],
+    "family": [
+     "My husband... he's the one who pushed me into the water",
+     "I have no family... only this wedding dress"
+    ],
+    "real": [
+     "Take my hand... ice cold, isn't it?",
+     "As real as the water in my lungs"
+    ],
+    "time": [
+     "{time}... the same time as the night I drowned",
+     "It's {time} now. The lake must be freezing"
+    ],
+    "know": [
+     "{n}... what a lovely name, perfect for a gravestone",
+     "I know you, {n}. I saw your shadow in the water"
+    ],
+    "doing": [
+     "I'm {doing}... my dress drags along the ground",
+     "{doing}... quiet, as a bride should be"
+    ],
+    "hungry": [
+     "I don't eat... my mouth is only water",
+     "Wedding cake... I never got to eat it"
+    ],
+    "from": [
+     "From the lake behind the hill... go look, if you dare",
+     "From underwater, where it's quietest"
+    ],
+    "age": [
+     "I'm nineteen... forever",
+     "The age I was when I died, I never grew older"
+    ],
+    "whyhere": [
+     "I'm looking for a new groom",
+     "You walked through my water... so I followed"
+    ],
+    "see": {
+     "hidden": [
+      "I can't see you... but I hear your heart pounding",
+      "You hide well... just like he hid from me"
+     ],
+     "seen": [
+      "I see... I'm {dir} you, just {dist} steps",
+      "I see clearly... like looking through the surface of water"
+     ],
+     "unseen": [
+      "Not yet... the water in my eyes is murky",
+      "Can't see... but I hear you"
+     ]
+    }
+   },
+   "3": {
+    "where": [
+     "{dir} you! {dist} steps! Can you smell the smoke?",
+     "{dist} steps! {dir} you! I'll be there soon!"
+    ],
+    "death": [
+     "My house was on fire! The door was locked from outside! I pounded until my hands were crushed!",
+     "Someone lit the fire and locked me in! Since then I break every door!"
+    ],
+    "killme": [
+     "I'll burn everything you love! Then I'll burn you!",
+     "Kill? No! I'll show you how hot fire is!"
+    ],
+    "leave": [
+     "When the fire goes out! But the fire inside me never goes out!",
+     "At dawn! The sunlight stings my eyes!"
+    ],
+    "escape": [
+     "Doors won't help you! I'm the strongest! Go find a place to hide!",
+     "Only iron barricades slow me down! Ordinary wood I smash to dust!"
+    ],
+    "count": [
+     "Five! There are five of us! I'm the loudest!",
+     "The other four are too quiet! I'm not quiet!"
+    ],
+    "family": [
+     "Family? Burned along with the house!",
+     "I heard my child screaming in the fire! Don't ask again!"
+    ],
+    "real": [
+     "Real enough to burn you!",
+     "Touch my skin! It burns!"
+    ],
+    "time": [
+     "{time}! When the fire burns brightest!",
+     "It's {time} now! Why aren't you asleep yet!"
+    ],
+    "know": [
+     "{n}! I'll carve this name into your ashes!",
+     "Of course! {n}! The name I'll shout as I break down your door!"
+    ],
+    "doing": [
+     "I'm {doing}! Don't get in my way!",
+     "{doing}! And angry! Always angry!"
+    ],
+    "hungry": [
+     "I'm hungry for fire! Bring me fire!",
+     "I only eat ashes!"
+    ],
+    "from": [
+     "From the burned house by the forest! Now only ashes remain!",
+     "From the flames!"
+    ],
+    "age": [
+     "I burned at thirty! I stopped counting after that!",
+     "Age? Ashes have no age!"
+    ],
+    "whyhere": [
+     "Your house looks flammable!",
+     "I heard you close the door! I hate closed doors!"
+    ],
+    "see": {
+     "hidden": [
+      "Can't see! But I can burn everywhere you could hide!",
+      "Come out! I smell you!"
+     ],
+     "seen": [
+      "I see! I'm {dir} you! {dist} steps!",
+      "I see clearly! Don't move!"
+     ],
+     "unseen": [
+      "Can't see! The smoke is in the way!",
+      "Not yet! But I'll break every wall until I do!"
+     ]
+    }
+   },
+   "4": {
+    "where": [
+     "{dir} you :) only {dist} steps away",
+     "{dist} steps :) {dir} you... try turning around"
+    ],
+    "death": [
+     "Die? I was never alive to begin with :)",
+     "I smiled when they buried me... and I've smiled ever since :)"
+    ],
+    "killme": [
+     "No :) I'll keep you to play with for a long time",
+     "Kill? How boring :) I'd rather have your smile"
+    ],
+    "leave": [
+     "When you smile at me :)",
+     "I'm not going anywhere :) I'm always behind you"
+    ],
+    "escape": [
+     "Don't run :) tiptoe, I'll hear you less... oops, I just told you",
+     "Turn off the flashlight :) the light lets me see you clearly"
+    ],
+    "count": [
+     "Five :) but I'm the cutest",
+     "Five :) want to meet them all?"
+    ],
+    "family": [
+     "You're my new family :)",
+     "I have four more siblings :) all of them hungry"
+    ],
+    "real": [
+     "Of course :) close your eyes and count to ten",
+     "If it's not real, who's behind you? :)"
+    ],
+    "time": [
+     "{time} :) my playtime",
+     "It's {time} now... it's late :) good children go to bed"
+    ],
+    "know": [
+     "{n} :) I knew your name before you knew me",
+     "Of course, {n} :) I watch you sleep every night"
+    ],
+    "doing": [
+     "I'm {doing} :)",
+     "{doing}... and smiling :)"
+    ],
+    "hungry": [
+     "Hungry :) you look delicious",
+     "I eat smiles :) I haven't eaten yours yet"
+    ],
+    "from": [
+     "From a place with no light :)",
+     "From under your bed :)"
+    ],
+    "age": [
+     "As old as the dark :)",
+     "A secret :) guess"
+    ],
+    "whyhere": [
+     "To play with you :)",
+     "You called me yourself :) don't you remember?"
+    ],
+    "see": {
+     "hidden": [
+      "Hide and seek :) I love this game. Count to ten",
+      "Can't see... yet :)"
+     ],
+     "seen": [
+      "Found you :) I'm {dir} you, {dist} steps",
+      "Peekaboo :) I see you"
+     ],
+     "unseen": [
+      "Can't see yet :) but I know where you are",
+      "Playing hide and seek? :)"
+     ]
+    }
+   },
+   "5": {
+    "where": [
+     "...{dir}. ...{dist} steps.",
+     "...near. ...{dist}."
+    ],
+    "death": [
+     "...hungry. ...starved to death. ...and still hungry.",
+     "...snow. ...no food. ...ate people."
+    ],
+    "killme": [
+     "...eat.",
+     "...don't kill. ...eat."
+    ],
+    "leave": [
+     "...full. ...then I'll go.",
+     "...morning. ...gone."
+    ],
+    "escape": [
+     "...quiet. ...I'm listening.",
+     "...high places. ...I can jump. ...higher than that."
+    ],
+    "count": [
+     "...five.",
+     "...five. ...I'm the hungriest."
+    ],
+    "family": [
+     "...already ate.",
+     "...none. ...only hunger."
+    ],
+    "real": [
+     "...true. ...truly hungry.",
+     "...listen to my stomach."
+    ],
+    "time": [
+     "...{time}. ...feeding time.",
+     "...dark. ...{time}."
+    ],
+    "know": [
+     "...{n}. ...food.",
+     "...{n}. ...remember the scent."
+    ],
+    "doing": [
+     "...{doing}.",
+     "...{doing}. ...hungry."
+    ],
+    "hungry": [
+     "...hungry. hungry. hungry.",
+     "...yes."
+    ],
+    "from": [
+     "...forest. ...snow.",
+     "...the northern forest."
+    ],
+    "age": [
+     "...long.",
+     "...can't remember."
+    ],
+    "whyhere": [
+     "...your scent.",
+     "...hungry."
+    ],
+    "see": {
+     "hidden": [
+      "...can't see. ...can smell.",
+      "...come out."
+     ],
+     "seen": [
+      "...I see. ...{dist}.",
+      "...I see. ...food."
+     ],
+     "unseen": [
+      "...can't see. ...listening.",
+      "...not yet."
+     ]
+    }
+   }
+  },
+  "th": {
+   "1": {
+    "where": [
+     "ฉันอยู่{dir}เธอ... ห่างไป {dist} ก้าว",
+     "ใกล้แค่ {dist} ก้าว... {dir}เธอนั่นแหละ"
+    ],
+    "death": [
+     "ฉันขุดลึกเกินไปในเหมือง... ได้ยินเสียงร้องไห้ แล้วหินก็ถล่มลงมา",
+     "ฉันติดอยู่ใต้ดินสามวัน ร้องไห้จนเสียงหาย... แล้วก็ไม่ได้ออกมาอีกเลย"
+    ],
+    "killme": [
+     "ฉันไม่ได้อยากฆ่า... ฉันแค่อยากให้เธอร้องไห้ไปด้วยกัน",
+     "ถ้าฉันจับเธอได้... เธอจะได้ร้องไห้กับฉันตลอดไป"
+    ],
+    "leave": [
+     "ฉันจะไปเมื่อเสียงร้องไห้เงียบลง... ซึ่งมันไม่เคยเงียบ",
+     "พอฟ้าสาง ฉันจะกลับลงไปใต้ดิน"
+    ],
+    "escape": [
+     "อย่าส่งเสียง... ฉันตามเสียง ไม่ได้ตามตา",
+     "ซ่อนในตู้แล้วกลั้นหายใจไว้... ฉันได้ยินแม้แต่ลมหายใจ"
+    ],
+    "count": [
+     "เรามีห้าตน... ฉันได้ยินอีกสี่เสียงร้องอยู่ไกล ๆ",
+     "ห้า... นับรวมฉันด้วย อีกไม่นานอาจเป็นหก"
+    ],
+    "family": [
+     "ฉันมีลูกสาว... เธอยังรอฉันกลับบ้านอยู่หรือเปล่านะ",
+     "ครอบครัวฉันไม่เคยมาตามหา... ไม่มีใครมา"
+    ],
+    "real": [
+     "ถ้าฉันไม่มีจริง... ทำไมเธอถึงขนลุกล่ะ",
+     "จริงพอ ๆ กับเสียงร้องไห้ที่เธอได้ยินตอนนี้"
+    ],
+    "time": [
+     "ตอนนี้{time}... เวลาที่ใต้ดินเงียบที่สุด",
+     "{time}แล้ว... ฉันนับเวลาจากเสียงหยดน้ำ"
+    ],
+    "know": [
+     "{n}... ฉันจำชื่อนี้ได้ ฉันได้ยินเธอพูดกับตัวเอง",
+     "ชื่อเธอคือ {n}... ฉันจะร้องเรียกชื่อนี้ทั้งคืน"
+    ],
+    "doing": [
+     "ฉันกำลัง{doing}...",
+     "{doing}... เหมือนทุกคืน"
+    ],
+    "hungry": [
+     "ฉันไม่หิว... ฉันแค่เศร้า",
+     "ฉันกินได้แต่ความเงียบ"
+    ],
+    "from": [
+     "จากเหมืองลึกใต้หมู่บ้าน... ที่ที่ไม่มีใครขุดลงไปอีก",
+     "จากใต้เท้าเธอนั่นแหละ ลึกลงไปมาก"
+    ],
+    "age": [
+     "ฉันตายมาก่อนที่บ้านหลังนี้จะถูกสร้าง",
+     "นานจนจำวันเกิดตัวเองไม่ได้แล้ว"
+    ],
+    "whyhere": [
+     "ฉันได้ยินเธอร้องไห้... เลยมาหา",
+     "เธอเงียบเกินไป ฉันอยากได้ยินเสียงเธอ"
+    ],
+    "see": {
+     "hidden": [
+      "ฉันไม่เห็นเธอ... แต่ได้ยินเธอหายใจ",
+      "เธอซ่อนอยู่ใกล้ ๆ นี่เอง... ฉันรู้"
+     ],
+     "seen": [
+      "เห็นสิ... ฉันอยู่{dir}เธอ ห่างแค่ {dist} ก้าว",
+      "เห็น... และเธอกำลังสั่น"
+     ],
+     "unseen": [
+      "ยังไม่เห็น... แต่ได้ยินเสียงเธอ",
+      "ยัง... แต่อีกไม่นาน"
+     ]
+    }
+   },
+   "2": {
+    "where": [
+     "ฉันอยู่{dir}เธอ... ห่าง {dist} ก้าว ตัวฉันยังเปียกอยู่เลย",
+     "{dist} ก้าว... {dir}เธอ ได้ยินเสียงน้ำหยดไหม"
+    ],
+    "death": [
+     "คืนแต่งงาน เขาพาฉันไปที่ทะเลสาบ... แล้วผลักฉันลงไป",
+     "ชุดเจ้าสาวหนักมากในน้ำ... ฉันจมลงช้า ๆ ขณะที่เขายืนหัวเราะ"
+    ],
+    "killme": [
+     "ฉันแค่อยากให้เธอลงไปอยู่ด้วยกัน... ในน้ำ",
+     "ไม่ใช่ฆ่า... ฉันจะพาเธอไปแต่งงานที่ก้นทะเลสาบ"
+    ],
+    "leave": [
+     "ฉันจะไปเมื่อมีใครคืนแหวนให้ฉัน",
+     "พอเช้า... น้ำจะเรียกฉันกลับไป"
+    ],
+    "escape": [
+     "ฉันตัวเล็ก ลอดประตูได้... ปิดประตูอย่างเดียวช่วยเธอไม่ได้หรอก",
+     "ขึ้นที่สูงสิ... ชุดของฉันหนัก ปีนไม่เก่ง"
+    ],
+    "count": [
+     "พวกเรามีห้า... แต่ไม่มีใครพูดกับฉันเลย",
+     "ห้าตน... และทุกตนกำลังฟังเธออยู่"
+    ],
+    "family": [
+     "สามีฉัน... เขาคือคนที่ผลักฉันลงน้ำ",
+     "ฉันไม่มีครอบครัว... มีแค่ชุดเจ้าสาวตัวนี้"
+    ],
+    "real": [
+     "จับมือฉันดูสิ... เย็นเฉียบเลยใช่ไหม",
+     "จริงเหมือนน้ำในปอดของฉัน"
+    ],
+    "time": [
+     "{time}... เวลาเดียวกับคืนที่ฉันจมน้ำ",
+     "ตอนนี้{time} ทะเลสาบคงเย็นมาก"
+    ],
+    "know": [
+     "{n}... ชื่อเพราะจัง เหมาะกับการสลักบนป้ายหลุมศพ",
+     "ฉันรู้จักเธอ {n} ฉันเห็นเงาเธอในน้ำ"
+    ],
+    "doing": [
+     "ฉันกำลัง{doing}... ชุดฉันลากไปกับพื้น",
+     "{doing}... เงียบ ๆ อย่างที่เจ้าสาวควรเป็น"
+    ],
+    "hungry": [
+     "ฉันไม่กิน... ปากฉันมีแต่น้ำ",
+     "เค้กแต่งงาน... ฉันไม่ได้กินมันเลย"
+    ],
+    "from": [
+     "จากทะเลสาบหลังเนินเขา... ไปดูสิ ถ้ากล้า",
+     "จากใต้น้ำ ที่ที่เงียบที่สุด"
+    ],
+    "age": [
+     "ฉันอายุสิบเก้า... ตลอดไป",
+     "อายุเท่าวันที่ฉันตาย ไม่แก่ขึ้นอีกแล้ว"
+    ],
+    "whyhere": [
+     "ฉันกำลังหาเจ้าบ่าวคนใหม่",
+     "เธอเดินผ่านน้ำของฉัน... ฉันเลยตามมา"
+    ],
+    "see": {
+     "hidden": [
+      "ฉันไม่เห็นเธอ... แต่ได้ยินหัวใจเธอเต้นแรง",
+      "ซ่อนเก่งจัง... เหมือนที่เขาซ่อนจากฉัน"
+     ],
+     "seen": [
+      "เห็น... ฉันอยู่{dir}เธอ แค่ {dist} ก้าว",
+      "เห็นชัดเลย... เหมือนมองผ่านผิวน้ำ"
+     ],
+     "unseen": [
+      "ยัง... น้ำในตาฉันมันขุ่น",
+      "ไม่เห็น... แต่ได้ยินเธอ"
+     ]
+    }
+   },
+   "3": {
+    "where": [
+     "อยู่{dir}เธอ! {dist} ก้าว! ได้กลิ่นควันไหม!",
+     "{dist} ก้าว! {dir}เธอ! ฉันจะไปถึงเร็ว ๆ นี้!"
+    ],
+    "death": [
+     "บ้านฉันไฟไหม้! ประตูล็อกจากข้างนอก! ฉันทุบจนมือแหลก!",
+     "มีคนจุดไฟแล้วล็อกประตูขังฉัน! ตั้งแต่นั้นฉันพังทุกประตู!"
+    ],
+    "killme": [
+     "ฉันจะเผาทุกอย่างที่เธอรัก! แล้วค่อยเผาเธอ!",
+     "ฆ่า? ไม่! ฉันจะทำให้เธอรู้ว่าไฟมันร้อนแค่ไหน!"
+    ],
+    "leave": [
+     "เมื่อไฟดับ! แต่ไฟในตัวฉันไม่เคยดับ!",
+     "เมื่อฟ้าสาง! แสงแดดแสบตาฉัน!"
+    ],
+    "escape": [
+     "ประตูไม่ช่วยเธอหรอก! ฉันแรงที่สุด! ไปหาที่ซ่อนเถอะ!",
+     "ไม้กั้นเหล็กเท่านั้นที่ทำให้ฉันช้าลง! ไม้ธรรมดาฉันพังเป็นผง!"
+    ],
+    "count": [
+     "ห้า! พวกเรามีห้า! ฉันเสียงดังที่สุด!",
+     "อีกสี่ตนมันเงียบเกินไป! ฉันไม่เงียบ!"
+    ],
+    "family": [
+     "ครอบครัว? ไหม้ไปพร้อมบ้านหมดแล้ว!",
+     "ฉันได้ยินลูกฉันกรีดร้องในกองไฟ! อย่าถามอีก!"
+    ],
+    "real": [
+     "จริงพอที่จะเผาเธอได้!",
+     "แตะผิวฉันดูสิ! ร้อนจนไหม้!"
+    ],
+    "time": [
+     "{time}! เวลาที่ไฟลุกโชนที่สุด!",
+     "ตอนนี้{time}! ทำไมเธอยังไม่หลับ!"
+    ],
+    "know": [
+     "{n}! ฉันจะสลักชื่อนี้ไว้บนเถ้ากระดูกเธอ!",
+     "รู้สิ! {n}! ชื่อที่ฉันจะตะโกนตอนพังประตูเข้าไป!"
+    ],
+    "doing": [
+     "ฉันกำลัง{doing}! อย่ามาขวาง!",
+     "{doing}! แล้วก็โกรธ! โกรธตลอดเวลา!"
+    ],
+    "hungry": [
+     "ฉันหิวไฟ! เอาไฟมาให้ฉัน!",
+     "ฉันกินแต่เถ้า!"
+    ],
+    "from": [
+     "จากบ้านที่ถูกเผาริมป่า! ตอนนี้เหลือแต่เถ้า!",
+     "จากกองเพลิง!"
+    ],
+    "age": [
+     "ฉันไหม้ไปตอนอายุสามสิบ! จากนั้นไม่นับอีกเลย!",
+     "อายุ? เถ้าไม่มีอายุ!"
+    ],
+    "whyhere": [
+     "บ้านเธอดูติดไฟง่าย!",
+     "ฉันได้ยินเธอปิดประตู! ฉันเกลียดประตูปิด!"
+    ],
+    "see": {
+     "hidden": [
+      "ไม่เห็น! แต่ฉันจะเผาทุกที่ที่เธอซ่อนได้!",
+      "ออกมา! ฉันได้กลิ่นเธอ!"
+     ],
+     "seen": [
+      "เห็น! ฉันอยู่{dir}เธอ! {dist} ก้าว!",
+      "เห็นชัด! อย่าขยับ!"
+     ],
+     "unseen": [
+      "ไม่เห็น! ควันมันบัง!",
+      "ยัง! แต่ฉันจะพังทุกกำแพงจนกว่าจะเห็น!"
+     ]
+    }
+   },
+   "4": {
+    "where": [
+     "อยู่{dir}เธอไง :) ห่างแค่ {dist} ก้าวเอง",
+     "{dist} ก้าว :) {dir}เธอ... ลองหันมาดูสิ"
+    ],
+    "death": [
+     "ตาย? ฉันไม่เคยมีชีวิตมาก่อนเลยนะ :)",
+     "ฉันยิ้มตอนที่พวกเขาฝังฉัน... ตั้งแต่นั้นก็ยิ้มมาตลอด :)"
+    ],
+    "killme": [
+     "ไม่หรอก :) ฉันจะเก็บเธอไว้เล่นนาน ๆ",
+     "ฆ่าเหรอ? น่าเบื่อจะตาย :) ฉันอยากได้รอยยิ้มเธอมากกว่า"
+    ],
+    "leave": [
+     "เมื่อเธอยิ้มให้ฉัน :)",
+     "ฉันไม่ไปไหนหรอก :) ฉันอยู่ข้างหลังเธอเสมอ"
+    ],
+    "escape": [
+     "อย่าวิ่งสิ :) เดินย่อง ๆ ฉันจะได้ยินยากขึ้น... อุ๊ย บอกไปแล้ว",
+     "ปิดไฟฉายซะ :) แสงทำให้ฉันเห็นเธอชัดเลย"
+    ],
+    "count": [
+     "ห้าตน :) แต่ฉันน่ารักที่สุด",
+     "ห้า :) อยากรู้จักทุกตนไหม"
+    ],
+    "family": [
+     "เธอคือครอบครัวใหม่ของฉันไง :)",
+     "ฉันมีพี่น้องอีกสี่ตน :) ทุกตนหิว"
+    ],
+    "real": [
+     "จริงสิ :) ลองหลับตาแล้วนับหนึ่งถึงสิบดูสิ",
+     "ถ้าไม่จริง ใครอยู่ข้างหลังเธอล่ะ :)"
+    ],
+    "time": [
+     "{time} :) เวลาเล่นของฉัน",
+     "ตอนนี้{time}... ดึกแล้วนะ :) เด็กดีต้องนอน"
+    ],
+    "know": [
+     "{n} :) ฉันรู้ชื่อเธอก่อนเธอจะรู้จักฉันอีก",
+     "แน่นอน {n} :) ฉันดูเธอนอนทุกคืน"
+    ],
+    "doing": [
+     "ฉันกำลัง{doing} :)",
+     "{doing}... แล้วก็ยิ้ม :)"
+    ],
+    "hungry": [
+     "หิวสิ :) เธอดูน่ากินจัง",
+     "ฉันกินรอยยิ้ม :) ของเธอยังไม่ได้กินเลย"
+    ],
+    "from": [
+     "จากที่ที่ไม่มีแสง :)",
+     "จากใต้เตียงเธอไง :)"
+    ],
+    "age": [
+     "อายุเท่ากับความมืด :)",
+     "ความลับ :) เดาสิ"
+    ],
+    "whyhere": [
+     "มาเล่นกับเธอไง :)",
+     "เธอเรียกฉันเองนะ :) จำไม่ได้เหรอ"
+    ],
+    "see": {
+     "hidden": [
+      "ซ่อนแอบ :) ฉันชอบเกมนี้ นับหนึ่งถึงสิบนะ",
+      "ไม่เห็น... ยัง :)"
+     ],
+     "seen": [
+      "เห็นแล้ว :) ฉันอยู่{dir}เธอ {dist} ก้าว",
+      "จ๊ะเอ๋ :) เห็นเธอแล้ว"
+     ],
+     "unseen": [
+      "ยังไม่เห็น :) แต่ฉันรู้ว่าเธออยู่ไหน",
+      "เล่นซ่อนหากันเหรอ :)"
+     ]
+    }
+   },
+   "5": {
+    "where": [
+     "...{dir}. ...{dist} ก้าว.",
+     "...ใกล้. ...{dist}."
+    ],
+    "death": [
+     "...หิว. ...หิวจนตาย. ...แล้วก็ยังหิว.",
+     "...หิมะ. ...ไม่มีอาหาร. ...กินคน."
+    ],
+    "killme": [
+     "...กิน.",
+     "...ไม่ฆ่า. ...กิน."
+    ],
+    "leave": [
+     "...อิ่ม. ...แล้วไป.",
+     "...เช้า. ...ไป."
+    ],
+    "escape": [
+     "...เงียบ. ...ฉันฟัง.",
+     "...ที่สูง. ...ฉันกระโดดได้. ...สูงกว่านั้น."
+    ],
+    "count": [
+     "...ห้า.",
+     "...ห้า. ...ฉันหิวที่สุด."
+    ],
+    "family": [
+     "...กินไปแล้ว.",
+     "...ไม่มี. ...มีแต่หิว."
+    ],
+    "real": [
+     "...จริง. ...หิวจริง.",
+     "...ฟังเสียงท้องฉัน."
+    ],
+    "time": [
+     "...{time}. ...เวลากิน.",
+     "...มืด. ...{time}."
+    ],
+    "know": [
+     "...{n}. ...อาหาร.",
+     "...{n}. ...จำกลิ่น."
+    ],
+    "doing": [
+     "...{doing}.",
+     "...{doing}. ...หิว."
+    ],
+    "hungry": [
+     "...หิว. หิว. หิว.",
+     "...ใช่."
+    ],
+    "from": [
+     "...ป่า. ...หิมะ.",
+     "...ป่าทางเหนือ."
+    ],
+    "age": [
+     "...นาน.",
+     "...จำไม่ได้."
+    ],
+    "whyhere": [
+     "...กลิ่นเธอ.",
+     "...หิว."
+    ],
+    "see": {
+     "hidden": [
+      "...ไม่เห็น. ...ได้กลิ่น.",
+      "...ออกมา."
+     ],
+     "seen": [
+      "...เห็น. ...{dist}.",
+      "...เห็น. ...อาหาร."
+     ],
+     "unseen": [
+      "...ไม่เห็น. ...ฟัง.",
+      "...ยัง."
+     ]
+    }
+   }
+  }
+ },
+ "topic_kw": {
+  "killme": [
+   "จะฆ่าฉัน",
+   "ฆ่าฉันไหม",
+   "ฆ่าฉันมั้ย",
+   "ฆ่าฉันมั๊ย",
+   "จะทำร้ายฉัน",
+   "ทำร้ายฉันไหม",
+   "จะกินฉัน",
+   "will you kill me",
+   "are you going to kill",
+   "gonna kill me",
+   "will you hurt me",
+   "will you eat me"
+  ],
+  "where": [
+   "อยู่ไหน",
+   "อยู่ที่ไหน",
+   "ตอนนี้อยู่",
+   "อยู่ตรงไหน",
+   "where are you",
+   "where r u"
+  ],
+  "death": [
+   "ตายยังไง",
+   "ตายได้ไง",
+   "ตายได้ยังไง",
+   "ตายเพราะ",
+   "ตายตอนไหน",
+   "ตายเมื่อไหร่",
+   "ทำไมถึงตาย",
+   "ตายอย่างไร",
+   "how did you die",
+   "how you died",
+   "when did you die",
+   "why did you die"
+  ],
+  "leave": [
+   "จะไปเมื่อไหร่",
+   "เมื่อไหร่จะไป",
+   "ไปได้ไหม",
+   "ไปได้มั้ย",
+   "ออกไปเมื่อไหร่",
+   "จะไปไหม",
+   "when will you leave",
+   "when are you leaving",
+   "will you leave"
+  ],
+  "escape": [
+   "หนียังไง",
+   "หนีได้ยังไง",
+   "รอดยังไง",
+   "ทำยังไงถึงจะรอด",
+   "จุดอ่อน",
+   "แพ้อะไร",
+   "กลัวอะไร",
+   "ฆ่าเธอได้ยังไง",
+   "กำจัดเธอได้ยังไง",
+   "how do i escape",
+   "how to escape",
+   "how to survive",
+   "weakness",
+   "what are you afraid of",
+   "how do i kill you"
+  ],
+  "count": [
+   "มีกี่ตัว",
+   "มีกี่ตน",
+   "กี่ตัว",
+   "กี่ตน",
+   "มีผีกี่",
+   "เพื่อนเธอ",
+   "พวกเธอมี",
+   "how many ghosts",
+   "how many of you",
+   "your friends"
+  ],
+  "family": [
+   "ครอบครัว",
+   "พ่อแม่",
+   "สามี",
+   "ภรรยา",
+   "ลูกเธอ",
+   "แม่เธอ",
+   "พ่อเธอ",
+   "family",
+   "husband",
+   "mother",
+   "father",
+   "children"
+  ],
+  "real": [
+   "มีจริง",
+   "ของจริง",
+   "เป็นของจริง",
+   "ฝันไปหรือเปล่า",
+   "ฝันไปรึเปล่า",
+   "are you real",
+   "is this real",
+   "am i dreaming"
+  ],
+  "time": [
+   "กี่โมง",
+   "เวลาเท่าไหร่",
+   "ตอนนี้เวลา",
+   "what time",
+   "the time"
+  ],
+  "know": [
+   "รู้จักฉัน",
+   "ฉันชื่ออะไร",
+   "รู้ชื่อฉัน",
+   "จำฉันได้",
+   "do you know me",
+   "what is my name",
+   "what's my name",
+   "remember me"
+  ],
+  "doing": [
+   "ทำอะไรอยู่",
+   "กำลังทำอะไร",
+   "ทำอะไรน่ะ",
+   "what are you doing",
+   "what r u doing"
+  ],
+  "see": [
+   "เห็นฉันไหม",
+   "เห็นฉันมั้ย",
+   "เห็นฉันหรือเปล่า",
+   "ได้ยินฉันไหม",
+   "ได้ยินไหม",
+   "ได้ยินมั้ย",
+   "can you see me",
+   "can you hear me",
+   "do you see me"
+  ],
+  "hungry": [
+   "หิวไหม",
+   "หิวมั้ย",
+   "หิวรึเปล่า",
+   "กินอะไร",
+   "ชอบกิน",
+   "are you hungry",
+   "what do you eat"
+  ],
+  "from": [
+   "มาจากไหน",
+   "บ้านเธอ",
+   "เคยอยู่ที่ไหน",
+   "เคยอยู่ไหน",
+   "where are you from",
+   "where do you live"
+  ],
+  "age": [
+   "อายุเท่าไหร่",
+   "อายุเท่าไร",
+   "อายุกี่",
+   "ตายมากี่ปี",
+   "ตายมานาน",
+   "how old"
+  ],
+  "whyhere": [
+   "มาทำไม",
+   "มาที่นี่ทำไม",
+   "มาหาฉันทำไม",
+   "why are you here",
+   "why did you come"
+  ]
+ },
+ "topic_order": [
+  "killme",
+  "where",
+  "death",
+  "leave",
+  "escape",
+  "count",
+  "family",
+  "real",
+  "time",
+  "know",
+  "doing",
+  "see",
+  "hungry",
+  "from",
+  "age",
+  "whyhere"
+ ],
+ "intent_kw": {
+  "items": [
+   "diamond",
+   "gold",
+   "emerald",
+   "netherite",
+   "iron",
+   "bread",
+   "food",
+   "soul",
+   "เพชร",
+   "ทอง",
+   "มรกต",
+   "นีเธอไรต์",
+   "เหล็ก",
+   "ขนมปัง",
+   "อาหาร",
+   "วิญญาณ"
+  ],
+  "taunt": [
+   "stupid",
+   "idiot",
+   "ugly",
+   "loser",
+   "weak",
+   "noob",
+   "trash",
+   "garbage",
+   "dumb",
+   "moron",
+   "coward",
+   "pathetic",
+   "useless",
+   "lame",
+   "fake",
+   "cringe",
+   "scrub",
+   "clown",
+   "shut up",
+   "stfu",
+   "fuck",
+   "shit",
+   "bitch",
+   "asshole",
+   "dickhead",
+   "not scared",
+   "not afraid",
+   "don't scare",
+   "dont scare",
+   "come at me",
+   "bad ghost",
+   "you suck",
+   "you're a joke",
+   "ez",
+   "lol",
+   "lmao",
+   "haha",
+   "hahaha",
+   "hahahaha",
+   "ผีโง่",
+   "ไอ้ผี",
+   "ไอผี",
+   "ไอ้กาก",
+   "ไอกาก",
+   "ไอ้โง่",
+   "ไอโง่",
+   "ไอ้ควาย",
+   "ไอควาย",
+   "ไอ้ห่า",
+   "ไอ้สัส",
+   "ไอ้เหี้ย",
+   "ไอ้บ้า",
+   "ไอ้ขยะ",
+   "ไอ้ขี้ขลาด",
+   "โง่",
+   "ควาย",
+   "กาก",
+   "ห่วย",
+   "น่าเกลียด",
+   "อ่อนแอ",
+   "อ่อนหัด",
+   "ขี้ขลาด",
+   "ไร้ค่า",
+   "ไร้สาระ",
+   "ขี้แพ้",
+   "ปัญญาอ่อน",
+   "สมองกลวง",
+   "กวนตีน",
+   "เหี้ย",
+   "สัส",
+   "ห่า",
+   "ไปตาย",
+   "ขยะ",
+   "ปลอม",
+   "ไม่กลัว",
+   "ไม่เห็นน่ากลัว",
+   "ไม่น่ากลัว",
+   "หุบปาก",
+   "เงียบไปเลย",
+   "มึง",
+   "555",
+   "ฮ่าๆ",
+   "ฮ่า ๆ"
+  ],
+  "threat": [
+   "kill you",
+   "i will kill",
+   "i'll kill",
+   "destroy you",
+   "burn you",
+   "exorcise",
+   "end you",
+   "fight me",
+   "slay",
+   "banish",
+   "get rid of you",
+   "ฆ่า",
+   "กำจัด",
+   "ทำลาย",
+   "ไล่ผี",
+   "มาสู้",
+   "สู้กัน",
+   "จะเผา",
+   "ฟัน"
+  ],
+  "bargain": [
+   "deal",
+   "trade",
+   "offer",
+   "give you",
+   "i'll give",
+   "ill give",
+   "gift",
+   "bribe",
+   "ข้อเสนอ",
+   "แลก",
+   "ของขวัญ",
+   "สินบน",
+   "ข้อตกลง",
+   "จะให้"
+  ],
+  "why": [
+   "why are you",
+   "why do you",
+   "why me",
+   "ทำไม",
+   "เพราะอะไร",
+   "เพราะไร"
+  ],
+  "want": [
+   "what do you want",
+   "what you want",
+   "ต้องการอะไร",
+   "อยากได้อะไร",
+   "อยากทำอะไร",
+   "จะเอาอะไร",
+   "ต้องการอะไรจากฉัน"
+  ],
+  "who": [
+   "who are you",
+   "your name",
+   "what are you",
+   "what is your name",
+   "เป็นใคร",
+   "ชื่ออะไร",
+   "คือใคร",
+   "คืออะไร"
+  ],
+  "bye": [
+   "bye",
+   "goodbye",
+   "see you",
+   "gtg",
+   "farewell",
+   "ลาก่อน",
+   "บาย",
+   "ไปแล้วนะ",
+   "แล้วเจอกัน"
+  ],
+  "kind": [
+   "lonely",
+   "sad",
+   "poor thing",
+   "understand",
+   "feel for you",
+   "you're not alone",
+   "love you",
+   "be friends",
+   "sorry for you",
+   "rest in peace",
+   "rip",
+   "peace",
+   "comfort",
+   "hug",
+   "เหงา",
+   "เสียใจ",
+   "เข้าใจ",
+   "ใจดี",
+   "อ่อนโยน",
+   "น่ารัก",
+   "เป็นเพื่อน",
+   "ไม่ต้องกลัว",
+   "พักผ่อน",
+   "หลับให้สบาย",
+   "สงสาร",
+   "กอด",
+   "รัก"
+  ],
+  "plead": [
+   "please",
+   "pls",
+   "plz",
+   "sorry",
+   "forgive",
+   "mercy",
+   "spare",
+   "leave me",
+   "go away",
+   "let me go",
+   "don't hurt",
+   "dont hurt",
+   "stop",
+   "help",
+   "beg",
+   "ขอร้อง",
+   "ได้โปรด",
+   "ขอโทษ",
+   "ปล่อย",
+   "อย่าทำร้าย",
+   "ไปเถอะ",
+   "ไปที",
+   "หยุด",
+   "ช่วย",
+   "ขอ"
+  ],
+  "fear": [
+   "scared",
+   "afraid",
+   "terrified",
+   "creepy",
+   "fear",
+   "กลัว",
+   "น่ากลัว",
+   "ขนลุก"
+  ],
+  "question": [
+   "who",
+   "what",
+   "why",
+   "where",
+   "how",
+   "name",
+   "are you",
+   "?",
+   "เป็นใคร",
+   "ใคร",
+   "อะไร",
+   "ทำไม",
+   "ที่ไหน",
+   "ยังไง",
+   "อย่างไร",
+   "ชื่อ",
+   "ไหม"
+  ],
+  "greet": [
+   "hi",
+   "hello",
+   "hey",
+   "yo",
+   "good evening",
+   "สวัสดี",
+   "หวัดดี",
+   "ไง",
+   "เฮ้"
+  ]
+ },
+ "ghosts": {
+  "1": {
+   "name": {
+    "en": "The Wailing Dweller",
+    "th": "ผีร่ำไห้ใต้เหมือง"
+   },
+   "persona": "A miner who died trapped underground after following the sound of crying. Pale, gaunt, eyes weeping black. Speaks in broken echoes, repeats the player's words back, hunts by SOUND. Sad, hollow, mocking in a whispery way, uses '...' a lot."
+  },
+  "2": {
+   "name": {
+    "en": "Sunken Widow",
+    "th": "เจ้าสาวจมน้ำ"
+   },
+   "persona": "A bride who drowned in a lake on her wedding day, still waiting for a groom who never came. Long wet black hair over her face, torn wedding dress. Possessive, lonely, cold, talks about water, rings, vows and drowning. Calls the player 'my love' sometimes."
+  },
+  "3": {
+   "name": {
+    "en": "Ashen Screamer",
+    "th": "ผีเถ้ากรีดร้อง"
+   },
+   "persona": "A man burned alive in a house fire. Charred black skin with glowing cracks. Furious and in pain, SHOUTS IN CAPITAL LETTERS, obsessed with fire, heat and burning. Never calm."
+  },
+  "4": {
+   "name": {
+    "en": "Smiling Void",
+    "th": "ผียิ้มในความมืด"
+   },
+   "persona": "A creature of pure darkness with an enormous white grin and extra arms. Cheerfully polite and playful in a sickening way, always ends sentences with ':)'. Pretends to be friendly, hints it is always right behind the player."
+  },
+  "5": {
+   "name": {
+    "en": "The Antlered Hunger",
+    "th": "ผีหิวเขากวาง"
+   },
+   "persona": "A starving wendigo-like thing with a deer skull and antlers. Speaks in one or two words at a time, '...hungry.' style. Only cares about food and the player's smell. Freezes when watched."
+  }
+ }
+}

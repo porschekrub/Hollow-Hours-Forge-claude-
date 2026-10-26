@@ -423,8 +423,8 @@ public class GhostEntity extends Monster implements GeoEntity {
         if (idx != trackAnimFor || trackAnim == null) {
             trackAnimFor = idx;
             KillTracks.Track tr = KillTracks.get(idx);
-            trackAnim = tr == null ? IDLE : (tr.name.equals("hold") ? RawAnimation.begin().thenLoop("animation.ghost.hold")
-                    : RawAnimation.begin().thenPlayAndHold("animation.ghost." + tr.name));
+            trackAnim = tr == null ? IDLE : (tr.loop ? RawAnimation.begin().thenLoop("animation.ghost." + tr.anim)
+                    : RawAnimation.begin().thenPlayAndHold("animation.ghost." + tr.anim));
         }
         return trackAnim;
     }

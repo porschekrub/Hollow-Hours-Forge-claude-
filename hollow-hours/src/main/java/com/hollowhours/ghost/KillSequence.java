@@ -82,7 +82,7 @@ public final class KillSequence {
     public static boolean begin(GhostBrain b, ServerPlayer p) {
         if (isVictim(p) || sessionOf(b) != null || !p.isAlive() || b.isLeaving()) return false;
         GhostEntity g = b.g;
-        KillTracks.Track grab = KillTracks.get("grab");
+        KillTracks.Track grab = KillTracks.phase("grab", b.kind.n);
         List<KillTracks.Track> kills = KillTracks.killsFor(b.kind.n);
         if (grab == null || kills.isEmpty()) return false;
         if (Hiding.isHidden(p)) Hiding.exit(p, true, true, g.eye());
@@ -161,7 +161,7 @@ public final class KillSequence {
         switch (s.phase) {
             case GRAB -> {
                 if (t >= s.track.length) {
-                    KillTracks.Track scream = KillTracks.get("scream");
+                    KillTracks.Track scream = KillTracks.phase("scream", b.kind.n);
                     if (scream != null) {
                         setPhase(s, Phase.SCREAM, scream, p);
                         Fx.sound(g.level(), "ghost.scream.g" + b.kind.n, g.eye(), 3f, R.pitch(0.95, 1.05), 64);
@@ -230,7 +230,7 @@ public final class KillSequence {
             names.add(o.getGameProfile().getName());
         }
         if (ids.isEmpty()) return false;
-        KillTracks.Track hold = KillTracks.get("hold");
+        KillTracks.Track hold = KillTracks.phase("hold", s.b.kind.n);
         if (hold == null) return false;
         s.offered = ids;
         setPhase(s, Phase.HOLD, hold, p);

@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "hollowhours:item/flashlight"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "hollowhours:on": 1
+      },
+      "model": "hollowhours:item/flashlight_on"
+    }
+  ]
+}

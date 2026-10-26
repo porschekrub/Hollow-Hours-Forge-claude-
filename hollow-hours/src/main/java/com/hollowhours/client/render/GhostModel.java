@@ -7,6 +7,7 @@ import com.hollowhours.entity.GhostKind;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.molang.MolangParser;
@@ -60,33 +61,100 @@ public class GhostModel extends GeoModel<GhostEntity> {
     @Override
     public void setCustomAnimations(GhostEntity g, long instanceId, AnimationState<GhostEntity> state) {
         super.setCustomAnimations(g, instanceId, state);
-        double tick = state.getData(DataTickets.TICK) == null ? g.tickCount : state.getData(DataTickets.TICK);
-        float t = (float) tick + state.getPartialTick();
+        float lt = (g.tickCount + state.getPartialTick()) / 20f;
         GhostAnim a = g.anim();
         boolean holding = a == GhostAnim.GRAB || a == GhostAnim.HOLD || a == GhostAnim.SCREAM || a == GhostAnim.KILL;
-        // sudden head ticks: snap to an angle, hold, snap back (stronger when enraged)
-        CoreGeoBone head = getAnimationProcessor().getBone("head");
-        if (head != null && !holding) {
-            float s = g.seed;
-            int slot = (int) Math.floor((t + s) / 9f);
-            float r = hash(slot * 31 + (int) s);
-            float amt = g.isRaged() ? 0.55f : 0.28f;
-            if (r > 0.72f) {
-                float k = hash(slot * 17 + 3) * 2 - 1;
-                head.setRotZ(head.getRotZ() + k * amt);
-                head.setRotX(head.getRotX() + (hash(slot * 7 + 5) - 0.5f) * amt * 0.6f);
+        // ---- look: the head follows its target (as the Bedrock "look" layer did)
+        boolean look = switch (a) {
+            case IDLE, STALK, SPAWN, SNAP, CHASE, FOLLOW_RUN -> true;
+            default -> false;
+        };
+        EntityModelData md = state.getData(DataTickets.ENTITY_MODEL_DATA);
+        if (look && md != null) {
+            // GeckoLib hands these over already flipped into its own convention
+            rot("head", -Mth.clamp(md.headPitch(), -40, 40), -Mth.clamp(md.netHeadYaw(), -70, 70), 0);
+        }
+        // ---- deform: each body breathes and shifts its own way
+        switch (kind) {
+            case WAIL -> {
+                scale("chest", 1, 1, 1 + sin(lt * 110) * 0.035f);
+                scale("neck", 1, 1 + sin(lt * 37) * 0.04f, 1);
             }
-            // tiny constant tremor
-            head.setRotY(head.getRotY() + Mth.sin(t * 2.7f + s) * 0.02f);
+            case WIDOW -> {
+                scale("chest", 1, 1, 1 + sin(lt * 90) * 0.03f);
+                rot("hair", sin(lt * 41) * 3, 0, sin(lt * 29) * 3);
+            }
+            case ASH -> scale("chest", 1 + sin(lt * 70) * 0.025f, 1, 1 + sin(lt * 70) * 0.05f);
+            case VOID -> {
+                scale("chest", 1, 1, 1 + sin(lt * 80) * 0.03f);
+                rot("extraArmR", sin(lt * 63) * 9, 0, sin(lt * 47) * 6);
+                rot("extraArmL", sin(lt * 59 + 90) * 9, 0, -sin(lt * 51) * 6);
+            }
+            case STAG -> scale("chest", 1, 1, 1 + sin(lt * 100) * 0.04f);
         }
-        // the jaw keeps working, faster when angry
-        CoreGeoBone jaw = getAnimationProcessor().getBone("jaw");
-        if (jaw != null && !holding) jaw.setRotX(jaw.getRotX() + (0.5f + 0.5f * Mth.sin(t * (g.isRaged() ? 1.3f : 0.35f) + g.seed)) * 0.12f);
-        // fingers spasm
-        for (String f : new String[]{"fingers_l", "fingers_r"}) {
-            CoreGeoBone b = getAnimationProcessor().getBone(f);
-            if (b != null) b.setRotX(b.getRotX() + Mth.sin(t * 1.9f + g.seed + f.length()) * 0.08f);
+        if (holding) return;
+        // ---- twitch: sudden snaps of the head, jaw, arms (idle / stalking)
+        if (a == GhostAnim.IDLE || a == GhostAnim.STALK || a == GhostAnim.SPAWN) {
+            rot("head", (mod(lt, 3.1f) > 2.9f ? -22 : 0), (mod(lt, 4.3f) > 4.05f ? 55 : 0) - (mod(lt, 7.7f) > 7.4f ? 80 : 0),
+                    (mod(lt, 2.3f) > 2.15f ? 38 : 0) - (mod(lt, 5.9f) > 5.7f ? 60 : 0));
+            rot("jaw", mod(lt, 5.3f) > 5.0f ? 50 : 0, 0, 0);
+            rot("rightArm", mod(lt, 3.7f) > 3.5f ? -40 : 0, 0, mod(lt, 2.9f) > 2.8f ? 25 : 0);
+            rot("leftArm", mod(lt, 4.7f) > 4.5f ? -50 : 0, 0, mod(lt, 3.3f) > 3.2f ? -25 : 0);
+            rot("rightHand", mod(lt, 1.9f) > 1.75f ? 40 : 0, 0, 0);
+            rot("leftHand", mod(lt, 2.1f) > 1.95f ? -40 : 0, 0, 0);
+            rot("body", mod(lt, 6.1f) > 5.9f ? 18 : 0, 0, mod(lt, 8.3f) > 8.1f ? 12 : 0);
         }
+        // ---- spasm: while chasing the whole body shakes
+        if (a == GhostAnim.CHASE || a == GhostAnim.FOLLOW_RUN || a == GhostAnim.CRAWL_CHASE || a == GhostAnim.FOLLOW_CRAWL) {
+            CoreGeoBone root = getAnimationProcessor().getBone("root");
+            if (root != null) {
+                root.setPosX(root.getPosX() - sin(lt * 1900) * 0.35f);
+                root.setPosZ(root.getPosZ() + cos(lt * 1700) * 0.35f);
+            }
+            rot("head", sin(lt * 1500) * 14, sin(lt * 1100) * 35, sin(lt * 1300) * 22);
+            rot("jaw", 30 + sin(lt * 2400) * 28, 0, 0);
+            rot("rightArm", sin(lt * 1400) * 22, 0, sin(lt * 1000) * 14);
+            rot("leftArm", sin(lt * 1300 + 90) * 22, 0, sin(lt * 900) * 14);
+            rot("rightHand", sin(lt * 2200) * 35, 0, 0);
+            rot("leftHand", sin(lt * 2100 + 40) * 35, 0, 0);
+            rot("chest", 0, sin(lt * 1200) * 10, 0);
+        }
+        // ---- searching on all fours: the head sweeps
+        if (a == GhostAnim.CRAWL_SEARCH) rot("head", mod(lt, 3.3f) > 3.05f ? -22 : 0, sin(lt * 38) * 30, 0);
+        // fingers never stop moving
+        rot("fingers_l", sin(lt * 520 + g.seed) * 8, 0, 0);
+        rot("fingers_r", sin(lt * 470 + g.seed * 2) * 8, 0, 0);
+    }
+
+    /** Adds a rotation given in Bedrock degrees (x and y are flipped in GeckoLib). */
+    void rot(String bone, float x, float y, float z) {
+        if (x == 0 && y == 0 && z == 0) return;
+        CoreGeoBone b = getAnimationProcessor().getBone(bone);
+        if (b == null) return;
+        b.setRotX(b.getRotX() - x * Mth.DEG_TO_RAD);
+        b.setRotY(b.getRotY() - y * Mth.DEG_TO_RAD);
+        b.setRotZ(b.getRotZ() + z * Mth.DEG_TO_RAD);
+    }
+
+    void scale(String bone, float x, float y, float z) {
+        CoreGeoBone b = getAnimationProcessor().getBone(bone);
+        if (b == null) return;
+        b.setScaleX(b.getScaleX() * x);
+        b.setScaleY(b.getScaleY() * y);
+        b.setScaleZ(b.getScaleZ() * z);
+    }
+
+    /** Bedrock math: sin/cos take degrees. */
+    static float sin(float deg) {
+        return Mth.sin(deg * Mth.DEG_TO_RAD);
+    }
+
+    static float cos(float deg) {
+        return Mth.cos(deg * Mth.DEG_TO_RAD);
+    }
+
+    static float mod(float a, float b) {
+        return a - (float) Math.floor(a / b) * b;
     }
 
     static float hash(int x) {

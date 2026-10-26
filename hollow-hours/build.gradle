@@ -63,8 +63,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
-    // GeckoLib's molang library: inside the GeckoLib jar at runtime, needed here for compiling and dev runs
-    minecraftLibrary "com.eliotlash.mclib:mclib:20"
+    // GeckoLib's molang library: GeckoLib ships it inside its own jar at runtime, we only need it to compile
+    compileOnly "com.eliotlash.mclib:mclib:20"
     // GeckoLib is bundled inside our jar (jar-in-jar), so players only need to install this mod.
     jarJar(group: 'software.bernie.geckolib', name: "geckolib-forge-${minecraft_version}", version: "[${geckolib_version},)") {
         jarJar.pin(it, geckolib_version)
