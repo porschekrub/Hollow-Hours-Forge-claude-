@@ -17,6 +17,8 @@ jobs:
     name: Build ${{ matrix.project }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +42,7 @@ jobs:
       - name: Build
         run: |
           chmod +x gradlew
-          ./gradlew build --no-daemon --stacktrace
+          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
 
       - name: Server smoke test (the mod must load without crashing)
         run: |
@@ -48,7 +50,7 @@ jobs:
           echo "eula=true" > run/eula.txt
           printf "online-mode=false\nlevel-type=minecraft\\:flat\nspawn-protection=0\n" > run/server.properties
           export HOLLOW_SMOKETEST=true HELPER_SMOKETEST=true
-          timeout 1500 ./gradlew runServer --no-daemon || true
+          timeout 1500 ./gradlew runServer --no-daemon > smoke.log 2>&1 || true
           echo "----- tail of server log -----"
           tail -n 120 run/logs/latest.log || true
           python3 ../tools/check_log.py run/logs/latest.log
@@ -61,6 +63,29 @@ jobs:
             ${{ matrix.project }}/build/libs/*.jar
             !${{ matrix.project }}/build/libs/*-slim.jar
           if-no-files-found: error
+
+      - name: Publish logs to the ci-logs branch (readable without downloading artifacts)
+        if: always() && github.event_name != 'pull_request'
+        working-directory: .
+        run: |
+          set +e
+          P=${{ matrix.project }}
+          D=/tmp/ci-logs/$P
+          mkdir -p $D
+          cp $P/build.log $D/ 2>/dev/null
+          cp $P/smoke.log $D/ 2>/dev/null
+          cp $P/run/logs/latest.log $D/server.log 2>/dev/null
+          cp -r $P/run/crash-reports $D/ 2>/dev/null
+          cp -r $P/run/screenshots $D/ 2>/dev/null
+          echo "${{ github.sha }} ${{ job.status }}" > $D/STATUS
+          cd $D
+          git init -q
+          git checkout -q -b ci-logs-$P
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "logs for ${{ github.sha }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs-$P
 
       - name: Upload logs (on failure)
         if: failure()
