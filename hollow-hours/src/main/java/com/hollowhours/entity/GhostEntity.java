@@ -233,7 +233,7 @@ public class GhostEntity extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return super.hurt(source, amount);
-        if (!level().isClientSide && source.getEntity() instanceof Player p) brain().onHitBy(p);
+        if (!level().isClientSide && source.getEntity() instanceof net.minecraft.server.level.ServerPlayer p) brain().onHitBy(p);
         return false;
     }
 
@@ -329,7 +329,9 @@ public class GhostEntity extends Monster implements GeoEntity {
             move.accept(passenger, getX(), getY() + 1.0, getZ());
             return;
         }
-        Vec3 off = tr.victimAt(trackTime(0));
+        Vec3 raw = tr.victimAt(trackTime(0));
+        // tracks are authored for an unscaled body; each ghost's model is scaled
+        Vec3 off = new Vec3(raw.x * kind.scaleXZ, raw.y * kind.scaleY, raw.z * kind.scaleXZ);
         float yaw = yBodyRot * Mth.DEG_TO_RAD;
         double fx = -Mth.sin(yaw), fz = Mth.cos(yaw);   // forward
         double lx = fz, lz = -fx;                         // left
