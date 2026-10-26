@@ -1,0 +1,68 @@
+package com.hollowhours.registry;
+
+import com.hollowhours.HollowHours;
+import com.hollowhours.entity.BoardsEntity;
+import com.hollowhours.entity.ClosetEntity;
+import com.hollowhours.entity.GhostEntity;
+import com.hollowhours.entity.GhostKind;
+import com.hollowhours.entity.HideSeatEntity;
+import com.hollowhours.entity.StalkerEntity;
+import com.hollowhours.entity.StalkerKind;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public final class HHEntities {
+    public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, HollowHours.MODID);
+
+    public static final List<RegistryObject<EntityType<GhostEntity>>> GHOSTS = new ArrayList<>();
+    public static final List<RegistryObject<EntityType<StalkerEntity>>> STALKERS = new ArrayList<>();
+
+    static {
+        for (GhostKind k : GhostKind.values()) {
+            GHOSTS.add(ENTITIES.register(k.id(), () -> EntityType.Builder.<GhostEntity>of(GhostEntity::new, MobCategory.MONSTER)
+                    .sized(k.width, k.height).fireImmune().clientTrackingRange(16).updateInterval(2)
+                    .build(HollowHours.MODID + ":" + k.id())));
+        }
+        for (StalkerKind k : StalkerKind.values()) {
+            STALKERS.add(ENTITIES.register(k.id(), () -> EntityType.Builder.<StalkerEntity>of(StalkerEntity::new, MobCategory.MONSTER)
+                    .sized(k.width, k.height).fireImmune().clientTrackingRange(16).updateInterval(1)
+                    .build(HollowHours.MODID + ":" + k.id())));
+        }
+    }
+
+    public static final RegistryObject<EntityType<ClosetEntity>> CLOSET = ENTITIES.register("closet",
+            () -> EntityType.Builder.<ClosetEntity>of(ClosetEntity::new, MobCategory.MISC).sized(1.0f, 2.2f).clientTrackingRange(10)
+                    .build(HollowHours.MODID + ":closet"));
+    public static final RegistryObject<EntityType<HideSeatEntity>> HIDE_SEAT = ENTITIES.register("hide_seat",
+            () -> EntityType.Builder.<HideSeatEntity>of(HideSeatEntity::new, MobCategory.MISC).sized(0.4f, 0.2f).clientTrackingRange(10)
+                    .noSummon().build(HollowHours.MODID + ":hide_seat"));
+    public static final RegistryObject<EntityType<BoardsEntity>> BOARDS = ENTITIES.register("boards",
+            () -> EntityType.Builder.<BoardsEntity>of(BoardsEntity::new, MobCategory.MISC).sized(0.3f, 0.3f).clientTrackingRange(10)
+                    .updateInterval(20).noSummon().build(HollowHours.MODID + ":boards"));
+
+    public static GhostKind kindOf(EntityType<?> type) {
+        for (int i = 0; i < GHOSTS.size(); i++) if (GHOSTS.get(i).isPresent() && GHOSTS.get(i).get() == type) return GhostKind.values()[i];
+        return GhostKind.WAIL;
+    }
+
+    public static StalkerKind stalkerKindOf(EntityType<?> type) {
+        for (int i = 0; i < STALKERS.size(); i++) if (STALKERS.get(i).isPresent() && STALKERS.get(i).get() == type) return StalkerKind.values()[i];
+        return StalkerKind.LANKY;
+    }
+
+    public static EntityType<GhostEntity> ghost(GhostKind k) {
+        return GHOSTS.get(k.ordinal()).get();
+    }
+
+    public static EntityType<StalkerEntity> stalker(StalkerKind k) {
+        return STALKERS.get(k.ordinal()).get();
+    }
+
+    private HHEntities() {}
+}

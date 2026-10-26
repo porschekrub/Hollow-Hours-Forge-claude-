@@ -1,0 +1,28 @@
+# Gradle / Forge
+.gradle/
+build/
+out/
+run/
+run-data/
+logs/
+classes/
+*.log
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# local tool output
+tools/out/
+tools/__pycache__/
