@@ -49,11 +49,32 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         super.preRender(poseStack, g, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
-    /** Cubes touching the camera are skipped (an arm swinging through the victim's face would fill the screen with its inside). */
+    private float clipMargin = 0.3f;
+
+    /**
+     * Cubes touching the camera are skipped: an arm swinging through the victim's face (or the arm holding the victim,
+     * seen along its length) would fill the screen with stretched polygons. During a kill the limbs, hair and rags get
+     * a wider margin than the head, so the face screaming at you stays visible.
+     */
+    @Override
+    public void renderCubesOfBone(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight,
+                                  int packedOverlay, float red, float green, float blue, float alpha) {
+        clipMargin = marginFor(bone.getName());
+        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    static float marginFor(String bone) {
+        if (!com.hollowhours.client.KillCam.active()) return 0.3f;
+        String n = bone.toLowerCase(java.util.Locale.ROOT);
+        if (n.contains("arm") || n.contains("hand") || n.contains("rag") || n.contains("hair")) return 1.0f;
+        if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.6f;
+        return 0.3f;
+    }
+
     @Override
     public void renderCube(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay,
                            float red, float green, float blue, float alpha) {
-        if (NearClip.touchesCamera(poseStack, cube, 0.3f)) return;
+        if (NearClip.touchesCamera(poseStack, cube, clipMargin)) return;
         super.renderCube(poseStack, cube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
