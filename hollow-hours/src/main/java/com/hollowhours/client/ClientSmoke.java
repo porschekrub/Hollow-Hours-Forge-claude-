@@ -289,12 +289,13 @@ public final class ClientSmoke {
         }
 
         // the player's scared animations, seen from the front in third person
-        record Pose(String name, float fear, boolean walk, boolean sprint, boolean sneak, boolean mine, float hp) {}
+        record Pose(String name, float fear, boolean walk, boolean sprint, boolean sneak, boolean mine, float hp, boolean side) {}
         Pose[] poses = {
-                new Pose("idle_calm", 0.1f, false, false, false, false, 20), new Pose("idle_scared", 1f, false, false, false, false, 20),
-                new Pose("walk_scared", 0.8f, true, false, false, false, 20), new Pose("run_panic", 1f, true, true, false, false, 20),
-                new Pose("sneak_scared", 1f, true, false, true, false, 20), new Pose("mine_shaking", 0.9f, false, false, false, true, 20),
-                new Pose("limp_hurt", 0.6f, true, false, false, false, 4)};
+                new Pose("idle_calm", 0.1f, false, false, false, false, 20, false), new Pose("idle_scared", 1f, false, false, false, false, 20, false),
+                new Pose("walk_scared", 0.8f, true, false, false, false, 20, false), new Pose("walk_scared_side", 0.8f, true, false, false, false, 20, true),
+                new Pose("run_panic", 1f, true, true, false, false, 20, false), new Pose("run_panic_side", 1f, true, true, false, false, 20, true),
+                new Pose("sneak_scared", 1f, true, false, true, false, 20, true), new Pose("mine_shaking", 0.9f, false, false, false, true, 20, false),
+                new Pose("limp_hurt", 0.6f, true, false, false, false, 4, true)};
         for (Pose ps : poses) {
             STEPS.add(t -> {
                 if (t == 0) {
@@ -309,6 +310,7 @@ public final class ClientSmoke {
                 }
                 if (t == 2) {
                     mc.options.keyUp.setDown(ps.walk());
+                    mc.options.keyLeft.setDown(ps.side());
                     mc.options.keyShift.setDown(ps.sneak());
                     mc.options.keySprint.setDown(ps.sprint());
                     if (ps.sprint() && mc.player != null) mc.player.setSprinting(true);
@@ -317,6 +319,7 @@ public final class ClientSmoke {
                 if (t == 22 || t == 27) shot("player_" + ps.name() + (t == 22 ? "_a" : "_b"));
                 if (t >= 28) {
                     mc.options.keyUp.setDown(false);
+                    mc.options.keyLeft.setDown(false);
                     mc.options.keyShift.setDown(false);
                     mc.options.keySprint.setDown(false);
                     if (mc.player != null) mc.player.setSprinting(false);
@@ -370,18 +373,19 @@ public final class ClientSmoke {
                 Atmos.snap();
                 lookAt = origin.add(10, 1.6 + 7.5, 0);
             }
-            if (t == 60) shot("bloodmoon_sky");
-            if (t == 61) lookAt = origin.add(0, 1.6, 12);
-            if (t == 80) shot("bloodmoon_ground");
-            if (t == 81) server(sp -> showGhost(sp, GhostKind.byN(3), origin.add(0, 0, 7), GhostAnim.CHASE));
-            if (t == 110) shot("bloodmoon_ghost");
-            if (t == 111) server(sp -> {
+            if (t == 60) shot("bloodmoon_title");
+            if (t == 190) shot("bloodmoon_sky");
+            if (t == 191) lookAt = origin.add(0, 1.6, 12);
+            if (t == 210) shot("bloodmoon_ground");
+            if (t == 211) server(sp -> showGhost(sp, GhostKind.byN(3), origin.add(0, 0, 7), GhostAnim.CHASE));
+            if (t == 240) shot("bloodmoon_ghost");
+            if (t == 241) server(sp -> {
                 clearAll(sp);
                 com.hollowhours.ghost.Atmosphere.forceBlood = 0;
                 sp.serverLevel().setDayTime(18000);
             });
-            if (t == 140) Atmos.snap();
-            return t >= 142;
+            if (t == 270) Atmos.snap();
+            return t >= 272;
         });
 
         // jumpscares (no night vision: as dark as in the game)

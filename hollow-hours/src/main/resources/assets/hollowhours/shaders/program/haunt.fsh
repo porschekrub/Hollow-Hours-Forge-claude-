@@ -54,12 +54,12 @@ void main() {
 
     // blood moon: the whole world bleeds
     vec3 red = vec3(lum * 1.35 + 0.035, lum * 0.32, lum * 0.30);
-    g = mix(g, red, 0.6 * Blood * s);
+    g = mix(g, red, 0.45 * Blood * s);
 
     // vignette, tighter with fear, pulsing with the heart
-    float vr = r2 * (2.0 + 1.6 * Fear + 0.5 * Blood) * (1.0 + 0.08 * beat);
-    float vig = 1.0 - smoothstep(0.18, 0.95, vr);
-    g *= mix(1.0, vig, (0.5 + 0.4 * Fear) * min(s, 1.0));
+    float vr = r2 * (1.7 + 1.1 * Fear + 0.4 * Blood) * (1.0 + 0.08 * beat);
+    float vig = 1.0 - smoothstep(0.2, 1.0, vr);
+    g *= mix(1.0, vig, (0.4 + 0.35 * Fear) * min(s, 1.0));
     g += vec3(0.10, 0.0, 0.0) * Blood * (1.0 - vig) * s;
 
     // film grain

@@ -116,7 +116,7 @@ public final class Atmos {
         if (f > 0.005f) {
             // a grey wall: same brightness as the sky, colour drained, slightly cold
             float lum = 0.3f * r + 0.59f * g + 0.11f * bl;
-            float grey = Math.max(0.035f, lum * 1.05f);
+            float grey = Math.max(0.085f, lum * 1.05f); // even at night the fog is a pale wall you can see
             float k = f * 0.85f;
             r = Mth.lerp(k, r, grey * 0.96f);
             g = Mth.lerp(k, g, grey * 0.98f);
