@@ -783,7 +783,7 @@ public final class Talk {
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
         String sys = AI_COMMANDS + " Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp() + ", level " + h.helperLevel() + ".";
-        AiBridge.send(sys, List.of(new AiBridge.Msg("user", text)), 400, 0.2).thenAccept(res -> server.execute(() -> {
+        AiBridge.send(sys, List.of(new AiBridge.Msg("user", text)), 1500, 0.2).thenAccept(res -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
             if (pl == null || hh == null) return;
@@ -914,7 +914,7 @@ public final class Talk {
         UUID hid = h.getUUID();
         String sys = "You are " + h.helperName() + ", a cheerful, loyal Minecraft helper of " + p.getGameProfile().getName() + ". Answer in the player's language (Thai if they wrote Thai), "
                 + "one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + ".";
-        AiBridge.chat(sys, List.of(new AiBridge.Msg("user", text)), 200, 0.8).thenAccept(r -> server.execute(() -> {
+        AiBridge.chat(sys, List.of(new AiBridge.Msg("user", text)), 800, 0.8).thenAccept(r -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
             if (pl != null && hh != null && r != null) say(pl, hh, r, r);

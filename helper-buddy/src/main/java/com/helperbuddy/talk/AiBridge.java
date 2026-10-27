@@ -18,7 +18,8 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Optional real AI (off by default; set it up in config/helperbuddy-common.toml with a key). Providers: gemini (free key
- * from Google AI Studio), openai, anthropic (Claude), ollama (local, no key), custom (any OpenAI-compatible URL).
+ * from Google AI Studio), openai, anthropic (Claude), openrouter, groq, ollama (local, no key), custom (any
+ * OpenAI-compatible URL).
  * Without it the built-in Thai/English brain does everything.
  */
 public final class AiBridge {
@@ -54,6 +55,8 @@ public final class AiBridge {
             case "anthropic" -> "claude-haiku-5-5";
             case "openai" -> "gpt-4o-mini";
             case "ollama" -> "llama3.1";
+            case "openrouter" -> "openrouter/auto";
+            case "groq" -> "llama-3.3-70b-versatile";
             default -> "gemini-flash-latest";
         };
     }
@@ -62,13 +65,18 @@ public final class AiBridge {
         String u = HBConfig.AI_URL.get().trim();
         if (!u.isEmpty()) {
             // "http://localhost:11434" is fine too: the chat endpoint is added
-            if (!provider().equals("anthropic") && !u.contains("/v1") && !u.endsWith("completions")) u = u.replaceAll("/+$", "") + "/v1/chat/completions";
+            if (!provider().equals("anthropic") && !u.endsWith("completions")) {
+                u = u.replaceAll("/+$", "");
+                u += u.endsWith("/v1") || u.endsWith("/openai") ? "/chat/completions" : "/v1/chat/completions";
+            }
             return u;
         }
         return switch (provider()) {
             case "anthropic" -> "https://api.anthropic.com/v1/messages";
             case "openai" -> "https://api.openai.com/v1/chat/completions";
             case "ollama" -> "http://localhost:11434/v1/chat/completions";
+            case "openrouter" -> "https://openrouter.ai/api/v1/chat/completions";
+            case "groq" -> "https://api.groq.com/openai/v1/chat/completions";
             default -> "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
         };
     }

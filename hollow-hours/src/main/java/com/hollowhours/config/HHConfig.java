@@ -82,14 +82,15 @@ public final class HHConfig {
         ASK_LIMIT = b.comment("Requests per player per ghost visit").defineInRange("askLimit", 3, 0, 100);
         b.pop();
 
-        b.comment("Optional real AI for ghost conversations. Without a key the built-in Thai/English brain is used.",
+        b.comment("Optional real AI for ghost conversations: the ghost understands any sentence (questions, begging, offers of any item,",
+                "asking it for an item) and answers in its own words. Without a key the built-in Thai/English brain is used.",
                 "providers: gemini (free key: aistudio.google.com), openai, anthropic, openrouter, groq, ollama (local), custom (OpenAI-compatible url)")
                 .push("ai");
         AI_ENABLED = b.define("enabled", false);
         AI_PROVIDER = b.define("provider", "gemini");
         AI_KEY = b.comment("API key (keep it secret!)").define("apiKey", "");
         AI_MODEL = b.comment("Leave empty for the provider default").define("model", "");
-        AI_URL = b.comment("Only for provider=custom or ollama: base url, e.g. http://localhost:11434/v1").define("url", "");
+        AI_URL = b.comment("Only for provider=custom or ollama: base url, e.g. http://localhost:11434").define("url", "");
         AI_TIMEOUT = b.defineInRange("timeoutSeconds", 20, 3, 120);
         b.pop();
 

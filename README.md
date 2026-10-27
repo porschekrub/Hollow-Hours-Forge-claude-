@@ -25,8 +25,22 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
   หน้าผีโผล่ ถูกลากออกจากใต้เตียง ผีที่ยืนจ้องอยู่เมื่อคุณไม่มอง
 - **Sell out a friend / ขายเพื่อน**: 25% of the time the ghost offers to spare you if you tell it where a friend is. Pick a friend or refuse — 10 seconds. Refusing or waiting = death.
   25% ผีจะถามว่า "บอกมาว่าเพื่อนอยู่ไหน แล้วฉันอาจไว้ชีวิต" เลือกเพื่อน หรือ "ไม่ขาย" ภายใน 10 วินาที ไม่ตอบ/ไม่ขาย = ตาย
-- Ghosts talk (Thai and English), and can use a real AI if you set one up in `config/hollowhours-common.toml`.
-  ผีพูดได้ทั้งไทยและอังกฤษ ตั้งค่า AI จริงได้ในไฟล์ config
+- **Talking / คุยกับผี**: type in chat starting with its short name (`wail`, `widow`, `ash`, `void`, `stag`), e.g. `stag please let me go`, or use the guide book → *Talk*. Ask questions, beg, offer items, insult it, or ask it for an item (cursed).
+  พิมพ์ในแชตขึ้นต้นด้วยชื่อย่อ เช่น `stag ขอร้อง ปล่อยฉันไป` หรือใช้สมุดคู่มือ → *คุยกับผี* ถามคำถาม อ้อนวอน เสนอของ ด่า หรือขอของจากผี (ของจะติดคำสาป)
+- **AI (optional) / AI (ไม่บังคับ)**: with an API key the ghost understands **any** sentence — every way of asking for or offering any item — and answers in its own words. The game still decides the outcome (chances, the item taken, rage).
+  ใส่ API key แล้วผีจะเข้าใจ**ทุกประโยค** ขอของ/เสนอของอะไรก็เข้าใจ และตอบเป็นคำพูดของมันเอง (ผลลัพธ์ยังเป็นไปตามกติกาของเกม)
+
+  Edit `config/hollowhours-common.toml` (created after the first launch; on a server it is the server's `config` folder):
+  แก้ไฟล์ `config/hollowhours-common.toml` (มีหลังจากเปิดเกมครั้งแรก):
+  ```toml
+  [ai]
+  	enabled = true
+  	provider = "gemini"        # gemini / openai / anthropic / openrouter / groq / ollama / custom
+  	apiKey = "YOUR-KEY"
+  	model = ""                 # empty = default
+  ```
+  Free Gemini key: https://aistudio.google.com/apikey — Helper Buddy uses the same settings in `config/helperbuddy-common.toml`.
+  key Gemini ฟรี: https://aistudio.google.com/apikey — ผู้ช่วยใช้ค่าแบบเดียวกันในไฟล์ `config/helperbuddy-common.toml`
 
 ---
 

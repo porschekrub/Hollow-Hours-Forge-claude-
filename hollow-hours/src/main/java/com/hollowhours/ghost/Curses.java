@@ -906,7 +906,23 @@ public final class Curses {
     }
 
     public static void askGhost(ServerPlayer p, String text) {
-        GhostEntity g = nearestGhost(p);
+        askGhost(p, nearestGhost(p), resolveItem(text), parseQty(text));
+    }
+
+    /** An item id the AI named ("diamond_sword", "minecraft:bread"), checked against the registry and the deny list. */
+    @Nullable
+    public static String checkItemId(@Nullable String raw) {
+        if (raw == null) return null;
+        String t = raw.trim().toLowerCase().replace("minecraft:", "").replace(' ', '_');
+        if (t.isEmpty() || t.equals("null") || t.equals("none")) return null;
+        if (DENY.contains(t)) return "!";
+        ResourceLocation rl = ResourceLocation.tryParse("minecraft:" + t);
+        if (rl != null && BuiltInRegistries.ITEM.containsKey(rl)) return rl.toString();
+        return resolveItem(raw);
+    }
+
+    /** id = resolved item (null = not understood, "!" = not allowed). */
+    public static void askGhost(ServerPlayer p, @Nullable GhostEntity g, @Nullable String id, int qty) {
         if (g == null) {
             p.sendSystemMessage(Component.translatable("hollowhours.ask.noghost").withStyle(ChatFormatting.GRAY));
             return;
@@ -919,8 +935,7 @@ public final class Curses {
         LAST_ASK.put(p.getUUID(), now);
         GhostKind kind = g.kind;
         GhostBrain b = g.brain();
-        String id = resolveItem(text);
-        int qty = parseQty(text);
+        qty = Math.max(1, Math.min(qty, 64));
         if (id == null || id.equals("!")) {
             GhostTalk.say(p, g, "ask.unknown", 0);
             return;

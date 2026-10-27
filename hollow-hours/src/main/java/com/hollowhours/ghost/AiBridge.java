@@ -19,7 +19,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Optional language model for ghost speech. Off by default; turn it on in hollowhours-common.toml with a key.
  * Providers: gemini (free key from Google AI Studio), openai, anthropic (Claude), ollama (local, no key), custom
- * (any OpenAI-compatible URL). The game decides WHAT happens; the model only writes the words.
+ * (any OpenAI-compatible URL), openrouter, groq. The model understands what the player typed (GhostTalk.understand)
+ * and writes the ghost's words; the game still decides WHAT happens (chances, items taken, rage).
  */
 public final class AiBridge {
     private AiBridge() {}
@@ -54,23 +55,53 @@ public final class AiBridge {
             case "anthropic" -> "claude-haiku-5-5";
             case "openai" -> "gpt-4o-mini";
             case "ollama" -> "llama3.1";
+            case "openrouter" -> "openrouter/auto";
+            case "groq" -> "llama-3.3-70b-versatile";
             default -> "gemini-flash-latest";
         };
     }
 
     static String url() {
         String u = HHConfig.AI_URL.get().trim();
-        if (!u.isEmpty()) return u;
+        if (!u.isEmpty()) {
+            // a base url such as http://localhost:11434 or .../v1 is fine: the chat endpoint is added
+            if (!provider().equals("anthropic") && !u.endsWith("completions")) {
+                u = u.replaceAll("/+$", "");
+                u += u.endsWith("/v1") || u.endsWith("/openai") ? "/chat/completions" : "/v1/chat/completions";
+            }
+            return u;
+        }
         return switch (provider()) {
             case "anthropic" -> "https://api.anthropic.com/v1/messages";
             case "openai" -> "https://api.openai.com/v1/chat/completions";
             case "ollama" -> "http://localhost:11434/v1/chat/completions";
+            case "openrouter" -> "https://openrouter.ai/api/v1/chat/completions";
+            case "groq" -> "https://api.groq.com/openai/v1/chat/completions";
             default -> "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
         };
     }
 
-    /** Sends a chat; completes with the reply text, or null on any failure. Never throws. */
+    /** Sends a chat; completes with the cleaned one-line reply, or null on any failure. Never throws. */
     public static CompletableFuture<String> chat(String system, List<Msg> msgs, int maxTokens, double temperature) {
+        return send(system, msgs, maxTokens, temperature).thenApply(AiBridge::clean);
+    }
+
+    /** The JSON object inside a reply (models like to wrap it in ``` fences or prose); null if there is none. */
+    @javax.annotation.Nullable
+    public static JsonObject jsonIn(@javax.annotation.Nullable String s) {
+        if (s == null) return null;
+        s = s.replaceAll("(?s)<think>.*?</think>", "");
+        int a = s.indexOf('{'), b = s.lastIndexOf('}');
+        if (a < 0 || b <= a) return null;
+        try {
+            return JsonParser.parseString(s.substring(a, b + 1)).getAsJsonObject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Sends a chat; completes with the raw reply text, or null on any failure. Never throws. */
+    public static CompletableFuture<String> send(String system, List<Msg> msgs, int maxTokens, double temperature) {
         try {
             boolean anth = provider().equals("anthropic");
             JsonObject body = new JsonObject();
@@ -124,10 +155,10 @@ public final class AiBridge {
                     JsonObject co = c.getAsJsonObject();
                     if (co.has("text")) sb.append(co.get("text").getAsString());
                 }
-                return clean(sb.toString());
+                return sb.toString();
             }
             JsonObject m = o.getAsJsonArray("choices").get(0).getAsJsonObject().getAsJsonObject("message");
-            return clean(m.get("content").getAsString());
+            return m.get("content").getAsString();
         } catch (Exception e) {
             HollowHours.LOG.warn("[Hollow Hours] AI reply could not be read: {}", trim(body, 300));
             return null;

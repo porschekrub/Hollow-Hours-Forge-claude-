@@ -410,14 +410,116 @@ public final class GhostTalk {
         }
         LAST_TALK.put(key, now);
         Memory mem = MEMORY.computeIfAbsent(key, k -> new Memory());
-        String text = rawText.trim();
-        if (text.length() > 160) text = text.substring(0, 160);
-        if (Curses.tryAsk(p, text)) return;
+        String trimmed = rawText.trim();
+        String text = trimmed.length() > 160 ? trimmed.substring(0, 160) : trimmed;
+        if (AiBridge.enabled() && !text.isEmpty()) {
+            // the language model reads the sentence (any wording, Thai or English); the rules below still decide what happens
+            HHNet.toPlayer(p, new S2CSpeech(g.kind.n, Component.literal("..."), 3));
+            understand(p, g, mem, text).thenAccept(u -> p.server.execute(() -> {
+                if (p.hasDisconnected() || !g.isAlive() || g.brain().isLeaving()) return;
+                respond(p, g, lang, mem, text, u);
+            }));
+            return;
+        }
+        respond(p, g, lang, mem, text, null);
+    }
+
+    /** What the language model understood from one message. */
+    record Understood(String intent, @Nullable String topic, @Nullable String offer, @Nullable String offerName, @Nullable String ask, int count) {}
+
+    static final Set<String> AI_INTENTS = Set.of("greet", "bye", "who", "why", "want", "question", "kind", "plead", "fear", "bargain", "taunt", "threat",
+            "ask_item", "other");
+
+    static final String UNDERSTAND = """
+            You read what a Minecraft player says to a ghost that is hunting them. Reply ONLY with one JSON object, no other text:
+            {"intent":"...","topic":null,"offer":null,"offer_name":null,"ask":null,"count":1}
+            intent is exactly one of:
+              greet (hello), bye (goodbye), who (asks who or what it is), why (asks why it haunts or hunts them), want (asks what it wants),
+              question (any other question), kind (compliments, kind words, apologising), plead (begs to be spared or left alone),
+              fear (says they are scared), bargain (proposes a deal, or offers to give it something so it goes away),
+              taunt (insults, mocks or swears at it), threat (threatens to hurt, kill or banish it),
+              ask_item (asks the ghost to GIVE THEM an item), other.
+            topic: only when they ask one of these, else null:
+              killme = will you kill me, where = where are you, death = how did you die, leave = will you leave / when will you go,
+              escape = how can I escape or survive, count = how many ghosts are there, family = its family, real = are you real,
+              time = what time is it, know = what do you know about me, doing = what are you doing, see = can you see me,
+              hungry = are you hungry / what do you eat, from = where do you come from, age = how old are you, whyhere = why are you here.
+            offer: the Minecraft item id they offer to GIVE the ghost (diamond, gold_ingot, emerald, iron_sword, cooked_beef ...),
+              "food" for food in general, null if they offer nothing. offer_name: that item's name in the player's language.
+            ask: the Minecraft item id they ask the ghost to give THEM (diamond_pickaxe, golden_apple, oak_log ...), count: how many (default 1).
+            Use the earlier conversation to understand short replies ("yes, take it", "the other one").
+            The player may write Thai or English, slang or typos. Thai: ขอ.../อยากได้... = asking for an item (ask_item);
+            จะให้.../เอา...ไปไหม/แลก... = offering (bargain); ขอร้อง/ปล่อยฉันไป = plead; ไอ้.../โง่ = taunt.""";
+
+    static java.util.concurrent.CompletableFuture<Understood> understand(ServerPlayer p, GhostEntity g, Memory mem, String text) {
+        StringBuilder sys = new StringBuilder(UNDERSTAND);
+        if (!mem.history.isEmpty()) {
+            sys.append("\nEarlier conversation:\n");
+            for (int i = Math.max(0, mem.history.size() - 6); i < mem.history.size(); i++) {
+                AiBridge.Msg m = mem.history.get(i);
+                sys.append(m.role().equals("user") ? "Player: " : "Ghost: ").append(m.text()).append('\n');
+            }
+        }
+        return AiBridge.send(sys.toString(), List.of(new AiBridge.Msg("user", text)), 1000, 0).thenApply(r -> {
+            JsonObject o = AiBridge.jsonIn(r);
+            if (o == null) return null;
+            try {
+                String intent = str(o, "intent");
+                if (intent == null || !AI_INTENTS.contains(intent.toLowerCase())) intent = "other";
+                String topic = str(o, "topic");
+                if (topic != null && !data().topicOrder.contains(topic.toLowerCase())) topic = null;
+                int count = o.has("count") && o.get("count").isJsonPrimitive() && o.get("count").getAsJsonPrimitive().isNumber() ? o.get("count").getAsInt() : 1;
+                return new Understood(intent.toLowerCase(), topic == null ? null : topic.toLowerCase(), str(o, "offer"), str(o, "offer_name"), str(o, "ask"), count);
+            } catch (Exception e) {
+                return null;
+            }
+        });
+    }
+
+    @Nullable
+    static String str(JsonObject o, String k) {
+        if (!o.has(k) || o.get(k).isJsonNull() || !o.get(k).isJsonPrimitive()) return null;
+        String v = o.get(k).getAsString().trim();
+        return v.isEmpty() || v.equalsIgnoreCase("null") || v.equalsIgnoreCase("none") ? null : v;
+    }
+
+    /** An offered item the AI named: the five valuables keep their bonus, any other real item counts a little. */
+    @Nullable
+    static Offer offerForId(String raw) {
+        if (raw.equalsIgnoreCase("food")) return offer("food");
+        String id = Curses.checkItemId(raw);
+        if (id == null || id.equals("!")) return null;
+        String path = id.substring(id.indexOf(':') + 1);
+        String k = switch (path) {
+            case "diamond" -> "diamond";
+            case "gold_ingot" -> "gold";
+            case "emerald" -> "emerald";
+            case "netherite_ingot" -> "netherite";
+            case "iron_ingot" -> "iron";
+            case "bread" -> "bread";
+            default -> null;
+        };
+        if (k != null) return offer(k);
+        Item it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(id));
+        if (it == Items.AIR) return null;
+        double bonus = path.contains("netherite") ? 0.25 : path.contains("diamond") ? 0.15 : path.contains("gold") || path.contains("emerald") ? 0.08
+                : it.isEdible() ? 0.05 : 0.03;
+        return new Offer(id, bonus, Set.of(it), false);
+    }
+
+    static void respond(ServerPlayer p, GhostEntity g, String lang, Memory mem, String text, @Nullable Understood u) {
+        GhostBrain b = g.brain();
+        if (u == null) {
+            if (Curses.tryAsk(p, text)) return;
+        } else if (u.intent().equals("ask_item")) {
+            Curses.askGhost(p, g, Curses.checkItemId(u.ask()), u.count());
+            return;
+        }
         int gn = g.kind.n;
         boolean raged = g.isRaged();
         String norm = text.toLowerCase();
 
-        String topic = findTopic(norm);
+        String topic = u != null ? u.topic() : findTopic(norm);
         if (topic != null && !(raged && R.chance(0.5))) {
             String tl = topicLine(p, g, topic, lang);
             if (tl != null) {
@@ -426,7 +528,13 @@ public final class GhostTalk {
                 return;
             }
         }
-        Intent in = classify(text);
+        Intent in;
+        Offer aiOffer = null;
+        if (u != null) {
+            aiOffer = u.offer() == null ? null : offerForId(u.offer());
+            String it = u.intent().equals("other") && aiOffer != null ? "bargain" : u.intent();
+            in = new Intent(it, aiOffer == null ? null : aiOffer.key);
+        } else in = classify(text);
         String intent = in.intent();
         Runnable done = () -> {
             mem.last = norm;
@@ -443,9 +551,10 @@ public final class GhostTalk {
         boolean lie = false;
         Offer offered = null;
         String itemName = in.item();
-        Offer o = intent.equals("bargain") && in.item() != null ? offer(OFFER_KEY.getOrDefault(in.item(), "")) : null;
+        Offer o = u != null ? (HOSTILE.contains(intent) ? null : aiOffer)
+                : intent.equals("bargain") && in.item() != null ? offer(OFFER_KEY.getOrDefault(in.item(), "")) : null;
         if (o != null) {
-            itemName = offerName(o.key, lang);
+            itemName = o.key.contains(":") && u.offerName() != null ? u.offerName() : offerName(o.key, lang);
             if (takeItem(p, o)) {
                 offered = o;
                 chance += o.bonus;
@@ -484,6 +593,7 @@ public final class GhostTalk {
 
     static String offerName(String key, String lang) {
         boolean en = lang.equals("en");
+        if (key.contains(":")) return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(key)).getDescription().getString();
         return switch (key) {
             case "diamond" -> en ? "diamond" : "เพชร";
             case "gold" -> en ? "gold ingot" : "ทองคำแท่ง";
@@ -526,7 +636,7 @@ public final class GhostTalk {
         String sys = systemPrompt(p, g, lang, outcome, fallback);
         List<AiBridge.Msg> msgs = new ArrayList<>(mem.history);
         msgs.add(new AiBridge.Msg("user", said.isEmpty() ? "(silence)" : said));
-        AiBridge.chat(sys, msgs, 120, 0.9).thenAccept(r -> p.server.execute(() -> {
+        AiBridge.chat(sys, msgs, 600, 0.9).thenAccept(r -> p.server.execute(() -> {
             if (p.hasDisconnected()) return;
             String line = r == null ? fallback : r;
             if (!said.isEmpty()) {

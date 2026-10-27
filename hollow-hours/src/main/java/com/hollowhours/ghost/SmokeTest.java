@@ -43,6 +43,7 @@ final class SmokeTest {
             check(GhostTalk.classify("ขอร้องอย่าทำร้ายฉัน").intent().equals("plead"), "intent plead th");
             check("minecraft:diamond".equals(Curses.resolveItem("give me 5 diamonds")), "resolve item en");
             check("minecraft:iron_pickaxe".equals(Curses.resolveItem("ขออีเต้อเหล็กหน่อย")), "resolve item th");
+            aiUnderstanding();
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
 
@@ -83,6 +84,60 @@ final class SmokeTest {
             HollowHours.LOG.error("SMOKE TEST FAILED", t);
         }
         server.halt(false);
+    }
+
+    /**
+     * The AI path against a fake OpenAI-compatible server on localhost: the request reaches /v1/chat/completions, the
+     * JSON answer (even wrapped in a code fence) is read, and the item ids it names are checked.
+     */
+    static void aiUnderstanding() throws Exception {
+        java.util.List<String> paths = new java.util.ArrayList<>();
+        com.sun.net.httpserver.HttpServer http = com.sun.net.httpserver.HttpServer.create(new java.net.InetSocketAddress("127.0.0.1", 0), 0);
+        http.createContext("/", ex -> {
+            paths.add(ex.getRequestURI().getPath());
+            String req = new String(ex.getRequestBody().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            String content = req.contains("diamond sword")
+                    ? "{\"intent\":\"ask_item\",\"topic\":null,\"offer\":null,\"ask\":\"diamond_sword\",\"count\":2}"
+                    : "Sure:\n```json\n{\"intent\":\"bargain\",\"offer\":\"minecraft:cooked_beef\",\"offer_name\":\"steak\",\"count\":1}\n```";
+            com.google.gson.JsonObject msg = new com.google.gson.JsonObject();
+            msg.addProperty("role", "assistant");
+            msg.addProperty("content", content);
+            com.google.gson.JsonObject choice = new com.google.gson.JsonObject();
+            choice.add("message", msg);
+            com.google.gson.JsonArray choices = new com.google.gson.JsonArray();
+            choices.add(choice);
+            com.google.gson.JsonObject body = new com.google.gson.JsonObject();
+            body.add("choices", choices);
+            byte[] out = body.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            ex.getResponseHeaders().add("content-type", "application/json");
+            ex.sendResponseHeaders(200, out.length);
+            ex.getResponseBody().write(out);
+            ex.close();
+        });
+        http.start();
+        boolean was = com.hollowhours.config.HHConfig.AI_ENABLED.get();
+        String prov = com.hollowhours.config.HHConfig.AI_PROVIDER.get(), url = com.hollowhours.config.HHConfig.AI_URL.get();
+        try {
+            com.hollowhours.config.HHConfig.AI_ENABLED.set(true);
+            com.hollowhours.config.HHConfig.AI_PROVIDER.set("custom");
+            com.hollowhours.config.HHConfig.AI_URL.set("http://127.0.0.1:" + http.getAddress().getPort());
+            check(AiBridge.enabled(), "ai enabled");
+            GhostTalk.Understood a = GhostTalk.understand(null, null, new GhostTalk.Memory(), "give me 2 diamond swords pls").get(15, java.util.concurrent.TimeUnit.SECONDS);
+            check(a != null && a.intent().equals("ask_item") && a.count() == 2 && "minecraft:diamond_sword".equals(Curses.checkItemId(a.ask())), "ai ask item: " + a);
+            GhostTalk.Understood b = GhostTalk.understand(null, null, new GhostTalk.Memory(), "เอาสเต๊กไปไหม แล้วปล่อยฉันไป").get(15, java.util.concurrent.TimeUnit.SECONDS);
+            check(b != null && b.intent().equals("bargain") && "steak".equals(b.offerName()), "ai offer: " + b);
+            GhostTalk.Offer o = GhostTalk.offerForId(b.offer());
+            check(o != null && o.items().contains(Items.COOKED_BEEF) && o.bonus() > 0, "ai offer item");
+            check(GhostTalk.offerForId("diamond").bonus() == 0.20, "ai offer diamond bonus");
+            check("!".equals(Curses.checkItemId("command_block")), "ai deny list");
+            check(paths.size() == 2 && paths.get(0).equals("/v1/chat/completions"), "ai endpoint " + paths);
+            HollowHours.LOG.info("[smoke] AI understanding OK: {} | {}", a, b);
+        } finally {
+            com.hollowhours.config.HHConfig.AI_ENABLED.set(was);
+            com.hollowhours.config.HHConfig.AI_PROVIDER.set(prov);
+            com.hollowhours.config.HHConfig.AI_URL.set(url);
+            http.stop(0);
+        }
     }
 
     static void check(boolean ok, String what) {
