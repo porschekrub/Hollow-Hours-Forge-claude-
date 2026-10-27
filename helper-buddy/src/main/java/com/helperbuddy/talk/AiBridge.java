@@ -60,7 +60,11 @@ public final class AiBridge {
 
     static String url() {
         String u = HBConfig.AI_URL.get().trim();
-        if (!u.isEmpty()) return u;
+        if (!u.isEmpty()) {
+            // "http://localhost:11434" is fine too: the chat endpoint is added
+            if (!provider().equals("anthropic") && !u.contains("/v1") && !u.endsWith("completions")) u = u.replaceAll("/+$", "") + "/v1/chat/completions";
+            return u;
+        }
         return switch (provider()) {
             case "anthropic" -> "https://api.anthropic.com/v1/messages";
             case "openai" -> "https://api.openai.com/v1/chat/completions";

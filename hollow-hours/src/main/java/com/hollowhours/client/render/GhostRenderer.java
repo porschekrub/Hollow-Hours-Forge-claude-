@@ -60,6 +60,7 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     public void renderCubesOfBone(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight,
                                   int packedOverlay, float red, float green, float blue, float alpha) {
         clipMargin = marginFor(bone.getName());
+        currentBone = bone.getName();
         super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
@@ -71,11 +72,35 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         return 0.3f;
     }
 
+    // CI diagnostics: which bones come close to the victim's eye during a kill
+    static final boolean DEBUG = Boolean.getBoolean("hollowhours.clientsmoke");
+    static long debugFrame;
+    private String currentBone = "";
+    private final StringBuilder debugLine = new StringBuilder();
+
     @Override
     public void renderCube(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay,
                            float red, float green, float blue, float alpha) {
-        if (NearClip.touchesCamera(poseStack, cube, clipMargin)) return;
+        boolean skip = NearClip.touchesCamera(poseStack, cube, clipMargin);
+        if (DEBUG && com.hollowhours.client.KillCam.active() && debugFrame % 20 == 0) {
+            float d = NearClip.distance(poseStack, cube);
+            if (d < 1.6f && debugLine.length() < 900) debugLine.append(currentBone).append('=').append(String.format("%.2f", d)).append(skip ? "x " : " ");
+        }
+        if (skip) return;
         super.renderCube(poseStack, cube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
+    @Override
+    public void actuallyRender(PoseStack poseStack, GhostEntity g, software.bernie.geckolib.cache.object.BakedGeoModel model, RenderType renderType,
+                               MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay,
+                               float red, float green, float blue, float alpha) {
+        super.actuallyRender(poseStack, g, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+        if (DEBUG && !isReRender && com.hollowhours.client.KillCam.active()) {
+            if (debugFrame++ % 20 == 0) {
+                com.hollowhours.HollowHours.LOG.info("[killcam] ghost {} near bones: {}", g.kind.n, debugLine);
+                debugLine.setLength(0);
+            }
+        }
     }
 
     @Override

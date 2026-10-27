@@ -17,6 +17,36 @@ import software.bernie.geckolib.util.RenderUtils;
 public final class NearClip {
     private NearClip() {}
 
+    /** Distance (blocks) from the camera to the cube's box, for diagnostics. */
+    public static float distance(PoseStack poseStack, GeoCube cube) {
+        GeoQuad[] quads = cube.quads();
+        if (quads == null) return 99;
+        float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE, maxZ = -Float.MAX_VALUE;
+        for (GeoQuad q : quads) {
+            if (q == null) continue;
+            for (GeoVertex v : q.vertices()) {
+                Vector3f p = v.position();
+                minX = Math.min(minX, p.x);
+                minY = Math.min(minY, p.y);
+                minZ = Math.min(minZ, p.z);
+                maxX = Math.max(maxX, p.x);
+                maxY = Math.max(maxY, p.y);
+                maxZ = Math.max(maxZ, p.z);
+            }
+        }
+        poseStack.pushPose();
+        RenderUtils.translateToPivotPoint(poseStack, cube);
+        RenderUtils.rotateMatrixAroundCube(poseStack, cube);
+        RenderUtils.translateAwayFromPivotPoint(poseStack, cube);
+        Matrix4f m = new Matrix4f(poseStack.last().pose());
+        poseStack.popPose();
+        float scale = new Vector3f(m.m00(), m.m01(), m.m02()).length();
+        Vector4f c = m.invert(new Matrix4f()).transform(new Vector4f(0, 0, 0, 1));
+        float dx = Math.max(0, Math.max(minX - c.x, c.x - maxX)), dy = Math.max(0, Math.max(minY - c.y, c.y - maxY)), dz = Math.max(0, Math.max(minZ - c.z, c.z - maxZ));
+        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz) * scale;
+    }
+
     public static boolean touchesCamera(PoseStack poseStack, GeoCube cube, float marginBlocks) {
         GeoQuad[] quads = cube.quads();
         if (quads == null) return false;

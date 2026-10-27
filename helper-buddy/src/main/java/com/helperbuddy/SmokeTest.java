@@ -47,6 +47,9 @@ public final class SmokeTest {
             BlockPos sp = level.getSharedSpawnPos();
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());
             base = new BlockPos(sp.getX(), y, sp.getZ());
+            // a server without players stops ticking entities after 15 seconds unless chunks are force-loaded
+            for (int dx = -2; dx <= 2; dx++)
+                for (int dz = -2; dz <= 2; dz++) level.setChunkForced((base.getX() >> 4) + dx, (base.getZ() >> 4) + dz, true);
             h = HBRegistry.HELPER.get().create(level);
             check(h != null, "create helper");
             h.moveTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, 0, 0);
@@ -149,8 +152,13 @@ public final class SmokeTest {
             }
             if (t == 700) h.brain().tasks().start(Tasks.craft("minecraft:crafting_table", 1));
             if (t == 760) h.brain().tasks().start(Tasks.smelt("iron", 4));
+            if (t % 100 == 50) HelperBuddy.LOG.info("[smoke] t={} mode {} status '{}' tasks {} bag {}/36", t, h.mode(), h.status(), h.brain().tasks().active(), Bag.usedSlots(h));
             if (t == 800) {
                 check(h.isAlive(), "helper alive");
+                StringBuilder bag = new StringBuilder();
+                for (int i = 0; i < h.bag.getContainerSize(); i++)
+                    if (!h.bag.getItem(i).isEmpty()) bag.append(h.bag.getItem(i).getCount()).append(' ').append(h.bag.getItem(i).getItem()).append(", ");
+                HelperBuddy.LOG.info("[smoke] bag: {}", bag);
                 check(Bag.count(h, Items.IRON_INGOT) > 0 || Bag.count(h, Items.CRAFTING_TABLE) > 0, "crafting / smelting produced something");
                 HelperBuddy.LOG.info("[smoke] mode {} status '{}' bag {}/36", h.mode(), h.status(), Bag.usedSlots(h));
                 HelperBuddy.LOG.info("SMOKE TEST OK");
