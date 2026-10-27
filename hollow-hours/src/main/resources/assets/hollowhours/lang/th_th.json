@@ -478,5 +478,9 @@
  "subtitles.hollowhours.ghost.voice.g5.l": "ผีพูด",
  "subtitles.hollowhours.ghost.voice.g5.m": "ผีพูด",
  "subtitles.hollowhours.ghost.voice.g5.rage": "ผีพูด",
- "subtitles.hollowhours.ghost.voice.g5.s": "ผีพูด"
+ "subtitles.hollowhours.ghost.voice.g5.s": "ผีพูด",
+ "hollowhours.bloodmoon.title": "§4§lคืนพระจันทร์สีเลือด",
+ "hollowhours.bloodmoon.sub": "§cคืนนี้พวกมันจะมาบ่อยขึ้น... และโหดกว่าเดิม",
+ "hollowhours.bloodmoon.chat": "คืนนี้พระจันทร์เป็นสีเลือด อย่าออกไปข้างนอก อย่าหลับ อย่าให้พวกมันหาเจอ",
+ "hollowhours.bloodmoon.end": "พระจันทร์สีเลือดลับขอบฟ้าไปแล้ว... สำหรับคืนนี้"
 }

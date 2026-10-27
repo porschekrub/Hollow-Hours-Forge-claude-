@@ -306,6 +306,7 @@ public class GhostEntity extends Monster implements GeoEntity {
     public float attackDamage() {
         float d = (float) (double) HHConfig.DAMAGE.get();
         if (isRaged()) d *= (float) (double) HHConfig.RAGE_DAMAGE.get();
+        if (com.hollowhours.ghost.Atmosphere.bloodMoonFor(level())) d *= (float) (double) HHConfig.BLOOD_DAMAGE_MULT.get();
         return d;
     }
 

@@ -73,6 +73,9 @@ public final class GhostEvents {
         bus.addListener(GhostEvents::onDrops);
         bus.addListener(GhostEvents::onRespawn);
         bus.addListener(GhostEvents::onLogin);
+        bus.addListener((PlayerEvent.PlayerChangedDimensionEvent e) -> {
+            if (e.getEntity() instanceof ServerPlayer p) Atmosphere.send(p);
+        });
         bus.addListener(GhostEvents::onLogout);
         bus.addListener(GhostEvents::onCrafted);
         bus.addListener(GhostEvents::onChat);
@@ -92,6 +95,7 @@ public final class GhostEvents {
         if (now % 5 == 0) safe("music", () -> Director.musicTick(server, now));
         if (now % 10 == 0) safe("dread", () -> Director.dreadTick(server, now));
         if (now % 20 == 0) {
+            safe("atmosphere", () -> Atmosphere.tick(server, now));
             safe("soul", () -> Soul.tick(server, now));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
@@ -276,6 +280,7 @@ public final class GhostEvents {
         if (!(e.getEntity() instanceof ServerPlayer p)) return;
         Soul.onRespawn(p);
         Sprint.onRespawn(p);
+        Atmosphere.send(p);
         if (!e.isEndConquered()) giveGuideIfMissing(p, false);
         Integer n = KILLED_BY.remove(p.getUUID());
         if (n != null) Later.run(30, () -> {
@@ -308,6 +313,7 @@ public final class GhostEvents {
     static void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p)) return;
         giveGuideIfMissing(p, true);
+        Atmosphere.send(p);
         Integer n = FLED_FROM.remove(p.getUUID());
         if (n != null) Later.run(80, () -> punishFlee(p, n));
     }
@@ -376,6 +382,7 @@ public final class GhostEvents {
     static void onServerStarted(ServerStartedEvent e) {
         Later.clear();
         Director.reset();
+        Atmosphere.reset();
         KillSequence.clear();
         Stalkers.clear();
         KILLED_BY.clear();

@@ -478,5 +478,9 @@
  "subtitles.hollowhours.ghost.voice.g5.l": "A ghost speaks",
  "subtitles.hollowhours.ghost.voice.g5.m": "A ghost speaks",
  "subtitles.hollowhours.ghost.voice.g5.rage": "A ghost speaks",
- "subtitles.hollowhours.ghost.voice.g5.s": "A ghost speaks"
+ "subtitles.hollowhours.ghost.voice.g5.s": "A ghost speaks",
+ "hollowhours.bloodmoon.title": "§4§lBLOOD MOON",
+ "hollowhours.bloodmoon.sub": "§cTonight they come more often... and they are stronger",
+ "hollowhours.bloodmoon.chat": "The moon is red tonight. Don't go out. Don't sleep. Don't let them find you.",
+ "hollowhours.bloodmoon.end": "The red moon sets. For now."
 }

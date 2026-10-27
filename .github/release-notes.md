@@ -1,8 +1,16 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.1.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.1.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.2.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.2.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.2.0**
+- Blood moon: 10% of nights. Ghosts come 3× as often, hit 3× as hard, run faster, break in easier, and 50% of hunts bring two ghosts. Red moon, red night.
+  คืนพระจันทร์สีเลือด 10% ผีมาถี่ขึ้น 3 เท่า โหดขึ้น 3 เท่า วิ่งเร็วขึ้น และมีโอกาส 50% ที่จะมาทีเดียว 2 ตัว
+- Fog that rolls in now and then. / หมอกลงเป็นช่วง ๆ
+- Built-in horror shader (turn off with `shader = false` in `config/hollowhours-client.toml`). / เชดเดอร์สยองในตัว
+- Scared player animations (third person) and shaking hands / breathing sway (first person). / แอนิเมชันตัวละครกลัวผี มือสั่น จอโยก
+- Settings: `[atmosphere]` in `hollowhours-common.toml`, `[look]` in `hollowhours-client.toml`. Test: `/hollow bloodmoon on`, `/hollow fog on`.
 
 **2.1.0**
 - Ghosts + AI: with an API key the ghost now *understands* every sentence (questions, begging, insults, offering ANY item, asking it for any item) instead of only writing its answers. Set it up in `config/hollowhours-common.toml` (see README).

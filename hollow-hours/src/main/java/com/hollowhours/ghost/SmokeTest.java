@@ -44,6 +44,7 @@ final class SmokeTest {
             check("minecraft:diamond".equals(Curses.resolveItem("give me 5 diamonds")), "resolve item en");
             check("minecraft:iron_pickaxe".equals(Curses.resolveItem("ขออีเต้อเหล็กหน่อย")), "resolve item th");
             aiUnderstanding();
+            bloodMoon(server, level, at);
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
 
@@ -138,6 +139,31 @@ final class SmokeTest {
             com.hollowhours.config.HHConfig.AI_URL.set(url);
             http.stop(0);
         }
+    }
+
+    /** A forced blood moon rises at night, makes ghosts 3x deadlier, allows two at once, and sets at dawn. */
+    static void bloodMoon(MinecraftServer server, ServerLevel level, Vec3 at) {
+        long keep = level.getDayTime();
+        level.setDayTime(18000);
+        Atmosphere.forceBlood = 1;
+        Atmosphere.tick(server, level.getGameTime());
+        check(Atmosphere.bloodMoon(), "blood moon rises");
+        check(Director.maxAlive() >= 2, "blood moon allows two ghosts");
+        GhostEntity g = Director.spawnGhost(level, GhostKind.byN(1), at.add(0, 0, 8));
+        check(g != null, "blood moon ghost");
+        float dmg = g.attackDamage();
+        check(Math.abs(dmg - 3 * com.hollowhours.config.HHConfig.DAMAGE.get()) < 0.01, "blood moon damage x3: " + dmg);
+        g.discard();
+        Atmosphere.startFog(server, 200, 0.8f);
+        check(Atmosphere.fogNow(server) >= 0.8f, "fog");
+        Atmosphere.stopFog(server);
+        Atmosphere.forceBlood = -1;
+        level.setDayTime(6000);
+        Atmosphere.tick(server, level.getGameTime());
+        check(!Atmosphere.bloodMoon(), "blood moon sets");
+        Atmosphere.forceBlood = 0;
+        level.setDayTime(keep);
+        HollowHours.LOG.info("[smoke] blood moon OK (ghost damage {})", dmg);
     }
 
     static void check(boolean ok, String what) {

@@ -47,6 +47,10 @@ public final class ClientPackets {
         HorrorMusic.set(m.key());
     }
 
+    public static void atmos(com.hollowhours.net.S2CAtmos m) {
+        Atmos.set(m.bloodMoon(), m.fog());
+    }
+
     public static void hud(S2CHud m) {
         ClientFx.hud(m);
     }

@@ -6,7 +6,8 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class HHClientConfig {
     public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.DoubleValue JUMPSCARE_INTENSITY, SHAKE, JUMPSCARE_VOLUME;
-    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX;
+    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX, SHADER, PLAYER_ANIMS;
+    public static final ForgeConfigSpec.DoubleValue SHADER_STRENGTH, CAMERA_SWAY;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -17,6 +18,12 @@ public final class HHClientConfig {
         REDUCE_FLASHING = b.comment("Photosensitivity: no rapid red/black flashes").define("reduceFlashing", false);
         FACE_CLOSEUPS = b.comment("Show the full-screen ghost face close-ups").define("faceCloseups", true);
         DEATH_SCREEN_FX = b.comment("Glitchy ghost face on the death screen").define("deathScreenFx", true);
+        b.pop();
+        b.push("look");
+        SHADER = b.comment("Built-in horror shader: bleak colours, vignette, film grain, red blood moon (turn off if you use a shader pack)").define("shader", true);
+        SHADER_STRENGTH = b.comment("How strong the shader is").defineInRange("shaderStrength", 1.0, 0, 1.5);
+        PLAYER_ANIMS = b.comment("Scared player animations (hunched walk, panicked run, shaking hands ...)").define("playerAnimations", true);
+        CAMERA_SWAY = b.comment("First-person breathing / panic sway").defineInRange("cameraSway", 1.0, 0, 2);
         b.pop();
         SPEC = b.build();
     }

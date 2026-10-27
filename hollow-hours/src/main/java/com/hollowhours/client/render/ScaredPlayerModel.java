@@ -1,0 +1,192 @@
+package com.hollowhours.client.render;
+
+import com.hollowhours.client.Fear;
+import com.hollowhours.config.HHClientConfig;
+import com.hollowhours.entity.GhostEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.util.Mth;
+
+/**
+ * The player's body acts scared (seen in third person and by other players), more the more afraid they are:
+ * - standing: trembling, hugging themselves, glancing over their shoulders
+ * - walking: hunched over, arms held in, shaky steps, nervous looks around
+ * - running: bent forward, arms flailing, looking back at what is chasing them
+ * - sneaking: creeping with the hands up, ready to flinch
+ * - mining / hitting: hands shaking on every swing
+ * - badly hurt: limping, one hand pressed to the side
+ * - grabbed by a ghost: kicking and clawing at the air
+ * The first-person arm (drawn through this model with all-zero arguments) is left alone.
+ */
+public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
+    public ScaredPlayerModel(ModelPart root, boolean slim) {
+        super(root, slim);
+    }
+
+    @Override
+    public void setupAnim(AbstractClientPlayer p, float limbSwing, float limbAmount, float age, float headYaw, float headPitch) {
+        super.setupAnim(p, limbSwing, limbAmount, age, headYaw, headPitch);
+        if (age == 0 || !HHClientConfig.PLAYER_ANIMS.get()) return;
+        try {
+            scare(p, limbSwing, limbAmount, age);
+        } catch (Throwable ignored) {
+            // never break player rendering
+        }
+        hat.copyFrom(head);
+        leftPants.copyFrom(leftLeg);
+        rightPants.copyFrom(rightLeg);
+        leftSleeve.copyFrom(leftArm);
+        rightSleeve.copyFrom(rightArm);
+        jacket.copyFrom(body);
+    }
+
+    void scare(AbstractClientPlayer p, float swing, float amount, float t) {
+        float f = Fear.of(p, Minecraft.getInstance().getFrameTime());
+        if (p.getVehicle() instanceof GhostEntity) {
+            struggle(t);
+            return;
+        }
+        if (p.isSleeping() || p.isFallFlying() || p.isVisuallySwimming() || swimAmount > 0 || p.isPassenger() || p.isSpectator()) return;
+        float seed = (p.getId() % 97) * 1.37f;
+        boolean moving = amount > 0.08f;
+        boolean sprint = p.isSprinting() && moving;
+        boolean attack = attackTime > 0;
+        float hp = p.getHealth() / Math.max(1, p.getMaxHealth());
+
+        // ---- trembling: a fine shiver on everything, stronger with fear
+        float tr = 0.006f + 0.045f * f;
+        rightArm.xRot += shiver(t, seed) * tr;
+        rightArm.zRot += shiver(t * 1.13f, seed + 3) * tr;
+        leftArm.xRot += shiver(t * 0.97f, seed + 7) * tr;
+        leftArm.zRot += shiver(t * 1.21f, seed + 11) * tr;
+        head.xRot += shiver(t * 0.83f, seed + 5) * tr * 0.6f;
+        head.zRot += shiver(t * 0.91f, seed + 9) * tr * 0.5f;
+
+        // ---- nervous glances over the shoulder
+        float window = 46 + (seed % 17);
+        float ph = t % window;
+        float dir = hash(Mth.floor(t / window) + (int) seed) > 0.5f ? 1 : -1;
+        float glance = ph < 16 ? Mth.sin(ph / 16f * Mth.PI) : 0;
+        if (!sprint) head.yRot += glance * dir * (0.15f + 0.5f * f);
+
+        if (crouching) {
+            // creeping, hands up in front of the chest
+            float k = 0.4f + 0.6f * f;
+            rightArm.xRot = Mth.lerp(k * 0.6f, rightArm.xRot, -1.0f);
+            leftArm.xRot = Mth.lerp(k * 0.6f, leftArm.xRot, -1.0f);
+            rightArm.yRot -= 0.25f * k;
+            leftArm.yRot += 0.25f * k;
+        } else if (sprint) {
+            // running for your life
+            float lean = 0.12f + 0.3f * f;
+            hunch(lean);
+            float flail = 1 + 0.7f * f;
+            rightArm.xRot *= flail;
+            leftArm.xRot *= flail;
+            float out = Mth.abs(Mth.sin(swing * 0.6662f)) * 0.35f * f;
+            rightArm.zRot += out;
+            leftArm.zRot -= out;
+            // looking back at it
+            float back = t % 58;
+            if (f > 0.35f && back < 18) {
+                float k = Mth.sin(back / 18f * Mth.PI);
+                float side = hash(Mth.floor(t / 58) + 13) > 0.5f ? 1 : -1;
+                head.yRot += k * side * 1.15f * f;
+                head.xRot -= k * 0.25f;
+                body.yRot += k * side * 0.22f * f;
+            }
+        } else if (moving) {
+            // walking hunched, arms in, small shaky steps
+            hunch(0.08f + 0.26f * f);
+            float in = 1 - 0.5f * f;
+            rightArm.xRot = rightArm.xRot * in - 0.15f * f;
+            leftArm.xRot = leftArm.xRot * in - 0.15f * f;
+            rightArm.zRot -= 0.06f * f;
+            leftArm.zRot += 0.06f * f;
+            head.xRot += 0.12f * f;
+            rightLeg.xRot *= 1 - 0.25f * f;
+            leftLeg.xRot *= 1 - 0.25f * f;
+        } else if (!attack) {
+            // standing still: hugging yourself when it gets bad, breathing hard
+            float k = Mth.clamp((f - 0.3f) / 0.45f, 0, 1);
+            k = k * k * (3 - 2 * k);
+            float breath = Mth.sin(t * (0.12f + 0.3f * f)) * (0.03f + 0.06f * f);
+            rightArm.xRot = Mth.lerp(k, rightArm.xRot, -0.95f) + breath;
+            leftArm.xRot = Mth.lerp(k, leftArm.xRot, -0.95f) + breath;
+            rightArm.yRot = Mth.lerp(k, rightArm.yRot, -0.55f);
+            leftArm.yRot = Mth.lerp(k, leftArm.yRot, 0.55f);
+            rightArm.zRot = Mth.lerp(k, rightArm.zRot, 0.12f);
+            leftArm.zRot = Mth.lerp(k, leftArm.zRot, -0.12f);
+            hunch(0.05f + 0.15f * k);
+            head.xRot += 0.18f * k + breath * 0.5f;
+        }
+
+        // ---- mining / hitting with shaking hands
+        if (attack) {
+            rightArm.xRot += Mth.sin(t * 3.1f + seed) * (0.03f + 0.1f * f);
+            rightArm.zRot += Mth.sin(t * 2.3f + seed) * (0.02f + 0.07f * f);
+        }
+
+        // ---- badly hurt: limping, holding the side
+        if (hp < 0.35f && !sprint) {
+            float k = 1 - hp / 0.35f;
+            if (moving) {
+                rightLeg.xRot *= 1 - 0.65f * k;
+                body.zRot += Mth.sin(swing * 0.6662f) * 0.1f * k;
+                head.zRot += Mth.sin(swing * 0.6662f) * 0.06f * k;
+            }
+            leftArm.xRot = Mth.lerp(k, leftArm.xRot, -0.55f);
+            leftArm.yRot = Mth.lerp(k, leftArm.yRot, 0.5f);
+            leftArm.zRot = Mth.lerp(k, leftArm.zRot, 0.15f);
+            head.xRot += 0.15f * k;
+        }
+    }
+
+    /** Held by a ghost: kicking and clawing. */
+    void struggle(float t) {
+        rightArm.xRot = -2.35f + Mth.sin(t * 0.9f) * 0.55f;
+        rightArm.yRot = Mth.sin(t * 0.7f) * 0.3f;
+        rightArm.zRot = 0.25f + Mth.sin(t * 1.3f) * 0.3f;
+        leftArm.xRot = -2.2f + Mth.sin(t * 1.1f + 1) * 0.55f;
+        leftArm.yRot = -Mth.sin(t * 0.8f) * 0.3f;
+        leftArm.zRot = -0.25f - Mth.sin(t * 1.2f) * 0.3f;
+        rightLeg.xRot = Mth.sin(t * 0.85f) * 0.85f;
+        leftLeg.xRot = -Mth.sin(t * 0.85f) * 0.85f;
+        rightLeg.zRot = 0.08f;
+        leftLeg.zRot = -0.08f;
+        head.xRot = -0.35f + Mth.sin(t * 0.5f) * 0.2f;
+        head.yRot = Mth.sin(t * 0.37f) * 0.6f;
+        body.zRot = Mth.sin(t * 0.6f) * 0.08f;
+    }
+
+    /** Bend the upper body forward by h radians (like a partial sneak). */
+    void hunch(float h) {
+        float k = h / 0.5f;
+        body.xRot += h;
+        rightArm.xRot += 0.4f * k;
+        leftArm.xRot += 0.4f * k;
+        rightLeg.z += 3.9f * k;
+        leftLeg.z += 3.9f * k;
+        rightLeg.y += 0.2f * k;
+        leftLeg.y += 0.2f * k;
+        head.y += 4.2f * k;
+        body.y += 3.2f * k;
+        leftArm.y += 3.2f * k;
+        rightArm.y += 3.2f * k;
+    }
+
+    static float shiver(float t, float seed) {
+        return Mth.sin(t * 2.7f + seed) * 0.6f + Mth.sin(t * 4.3f + seed * 1.7f) * 0.4f;
+    }
+
+    static float hash(int x) {
+        x = (x ^ 61) ^ (x >>> 16);
+        x *= 9;
+        x ^= x >>> 4;
+        x *= 0x27d4eb2d;
+        x ^= x >>> 15;
+        return (x & 0xFFFF) / 65535f;
+    }
+}

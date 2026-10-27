@@ -23,6 +23,14 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
   ผีจับตัว กรีดร้องใส่หน้า แล้วทุบจนตาย ผีแต่ละตัวมีท่าฆ่า 3 แบบ สุ่มทุกครั้ง
 - **Jumpscares / จัมป์สแกร์**: faces, getting dragged out from under the bed, stalkers that are only there when you don't look.
   หน้าผีโผล่ ถูกลากออกจากใต้เตียง ผีที่ยืนจ้องอยู่เมื่อคุณไม่มอง
+- **Blood moon / คืนพระจันทร์สีเลือด**: 10% of nights the moon rises red. Until dawn ghosts come 3× as often, hit 3× as hard, run faster, break in easier — and a hunt can bring two ghosts at once.
+  10% ของทุกคืน พระจันทร์จะเป็นสีเลือด จนถึงเช้า ผีมาถี่ขึ้น 3 เท่า ตีแรงขึ้น 3 เท่า วิ่งเร็วขึ้น พังบ้านง่ายขึ้น และอาจมาทีเดียว 2 ตัว
+- **Fog / หมอก**: thick fog rolls in now and then (more at night). / บางช่วงหมอกหนาจะลง (กลางคืนบ่อยกว่า)
+- **Horror shader / เชดเดอร์**: built in — cold drained colours, vignette, film grain, a heartbeat pulse when a ghost is near, red under the blood moon. Turn it off in `config/hollowhours-client.toml` (`shader = false`) if you use a shader pack.
+  มีเชดเดอร์ในตัว สีหม่นเย็น ขอบจอมืด เกรนฟิล์ม จอเต้นตามหัวใจเวลาผีอยู่ใกล้ แดงทั้งจอตอนพระจันทร์สีเลือด ปิดได้ใน `config/hollowhours-client.toml` (`shader = false`)
+- **Scared player / ตัวละครกลัวผี**: your character hunches, trembles, hugs itself, looks over its shoulder, flails while running away, limps when hurt and struggles when grabbed; in first person your hands shake and your breathing sways the view.
+  ตัวละครเดินหลังค่อม ตัวสั่น กอดตัวเอง หันมองข้างหลัง วิ่งหนีแขนแกว่งมั่ว เดินกะเผลกตอนเลือดน้อย ดิ้นตอนโดนจับ มุมมองบุคคลที่ 1 มือสั่นและจอโยกตามลมหายใจ
+- Test commands (op): `/hollow bloodmoon on|off|random`, `/hollow fog on|off`
 - **Sell out a friend / ขายเพื่อน**: 25% of the time the ghost offers to spare you if you tell it where a friend is. Pick a friend or refuse — 10 seconds. Refusing or waiting = death.
   25% ผีจะถามว่า "บอกมาว่าเพื่อนอยู่ไหน แล้วฉันอาจไว้ชีวิต" เลือกเพื่อน หรือ "ไม่ขาย" ภายใน 10 วินาที ไม่ตอบ/ไม่ขาย = ตาย
 - **Talking / คุยกับผี**: type in chat starting with its short name (`wail`, `widow`, `ash`, `void`, `stag`), e.g. `stag please let me go`, or use the guide book → *Talk*. Ask questions, beg, offer items, insult it, or ask it for an item (cursed).

@@ -139,6 +139,7 @@ public final class GhostBrain {
     public int power() {
         int p = Math.max(1, power);
         if (g.isRaged()) p++;
+        if (Atmosphere.bloodMoonFor(g.level())) p++;
         return Math.min(3, p);
     }
 
@@ -450,6 +451,7 @@ public final class GhostBrain {
     public void applySpeed() {
         double base = 0.30 * HHConfig.SPEED_MULT.get() * spdBuff() * spdMul;
         if (g.isRaged()) base *= HHConfig.RAGE_SPEED.get();
+        if (Atmosphere.bloodMoonFor(g.level())) base *= HHConfig.BLOOD_SPEED_MULT.get();
         if (g.isCrawling()) base *= 0.82;
         if (Math.abs(base - appliedSpeed) > 1e-4) {
             appliedSpeed = base;

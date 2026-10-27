@@ -84,6 +84,7 @@ public final class ClientSmoke {
             }
             inWorldTicks++;
             if (inWorldTicks < 100) return; // let chunks load and render
+            if (!built && mc.screen instanceof net.minecraft.client.gui.screens.ReceivingLevelScreen && inWorldTicks < 1200) return;
             if (!built) build(mc);
             if (lookAt != null && !KillCam.active() && mc.player.isAlive()) face(mc, lookAt);
             if (stepIndex >= STEPS.size()) return;
@@ -286,6 +287,102 @@ public final class ClientSmoke {
                 });
             }
         }
+
+        // the player's scared animations, seen from the front in third person
+        record Pose(String name, float fear, boolean walk, boolean sprint, boolean sneak, boolean mine, float hp) {}
+        Pose[] poses = {
+                new Pose("idle_calm", 0.1f, false, false, false, false, 20), new Pose("idle_scared", 1f, false, false, false, false, 20),
+                new Pose("walk_scared", 0.8f, true, false, false, false, 20), new Pose("run_panic", 1f, true, true, false, false, 20),
+                new Pose("sneak_scared", 1f, true, false, true, false, 20), new Pose("mine_shaking", 0.9f, false, false, false, true, 20),
+                new Pose("limp_hurt", 0.6f, true, false, false, false, 4)};
+        for (Pose ps : poses) {
+            STEPS.add(t -> {
+                if (t == 0) {
+                    Fear.force = ps.fear();
+                    mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                    lookAt = origin.add(0, 1.6, 30);
+                    server(sp -> {
+                        clearAll(sp);
+                        pin(sp);
+                        sp.setHealth(ps.hp());
+                    });
+                }
+                if (t == 2) {
+                    mc.options.keyUp.setDown(ps.walk());
+                    mc.options.keyShift.setDown(ps.sneak());
+                    mc.options.keySprint.setDown(ps.sprint());
+                    if (ps.sprint() && mc.player != null) mc.player.setSprinting(true);
+                }
+                if (ps.mine() && mc.player != null && t % 5 == 0) mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                if (t == 22 || t == 27) shot("player_" + ps.name() + (t == 22 ? "_a" : "_b"));
+                if (t >= 28) {
+                    mc.options.keyUp.setDown(false);
+                    mc.options.keyShift.setDown(false);
+                    mc.options.keySprint.setDown(false);
+                    if (mc.player != null) mc.player.setSprinting(false);
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    Fear.force = -1;
+                    server(sp -> {
+                        pin(sp);
+                        sp.setHealth(sp.getMaxHealth());
+                    });
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        // the atmosphere: the shader at night, fog by day and by night, the blood moon (no night vision)
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.6, 12);
+                server(sp -> {
+                    clearAll(sp);
+                    pin(sp);
+                    sp.removeEffect(MobEffects.NIGHT_VISION);
+                });
+            }
+            if (t == 20) shot("atmos_night_plain");
+            if (t == 22) Fear.force = 1;
+            if (t == 40) shot("atmos_night_fear");
+            if (t == 41) Fear.force = -1;
+            return t >= 42;
+        });
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                sp.serverLevel().setDayTime(6000);
+                com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 120, 1f);
+            });
+            if (t == 30) Atmos.snap();
+            if (t == 40) shot("atmos_day_fog");
+            if (t == 41) server(sp -> sp.serverLevel().setDayTime(18000));
+            if (t == 70) shot("atmos_night_fog");
+            if (t == 71) server(sp -> com.hollowhours.ghost.Atmosphere.stopFog(sp.server));
+            if (t == 90) Atmos.snap();
+            return t >= 92;
+        });
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                sp.serverLevel().setDayTime(15000);
+                com.hollowhours.ghost.Atmosphere.forceBlood = 1;
+            });
+            if (t == 45) {
+                Atmos.snap();
+                lookAt = origin.add(10, 1.6 + 7.5, 0);
+            }
+            if (t == 60) shot("bloodmoon_sky");
+            if (t == 61) lookAt = origin.add(0, 1.6, 12);
+            if (t == 80) shot("bloodmoon_ground");
+            if (t == 81) server(sp -> showGhost(sp, GhostKind.byN(3), origin.add(0, 0, 7), GhostAnim.CHASE));
+            if (t == 110) shot("bloodmoon_ghost");
+            if (t == 111) server(sp -> {
+                clearAll(sp);
+                com.hollowhours.ghost.Atmosphere.forceBlood = 0;
+                sp.serverLevel().setDayTime(18000);
+            });
+            if (t == 140) Atmos.snap();
+            return t >= 142;
+        });
 
         // jumpscares (no night vision: as dark as in the game)
         STEPS.add(t -> {

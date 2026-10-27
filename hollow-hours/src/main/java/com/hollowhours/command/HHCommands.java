@@ -76,6 +76,28 @@ public final class HHCommands {
             Curses.askGhost(c.getSource().getPlayerOrException(), StringArgumentType.getString(c, "text"));
             return 1;
         })));
+        root.then(Commands.literal("bloodmoon")
+                .then(Commands.literal("on").executes(c -> {
+                    com.hollowhours.ghost.Atmosphere.forceBlood = 1;
+                    return reply(c, "blood moon forced on (it rises when night falls)");
+                }))
+                .then(Commands.literal("off").executes(c -> {
+                    com.hollowhours.ghost.Atmosphere.forceBlood = -1;
+                    return reply(c, "blood moon off");
+                }))
+                .then(Commands.literal("random").executes(c -> {
+                    com.hollowhours.ghost.Atmosphere.forceBlood = 0;
+                    return reply(c, "blood moon: random again");
+                })));
+        root.then(Commands.literal("fog")
+                .then(Commands.literal("on").executes(c -> {
+                    com.hollowhours.ghost.Atmosphere.startFog(c.getSource().getServer(), 5 * 60 * 20, 1f);
+                    return reply(c, "fog for 5 minutes");
+                }))
+                .then(Commands.literal("off").executes(c -> {
+                    com.hollowhours.ghost.Atmosphere.stopFog(c.getSource().getServer());
+                    return reply(c, "fog cleared");
+                })));
         root.then(Commands.literal("clear").executes(c -> {
             int n = 0;
             for (GhostEntity g : Director.allGhosts(c.getSource().getServer())) {

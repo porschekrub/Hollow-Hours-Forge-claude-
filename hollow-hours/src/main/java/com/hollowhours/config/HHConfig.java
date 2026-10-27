@@ -28,6 +28,8 @@ public final class HHConfig {
 
     // ---- AI (optional)
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue BLOOD_MOON_CHANCE, BLOOD_SPAWN_MULT, BLOOD_DAMAGE_MULT, BLOOD_SPEED_MULT, BLOOD_DOUBLE_CHANCE, FOG_CHANCE;
+    public static final ForgeConfigSpec.BooleanValue FOG_ENABLED;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
 
@@ -62,6 +64,16 @@ public final class HHConfig {
         RAGE_DAMAGE = b.comment("Damage multiplier while enraged").defineInRange("rageDamage", 2.0, 1, 10);
         BREAK_DOORS = b.comment("Ghosts smash doors, windows, trapdoors, gates and boards").define("breakDoors", true);
         BREAK_WALLS = b.comment("Ghosts may smash through walls when they can't get through a door").define("breakWalls", true);
+        b.pop();
+
+        b.comment("Blood moon nights and rolling fog").push("atmosphere");
+        BLOOD_MOON_CHANCE = b.comment("Chance that a night is a blood moon").defineInRange("bloodMoonChance", 0.10, 0, 1);
+        BLOOD_SPAWN_MULT = b.comment("Blood moon: ghosts come this many times more often").defineInRange("bloodMoonSpawnMultiplier", 3.0, 1, 10);
+        BLOOD_DAMAGE_MULT = b.comment("Blood moon: ghost damage multiplier").defineInRange("bloodMoonDamageMultiplier", 3.0, 1, 10);
+        BLOOD_SPEED_MULT = b.comment("Blood moon: ghost speed multiplier").defineInRange("bloodMoonSpeedMultiplier", 1.25, 1, 3);
+        BLOOD_DOUBLE_CHANCE = b.comment("Blood moon: chance that two ghosts come at once").defineInRange("bloodMoonDoubleChance", 0.5, 0, 1);
+        FOG_ENABLED = b.comment("Thick fog rolls in now and then").define("fog", true);
+        FOG_CHANCE = b.comment("Chance per minute that fog rolls in (doubled at night)").defineInRange("fogChancePerMinute", 0.05, 0, 1);
         b.pop();
 
         b.comment("What happens when a ghost catches you").push("death");

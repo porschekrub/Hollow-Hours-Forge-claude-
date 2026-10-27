@@ -71,7 +71,20 @@ public final class Director {
 
     static long nextGap() {
         double g = R.chance(HHConfig.QUICK_CHANCE.get()) ? rand(4 * MIN, 6 * MIN) : rand(HHConfig.GAP_MIN.get() * 20, HHConfig.GAP_MAX.get() * 20);
-        return (long) (g * Variety.moodGap());
+        g *= Variety.moodGap();
+        if (Atmosphere.bloodMoon()) g /= HHConfig.BLOOD_SPAWN_MULT.get();
+        return (long) g;
+    }
+
+    /** The moon just rose red: the next hunt comes soon. */
+    static void bloodMoonRose(MinecraftServer server) {
+        long now = server.overworld().getGameTime();
+        if (started) nextSpawnAt = Math.min(nextSpawnAt, now + (long) rand(40 * 20, 100 * 20));
+    }
+
+    static int maxAlive() {
+        int m = HHConfig.MAX_ALIVE.get();
+        return Atmosphere.bloodMoon() ? Math.max(m + 1, 2) : m;
     }
 
     // ------------------------------------------------------------------ hunting ghosts alive
@@ -185,12 +198,24 @@ public final class Director {
                 nextSpawnAt = now + (long) rand(4 * MIN, 8 * MIN);
                 return;
             }
-            spawnGhost(p.serverLevel(), GhostKind.byN(R.pick(ready)), spot);
+            int first = R.pick(ready);
+            spawnGhost(p.serverLevel(), GhostKind.byN(first), spot);
+            // blood moon: sometimes two come together, from different sides
+            if (Atmosphere.bloodMoonFor(p.level()) && total + 1 < maxAlive() && R.chance(HHConfig.BLOOD_DOUBLE_CHANCE.get())) {
+                ready.remove((Integer) first);
+                Vec3 spot2 = ready.isEmpty() ? null : findSpot(p, false, 20, 32);
+                if (spot2 != null) {
+                    GhostKind second = GhostKind.byN(R.pick(ready));
+                    Later.run((int) rand(20, 80), () -> {
+                        if (p.isAlive() && !p.hasDisconnected()) spawnGhost(p.serverLevel(), second, spot2);
+                    });
+                }
+            }
             nextSpawnAt = now + nextGap();
             return;
         }
         // ---- time for a new omen?
-        if (total >= HHConfig.MAX_ALIVE.get() || now < nextSpawnAt) return;
+        if (total >= maxAlive() || now < nextSpawnAt) return;
         List<ServerPlayer> players = new ArrayList<>();
         for (ServerLevel l : server.getAllLevels()) {
             if (!huntAllowedIn(l)) continue;
@@ -205,7 +230,7 @@ public final class Director {
             return;
         }
         ServerPlayer p = R.pick(players);
-        long len = (long) rand(15 * 20, 40 * 20);
+        long len = (long) (rand(15 * 20, 40 * 20) * (Atmosphere.bloodMoon() ? 0.5 : 1));
         omen = new Omen(p.getUUID(), now, now + len, R.chance(HHConfig.FALSE_ALARM_CHANCE.get()));
         String k = R.chance(0.5) ? "ambient1" : "ambient2";
         sendMusic(p, k, now);

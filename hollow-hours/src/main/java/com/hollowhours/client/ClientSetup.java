@@ -34,6 +34,33 @@ public final class ClientSetup {
         e.registerEntityRenderer(HHEntities.HIDE_SEAT.get(), NoopRenderer::new);
     }
 
+    /** Players get the scared body animations (the model inside both player renderers is swapped). */
+    @SubscribeEvent
+    public static void playerModels(EntityRenderersEvent.AddLayers e) {
+        for (String skin : e.getSkins()) {
+            net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?> r = e.getSkin(skin);
+            if (r == null) continue;
+            boolean slim = skin.equals("slim");
+            try {
+                var part = e.getEntityModels().bakeLayer(slim ? net.minecraft.client.model.geom.ModelLayers.PLAYER_SLIM : net.minecraft.client.model.geom.ModelLayers.PLAYER);
+                for (java.lang.reflect.Field f : net.minecraft.client.renderer.entity.LivingEntityRenderer.class.getDeclaredFields()) {
+                    if (net.minecraft.client.model.EntityModel.class.isAssignableFrom(f.getType())) {
+                        f.setAccessible(true);
+                        f.set(r, new com.hollowhours.client.render.ScaredPlayerModel(part, slim));
+                        break;
+                    }
+                }
+            } catch (Throwable ex) {
+                HollowHours.LOG.warn("[Hollow Hours] could not add the scared player animations to the {} player model", skin, ex);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void reloadListeners(net.minecraftforge.client.event.RegisterClientReloadListenersEvent e) {
+        e.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> HorrorShader.reload());
+    }
+
     @SubscribeEvent
     public static void overlays(RegisterGuiOverlaysEvent e) {
         e.registerAbove(VanillaGuiOverlay.CHAT_PANEL.id(), "horror_fx", (gui, g, partial, w, h) -> ClientFx.render(g, partial));
