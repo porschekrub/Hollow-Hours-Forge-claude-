@@ -56,8 +56,10 @@ public class HelperRenderer extends GeoEntityRenderer<HelperEntity> {
             @Override
             protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, HelperEntity h, MultiBufferSource buffers, float partialTick,
                                               int light, int overlay) {
+                // like a player's hand: the tool points forward out of the fist
                 poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
-                poseStack.translate(0, 0.1, -0.06);
+                poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+                poseStack.translate(0, 0.08, 0.06);
                 super.renderStackForBone(poseStack, bone, stack, h, buffers, partialTick, light, overlay);
             }
         });

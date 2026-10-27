@@ -68,8 +68,10 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         if (!com.hollowhours.client.KillCam.active()) return 0.3f;
         String n = bone.toLowerCase(java.util.Locale.ROOT);
         if (n.contains("arm") || n.contains("hand") || n.contains("rag") || n.contains("hair")) return 1.0f;
-        if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.6f;
-        return 0.3f;
+        if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.85f;
+        // the victim is held against the ghost: its chest and neck right in front of the eye would fill the screen
+        if (n.contains("chest") || n.contains("body") || n.contains("neck") || n.contains("rib") || n.contains("spine") || n.contains("torso")) return 0.8f;
+        return 0.3f; // head and jaw stay: that is the face screaming at you
     }
 
     // CI diagnostics: which bones come close to the victim's eye during a kill

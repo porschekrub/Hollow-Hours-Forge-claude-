@@ -293,6 +293,8 @@ def paint_face(name, face, w, h, P, rnd):
                 gp[x, y] = lamp + (255,)
         put(0, 0, (255, 255, 220), (255, 255, 220))
     elif name in ("arm_r", "arm_l"):
+        sleeve = mix(P["suit"], P["suit2"], 0.45)
+        P = dict(P, suit=sleeve)
         fill(P["suit"])
         for y in range(h - 3, h):
             for x in range(w):

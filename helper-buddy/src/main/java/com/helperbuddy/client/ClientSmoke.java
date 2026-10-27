@@ -265,20 +265,21 @@ public final class ClientSmoke {
         });
         // building: a hotel and a random house, watched from the side
         String[][] builds = {{"hotel", "build_hotel"}, {"standard", "build_house"}, {"statue", "build_statue"}};
-        for (String[] b : builds) {
+        for (int bi = 0; bi < builds.length; bi++) {
+            final String[] b = builds[bi];
+            final Vec3 spot = origin.add(-48 * (bi + 1), 0, 0);
             STEPS.add(t -> {
                 if (t == 0) server(sp -> {
                     clearHelpers(sp);
-                    pin(sp);
-                    sp.setYRot(0);
-                    HelperEntity h = spawn(sp, origin.add(0, 0, 2), 3);
+                    sp.teleportTo(sp.serverLevel(), spot.x, spot.y, spot.z, 0f, 10f);
+                    HelperEntity h = spawn(sp, spot.add(1.5, 0, -1), 3);
                     Gen.Opts o = new Gen.Opts();
                     o.type = b[0];
                     o.speed = 3;
                     o.floors = b[0].equals("hotel") ? 2 : null;
                     Talk.buildFromMenu(sp, h, o);
                 });
-                if (t == 2) lookAt = origin.add(0, 4, 14);
+                if (t == 2) lookAt = spot.add(0, 3, 14);
                 if (t == 300) shot(b[1]);
                 return t >= 302;
             });
