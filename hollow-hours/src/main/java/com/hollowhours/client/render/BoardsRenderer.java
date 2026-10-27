@@ -52,6 +52,12 @@ public class BoardsRenderer extends GeoEntityRenderer<BoardsEntity> {
                 software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bkind", () -> kind);
                 software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bn", () -> n);
                 software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bside", () -> side);
+                // GeckoLib's molang cannot parse "==": the animation reads these 0/1 flags instead
+                software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bkind_is1", () -> kind == 1 ? 1 : 0);
+                for (int i = 1; i <= 4; i++) {
+                    double on = n == i ? 1 : 0;
+                    software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bn_is" + i, () -> on);
+                }
             }
         });
         this.shadowRadius = 0f;

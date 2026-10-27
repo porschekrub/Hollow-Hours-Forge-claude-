@@ -79,8 +79,19 @@ def fix_molang(text):
 def geckolib_channels(d):
     """GeckoLib only reads vectors: a channel written as one number/expression ("scale": "q ? 0 : 1") becomes [v, v, v]."""
     def fixexpr(x):
+        if not isinstance(x, str):
+            return x
         # GeckoLib's molang cannot read a negative number right after "?" or ":" ("a ? -4.9 : -7")
-        return re.sub(r"([?:]\s*)-(\d+(?:\.\d+)?)", r"\1(0-\2)", x) if isinstance(x, str) else x
+        x = re.sub(r"([?:]\s*)-(\d+(?:\.\d+)?)", r"\1(0-\2)", x)
+        # ... nor "==", "&&" or "<" (its parser treats "=" as assignment). Only "a > b ? x : y" is safe, so equality tests
+        # become 0/1 flags the renderer sets (variable.bn == 2 -> variable.bn_is2) and the rest is rewritten with ">".
+        x = re.sub(r"\((variable\.\w+) == (\d+) && query\.anim_time < ([\d.]+)\) \? 0 : 1",
+                   lambda m: "1 - %s_is%s * (query.anim_time > %s ? 0 : 1)" % (m.group(1), m.group(2), m.group(3)), x)
+        x = re.sub(r"(variable\.\w+) == (\d+)", lambda m: "%s_is%s > 0.5" % (m.group(1), m.group(2)), x)
+        x = re.sub(r"^query\.anim_time < ([\d.]+) \? 0 : 1$", r"query.anim_time > \1 ? 1 : 0", x)
+        if "==" in x or "&&" in x or "<" in x:
+            raise SystemExit("molang form GeckoLib cannot parse: " + x)
+        return x
 
     def vec(v):
         if isinstance(v, str):

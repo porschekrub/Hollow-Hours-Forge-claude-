@@ -116,7 +116,8 @@ jobs:
 
   release:
     name: Publish release
-    if: startsWith(github.ref, 'refs/tags/v')
+    # runs even when one mod failed, so a finished mod can be released while the other is still being worked on
+    if: always() && startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -133,4 +134,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*.jar
+          fail_on_unmatched_files: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true

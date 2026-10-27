@@ -35,6 +35,11 @@ for i, line in enumerate(lines):
     if level_error or exception:
         problems.append(window)
 
+# GeckoLib logs a broken animation without our namespace in the line: name it explicitly
+for line in lines:
+    if "Unable to parse animation" in line:
+        problems.append(line)
+
 # resource problems (missing sounds/textures/models) are warnings, shown in the run summary
 WARN = re.compile(r"(Missing|Unable to|Invalid|Couldn't|Failed|not found)", re.I)
 for line in lines:

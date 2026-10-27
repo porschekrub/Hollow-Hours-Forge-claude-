@@ -49,6 +49,14 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         super.preRender(poseStack, g, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
+    /** Cubes touching the camera are skipped (an arm swinging through the victim's face would fill the screen with its inside). */
+    @Override
+    public void renderCube(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay,
+                           float red, float green, float blue, float alpha) {
+        if (NearClip.touchesCamera(poseStack, cube, 0.3f)) return;
+        super.renderCube(poseStack, cube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+    }
+
     @Override
     protected float getDeathMaxRotation(GhostEntity g) {
         return 0f;
