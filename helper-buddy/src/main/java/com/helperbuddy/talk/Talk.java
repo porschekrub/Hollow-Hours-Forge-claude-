@@ -122,6 +122,17 @@ public final class Talk {
             say(p, h, "ผมเป็นผู้ช่วยของ " + h.ownerName() + " นะครับ", "I'm " + h.ownerName() + "'s helper");
             return;
         }
+        // with a real AI set up, it reads every typed sentence first (orders, chat, questions); the built-in brain is the
+        // fallback when the AI can't be reached. Menu buttons stay on the built-in brain (instant, exact).
+        if (typed && AiBridge.enabled() && HBConfig.AI_FOR_COMMANDS.get()) {
+            aiUnderstand(p, h, text, true);
+            return;
+        }
+        local(p, h, text, true);
+    }
+
+    /** The built-in Thai/English brain. */
+    static void local(ServerPlayer p, HelperEntity h, String text, boolean allowAi) {
         // questions first (knowledge / small talk)
         if (Nlu.isQuestion(text)) {
             String kb = SmallTalk.reply(Nlu.norm(text), ctx(h, p), th(p));
@@ -143,7 +154,7 @@ public final class Talk {
         }
         if (!NOT_ORDERS.contains(first.k) && !first.k.equals("unknown")) LAST_ORDER.put(h.getUUID(), text);
         if (tryPlan(p, h, text)) return;
-        single(p, h, first, text, true);
+        single(p, h, first, text, allowAi);
     }
 
     static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume");
@@ -262,7 +273,7 @@ public final class Talk {
             return;
         }
         if (allowAi && AiBridge.enabled() && (HBConfig.AI_FOR_COMMANDS.get() || HBConfig.AI_FOR_CHAT.get())) {
-            aiUnderstand(p, h, text);
+            aiUnderstand(p, h, text, false);
             return;
         }
         say(p, h, "ขอโทษครับ ผมไม่แน่ใจว่า \"§f" + text + "§r\" หมายถึงอะไร ลองพูดแบบอื่น หรือพิมพ์ \"§eช่วย§r\" เพื่อดูตัวอย่างคำสั่ง",
@@ -778,17 +789,33 @@ public final class Talk {
             + "Several commands run one after another. If the message is just chat or a question, give no commands and answer in \"reply\" in the player's language "
             + "(Thai if they wrote Thai), as a cheerful helper, one or two short sentences.";
 
-    static void aiUnderstand(ServerPlayer p, HelperEntity h, String text) {
+    /** Recent conversation per helper, so the AI understands follow-ups ("more", "the other one", "yes"). */
+    static final Map<UUID, List<AiBridge.Msg>> HISTORY = new java.util.HashMap<>();
+    static final java.util.Set<UUID> AI_FAIL_TOLD = new java.util.HashSet<>();
+
+    /** fallbackLocal: if the AI can't be reached, let the built-in brain handle the sentence instead. */
+    static void aiUnderstand(ServerPlayer p, HelperEntity h, String text, boolean fallbackLocal) {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
-        String sys = AI_COMMANDS + " Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp() + ", level " + h.helperLevel() + ".";
-        AiBridge.send(sys, List.of(new AiBridge.Msg("user", text)), 1500, 0.2).thenAccept(res -> server.execute(() -> {
+        String sys = AI_COMMANDS + " The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
+                + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups.";
+        List<AiBridge.Msg> hist = HISTORY.computeIfAbsent(hid, k -> new ArrayList<>());
+        List<AiBridge.Msg> msgs = new ArrayList<>(hist);
+        msgs.add(new AiBridge.Msg("user", text));
+        AiBridge.send(sys, msgs, 1500, 0.2).thenAccept(res -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
             if (pl == null || hh == null) return;
             JsonObject o = AiBridge.jsonIn(res);
             if (o == null) {
+                if (res == null && AI_FAIL_TOLD.add(pl.getUUID()))
+                    pl.sendSystemMessage(Component.literal(Say.t(pl, "§7[Helper Buddy] เชื่อมต่อ AI ไม่ได้ (เช็ก apiKey ในไฟล์ config หรือดูรายละเอียดใน logs/latest.log) ตอนนี้ใช้สมองในตัวแทน",
+                            "§7[Helper Buddy] The AI could not be reached (check apiKey in the config file, details in logs/latest.log). Using the built-in brain")));
+                if (fallbackLocal) {
+                    local(pl, hh, text, false);
+                    return;
+                }
                 say(pl, hh, "ขอโทษครับ ผมไม่แน่ใจว่าหมายถึงอะไร ลองพูดแบบอื่น หรือพิมพ์ \"§eช่วย§r\" ดูตัวอย่างนะ", "Sorry, I'm not sure what you mean. Try another way, or type \"§ehelp§r\"");
                 return;
             }
@@ -797,11 +824,19 @@ public final class Talk {
                 for (JsonElement e : o.getAsJsonArray("commands")) if (e.isJsonPrimitive()) cmds.add(e.getAsString());
             String reply = o.has("reply") && o.get("reply").isJsonPrimitive() ? AiBridge.clean(o.get("reply").getAsString()) : null;
             if (reply != null && !reply.isEmpty()) say(pl, hh, reply, reply);
+            hist.add(new AiBridge.Msg("user", text));
+            hist.add(new AiBridge.Msg("assistant", o.toString()));
+            while (hist.size() > 10) hist.remove(0);
             if (cmds.isEmpty()) return;
             String joined = String.join(" then ", cmds);
             boolean any = false;
             for (String c : cmds) if (!Nlu.parse(c).k.equals("unknown")) any = true;
-            if (!any) return;
+            if (!any) {
+                // the AI answered with orders the helper doesn't know: try the player's own words with the built-in brain
+                if (reply == null || reply.isEmpty()) local(pl, hh, text, false);
+                return;
+            }
+            LAST_ORDER.put(hid, joined);
             if (cmds.size() == 1) {
                 Nlu.Intent it = Nlu.parse(cmds.get(0));
                 if (tryPlan(pl, hh, cmds.get(0))) return;

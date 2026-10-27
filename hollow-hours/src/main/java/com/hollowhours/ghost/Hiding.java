@@ -60,6 +60,8 @@ public final class Hiding {
         public double breath;
         public long gaspAt = -999, beatAt, hudAt, breathAt, lightAt;
         public boolean sneakReleased;
+        /** last tick a vanilla dismount (sneak) was tried; holding sneak tries every tick */
+        long lastDismountTry = Long.MIN_VALUE;
 
         State(Kind kind, String key, Entity seat, Vec3 spot, Vec3 exit, float baseYaw, BlockPos bedCell, Direction side, long t0) {
             this.kind = kind;
@@ -212,7 +214,13 @@ public final class Hiding {
     public static boolean allowDismount(ServerPlayer p, Entity vehicle) {
         State s = STATES.get(p.getUUID());
         if (s == null || s.seat != vehicle) return true;
-        if (!s.sneakReleased) return false;
+        // Sneak + right-click puts you in, and the sneak key is usually still held: vanilla would pull you straight back
+        // out. Holding sneak tries to dismount every tick, so a dismount only counts after the key was let go (no try
+        // for a few ticks) and not in the first half second.
+        long now = p.serverLevel().getGameTime();
+        boolean stillHeld = now - s.lastDismountTry <= 3 || now - s.t0 < 10;
+        s.lastDismountTry = now;
+        if (stillHeld) return false;
         // leaving by choice: run our exit (moves the player in front of the closet / next to the bed)
         com.hollowhours.util.Later.run(1, () -> {
             if (STATES.get(p.getUUID()) == s) exit(p, false, false, null);

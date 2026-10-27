@@ -417,12 +417,18 @@ public final class GhostTalk {
             HHNet.toPlayer(p, new S2CSpeech(g.kind.n, Component.literal("..."), 3));
             understand(p, g, mem, text).thenAccept(u -> p.server.execute(() -> {
                 if (p.hasDisconnected() || !g.isAlive() || g.brain().isLeaving()) return;
+                if (u == null && AI_FAIL_TOLD.add(p.getUUID()))
+                    p.sendSystemMessage(Component.literal(lang.equals("th")
+                            ? "§7[Hollow Hours] เชื่อมต่อ AI ไม่ได้ (เช็ก apiKey ในไฟล์ config หรือดูรายละเอียดใน logs/latest.log) ผีจะใช้สมองในตัวแทน"
+                            : "§7[Hollow Hours] The AI could not be reached (check apiKey in the config file, details in logs/latest.log). The ghosts use their built-in brain"));
                 respond(p, g, lang, mem, text, u);
             }));
             return;
         }
         respond(p, g, lang, mem, text, null);
     }
+
+    static final java.util.Set<UUID> AI_FAIL_TOLD = new java.util.HashSet<>();
 
     /** What the language model understood from one message. */
     record Understood(String intent, @Nullable String topic, @Nullable String offer, @Nullable String offerName, @Nullable String ask, int count) {}

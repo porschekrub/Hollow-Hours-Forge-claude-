@@ -1,8 +1,13 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.2.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.2.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.2.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.2.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.2.2**
+- Fixed: hiding under a bed / in a closet with sneak + right-click popped you straight back out. / แก้: มุดใต้เตียงหรือเข้าตู้แล้วเด้งออกทันที
+- Helper Buddy + AI: the AI now reads every sentence you type first (orders, chat, questions) and remembers the conversation; the built-in brain is only the fallback. / ผู้ช่วย + AI: AI อ่านทุกประโยคก่อน และจำบทสนทนาได้
+- If the AI can't be reached, a grey line in chat says so once. / ถ้าเชื่อมต่อ AI ไม่ได้ จะมีข้อความบอกในแชต
 
 **2.2.1**
 - AI: Gemini keys that start with `AQ.` (the only kind Google AI Studio gives out now) work — both mods now talk to Gemini's own API.
