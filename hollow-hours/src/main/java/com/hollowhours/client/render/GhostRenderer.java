@@ -83,6 +83,7 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     private boolean collecting;
     private String currentBone = "";
     private final StringBuilder debugLine = new StringBuilder();
+    private final java.util.List<Object[]> near = new java.util.ArrayList<>();
 
     @Override
     public void renderCube(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay,
@@ -90,9 +91,9 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         boolean skip = NearClip.touchesCamera(poseStack, cube, clipMargin);
         if (DEBUG && collecting) {
             float d = NearClip.distance(poseStack, cube);
-            if (d < 2.5f && debugLine.length() < 3000) {
+            if (d < 2.5f) {
                 double sz = Math.max(cube.size().x, Math.max(cube.size().y, cube.size().z)) / 16.0;
-                debugLine.append(currentBone).append('=').append(String.format("%.2f/%.2f", d, sz)).append(skip ? "x " : " ");
+                near.add(new Object[] {d, currentBone + "=" + String.format("%.2f/%.2f", d, sz) + (skip ? "x" : "")});
             }
         }
         if (skip) return;
@@ -105,10 +106,15 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
                                float red, float green, float blue, float alpha) {
         String tag = debugTag;
         collecting = DEBUG && !isReRender && tag != null;
-        if (collecting) debugLine.setLength(0);
+        if (collecting) near.clear();
         super.actuallyRender(poseStack, g, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
         if (collecting) {
-            var cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            var camera = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera();
+            var cam = camera.getPosition();
+            near.sort((a, b) -> Float.compare((Float) a[0], (Float) b[0]));
+            debugLine.setLength(0);
+            debugLine.append("look ").append(String.format("%.0f/%.0f", camera.getYRot(), camera.getXRot())).append(" | ");
+            for (int i = 0; i < Math.min(30, near.size()); i++) debugLine.append(near.get(i)[1]).append(' ');
             com.hollowhours.HollowHours.LOG.info("[killcam] {} ghost {} at {} cam {} dist {} cubes (dist/size): {}", tag, g.kind.n, g.position(), cam,
                     String.format("%.2f", cam.distanceTo(g.position())), debugLine);
             collecting = false;
