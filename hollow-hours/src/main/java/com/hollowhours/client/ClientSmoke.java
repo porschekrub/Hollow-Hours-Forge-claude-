@@ -156,6 +156,8 @@ public final class ClientSmoke {
         ServerLevel level = sp.serverLevel();
         for (Entity en : level.getAllEntities()) {
             if (en instanceof GhostEntity || en instanceof StalkerEntity || en instanceof ClosetEntity) en.discard();
+            // superflat slimes from before mob spawning was turned off would kill the player mid-tour
+            else if (en instanceof net.minecraft.world.entity.monster.Enemy) en.discard();
         }
     }
 
@@ -353,6 +355,7 @@ public final class ClientSmoke {
         });
         STEPS.add(t -> {
             if (t == 0) server(sp -> {
+                clearAll(sp);
                 sp.serverLevel().setDayTime(6000);
                 com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 120, 1f);
             });
@@ -366,6 +369,8 @@ public final class ClientSmoke {
         });
         STEPS.add(t -> {
             if (t == 0) server(sp -> {
+                clearAll(sp);
+                pin(sp);
                 sp.serverLevel().setDayTime(15000);
                 com.hollowhours.ghost.Atmosphere.forceBlood = 1;
             });
