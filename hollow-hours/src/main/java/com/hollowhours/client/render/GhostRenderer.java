@@ -71,7 +71,9 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.85f;
         // the victim is held against the ghost: its chest and neck right in front of the eye would fill the screen
         if (n.contains("chest") || n.contains("body") || n.contains("neck") || n.contains("rib") || n.contains("spine") || n.contains("torso")) return 0.8f;
-        return 0.3f; // head and jaw stay: that is the face screaming at you
+        // the face screaming at you stays; only when it is pressed right against the eye (seen edge-on it turns into a
+        // long "road" across the screen) it is not drawn
+        return 0.55f;
     }
 
     // CI diagnostics: which bones come close to the victim's eye during a kill
