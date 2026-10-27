@@ -67,13 +67,12 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     static float marginFor(String bone) {
         if (!com.hollowhours.client.KillCam.active()) return 0.3f;
         String n = bone.toLowerCase(java.util.Locale.ROOT);
-        if (n.contains("arm") || n.contains("hand") || n.contains("rag") || n.contains("hair")) return 1.0f;
-        if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.85f;
+        if (n.contains("arm") || n.contains("hand") || n.contains("rag") || n.contains("hair")) return 0.6f;
+        if (n.contains("leg") || n.contains("shin") || n.contains("foot")) return 0.5f;
         // the victim is held against the ghost: its chest and neck right in front of the eye would fill the screen
-        if (n.contains("chest") || n.contains("body") || n.contains("neck") || n.contains("rib") || n.contains("spine") || n.contains("torso")) return 0.8f;
-        // the face screaming at you stays; only when it is pressed right against the eye (seen edge-on it turns into a
-        // long "road" across the screen) it is not drawn
-        return 0.55f;
+        if (n.contains("chest") || n.contains("body") || n.contains("neck") || n.contains("rib") || n.contains("spine") || n.contains("torso")) return 0.45f;
+        // the face screaming at you stays; only when it is pressed right against the eye it is not drawn
+        return 0.3f;
     }
 
     // CI diagnostics: which bones come close to the victim's eye during a kill
