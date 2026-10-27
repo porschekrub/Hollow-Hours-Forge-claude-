@@ -177,7 +177,7 @@ public final class GhostBrain {
         if (buff != null) stalkFor *= buff.dur();
         power = Director.forcedPower > 0 ? Director.forcedPower : GhostBreach.rollPower(buff != null && R.chance(0.5));
         nextCreep = now + (long) R.rand(80, 160);
-        g.setAnim(GhostAnim.SPAWN);
+        if (mode == Mode.SPAWNING) g.setAnim(GhostAnim.SPAWN); // a kill that began on the spawn tick keeps its grab animation
     }
 
     // ------------------------------------------------------------------ main tick (server)

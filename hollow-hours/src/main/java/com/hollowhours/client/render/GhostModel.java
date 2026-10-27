@@ -23,6 +23,7 @@ import java.util.Map;
 public class GhostModel extends GeoModel<GhostEntity> {
     private final GhostKind kind;
     private final ResourceLocation model, texture, anims;
+    private final BoneEdits edits = new BoneEdits();
 
     public GhostModel(GhostKind kind) {
         this.kind = kind;
@@ -67,6 +68,7 @@ public class GhostModel extends GeoModel<GhostEntity> {
     @Override
     public void setCustomAnimations(GhostEntity g, long instanceId, AnimationState<GhostEntity> state) {
         super.setCustomAnimations(g, instanceId, state);
+        edits.begin();
         float lt = (g.tickCount + state.getPartialTick()) / 20f;
         GhostAnim a = g.anim();
         boolean holding = a == GhostAnim.GRAB || a == GhostAnim.HOLD || a == GhostAnim.SCREAM || a == GhostAnim.KILL;
@@ -113,10 +115,7 @@ public class GhostModel extends GeoModel<GhostEntity> {
         // ---- spasm: while chasing the whole body shakes
         if (a == GhostAnim.CHASE || a == GhostAnim.FOLLOW_RUN || a == GhostAnim.CRAWL_CHASE || a == GhostAnim.FOLLOW_CRAWL) {
             CoreGeoBone root = getAnimationProcessor().getBone("root");
-            if (root != null) {
-                root.setPosX(root.getPosX() - sin(lt * 1900) * 0.35f);
-                root.setPosZ(root.getPosZ() + cos(lt * 1700) * 0.35f);
-            }
+            if (root != null) edits.addPos(root, -sin(lt * 1900) * 0.35f, 0, cos(lt * 1700) * 0.35f);
             rot("head", sin(lt * 1500) * 14, sin(lt * 1100) * 35, sin(lt * 1300) * 22);
             rot("jaw", 30 + sin(lt * 2400) * 28, 0, 0);
             rot("rightArm", sin(lt * 1400) * 22, 0, sin(lt * 1000) * 14);
@@ -137,17 +136,13 @@ public class GhostModel extends GeoModel<GhostEntity> {
         if (x == 0 && y == 0 && z == 0) return;
         CoreGeoBone b = getAnimationProcessor().getBone(bone);
         if (b == null) return;
-        b.setRotX(b.getRotX() - x * Mth.DEG_TO_RAD);
-        b.setRotY(b.getRotY() - y * Mth.DEG_TO_RAD);
-        b.setRotZ(b.getRotZ() + z * Mth.DEG_TO_RAD);
+        edits.addRot(b, -x * Mth.DEG_TO_RAD, -y * Mth.DEG_TO_RAD, z * Mth.DEG_TO_RAD);
     }
 
     void scale(String bone, float x, float y, float z) {
         CoreGeoBone b = getAnimationProcessor().getBone(bone);
         if (b == null) return;
-        b.setScaleX(b.getScaleX() * x);
-        b.setScaleY(b.getScaleY() * y);
-        b.setScaleZ(b.getScaleZ() * z);
+        edits.mulScale(b, x, y, z);
     }
 
     /** Bedrock math: sin/cos take degrees. */
