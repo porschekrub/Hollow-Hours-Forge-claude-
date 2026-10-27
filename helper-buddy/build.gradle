@@ -36,6 +36,11 @@ minecraft {
             }
         }
         client {
+            // CI client smoke test: opens the world "smoke", shows the helper, its menus and a few jobs and takes screenshots
+            property 'helperbuddy.clientsmoke', System.getenv('HELPER_CLIENTSMOKE') ?: 'false'
+            if (System.getenv('HELPER_CLIENTSMOKE')) {
+                args '--quickPlaySingleplayer', 'smoke', '--width', '960', '--height', '540'
+            }
         }
         server {
             args '--nogui'
@@ -51,7 +56,10 @@ repositories {
     maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content { includeGroup('software.bernie.geckolib') }
+        content {
+            includeGroup('software.bernie.geckolib')
+            includeGroup('com.eliotlash.mclib')
+        }
     }
     mavenCentral()
 }
@@ -60,6 +68,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+    // GeckoLib's molang library: GeckoLib ships it inside its own jar at runtime, we only need it to compile
+    compileOnly "com.eliotlash.mclib:mclib:20"
     // GeckoLib is bundled inside our jar (jar-in-jar), so players only need to install this mod.
     jarJar(group: 'software.bernie.geckolib', name: "geckolib-forge-${minecraft_version}", version: "[${geckolib_version},)") {
         jarJar.pin(it, geckolib_version)
@@ -107,3 +117,4 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs << '-Xmaxerrs' << '2000'
 }
+

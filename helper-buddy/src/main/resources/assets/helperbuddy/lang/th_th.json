@@ -1,0 +1,9 @@
+{
+ "entity.helperbuddy.helper": "ผู้ช่วย",
+ "item.helperbuddy.helper_contract": "สัญญาจ้างผู้ช่วย",
+ "item.helperbuddy.helper_contract.tip": "คลิกขวาที่พื้น: ผู้ช่วยจะมาทำงานให้คุณ",
+ "item.helperbuddy.command_book": "หนังสือสั่งงาน",
+ "item.helperbuddy.command_book.tip": "สั่งผู้ช่วยได้จากทุกที่",
+ "item.helperbuddy.helper_spawn_egg": "ไข่เรียกผู้ช่วย",
+ "itemGroup.helperbuddy": "Helper Buddy"
+}
