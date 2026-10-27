@@ -102,6 +102,7 @@ public final class AiBridge {
 
     /** Sends a chat; completes with the raw reply text, or null on any failure. Never throws. */
     public static CompletableFuture<String> send(String system, List<Msg> msgs, int maxTokens, double temperature) {
+        if (provider().equals("gemini") && HHConfig.AI_URL.get().isBlank()) return sendGemini(system, msgs, maxTokens, temperature);
         try {
             boolean anth = provider().equals("anthropic");
             JsonObject body = new JsonObject();
@@ -137,6 +138,74 @@ public final class AiBridge {
             HollowHours.LOG.warn("[Hollow Hours] AI request could not be sent: {}", e.toString());
             return CompletableFuture.completedFuture(null);
         }
+    }
+
+    /** Gemini's own endpoint (base, model is appended); tests point it at a local fake server. */
+    static String geminiBase = "https://generativelanguage.googleapis.com/v1beta/models/";
+
+    /**
+     * Gemini through its native API with the key in the x-goog-api-key header. Google's newer "AQ." keys (the only
+     * kind AI Studio hands out now) are refused by its OpenAI-compatible endpoint, the old "AIza" keys work here too.
+     */
+    static CompletableFuture<String> sendGemini(String system, List<Msg> msgs, int maxTokens, double temperature) {
+        try {
+            JsonObject body = new JsonObject();
+            body.add("systemInstruction", parts(system));
+            JsonArray contents = new JsonArray();
+            for (Msg m : msgs) {
+                JsonObject c = parts(m.text);
+                c.addProperty("role", m.role.equals("assistant") ? "model" : "user");
+                contents.add(c);
+            }
+            body.add("contents", contents);
+            JsonObject gen = new JsonObject();
+            // thinking models count their thoughts in this budget: leave room so the answer is not cut off
+            gen.addProperty("maxOutputTokens", Math.max(maxTokens, 2048));
+            gen.addProperty("temperature", temperature);
+            body.add("generationConfig", gen);
+            String model = model().replaceFirst("^models/", "");
+            HttpRequest rq = HttpRequest.newBuilder(URI.create(geminiBase + model + ":generateContent"))
+                    .timeout(Duration.ofSeconds(Math.max(3, HHConfig.AI_TIMEOUT.get())))
+                    .header("content-type", "application/json")
+                    .header("x-goog-api-key", HHConfig.AI_KEY.get().trim())
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
+            return client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
+                if (r.statusCode() / 100 != 2) {
+                    HollowHours.LOG.warn("[Hollow Hours] {}", "AI request failed (" + r.statusCode() + "): " + trim(r.body(), 300));
+                    return (String) null;
+                }
+                try {
+                    JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
+                    StringBuilder sb = new StringBuilder();
+                    JsonObject content = o.getAsJsonArray("candidates").get(0).getAsJsonObject().getAsJsonObject("content");
+                    for (JsonElement p : content.getAsJsonArray("parts")) {
+                        JsonObject po = p.getAsJsonObject();
+                        if (po.has("thought") && po.get("thought").getAsBoolean()) continue;
+                        if (po.has("text")) sb.append(po.get("text").getAsString());
+                    }
+                    return sb.length() == 0 ? null : sb.toString();
+                } catch (Exception e) {
+                    HollowHours.LOG.warn("[Hollow Hours] {}", "AI reply could not be read: " + trim(r.body(), 300));
+                    return null;
+                }
+            }).exceptionally(e -> {
+                HollowHours.LOG.warn("[Hollow Hours] {}", "AI request failed: " + e);
+                return null;
+            });
+        } catch (Exception e) {
+            HollowHours.LOG.warn("[Hollow Hours] {}", "AI request could not be sent: " + e);
+            return CompletableFuture.completedFuture(null);
+        }
+    }
+
+    static JsonObject parts(String text) {
+        JsonObject t = new JsonObject();
+        t.addProperty("text", text);
+        JsonArray a = new JsonArray();
+        a.add(t);
+        JsonObject o = new JsonObject();
+        o.add("parts", a);
+        return o;
     }
 
     static JsonObject msg(String role, String text) {

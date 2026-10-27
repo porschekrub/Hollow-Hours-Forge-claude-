@@ -97,6 +97,19 @@ final class SmokeTest {
         http.createContext("/", ex -> {
             paths.add(ex.getRequestURI().getPath());
             String req = new String(ex.getRequestBody().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            if (ex.getRequestURI().getPath().endsWith(":generateContent")) {
+                // Gemini's native API: key in x-goog-api-key, answer in candidates/content/parts (a thought part is skipped)
+                String key = ex.getRequestHeaders().getFirst("x-goog-api-key");
+                String text = "AQ.fake-smoke-key".equals(key) && req.contains("systemInstruction")
+                        ? "{\\\"intent\\\":\\\"plead\\\",\\\"count\\\":1}" : "nope";
+                String gem = "{\"candidates\":[{\"content\":{\"role\":\"model\",\"parts\":[{\"text\":\"thinking...\",\"thought\":true},{\"text\":\"" + text + "\"}]}}]}";
+                byte[] out = gem.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                ex.getResponseHeaders().add("content-type", "application/json");
+                ex.sendResponseHeaders(200, out.length);
+                ex.getResponseBody().write(out);
+                ex.close();
+                return;
+            }
             String content = req.contains("diamond sword")
                     ? "{\"intent\":\"ask_item\",\"topic\":null,\"offer\":null,\"ask\":\"diamond_sword\",\"count\":2}"
                     : "Sure:\n```json\n{\"intent\":\"bargain\",\"offer\":\"minecraft:cooked_beef\",\"offer_name\":\"steak\",\"count\":1}\n```";
@@ -132,6 +145,20 @@ final class SmokeTest {
             check(GhostTalk.offerForId("diamond").bonus() == 0.20, "ai offer diamond bonus");
             check("!".equals(Curses.checkItemId("command_block")), "ai deny list");
             check(paths.size() == 2 && paths.get(0).equals("/v1/chat/completions"), "ai endpoint " + paths);
+            // gemini with a new-style "AQ." key goes to the native endpoint
+            String keyWas = com.hollowhours.config.HHConfig.AI_KEY.get(), baseWas = AiBridge.geminiBase;
+            try {
+                com.hollowhours.config.HHConfig.AI_PROVIDER.set("gemini");
+                com.hollowhours.config.HHConfig.AI_URL.set("");
+                com.hollowhours.config.HHConfig.AI_KEY.set("AQ.fake-smoke-key");
+                AiBridge.geminiBase = "http://127.0.0.1:" + http.getAddress().getPort() + "/v1beta/models/";
+                GhostTalk.Understood gm = GhostTalk.understand(null, null, new GhostTalk.Memory(), "please let me go").get(15, java.util.concurrent.TimeUnit.SECONDS);
+                check(gm != null && gm.intent().equals("plead"), "gemini native: " + gm + " " + paths);
+                check(paths.get(paths.size() - 1).equals("/v1beta/models/gemini-flash-latest:generateContent"), "gemini path " + paths);
+            } finally {
+                com.hollowhours.config.HHConfig.AI_KEY.set(keyWas);
+                AiBridge.geminiBase = baseWas;
+            }
             HollowHours.LOG.info("[smoke] AI understanding OK: {} | {}", a, b);
         } finally {
             com.hollowhours.config.HHConfig.AI_ENABLED.set(was);
