@@ -146,7 +146,7 @@ public final class FoodJob {
             return (until == null || now > until) && ripe(s);
         };
         BlockPos near = Scan.nearest(sl, h.blockPosition(), 24, 12, FoodJob::isCrop, ok);
-        if (near != null || now - lastFarScan < 100) return near;
+        if (near != null || now - lastFarScan < 200) return near;
         lastFarScan = now;
         return Scan.nearest(sl, h.blockPosition(), Brain.radius(), 32, FoodJob::isCrop, ok);
     }

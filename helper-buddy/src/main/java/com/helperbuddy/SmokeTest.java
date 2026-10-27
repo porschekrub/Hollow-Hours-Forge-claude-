@@ -4,7 +4,7 @@ import com.helperbuddy.brain.Bag;
 import com.helperbuddy.brain.BuildJob;
 import com.helperbuddy.brain.Crafter;
 import com.helperbuddy.brain.Tasks;
-import com.helperbuddy.build.BlockMap;
+import com.helperbuddy.blocks.BlockMap;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
 import com.helperbuddy.gen.ExtraGen;

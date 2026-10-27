@@ -1,6 +1,6 @@
 package com.helperbuddy.brain;
 
-import com.helperbuddy.build.BlockMap;
+import com.helperbuddy.blocks.BlockMap;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;

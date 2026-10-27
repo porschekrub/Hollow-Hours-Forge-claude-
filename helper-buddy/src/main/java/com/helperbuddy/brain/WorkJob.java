@@ -201,10 +201,11 @@ public final class WorkJob {
         BlockPos near = Scan.nearest(sl, c, 24, 24, want, ok);
         if (near != null) return near;
         long now = sl.getGameTime();
-        if (now - lastFarScan < 100) return null;
+        // the full search radius (100 blocks by default) is a big scan: at most every 10 seconds
+        if (now - lastFarScan < 200) return null;
         lastFarScan = now;
         int r = Brain.radius();
-        return Scan.nearest(sl, c, r, Math.min(r, 64), want, ok);
+        return Scan.nearest(sl, c, r, Math.min(r, 48), want, ok);
     }
 
     boolean findOre() {
