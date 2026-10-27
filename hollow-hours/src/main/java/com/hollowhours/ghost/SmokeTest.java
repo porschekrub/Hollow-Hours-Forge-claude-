@@ -129,12 +129,8 @@ final class SmokeTest {
             ex.close();
         });
         http.start();
-        boolean was = com.hollowhours.config.HHConfig.AI_ENABLED.get();
-        String prov = com.hollowhours.config.HHConfig.AI_PROVIDER.get(), url = com.hollowhours.config.HHConfig.AI_URL.get();
         try {
-            com.hollowhours.config.HHConfig.AI_ENABLED.set(true);
-            com.hollowhours.config.HHConfig.AI_PROVIDER.set("custom");
-            com.hollowhours.config.HHConfig.AI_URL.set("http://127.0.0.1:" + http.getAddress().getPort());
+            AiBridge.testSettings = new String[] {"custom", "http://127.0.0.1:" + http.getAddress().getPort(), ""};
             check(AiBridge.enabled(), "ai enabled");
             GhostTalk.Understood a = GhostTalk.understand(null, null, new GhostTalk.Memory(), "give me 2 diamond swords pls").get(15, java.util.concurrent.TimeUnit.SECONDS);
             check(a != null && a.intent().equals("ask_item") && a.count() == 2 && "minecraft:diamond_sword".equals(Curses.checkItemId(a.ask())), "ai ask item: " + a);
@@ -146,24 +142,19 @@ final class SmokeTest {
             check("!".equals(Curses.checkItemId("command_block")), "ai deny list");
             check(paths.size() == 2 && paths.get(0).equals("/v1/chat/completions"), "ai endpoint " + paths);
             // gemini with a new-style "AQ." key goes to the native endpoint
-            String keyWas = com.hollowhours.config.HHConfig.AI_KEY.get(), baseWas = AiBridge.geminiBase;
+            String baseWas = AiBridge.geminiBase;
             try {
-                com.hollowhours.config.HHConfig.AI_PROVIDER.set("gemini");
-                com.hollowhours.config.HHConfig.AI_URL.set("");
-                com.hollowhours.config.HHConfig.AI_KEY.set("AQ.fake-smoke-key");
+                AiBridge.testSettings = new String[] {"gemini", "", "AQ.fake-smoke-key"};
                 AiBridge.geminiBase = "http://127.0.0.1:" + http.getAddress().getPort() + "/v1beta/models/";
                 GhostTalk.Understood gm = GhostTalk.understand(null, null, new GhostTalk.Memory(), "please let me go").get(15, java.util.concurrent.TimeUnit.SECONDS);
                 check(gm != null && gm.intent().equals("plead"), "gemini native: " + gm + " " + paths);
                 check(paths.get(paths.size() - 1).equals("/v1beta/models/gemini-flash-latest:generateContent"), "gemini path " + paths);
             } finally {
-                com.hollowhours.config.HHConfig.AI_KEY.set(keyWas);
                 AiBridge.geminiBase = baseWas;
             }
             HollowHours.LOG.info("[smoke] AI understanding OK: {} | {}", a, b);
         } finally {
-            com.hollowhours.config.HHConfig.AI_ENABLED.set(was);
-            com.hollowhours.config.HHConfig.AI_PROVIDER.set(prov);
-            com.hollowhours.config.HHConfig.AI_URL.set(url);
+            AiBridge.testSettings = null;
             http.stop(0);
         }
     }

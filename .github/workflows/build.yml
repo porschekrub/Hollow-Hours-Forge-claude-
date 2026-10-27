@@ -116,9 +116,9 @@ jobs:
 
   release:
     name: Publish release
-    # runs even when one mod failed, so a finished mod can be released while the other is still being worked on
+    # only when both mods built and passed every test
     # a tag "v2.0.0" or a branch "release/2.0.0" publishes the release
-    if: always() && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/release/'))
+    if: needs.build.result == 'success' && (startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/release/'))
     needs: build
     runs-on: ubuntu-latest
     permissions:

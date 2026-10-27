@@ -34,14 +34,33 @@ public final class AiBridge {
         return client;
     }
 
+    /** Server smoke test only: settings used instead of the config file (a config reload can't race the test). */
+    static String[] testSettings; // provider, url, key
+
+    static boolean cfgEnabled() {
+        return testSettings != null || HHConfig.AI_ENABLED.get();
+    }
+
+    static String cfgProvider() {
+        return testSettings != null ? testSettings[0] : HHConfig.AI_PROVIDER.get();
+    }
+
+    static String cfgUrl() {
+        return testSettings != null ? testSettings[1] : HHConfig.AI_URL.get();
+    }
+
+    static String cfgKey() {
+        return testSettings != null ? testSettings[2] : HHConfig.AI_KEY.get();
+    }
+
     public static boolean enabled() {
-        if (!HHConfig.AI_ENABLED.get()) return false;
+        if (!cfgEnabled()) return false;
         String p = provider();
-        return p.equals("ollama") || p.equals("custom") || !HHConfig.AI_KEY.get().isBlank();
+        return p.equals("ollama") || p.equals("custom") || !cfgKey().isBlank();
     }
 
     static String provider() {
-        String p = HHConfig.AI_PROVIDER.get().trim().toLowerCase(Locale.ROOT);
+        String p = cfgProvider().trim().toLowerCase(Locale.ROOT);
         if (p.equals("claude")) return "anthropic";
         if (p.equals("google")) return "gemini";
         if (p.equals("chatgpt") || p.equals("gpt")) return "openai";
@@ -62,7 +81,7 @@ public final class AiBridge {
     }
 
     static String url() {
-        String u = HHConfig.AI_URL.get().trim();
+        String u = cfgUrl().trim();
         if (!u.isEmpty()) {
             // a base url such as http://localhost:11434 or .../v1 is fine: the chat endpoint is added
             if (!provider().equals("anthropic") && !u.endsWith("completions")) {
@@ -102,7 +121,7 @@ public final class AiBridge {
 
     /** Sends a chat; completes with the raw reply text, or null on any failure. Never throws. */
     public static CompletableFuture<String> send(String system, List<Msg> msgs, int maxTokens, double temperature) {
-        if (provider().equals("gemini") && HHConfig.AI_URL.get().isBlank()) return sendGemini(system, msgs, maxTokens, temperature);
+        if (provider().equals("gemini") && cfgUrl().isBlank()) return sendGemini(system, msgs, maxTokens, temperature);
         try {
             boolean anth = provider().equals("anthropic");
             JsonObject body = new JsonObject();
@@ -118,7 +137,7 @@ public final class AiBridge {
                     .timeout(Duration.ofSeconds(Math.max(3, HHConfig.AI_TIMEOUT.get())))
                     .header("content-type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(body.toString()));
-            String key = HHConfig.AI_KEY.get().trim();
+            String key = cfgKey().trim();
             if (anth) {
                 rb.header("x-api-key", key).header("anthropic-version", "2023-06-01");
             } else if (!key.isEmpty()) rb.header("authorization", "Bearer " + key);
@@ -167,7 +186,7 @@ public final class AiBridge {
             HttpRequest rq = HttpRequest.newBuilder(URI.create(geminiBase + model + ":generateContent"))
                     .timeout(Duration.ofSeconds(Math.max(3, HHConfig.AI_TIMEOUT.get())))
                     .header("content-type", "application/json")
-                    .header("x-goog-api-key", HHConfig.AI_KEY.get().trim())
+                    .header("x-goog-api-key", cfgKey().trim())
                     .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
             return client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
                 if (r.statusCode() / 100 != 2) {
