@@ -8,6 +8,7 @@
 - Fixed: during kills the ghost's body stretched into long "tunnels" across the screen, and ghosts' heads/arms spun more and more while twitching. The ghost now grabs you, screams in your face and kills you cleanly.
   แก้: ตอนผีฆ่า ตัวผียืดเป็นแท่งยาวเต็มจอ และหัว/แขนผีหมุนเพี้ยนเวลากระตุก ตอนนี้ฉากจับตัว กรีดร้องใส่หน้า และฆ่า แสดงถูกต้องแล้ว
 - Fixed: the grab animation now always plays at the start of a kill. / แก้: ท่าจับตัวเล่นทุกครั้งตอนเริ่มฉากฆ่า
+- Fixed: other mobs (slimes, zombies...) can no longer kill you while a ghost is holding you, cutting the kill short. / แก้: ระหว่างผีจับตัว มอนสเตอร์อื่นจะไม่มาตีตายแทรกฉาก
 - Helper Buddy: the head no longer drifts when it looks around. / ผู้ช่วย: หัวไม่หมุนเพี้ยนเวลามองไปมา
 
 Remove the 2.0.0 jars from `mods` before adding these. / ลบไฟล์ 2.0.0 ออกจาก `mods` ก่อนใส่ไฟล์ใหม่

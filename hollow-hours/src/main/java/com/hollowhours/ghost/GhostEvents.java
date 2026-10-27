@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -64,6 +65,7 @@ public final class GhostEvents {
         bus.addListener(GhostEvents::onUseFinish);
         bus.addListener(GhostEvents::onUseStop);
         bus.addListener(GhostEvents::onHurt);
+        bus.addListener(EventPriority.HIGH, GhostEvents::onAttacked);
         bus.addListener(GhostEvents::onBreak);
         bus.addListener(GhostEvents::onPlace);
         bus.addListener(GhostEvents::onMount);
@@ -199,6 +201,12 @@ public final class GhostEvents {
 
     static void onUseStop(LivingEntityUseItemEvent.Stop e) {
         if (e.getEntity() instanceof ServerPlayer p && Curses.isCursed(e.getItem())) Curses.handleUse(p, "release", e.getItem());
+    }
+
+    /** While a ghost holds you nothing else gets to hurt you (a slime or a zombie would cut the kill short). */
+    static void onAttacked(LivingAttackEvent e) {
+        if (e.getEntity() instanceof ServerPlayer p && KillSequence.isVictim(p) && !GhostDamage.isGhost(e.getSource())
+                && !e.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) e.setCanceled(true);
     }
 
     static void onHurt(LivingHurtEvent e) {
