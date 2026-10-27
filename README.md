@@ -69,4 +69,4 @@ cd hollow-hours   # or helper-buddy
 ./gradlew build   # the jar is in build/libs/
 ```
 Every push is built and tested on GitHub (a server and a client are started and screenshots are taken).
-Pushing a tag such as `v2.0.0` publishes a GitHub Release with the jars.
+Pushing a tag such as `v2.0.0` (or a branch such as `release/2.0.0`) publishes a GitHub Release with the jars.
