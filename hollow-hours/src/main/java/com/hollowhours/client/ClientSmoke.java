@@ -154,7 +154,9 @@ public final class ClientSmoke {
 
     private static void clearAll(ServerPlayer sp) {
         ServerLevel level = sp.serverLevel();
-        for (Entity en : level.getAllEntities()) {
+        List<Entity> all = new ArrayList<>();
+        for (Entity en : level.getAllEntities()) all.add(en); // discarding while iterating breaks the entity map
+        for (Entity en : all) {
             if (en instanceof GhostEntity || en instanceof StalkerEntity || en instanceof ClosetEntity) en.discard();
             // superflat slimes from before mob spawning was turned off would kill the player mid-tour
             else if (en instanceof net.minecraft.world.entity.monster.Enemy) en.discard();
