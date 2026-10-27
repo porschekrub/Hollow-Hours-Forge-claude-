@@ -343,6 +343,15 @@ public final class ClientSmoke {
         }
     }
 
+    private static String animName(GhostEntity g) {
+        try {
+            var c = g.getAnimatableInstanceCache().getManagerForId(g.getId()).getAnimationControllers().get("main");
+            return c == null || c.getCurrentAnimation() == null ? "none" : c.getCurrentAnimation().animation().name();
+        } catch (Throwable e) {
+            return "?";
+        }
+    }
+
     private static void killStep(Minecraft mc, GhostKind k, int kill) {
         final int[] deadAt = {-1};
         STEPS.add(t -> {
@@ -363,7 +372,14 @@ public final class ClientSmoke {
             String base = "kill_g" + k.n + "_" + (kill + 1);
             boolean dead = mc.player == null || !mc.player.isAlive() || mc.screen instanceof DeathScreen;
             if (deadAt[0] < 0 && dead) deadAt[0] = t;
-            if (deadAt[0] < 0 && t > 0 && t % 8 == 0) shot(base + "_t" + String.format("%03d", t));
+            if (deadAt[0] < 0 && t > 0 && t % 8 == 7) com.hollowhours.client.render.GhostRenderer.debugTag = base + "_t" + String.format("%03d", t + 1);
+            if (deadAt[0] < 0 && t > 0 && t % 8 == 0) {
+                GhostEntity kg = KillCam.ghost();
+                HollowHours.LOG.info("[killcam] {} phase {} track {} trackT {} jumpscare {} player {} vehicle {} anim {}", base + "_t" + String.format("%03d", t),
+                        KillCam.phase, KillCam.track, kg == null ? -1 : String.format("%.2f", kg.trackTime(0)), Jumpscare.active(), mc.player == null ? null : mc.player.position(),
+                        mc.player == null || mc.player.getVehicle() == null ? "none" : mc.player.getVehicle().getType().toShortString(), kg == null ? "-" : animName(kg));
+                shot(base + "_t" + String.format("%03d", t));
+            }
             if (deadAt[0] >= 0) {
                 int d = t - deadAt[0];
                 if (d == 10 || d == 40) shot(base + "_dead" + d);

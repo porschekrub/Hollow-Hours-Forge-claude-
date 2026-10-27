@@ -78,7 +78,9 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
 
     // CI diagnostics: which bones come close to the victim's eye during a kill
     static final boolean DEBUG = Boolean.getBoolean("hollowhours.clientsmoke");
-    static long debugFrame;
+    /** Set by the CI smoke test right before a screenshot: the next frame logs every cube near the camera. */
+    public static volatile String debugTag;
+    private boolean collecting;
     private String currentBone = "";
     private final StringBuilder debugLine = new StringBuilder();
 
@@ -86,9 +88,12 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     public void renderCube(PoseStack poseStack, software.bernie.geckolib.cache.object.GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay,
                            float red, float green, float blue, float alpha) {
         boolean skip = NearClip.touchesCamera(poseStack, cube, clipMargin);
-        if (DEBUG && com.hollowhours.client.KillCam.active() && debugFrame % 20 == 0) {
+        if (DEBUG && collecting) {
             float d = NearClip.distance(poseStack, cube);
-            if (d < 1.6f && debugLine.length() < 900) debugLine.append(currentBone).append('=').append(String.format("%.2f", d)).append(skip ? "x " : " ");
+            if (d < 2.5f && debugLine.length() < 3000) {
+                double sz = Math.max(cube.size().x, Math.max(cube.size().y, cube.size().z)) / 16.0;
+                debugLine.append(currentBone).append('=').append(String.format("%.2f/%.2f", d, sz)).append(skip ? "x " : " ");
+            }
         }
         if (skip) return;
         super.renderCube(poseStack, cube, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -98,12 +103,16 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
     public void actuallyRender(PoseStack poseStack, GhostEntity g, software.bernie.geckolib.cache.object.BakedGeoModel model, RenderType renderType,
                                MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay,
                                float red, float green, float blue, float alpha) {
+        String tag = debugTag;
+        collecting = DEBUG && !isReRender && tag != null;
+        if (collecting) debugLine.setLength(0);
         super.actuallyRender(poseStack, g, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-        if (DEBUG && !isReRender && com.hollowhours.client.KillCam.active()) {
-            if (debugFrame++ % 20 == 0) {
-                com.hollowhours.HollowHours.LOG.info("[killcam] ghost {} near bones: {}", g.kind.n, debugLine);
-                debugLine.setLength(0);
-            }
+        if (collecting) {
+            var cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            com.hollowhours.HollowHours.LOG.info("[killcam] {} ghost {} at {} cam {} dist {} cubes (dist/size): {}", tag, g.kind.n, g.position(), cam,
+                    String.format("%.2f", cam.distanceTo(g.position())), debugLine);
+            collecting = false;
+            debugTag = null;
         }
     }
 

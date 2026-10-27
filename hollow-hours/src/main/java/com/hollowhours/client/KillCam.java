@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 public final class KillCam {
     private KillCam() {}
 
-    static int ghostId = -1, kind, phase = -1, track = -1;
+    public static int ghostId = -1, kind, phase = -1, track = -1;
     static int nextEvent;
     static float lastT;
     static long startedAt, endedAt = -100000;
@@ -62,7 +62,7 @@ public final class KillCam {
         }
     }
 
-    static GhostEntity ghost() {
+    public static GhostEntity ghost() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || ghostId < 0) return null;
         Entity e = mc.level.getEntity(ghostId);
