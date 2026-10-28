@@ -18,6 +18,8 @@ import net.minecraft.util.Mth;
  * - mining / hitting: hands shaking on every swing
  * - badly hurt: limping, one hand pressed to the side
  * - grabbed by a ghost: kicking and clawing at the air
+ * - jumping: arms up to shield the head (before the story: arms thrown up for joy)
+ * - eating and drinking: the hand to the mouth, chewing / head tipped back
  * The first-person arm (drawn through this model with all-zero arguments) is left alone.
  */
 public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
@@ -51,8 +53,41 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
         if (p.isSleeping() || p.isFallFlying() || p.isVisuallySwimming() || swimAmount > 0 || p.isPassenger() || p.isSpectator()) return;
         if (!com.hollowhours.client.Atmos.haunted) {
             happy(p, swing, amount, t);
+            eatDrink(p, t);
             return;
         }
+        scared(p, swing, amount, t, f);
+        eatDrink(p, t);
+    }
+
+    /** In the air from a jump or a fall (not just stepping down a slab). */
+    static boolean airborne(AbstractClientPlayer p) {
+        return !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.onClimbable() && (p.getY() - p.yo > 0.02 || p.fallDistance > 0.4f);
+    }
+
+    /** Eating: the hand at the mouth, chewing. Drinking: the hand higher, head tipped back. */
+    void eatDrink(AbstractClientPlayer p, float t) {
+        if (!p.isUsingItem()) return;
+        var ua = p.getUseItem().getUseAnimation();
+        if (ua != net.minecraft.world.item.UseAnim.EAT && ua != net.minecraft.world.item.UseAnim.DRINK) return;
+        boolean right = (p.getUsedItemHand() == net.minecraft.world.InteractionHand.MAIN_HAND) == (p.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT);
+        ModelPart arm = right ? rightArm : leftArm;
+        float s = right ? 1 : -1;
+        if (ua == net.minecraft.world.item.UseAnim.DRINK) {
+            arm.xRot = -2.05f + Mth.sin(t * 0.5f) * 0.04f;
+            arm.yRot = -s * 0.5f;
+            arm.zRot = 0;
+            head.xRot = Math.min(head.xRot, 0) - 0.45f;
+        } else {
+            float chew = Mth.sin(t * 1.35f);
+            arm.xRot = -1.55f + chew * 0.08f;
+            arm.yRot = -s * 0.55f;
+            arm.zRot = 0;
+            head.xRot += chew * 0.06f + 0.1f;
+        }
+    }
+
+    void scared(AbstractClientPlayer p, float swing, float amount, float t, float f) {
         float seed = (p.getId() % 97) * 1.37f;
         boolean moving = amount > 0.08f;
         boolean sprint = p.isSprinting() && moving;
@@ -113,8 +148,8 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             rightLeg.xRot *= 1 - 0.25f * f;
             leftLeg.xRot *= 1 - 0.25f * f;
         } else if (!attack) {
-            // standing still: hugging yourself when it gets bad, breathing hard
-            float k = Mth.clamp((f - 0.3f) / 0.45f, 0, 1);
+            // standing still: hugging yourself, more tightly the worse it gets, breathing hard
+            float k = Math.max(0.85f, Mth.clamp((f - 0.3f) / 0.45f, 0, 1));
             k = k * k * (3 - 2 * k);
             float breath = Mth.sin(t * (0.12f + 0.3f * f)) * (0.03f + 0.06f * f);
             rightArm.xRot = Mth.lerp(k, rightArm.xRot, -0.95f) + breath;
@@ -125,6 +160,20 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             leftArm.zRot = Mth.lerp(k, leftArm.zRot, -0.12f);
             hunch(0.05f + 0.15f * k);
             head.xRot += 0.18f * k + breath * 0.5f;
+        }
+
+        // ---- jumping / falling: arms up over the head, knees pulled up
+        if (airborne(p)) {
+            float k = Mth.clamp(0.6f + f, 0, 1);
+            rightArm.xRot = Mth.lerp(k, rightArm.xRot, -2.45f);
+            leftArm.xRot = Mth.lerp(k, leftArm.xRot, -2.45f);
+            rightArm.yRot = Mth.lerp(k, rightArm.yRot, -0.45f);
+            leftArm.yRot = Mth.lerp(k, leftArm.yRot, 0.45f);
+            rightArm.zRot = Mth.lerp(k, rightArm.zRot, 0.25f);
+            leftArm.zRot = Mth.lerp(k, leftArm.zRot, -0.25f);
+            head.xRot += 0.3f * k;
+            rightLeg.xRot = -0.55f;
+            leftLeg.xRot = 0.25f;
         }
 
         // ---- mining / hitting with shaking hands
@@ -196,8 +245,24 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             rightArm.xRot -= 0.15f;
         }
         if (crouching) {
-            rightArm.zRot += 0.15f;
-            leftArm.zRot -= 0.15f;
+            // tiptoeing like a cartoon burglar
+            float tip = Mth.sin(swing * 0.6662f);
+            rightArm.xRot = -0.85f + tip * 0.25f;
+            leftArm.xRot = -0.85f - tip * 0.25f;
+            rightArm.zRot += 0.3f;
+            leftArm.zRot -= 0.3f;
+            head.zRot += Mth.sin(t * 0.3f) * 0.12f;
+        }
+        if (airborne(p)) {
+            // a jump for joy: arms up wide, legs kicked
+            rightArm.xRot = -2.85f;
+            leftArm.xRot = -2.85f;
+            rightArm.zRot = 0.5f;
+            leftArm.zRot = -0.5f;
+            rightArm.yRot = leftArm.yRot = 0;
+            rightLeg.xRot = -0.45f;
+            leftLeg.xRot = 0.6f;
+            head.xRot -= 0.15f;
         }
         if (hp < 0.35f && moving) {
             float k = 1 - hp / 0.35f;

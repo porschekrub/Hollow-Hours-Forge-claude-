@@ -1,8 +1,18 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.5.3.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.5.3.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.6.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.6.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.6.0 — body language**
+- **First person** (like the Actions & Stuff pack): your hands move with what you do — standing, walking, running, sneaking, jumping and landing.
+  มุมมองบุคคลที่ 1: มือขยับตามท่าทาง ยืน เดิน วิ่ง ย่อ กระโดด ลงพื้น
+- **Nights 1–2: carefree** — a bounce in every step, arms pumping, swaying to a tune, waving hello, arms thrown up when you jump; tiptoeing like a cartoon burglar when sneaking (third person).
+  คืน 1–2 ร่าเริงมาก เดินเด้ง แกว่งแขน โยกตามเพลง โบกมือ กระโดดชูมือ ย่อแบบย่องเหมือนการ์ตูน
+- **From night 3: scared** — hands pulled in and trembling, flinching at nothing, flailing when you run, shielding your face when you jump, and **hugging yourself** when you stand still (first and third person).
+  ตั้งแต่คืนที่ 3 กลัว มือสั่น สะดุ้ง วิ่งแขนแกว่งมั่ว กระโดดเอามือบังหน้า ยืนนิ่งๆ เอามือกอดอก
+- **Eating and drinking** animations (first and third person): hand to the mouth and chewing, tipping the bottle up and the head back; scooping river water with your hand.
+  แอนิเมชันกินและดื่ม: ยกมือเข้าปาก เคี้ยว ยกขวดดื่ม เงยหน้า วักน้ำจากแม่น้ำ
 
 **2.5.3**
 - Thirst now works like hunger: it goes down with what you do (running, jumping, fighting, mining, healing), **10% faster than the hunger bar**, and drinks give hidden hydration (like food saturation). Standing still doesn't make you thirsty.

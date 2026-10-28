@@ -257,6 +257,7 @@ public final class ClientSmoke {
                 return false;
             });
         }
+        bodyLanguage(mc, false);
         STEPS.add(t -> {
             if (t == 0) {
                 lookAt = origin.add(0, 1.6, 12);
@@ -401,6 +402,8 @@ public final class ClientSmoke {
                 return false;
             });
         }
+
+        bodyLanguage(mc, true);
 
         // the atmosphere: the shader at night, fog by day and by night, the blood moon (no night vision)
         STEPS.add(t -> {
@@ -623,6 +626,92 @@ public final class ClientSmoke {
         for (GhostKind k : GhostKind.values()) {
             int kills = Math.max(1, KillTracks.killsFor(k.n).size());
             for (int i = 0; i < kills; i++) killStep(mc, k, i);
+        }
+    }
+
+    // ------------------------------------------------------------------ first-person body language
+    private static void keys(Minecraft mc, boolean up, boolean sprint, boolean sneak) {
+        mc.options.keyUp.setDown(up);
+        mc.options.keySprint.setDown(sprint);
+        mc.options.keyShift.setDown(sneak);
+        if (mc.player != null) mc.player.setSprinting(sprint);
+    }
+
+    /** Hands in first person (and the body in third person) while standing, walking, running, sneaking, jumping, eating, drinking. */
+    private static void bodyLanguage(Minecraft mc, boolean scared) {
+        String tag = scared ? "scared" : "happy";
+        record Move(String name, boolean up, boolean sprint, boolean sneak, boolean jump, int[] shots) {}
+        Move[] moves = {
+                new Move("idle", false, false, false, false, new int[] {20, 30}),
+                new Move("walk", true, false, false, false, new int[] {18, 23}),
+                new Move("run", true, true, false, false, new int[] {18, 22}),
+                new Move("sneak", true, false, true, false, new int[] {20, 26}),
+                new Move("jump", false, false, false, true, new int[] {13, 18, 24})};
+        for (Move mv : moves) {
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    lookAt = origin.add(0, 1.6, 30);
+                    Fear.force = scared ? 0.6f : -1;
+                    server(sp -> {
+                        clearAll(sp);
+                        pin(sp);
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+                    });
+                }
+                if (t == 4) keys(mc, mv.up(), mv.sprint(), mv.sneak());
+                if (mv.jump() && t == 10 && mc.player != null) mc.player.jumpFromGround();
+                for (int i = 0; i < mv.shots().length; i++) if (t == mv.shots()[i]) shot("fp_" + tag + "_" + mv.name() + "_" + (char) ('a' + i));
+                if (t >= 32) {
+                    keys(mc, false, false, false);
+                    return true;
+                }
+                return false;
+            });
+        }
+        // scared and standing with empty hands for a while: hugging yourself
+        if (scared) STEPS.add(t -> {
+            if (t == 0) {
+                FirstPersonAnim.forceHug = true;
+                server(ClientSmoke::pin);
+            }
+            if (t == 30 || t == 36) shot("fp_scared_hug_" + (t == 30 ? "a" : "b"));
+            if (t == 38) FirstPersonAnim.forceHug = false;
+            return t >= 40;
+        });
+        // eating bread, drinking from the canteen, scooping river water - first person, then the same from the front
+        for (int view = 0; view < 2; view++) {
+            final boolean third = view == 1;
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(third ? net.minecraft.client.CameraType.THIRD_PERSON_FRONT : net.minecraft.client.CameraType.FIRST_PERSON);
+                    server(sp -> {
+                        pin(sp);
+                        sp.getFoodData().setFoodLevel(10);
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BREAD, 4));
+                    });
+                }
+                if (t == 6) mc.options.keyUse.setDown(true);
+                if (t == 18) shot((third ? "tp_" : "fp_") + tag + "_eat");
+                if (t == 20) mc.options.keyUse.setDown(false);
+                if (t == 24) server(sp -> sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+                        new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.CANTEEN.get())));
+                if (t == 30) mc.options.keyUse.setDown(true);
+                if (t == 44) shot((third ? "tp_" : "fp_") + tag + "_drink");
+                if (t == 46) mc.options.keyUse.setDown(false);
+                if (t == 50) server(sp -> sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY));
+                if (!third && t == 54) FirstPersonAnim.startSip();
+                if (!third && (t == 58 || t == 66)) shot("fp_" + tag + "_sip_" + (t == 58 ? "a" : "b"));
+                if (third && t == 54 && mc.player != null) mc.player.jumpFromGround();
+                if (third && t == 58) shot("tp_" + tag + "_jump");
+                if (t >= 72) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    Fear.force = -1;
+                    return true;
+                }
+                return false;
+            });
         }
     }
 

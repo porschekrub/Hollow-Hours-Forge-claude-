@@ -31,6 +31,7 @@ public final class ClientEvents {
         Atmos.tick();
         Fear.tick();
         PhoneAlert.tick();
+        FirstPersonAnim.tick();
         Jumpscare.tick();
         KillCam.tick();
         HorrorMusic.tick();
@@ -111,6 +112,7 @@ public final class ClientEvents {
         if (hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) return;
         if (!mc.level.getFluidState(hit.getBlockPos()).is(net.minecraft.tags.FluidTags.WATER)) return;
         lastSip = mc.level.getGameTime();
+        FirstPersonAnim.startSip();
         com.hollowhours.net.HHNet.toServer(new com.hollowhours.net.C2SPhone(com.hollowhours.net.C2SPhone.SIP));
         e.setSwingHand(true);
         e.setCanceled(true);
@@ -126,8 +128,6 @@ public final class ClientEvents {
         }
     }
 
-    private static int handFrame = -1;
-
     @SubscribeEvent
     public static void hand(RenderHandEvent e) {
         if (KillCam.active() || Jumpscare.active()) {
@@ -138,22 +138,8 @@ public final class ClientEvents {
             e.setCanceled(true);
             return;
         }
-        // shaking hands: once per frame (both hands share the pose)
-        if (handFrame == Atmos.frame) return;
-        handFrame = Atmos.frame;
-        float sway = (float) (double) com.hollowhours.config.HHClientConfig.CAMERA_SWAY.get();
-        if (sway <= 0 || !com.hollowhours.config.HHClientConfig.PLAYER_ANIMS.get()) return;
-        float partial = e.getPartialTick();
-        float f = Fear.local(partial) * sway;
-        // after the story starts every swing comes with shaking, paranoid hands
-        Minecraft mcc = Minecraft.getInstance();
-        if (Atmos.haunted && mcc.player != null && mcc.player.swinging) f = Math.max(f, 0.45f * sway);
-        if (f < 0.02f) return;
-        float t = ClientFx.now() + partial;
-        float a = 0.0015f + 0.011f * f;
-        var ps = e.getPoseStack();
-        ps.translate((Mth.sin(t * 2.9f) * 0.6f + Mth.sin(t * 5.3f) * 0.4f) * a, (Mth.sin(t * 3.7f) * 0.6f + Mth.sin(t * 4.1f) * 0.4f) * a - 0.025f * f * f, 0);
-        ps.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(Mth.sin(t * 2.3f) * 0.9f * f));
+        // the hands' body language: carefree before the story, scared after (and eating, drinking, sipping)
+        if (FirstPersonAnim.render(e)) e.setCanceled(true);
     }
 
     @SubscribeEvent
