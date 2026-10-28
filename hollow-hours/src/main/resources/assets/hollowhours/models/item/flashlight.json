@@ -1,14 +1,432 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "hollowhours:item/flashlight"
-  },
-  "overrides": [
-    {
-      "predicate": {
-        "hollowhours:on": 1
-      },
-      "model": "hollowhours:item/flashlight_on"
+ "textures": {
+  "t": "hollowhours:item/flashlight_3d",
+  "particle": "hollowhours:item/flashlight_3d"
+ },
+ "elements": [
+  {
+   "from": [
+    6.5,
+    6.5,
+    3.5
+   ],
+   "to": [
+    9.5,
+    9.5,
+    14
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      3,
+      3
+     ],
+     "texture": "#t"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      3,
+      3
+     ],
+     "texture": "#t"
+    },
+    "east": {
+     "uv": [
+      0,
+      0,
+      8,
+      8
+     ],
+     "texture": "#t"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      8,
+      8
+     ],
+     "texture": "#t"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      8,
+      8
+     ],
+     "texture": "#t"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      8,
+      8
+     ],
+     "texture": "#t"
     }
-  ]
+   }
+  },
+  {
+   "from": [
+    5.5,
+    5.5,
+    0.5
+   ],
+   "to": [
+    10.5,
+    10.5,
+    3.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8,
+      0,
+      12,
+      4
+     ],
+     "texture": "#t"
+    },
+    "south": {
+     "uv": [
+      8,
+      0,
+      12,
+      4
+     ],
+     "texture": "#t"
+    },
+    "east": {
+     "uv": [
+      4,
+      8,
+      8,
+      12
+     ],
+     "texture": "#t"
+    },
+    "west": {
+     "uv": [
+      4,
+      8,
+      8,
+      12
+     ],
+     "texture": "#t"
+    },
+    "up": {
+     "uv": [
+      4,
+      8,
+      8,
+      12
+     ],
+     "texture": "#t"
+    },
+    "down": {
+     "uv": [
+      4,
+      8,
+      8,
+      12
+     ],
+     "texture": "#t"
+    }
+   }
+  },
+  {
+   "from": [
+    6,
+    6,
+    0.3
+   ],
+   "to": [
+    10,
+    10,
+    0.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      12,
+      0,
+      16,
+      4
+     ],
+     "texture": "#t"
+    }
+   }
+  },
+  {
+   "from": [
+    7.5,
+    9.5,
+    6
+   ],
+   "to": [
+    8.5,
+    10.2,
+    8.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    },
+    "south": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    },
+    "east": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    },
+    "west": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    },
+    "up": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    },
+    "down": {
+     "uv": [
+      8,
+      4,
+      10,
+      6
+     ],
+     "texture": "#t"
+    }
+   }
+  },
+  {
+   "from": [
+    6.25,
+    6.25,
+    14
+   ],
+   "to": [
+    9.75,
+    9.75,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    },
+    "south": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    },
+    "east": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    },
+    "west": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    },
+    "up": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    },
+    "down": {
+     "uv": [
+      0,
+      8,
+      4,
+      12
+     ],
+     "texture": "#t"
+    }
+   }
+  }
+ ],
+ "display": {
+  "firstperson_righthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    1.0,
+    2.5,
+    -2.5
+   ],
+   "scale": [
+    0.85,
+    0.85,
+    0.85
+   ]
+  },
+  "firstperson_lefthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    1.0,
+    2.5,
+    -2.5
+   ],
+   "scale": [
+    0.85,
+    0.85,
+    0.85
+   ]
+  },
+  "thirdperson_righthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    -0.5
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "thirdperson_lefthand": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2.5,
+    -0.5
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.6
+   ]
+  },
+  "gui": {
+   "rotation": [
+    30,
+    135,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.95,
+    0.95,
+    0.95
+   ]
+  },
+  "ground": {
+   "rotation": [
+    0,
+    0,
+    0
+   ],
+   "translation": [
+    0,
+    2,
+    0
+   ],
+   "scale": [
+    0.5,
+    0.5,
+    0.5
+   ]
+  },
+  "fixed": {
+   "rotation": [
+    0,
+    90,
+    0
+   ],
+   "translation": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.8,
+    0.8,
+    0.8
+   ]
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "hollowhours:on": 1
+   },
+   "model": "hollowhours:item/flashlight_on"
+  }
+ ]
 }

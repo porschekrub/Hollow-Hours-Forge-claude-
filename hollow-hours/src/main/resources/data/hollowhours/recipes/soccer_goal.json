@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  "III",
+  "S S",
+  "I I"
+ ],
+ "key": {
+  "I": {
+   "item": "minecraft:iron_ingot"
+  },
+  "S": {
+   "item": "minecraft:string"
+  }
+ },
+ "result": {
+  "item": "hollowhours:soccer_goal",
+  "count": 1
+ }
+}

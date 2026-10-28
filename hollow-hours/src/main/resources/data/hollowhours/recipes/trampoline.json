@@ -1,0 +1,23 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  "WWW",
+  "ISI"
+ ],
+ "key": {
+  "W": {
+   "tag": "minecraft:wool"
+  },
+  "I": {
+   "item": "minecraft:iron_ingot"
+  },
+  "S": {
+   "item": "minecraft:slime_ball"
+  }
+ },
+ "result": {
+  "item": "hollowhours:trampoline",
+  "count": 1
+ }
+}

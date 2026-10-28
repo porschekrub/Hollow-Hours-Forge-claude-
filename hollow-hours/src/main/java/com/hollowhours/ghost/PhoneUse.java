@@ -12,15 +12,17 @@ import java.util.UUID;
 
 /**
  * Phone screen time, from the client's phone screen: while it is open the battery drains (faster while gaming, and
- * faster the more worn the battery is), and a game calms you down (sanity).
+ * faster the more worn the battery is), and a game calms you down (sanity). The arcade machine runs the same games
+ * without a battery, as long as you stand at it.
  */
 public final class PhoneUse {
     private PhoneUse() {}
 
-    public static final int OPEN = 0, CLOSE = 1, GAME = 2, BEAT = 3;
+    public static final int OPEN = 0, CLOSE = 1, GAME = 2, BEAT = 3, ARCADE = 4, ARCADE_GAME = 5;
 
     private static final class Use {
         long beat, game;
+        boolean arcade;
     }
 
     private static final Map<UUID, Use> USE = new HashMap<>();
@@ -33,7 +35,8 @@ public final class PhoneUse {
         }
         Use u = USE.computeIfAbsent(p.getUUID(), k -> new Use());
         u.beat = now;
-        if (action == GAME) u.game = now;
+        u.arcade = action == ARCADE || action == ARCADE_GAME;
+        if (action == GAME || action == ARCADE_GAME) u.game = now;
     }
 
     public static boolean using(ServerPlayer p) {
@@ -51,14 +54,25 @@ public final class PhoneUse {
                 it.remove();
                 continue;
             }
+            boolean gaming = now - u.game < 45;
+            if (u.arcade) {
+                if (gaming && nearArcade(p)) Sanity.add(p, 0.75f);
+                continue;
+            }
             ItemStack phone = PhoneItem.find(p, true);
             if (phone == null) continue;
-            boolean gaming = now - u.game < 45;
             float drain = (0.15f + (gaming ? 0.45f : 0)) * PhoneItem.drainMult(phone);
             PhoneItem.setBattery(phone, PhoneItem.battery(phone) - drain);
             PhoneItem.addWear(phone, 1 / 60f);
             if (gaming) Sanity.add(p, 0.6f);
         }
+    }
+
+    static boolean nearArcade(ServerPlayer p) {
+        net.minecraft.world.level.block.Block arcade = com.hollowhours.registry.HHBlocks.ARCADE.get();
+        for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(p.blockPosition().offset(-4, -2, -4), p.blockPosition().offset(4, 3, 4)))
+            if (p.level().getBlockState(b).is(arcade)) return true;
+        return false;
     }
 
     public static void forget(ServerPlayer p) {

@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  "L  ",
+  "LI ",
+  "LII"
+ ],
+ "key": {
+  "L": {
+   "item": "minecraft:ladder"
+  },
+  "I": {
+   "item": "minecraft:iron_ingot"
+  }
+ },
+ "result": {
+  "item": "hollowhours:slide",
+  "count": 1
+ }
+}

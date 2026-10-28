@@ -102,7 +102,7 @@ public final class Sanity {
 
     private static final java.util.Map<java.util.UUID, Float> cozyCache = new java.util.HashMap<>();
 
-    /** Music playing nearby, a lit campfire: 0..0.2 per second. */
+    /** Music playing nearby, a TV that's on, a lit campfire: 0..0.2 per second. */
     static float cozy(ServerLevel level, BlockPos at) {
         float c = 0;
         int cx = at.getX() >> 4, cz = at.getZ() >> 4;
@@ -113,6 +113,8 @@ public final class Sanity {
                 for (BlockEntity be : ch.getBlockEntities().values()) {
                     if (be.getBlockPos().distSqr(at) > 16 * 16) continue;
                     if (be instanceof JukeboxBlockEntity jb && !jb.getFirstItem().isEmpty()) c = Math.max(c, 0.15f);
+                    else if (be instanceof com.hollowhours.fun.FunBlocks.TvBlockEntity && be.getBlockState().getValue(com.hollowhours.fun.FunBlocks.LIT)
+                            && be.getBlockPos().distSqr(at) < 8 * 8) c = Math.max(c, 0.2f);
                     else if (be.getBlockState().is(Blocks.CAMPFIRE) && be.getBlockState().getValue(CampfireBlock.LIT) && be.getBlockPos().distSqr(at) < 25) c = Math.max(c, 0.08f);
                 }
             }

@@ -9,14 +9,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -24,11 +27,15 @@ import java.util.List;
 /**
  * The phone (right-click it). The world keeps going while you look at it. Apps: messages, Snake, Ghost Tap (games
  * calm you down but eat the battery), and health (sanity, thirst, battery health, the day).
+ * The arcade machine opens the same games on its own screen: no battery, and a bit more fun.
  */
 public class PhoneScreen extends Screen {
     enum App { HOME, MESSAGES, SNAKE, TAP, HEALTH }
 
     final InteractionHand hand;
+    /** the arcade machine being played, or null for the phone */
+    @Nullable
+    final BlockPos arcade;
     App app = App.HOME;
     int ticks;
     final RandomSource rng = RandomSource.create();
@@ -40,9 +47,18 @@ public class PhoneScreen extends Screen {
         Minecraft.getInstance().setScreen(new PhoneScreen(hand));
     }
 
+    public static void openArcade(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new PhoneScreen(InteractionHand.MAIN_HAND, pos));
+    }
+
     PhoneScreen(InteractionHand hand) {
-        super(Component.translatable("item.hollowhours.phone"));
+        this(hand, null);
+    }
+
+    PhoneScreen(InteractionHand hand, @Nullable BlockPos arcade) {
+        super(Component.translatable(arcade == null ? "item.hollowhours.phone" : "block.hollowhours.arcade"));
         this.hand = hand;
+        this.arcade = arcade;
     }
 
     ItemStack phone() {
@@ -53,12 +69,12 @@ public class PhoneScreen extends Screen {
     }
 
     boolean dead() {
-        return PhoneItem.battery(phone()) <= 0;
+        return arcade == null && PhoneItem.battery(phone()) <= 0;
     }
 
     @Override
     protected void init() {
-        HHNet.toServer(new C2SPhone(PhoneUse.OPEN));
+        HHNet.toServer(new C2SPhone(arcade == null ? PhoneUse.OPEN : PhoneUse.ARCADE));
         Minecraft.getInstance().getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                 com.hollowhours.registry.HHSounds.get("phone.click"), 1.1f, 0.6f));
     }
@@ -76,7 +92,8 @@ public class PhoneScreen extends Screen {
     @Override
     public void tick() {
         ticks++;
-        if (phone().isEmpty()) {
+        Minecraft mc = Minecraft.getInstance();
+        if (arcade == null ? phone().isEmpty() : mc.player == null || mc.player.distanceToSqr(Vec3.atCenterOf(arcade)) > 36) {
             onClose();
             return;
         }
@@ -85,7 +102,7 @@ public class PhoneScreen extends Screen {
             if (app != App.HOME) app = App.HOME;
             gaming = false;
         }
-        if (ticks % 20 == 0) HHNet.toServer(new C2SPhone(gaming ? PhoneUse.GAME : PhoneUse.BEAT));
+        if (ticks % 20 == 0) HHNet.toServer(new C2SPhone(arcade != null ? (gaming ? PhoneUse.ARCADE_GAME : PhoneUse.ARCADE) : gaming ? PhoneUse.GAME : PhoneUse.BEAT));
         if (app == App.SNAKE) snakeTick();
         if (app == App.TAP) tapTick();
     }
@@ -99,11 +116,41 @@ public class PhoneScreen extends Screen {
         g.fill(x + w / 2 - 14, y + h - 7, x + w / 2 + 14, y + h - 5, 0xFF505058);
     }
 
+    /** The arcade cabinet around the screen: purple side art, marquee on top, buttons below. */
+    void drawCabinet(GuiGraphics g, Font f, int x, int y, int w, int h) {
+        g.fill(x - 8, y - 22, x + w + 8, y + h + 30, 0xFF2A1240);
+        g.fill(x - 6, y - 20, x + w + 6, y - 4, 0xFF120818);
+        int glow = (ticks / 10) % 2 == 0 ? 0xFFFFD040 : 0xFFFF7AD8;
+        g.drawCenteredString(f, Component.translatable("block.hollowhours.arcade"), x + w / 2, y - 16, glow);
+        g.fill(x - 1, y - 1, x + w + 1, y + h + 1, 0xFF6A3A9A);
+        g.fill(x, y, x + w, y + h, 0xFF000000);
+        int by = y + h + 10;
+        g.fill(x + 10, by + 4, x + 14, by + 16, 0xFF202020);
+        g.fill(x + 7, by, x + 17, by + 6, 0xFFD02020);
+        for (int i = 0; i < 3; i++) g.fill(x + w - 40 + i * 12, by + 4, x + w - 32 + i * 12, by + 12, new int[] {0xFF30C0FF, 0xFFFFD040, 0xFF40E060}[i]);
+    }
+
     @Override
     public void render(GuiGraphics g, int mx, int my, float partial) {
         renderBackground(g);
         Minecraft mc = Minecraft.getInstance();
         Font f = mc.font;
+        if (arcade != null) {
+            int ah = Math.min(220, height - 70), aw = Math.round(ah * 0.8f);
+            sx = width / 2 - aw / 2;
+            sy = height / 2 - ah / 2 + 4;
+            sw = aw;
+            sh = ah;
+            drawCabinet(g, f, sx, sy, sw, sh);
+            g.fillGradient(sx, sy, sx + sw, sy + sh, 0xFF14082A, 0xFF050210);
+            int top = sy + 2;
+            switch (app) {
+                case SNAKE -> renderSnake(g, f, top);
+                case TAP -> renderTap(g, f, top, partial);
+                default -> renderHome(g, f, mx, my, top);
+            }
+            return;
+        }
         int ph = Math.min(300, height - 16), pw = Math.round(ph * 0.56f);
         int px = width / 2 - pw / 2, py = height / 2 - ph / 2;
         drawBody(g, px, py, pw, ph);
@@ -157,9 +204,29 @@ public class PhoneScreen extends Screen {
         return mc.level == null ? 1 : mc.level.getDayTime() / 24000 + 1;
     }
 
-    static final App[] ICONS = {App.MESSAGES, App.SNAKE, App.TAP, App.HEALTH};
-    static final int[] ICON_COL = {0xFF35C759, 0xFF2FA84F, 0xFF7A3FD1, 0xFFE0425A};
-    static final String[] ICON_KEY = {"messages", "snake", "tap", "health"};
+    static final App[] ICONS = {App.MESSAGES, App.SNAKE, App.TAP, App.HEALTH}, ARCADE_ICONS = {App.SNAKE, App.TAP};
+
+    App[] icons() {
+        return arcade == null ? ICONS : ARCADE_ICONS;
+    }
+
+    static int iconColor(App a) {
+        return switch (a) {
+            case MESSAGES -> 0xFF35C759;
+            case SNAKE -> 0xFF2FA84F;
+            case TAP -> 0xFF7A3FD1;
+            default -> 0xFFE0425A;
+        };
+    }
+
+    static String iconGlyph(App a) {
+        return switch (a) {
+            case MESSAGES -> "✉";
+            case SNAKE -> "§";
+            case TAP -> "☠";
+            default -> "♥";
+        };
+    }
 
     int[] iconRect(int i, int top) {
         int size = Math.min(34, (sw - 30) / 2), gap = (sw - size * 2) / 3;
@@ -169,31 +236,29 @@ public class PhoneScreen extends Screen {
     }
 
     void renderHome(GuiGraphics g, Font f, int mx, int my, int top) {
-        String big = clock();
+        String big = arcade != null ? Component.translatable("hollowhours.arcade.play").getString() : clock();
         g.pose().pushPose();
         g.pose().translate(sx + sw / 2f, top + 6, 0);
         g.pose().scale(2, 2, 1);
         g.drawString(f, big, -f.width(big) / 2, 0, 0xFFFFFFFF, false);
         g.pose().popPose();
-        g.drawCenteredString(f, Component.translatable("hollowhours.phone.day", day()), sx + sw / 2, top + 26, 0xFFB0C0E0);
-        for (int i = 0; i < ICONS.length; i++) {
+        Component sub = arcade != null ? Component.translatable("hollowhours.arcade.free") : Component.translatable("hollowhours.phone.day", day());
+        g.drawCenteredString(f, sub, sx + sw / 2, top + 26, 0xFFB0C0E0);
+        App[] icons = icons();
+        for (int i = 0; i < icons.length; i++) {
             int[] r = iconRect(i, top);
             boolean hover = mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[2];
-            g.fill(r[0], r[1], r[0] + r[2], r[1] + r[2], hover ? brighten(ICON_COL[i]) : ICON_COL[i]);
-            String glyph = switch (i) {
-                case 0 -> "✉";
-                case 1 -> "§";
-                case 2 -> "☠";
-                default -> "♥";
-            };
+            int col = iconColor(icons[i]);
+            g.fill(r[0], r[1], r[0] + r[2], r[1] + r[2], hover ? brighten(col) : col);
+            String glyph = iconGlyph(icons[i]);
             g.pose().pushPose();
             g.pose().translate(r[0] + r[2] / 2f, r[1] + r[2] / 2f - 6, 0);
             g.pose().scale(1.6f, 1.6f, 1);
             g.drawString(f, glyph, -f.width(glyph) / 2, 0, 0xFFFFFFFF, false);
             g.pose().popPose();
-            Component name = Component.translatable("hollowhours.phone.app." + ICON_KEY[i]);
+            Component name = Component.translatable("hollowhours.phone.app." + icons[i].name().toLowerCase(java.util.Locale.ROOT));
             g.drawCenteredString(f, name, r[0] + r[2] / 2, r[1] + r[2] + 3, 0xFFFFFFFF);
-            if (i == 0 && unread()) g.fill(r[0] + r[2] - 6, r[1] - 2, r[0] + r[2] + 2, r[1] + 6, 0xFFFF3030);
+            if (icons[i] == App.MESSAGES && unread()) g.fill(r[0] + r[2] - 6, r[1] - 2, r[0] + r[2] + 2, r[1] + 6, 0xFFFF3030);
         }
     }
 
@@ -393,17 +458,18 @@ public class PhoneScreen extends Screen {
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
         if (dead()) return super.mouseClicked(mx, my, button);
-        int top = sy + 13;
+        int top = arcade != null ? sy + 2 : sy + 13;
         if (app != App.HOME && my >= top && my < top + 14 && mx < sx + 30) {
             app = App.HOME;
             sound("phone.click", 1.0f);
             return true;
         }
         if (app == App.HOME) {
-            for (int i = 0; i < ICONS.length; i++) {
+            App[] icons = icons();
+            for (int i = 0; i < icons.length; i++) {
                 int[] r = iconRect(i, top);
                 if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[2]) {
-                    app = ICONS[i];
+                    app = icons[i];
                     sound("phone.click", 1.2f);
                     if (app == App.SNAKE) snakeAlive = false;
                     if (app == App.TAP) tapLeft = 0;

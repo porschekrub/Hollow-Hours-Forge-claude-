@@ -1,0 +1,21 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "category": "misc",
+ "ingredients": [
+  {
+   "item": "minecraft:leather"
+  },
+  {
+   "item": "minecraft:white_dye"
+  },
+  {
+   "item": "minecraft:black_dye"
+  },
+  {
+   "item": "minecraft:slime_ball"
+  }
+ ],
+ "result": {
+  "item": "hollowhours:soccer_ball"
+ }
+}

@@ -31,7 +31,8 @@ public final class HHConfig {
     public static final ForgeConfigSpec.DoubleValue BLOOD_MOON_CHANCE, BLOOD_SPAWN_MULT, BLOOD_DAMAGE_MULT, BLOOD_SPEED_MULT, BLOOD_DOUBLE_CHANCE, FOG_CHANCE;
     public static final ForgeConfigSpec.BooleanValue FOG_ENABLED;
     public static final ForgeConfigSpec.IntValue START_NIGHT;
-    public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD;
+    public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD, TREE_FELLING, EXPLOSION_DEBRIS;
+    public static final ForgeConfigSpec.IntValue VEIN_MINING;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
 
@@ -79,6 +80,13 @@ public final class HHConfig {
         THIRST = b.comment("Thirst: drink water (bottles, or sneak + right-click water with an empty hand)").define("thirst", true);
         SANITY = b.comment("Sanity: drains in the dark, near ghosts and when they jump at you; play, sleep and stay with friends to keep it").define("sanity", true);
         BLOOD = b.comment("Blood: hits make every creature bleed in its own colour, badly hurt creatures drip").define("blood", true);
+        b.pop();
+
+        b.comment("Physics").push("physics");
+        TREE_FELLING = b.comment("Chop one log and the whole tree falls over (sneak to break a single log)").define("treeFelling", true);
+        VEIN_MINING = b.comment("Mine one ore and up to this many touching ores of the same kind break with it (sneak = just one; 1 = off)")
+                .defineInRange("veinMiningMax", 64, 1, 512);
+        EXPLOSION_DEBRIS = b.comment("Explosions throw blocks through the air (they land as rubble)").define("explosionDebris", true);
         b.pop();
 
         b.comment("Blood moon nights and rolling fog").push("atmosphere");

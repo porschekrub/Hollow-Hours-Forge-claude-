@@ -61,6 +61,10 @@ public final class ClientPackets {
         BloodParticle.spawn(m);
     }
 
+    public static void anim(com.hollowhours.net.S2CAnim m) {
+        if (m.kind() == com.hollowhours.net.S2CAnim.RELOAD) ReloadAnim.start();
+    }
+
     public static void phoneAlert(com.hollowhours.net.S2CPhoneAlert m) {
         PhoneAlert.start(m.phone());
     }

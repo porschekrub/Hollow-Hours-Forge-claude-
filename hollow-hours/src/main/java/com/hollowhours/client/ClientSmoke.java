@@ -513,10 +513,12 @@ public final class ClientSmoke {
         STEPS.add(t -> {
             if (t == 0) {
                 lookAt = origin.add(0, 0.6, 4);
+                BloodParticle.made = 0;
                 server(sp -> {
                     clearAll(sp);
                     pin(sp);
                     var l = sp.serverLevel();
+                    l.setDayTime(6000);
                     net.minecraft.world.entity.EntityType<?>[] types = {net.minecraft.world.entity.EntityType.PIG, net.minecraft.world.entity.EntityType.ZOMBIE,
                             net.minecraft.world.entity.EntityType.CREEPER, net.minecraft.world.entity.EntityType.SKELETON, net.minecraft.world.entity.EntityType.ENDERMAN};
                     for (int i = 0; i < types.length; i++) {
@@ -537,9 +539,18 @@ public final class ClientSmoke {
             });
             if (t == 9) shot("blood_spray");
             if (t == 60) shot("blood_splats");
-            if (t == 62) server(ClientSmoke::clearAll);
+            if (t == 62) {
+                HollowHours.LOG.info("[client smoke] blood drops made: {}", BloodParticle.made);
+                if (BloodParticle.made == 0) HollowHours.LOG.error("[client smoke] no blood particles arrived (com.hollowhours)");
+                server(sp -> {
+                    clearAll(sp);
+                    sp.serverLevel().setDayTime(18000);
+                });
+            }
             return t >= 64;
         });
+
+        physicsAndFun(mc);
 
         // jumpscares (no night vision: as dark as in the game)
         STEPS.add(t -> {
@@ -595,6 +606,339 @@ public final class ClientSmoke {
             int kills = Math.max(1, KillTracks.killsFor(k.n).size());
             for (int i = 0; i < kills; i++) killStep(mc, k, i);
         }
+    }
+
+    // ------------------------------------------------------------------ physics, the 3D flashlight, the playground
+    /** Everything the tour put down around the start: blocks above the ground, items, balls, debris, the swing seat. */
+    private static void clearArea(ServerPlayer sp) {
+        clearAll(sp);
+        ServerLevel l = sp.serverLevel();
+        net.minecraft.core.BlockPos o = net.minecraft.core.BlockPos.containing(origin);
+        for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(o.offset(-14, 0, -6), o.offset(14, 14, 20)))
+            if (!l.getBlockState(b).isAir()) l.setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2 | 16);
+        List<Entity> all = new ArrayList<>();
+        for (Entity en : l.getAllEntities()) all.add(en);
+        for (Entity en : all)
+            if (en instanceof net.minecraft.world.entity.item.ItemEntity || en instanceof net.minecraft.world.entity.ExperienceOrb
+                    || en instanceof net.minecraft.world.entity.item.FallingBlockEntity || en instanceof com.hollowhours.fun.BallEntity
+                    || en instanceof com.hollowhours.physics.FallingTreeEntity || en instanceof net.minecraft.world.entity.item.PrimedTnt)
+                en.discard();
+        if (sp.isPassenger()) sp.stopRiding();
+    }
+
+    private static net.minecraft.core.BlockPos at(double dx, double dy, double dz) {
+        return net.minecraft.core.BlockPos.containing(origin.add(dx, dy, dz));
+    }
+
+    private static void give(ServerPlayer sp, net.minecraft.world.item.Item main, net.minecraft.world.item.Item off) {
+        sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, main == null ? net.minecraft.world.item.ItemStack.EMPTY : new net.minecraft.world.item.ItemStack(main));
+        sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, off == null ? net.minecraft.world.item.ItemStack.EMPTY : new net.minecraft.world.item.ItemStack(off));
+    }
+
+    private static void physicsAndFun(Minecraft mc) {
+        // daylight + night vision: these are about seeing how things move
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                clearArea(sp);
+                pin(sp);
+                sp.serverLevel().setDayTime(6000);
+                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
+            });
+            return t >= 10;
+        });
+        // a tree, chopped from its west side: it tips over to the east, seen from the south
+        final net.minecraft.core.BlockPos[] stump = {null};
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(2, 3, 9);
+                server(sp -> {
+                    ServerLevel l = sp.serverLevel();
+                    net.minecraft.core.BlockPos base = at(0, 0, 9);
+                    stump[0] = base;
+                    var reg = l.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.CONFIGURED_FEATURE);
+                    boolean grown = reg.getHolder(net.minecraft.data.worldgen.features.TreeFeatures.OAK)
+                            .map(h -> h.value().place(l, l.getChunkSource().getGenerator(), l.random, base)).orElse(false);
+                    if (!grown) {
+                        for (int y = 0; y < 5; y++) l.setBlock(base.above(y), net.minecraft.world.level.block.Blocks.OAK_LOG.defaultBlockState(), 3);
+                        for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(base.offset(-2, 3, -2), base.offset(2, 6, 2)))
+                            if (l.getBlockState(b).isAir()) l.setBlock(b, net.minecraft.world.level.block.Blocks.OAK_LEAVES.defaultBlockState(), 3);
+                    }
+                    HollowHours.LOG.info("[client smoke] tree at {} (feature: {})", base, grown);
+                });
+            }
+            if (t == 20) shot("tree_standing");
+            if (t == 22) server(sp -> {
+                sp.teleportTo(stump[0].getX() - 1.5 + 0.5, origin.y, stump[0].getZ() + 0.5);
+                give(sp, net.minecraft.world.item.Items.DIAMOND_AXE, null);
+                sp.gameMode.destroyBlock(stump[0]);
+                sp.teleportTo(stump[0].getX() + 3.5, origin.y, stump[0].getZ() - 8.5);
+            });
+            if (t == 23) lookAt = Vec3.atBottomCenterOf(stump[0]).add(2.5, 2, 0);
+            if (t == 30 || t == 38 || t == 46 || t == 54) shot("tree_falling_t" + (t - 22));
+            if (t == 80) shot("tree_fallen_items");
+            return t >= 82;
+        });
+        // items lying on the ground: blocks as little cubes, flat things flat
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 0, 2.6);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    give(sp, null, null);
+                    net.minecraft.world.item.Item[] items = {net.minecraft.world.item.Items.COBBLESTONE, net.minecraft.world.item.Items.OAK_LOG,
+                            net.minecraft.world.item.Items.DIAMOND, net.minecraft.world.item.Items.IRON_SWORD, net.minecraft.world.item.Items.APPLE,
+                            com.hollowhours.registry.HHItems.FLASHLIGHT.get(), net.minecraft.world.item.Items.CRAFTING_TABLE, net.minecraft.world.item.Items.BREAD};
+                    for (int i = 0; i < items.length; i++) {
+                        var ie = new net.minecraft.world.entity.item.ItemEntity(sp.serverLevel(), origin.x - 1.4 + (i % 4) * 0.95, origin.y + 0.6,
+                                origin.z + 2.2 + (i / 4) * 0.9, new net.minecraft.world.item.ItemStack(items[i]));
+                        ie.setDeltaMovement(0, 0.1, 0);
+                        ie.setPickUpDelay(32767);
+                        sp.serverLevel().addFreshEntity(ie);
+                    }
+                });
+            }
+            if (t == 3) shot("items_falling");
+            if (t == 40) shot("items_on_ground");
+            return t >= 42;
+        });
+        // an iron vein: break one, the rest burst out one after another
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 0.8, 4.5);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    ServerLevel l = sp.serverLevel();
+                    int[][] vein = {{0, 0, 4}, {1, 0, 4}, {0, 1, 4}, {1, 1, 5}, {-1, 0, 5}, {0, 0, 5}, {0, 2, 5}, {1, 2, 5}, {-1, 1, 6}, {0, 1, 6}};
+                    for (int[] v : vein) l.setBlock(at(v[0], v[1], v[2]), net.minecraft.world.level.block.Blocks.IRON_ORE.defaultBlockState(), 3);
+                    for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(at(-2, 0, 5), at(2, 3, 7)))
+                        if (l.getBlockState(b).isAir()) l.setBlock(b, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 3);
+                    give(sp, net.minecraft.world.item.Items.DIAMOND_PICKAXE, null);
+                });
+            }
+            if (t == 12) shot("vein_before");
+            if (t == 14) server(sp -> sp.gameMode.destroyBlock(at(0, 0, 4)));
+            if (t == 18 || t == 24 || t == 32 || t == 50) shot("vein_t" + (t - 14));
+            if (t == 52) server(sp -> {
+                int ores = 0;
+                for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(at(-2, 0, 3), at(2, 3, 7)))
+                    if (sp.serverLevel().getBlockState(b).is(net.minecraft.world.level.block.Blocks.IRON_ORE)) ores++;
+                if (ores > 0) HollowHours.LOG.error("[client smoke] vein mining left {} iron ore (com.hollowhours)", ores);
+                else HollowHours.LOG.info("[client smoke] vein mining took the whole vein");
+            });
+            return t >= 54;
+        });
+        // the 3D flashlight in first and third person, and putting a battery in
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.2, 8);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    var fl = new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.FLASHLIGHT.get());
+                    com.hollowhours.ghost.Flashlight.stamp(fl, com.hollowhours.ghost.Flashlight.FULL / 4, true);
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, fl);
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.BATTERY.get(), 3));
+                });
+            }
+            if (t == 12) shot("flashlight_first_person");
+            if (t == 13) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+            if (t == 22) shot("flashlight_third_person");
+            if (t == 23) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            if (t == 30) server(sp -> com.hollowhours.ghost.Flashlight.reload(sp, sp.getMainHandItem()));
+            if (t == 33 || t == 38 || t == 43 || t == 48 || t == 56) shot("reload_t" + (t - 30));
+            return t >= 60;
+        });
+        // the playground: every piece in a row, with the items in the hotbar
+        net.minecraft.core.Direction north = net.minecraft.core.Direction.NORTH;
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 0.8, 8);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    give(sp, null, null);
+                    ServerLevel l = sp.serverLevel();
+                    var bs = com.hollowhours.registry.HHBlocks.ALL;
+                    for (int i = 0; i < bs.size(); i++) {
+                        var st = bs.get(i).get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, net.minecraft.core.Direction.NORTH);
+                        if (st.hasProperty(com.hollowhours.fun.FunBlocks.LIT)) st = st.setValue(com.hollowhours.fun.FunBlocks.LIT, true);
+                        l.setBlock(at(-7.5 + i * 2.5, 0, 8), st, 3);
+                    }
+                    for (int i = 0; i < bs.size(); i++) sp.getInventory().setItem(i, new net.minecraft.world.item.ItemStack(bs.get(i).get()));
+                    sp.getInventory().setItem(7, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.BASKETBALL.get()));
+                    sp.getInventory().setItem(8, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.SOCCER_BALL.get()));
+                });
+            }
+            if (t == 25) shot("playground");
+            if (t == 26) lookAt = origin.add(-7.5, 0.8, 8);
+            if (t == 34) shot("playground_left");
+            if (t == 35) lookAt = origin.add(7.5, 0.8, 8);
+            if (t == 43) shot("playground_right");
+            return t >= 44;
+        });
+        // the swing: sit, and it swings higher and higher (seen from the side)
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                clearArea(sp);
+                pin(sp);
+                ServerLevel l = sp.serverLevel();
+                net.minecraft.core.BlockPos sw = at(0, 0, 4);
+                var st = com.hollowhours.registry.HHBlocks.SWING.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north);
+                l.setBlock(sw, st, 3);
+                st.use(l, sp, net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(sw), north, sw, false));
+                Sanity_set(sp, 50);
+            });
+            if (t == 5) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                lookAt = origin.add(12, 1.2, 4);
+            }
+            if (t == 30 || t == 120 || t == 133 || t == 146) shot("swing_t" + t);
+            if (t == 150) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                server(sp -> {
+                    HollowHours.LOG.info("[client smoke] swing: riding {} sanity {}", sp.getVehicle() == null ? "nothing" : sp.getVehicle().getType().toShortString(),
+                            com.hollowhours.ghost.Sanity.get(sp));
+                    sp.stopRiding();
+                });
+            }
+            if (t == 160) shot("swing_left");
+            return t >= 162;
+        });
+        // the trampoline: dropped onto it, bouncing (seen from the front)
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                clearArea(sp);
+                ServerLevel l = sp.serverLevel();
+                l.setBlock(at(0, 0, 0), com.hollowhours.registry.HHBlocks.TRAMPOLINE.get().defaultBlockState(), 3);
+                sp.teleportTo(origin.x, origin.y + 4, origin.z);
+                sp.setDeltaMovement(Vec3.ZERO);
+            });
+            if (t == 2) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                lookAt = origin.add(0, 1.6, 30);
+            }
+            if (t >= 20 && t <= 80 && t % 6 == 0) shot("trampoline_t" + t);
+            if (t == 82) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                server(sp -> HollowHours.LOG.info("[client smoke] trampoline: health {} y {}", sp.getHealth(), sp.getY() - origin.y));
+            }
+            return t >= 84;
+        });
+        // basketball: a shot that drops through the rim; football: rolled into the goal
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.5, 6);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    Sanity_set(sp, 50);
+                    ServerLevel l = sp.serverLevel();
+                    l.setBlock(at(0, 0, 6), com.hollowhours.registry.HHBlocks.BASKETBALL_HOOP.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north), 3);
+                    var ball = HHEntities.BALL.get().create(l);
+                    if (ball == null) return;
+                    ball.setKind(com.hollowhours.fun.BallEntity.BASKETBALL);
+                    // the rim is 1.5 up and a quarter block in front (north) of the hoop block's centre
+                    net.minecraft.core.BlockPos h = at(0, 0, 6);
+                    ball.moveTo(h.getX() + 0.5, h.getY() + 3.2, h.getZ() + 0.25, 0, 0);
+                    ball.setDeltaMovement(0, 0.05, 0);
+                    ball.touchedBy(sp);
+                    l.addFreshEntity(ball);
+                });
+            }
+            if (t == 14 || t == 20 || t == 28 || t == 40) shot("basketball_t" + t);
+            if (t == 45) server(sp -> {
+                HollowHours.LOG.info("[client smoke] basketball: sanity {} (50 before)", com.hollowhours.ghost.Sanity.get(sp));
+                if (com.hollowhours.ghost.Sanity.get(sp) <= 50) HollowHours.LOG.error("[client smoke] the basket did not count (com.hollowhours)");
+            });
+            if (t == 46) {
+                lookAt = origin.add(0, 0.6, 7);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    Sanity_set(sp, 50);
+                    ServerLevel l = sp.serverLevel();
+                    // the goal opens toward the player (north-facing = open side to the north)
+                    l.setBlock(at(0, 0, 7), com.hollowhours.registry.HHBlocks.SOCCER_GOAL.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north), 3);
+                    var ball = HHEntities.BALL.get().create(l);
+                    if (ball == null) return;
+                    ball.setKind(com.hollowhours.fun.BallEntity.SOCCER);
+                    ball.moveTo(origin.x, origin.y + 0.1, origin.z + 2.5, 0, 0);
+                    ball.setDeltaMovement(0, 0.15, 0.55);
+                    ball.touchedBy(sp);
+                    l.addFreshEntity(ball);
+                });
+            }
+            if (t == 52 || t == 58 || t == 66 || t == 80) shot("football_t" + (t - 46));
+            if (t == 84) server(sp -> {
+                HollowHours.LOG.info("[client smoke] football: sanity {} (50 before)", com.hollowhours.ghost.Sanity.get(sp));
+                if (com.hollowhours.ghost.Sanity.get(sp) <= 50) HollowHours.LOG.error("[client smoke] the goal did not count (com.hollowhours)");
+                Sanity_set(sp, 100);
+            });
+            return t >= 86;
+        });
+        // the arcade machine and the TV, close up
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(-1, 1.0, 3);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    ServerLevel l = sp.serverLevel();
+                    l.setBlock(at(-1, 0, 3), com.hollowhours.registry.HHBlocks.ARCADE.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north), 3);
+                    l.setBlock(at(1.5, 0, 3), com.hollowhours.registry.HHBlocks.TV.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north)
+                            .setValue(com.hollowhours.fun.FunBlocks.LIT, true), 3);
+                });
+            }
+            if (t == 20) shot("arcade_closeup");
+            if (t == 21) lookAt = origin.add(1.5, 0.6, 3);
+            if (t == 30) shot("tv_closeup");
+            if (t == 32) PhoneScreen.openArcade(at(-1, 0, 3));
+            if (t == 38) shot("arcade_screen_home");
+            if (t == 39 && mc.screen instanceof PhoneScreen ps) {
+                ps.app = PhoneScreen.App.SNAKE;
+                ps.snakeStart();
+            }
+            if (t == 60) shot("arcade_screen_snake");
+            if (t == 62) mc.setScreen(null);
+            if (t == 64) server(sp -> {
+                clearArea(sp);
+                pin(sp);
+                give(sp, null, null);
+            });
+            return t >= 66;
+        });
+        // explosions throw blocks: a little brick hut blown up (last: it leaves a crater, which is filled back in)
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.5, 12);
+                server(sp -> {
+                    clearArea(sp);
+                    pin(sp);
+                    ServerLevel l = sp.serverLevel();
+                    for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(at(-2, 0, 10), at(2, 3, 14))) {
+                        boolean wall = b.getX() == at(-2, 0, 0).getX() || b.getX() == at(2, 0, 0).getX() || b.getZ() == at(0, 0, 10).getZ() || b.getZ() == at(0, 0, 14).getZ() || b.getY() == at(0, 3, 0).getY();
+                        if (wall) l.setBlock(b, net.minecraft.world.level.block.Blocks.BRICKS.defaultBlockState(), 3);
+                    }
+                });
+            }
+            if (t == 15) shot("explosion_before");
+            if (t == 16) server(sp -> sp.serverLevel().explode(null, origin.x, origin.y + 1, origin.z + 12, 3.5f, net.minecraft.world.level.Level.ExplosionInteraction.TNT));
+            if (t == 18 || t == 22 || t == 28 || t == 38 || t == 70) shot("explosion_t" + (t - 16));
+            if (t == 72) server(sp -> {
+                int flying = sp.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.item.FallingBlockEntity.class, sp.getBoundingBox().inflate(40)).size();
+                HollowHours.LOG.info("[client smoke] explosion debris still flying: {}", flying);
+                ServerLevel l = sp.serverLevel();
+                clearArea(sp);
+                for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(at(-8, -3, 4), at(8, -1, 20))) {
+                    var want = b.getY() == at(0, -1, 0).getY() ? net.minecraft.world.level.block.Blocks.GRASS_BLOCK : net.minecraft.world.level.block.Blocks.DIRT;
+                    if (l.getBlockState(b).isAir()) l.setBlock(b, want.defaultBlockState(), 2);
+                }
+                pin(sp);
+            });
+            return t >= 76;
+        });
     }
 
     private static String animName(GhostEntity g) {

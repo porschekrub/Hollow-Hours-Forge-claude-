@@ -40,6 +40,8 @@ public class HollowHours {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         HHSounds.SOUNDS.register(modBus);
         HHEntities.ENTITIES.register(modBus);
+        com.hollowhours.registry.HHBlocks.BLOCKS.register(modBus);
+        com.hollowhours.registry.HHBlocks.BLOCK_ENTITIES.register(modBus);
         HHItems.ITEMS.register(modBus);
         HHTabs.TABS.register(modBus);
         com.hollowhours.registry.HHParticles.PARTICLES.register(modBus);

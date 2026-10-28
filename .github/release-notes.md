@@ -1,8 +1,24 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.3.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.3.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.4.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.4.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.4.0 — physics and the playground**
+- **Trees fall**: chop one log and the whole tree tips over away from you and crashes down; the logs, leaves, saplings and apples land where it fell. Sneak to break just one log.
+  ตัดต้นไม้ทีเดียว ต้นไม้ล้มลงทั้งต้นพร้อมแอนิเมชัน ของตกอยู่ตรงที่ต้นไม้ล้ม (ย่อเพื่อตัดทีละบล็อก)
+- **Vein mining**: mine one ore and every touching ore of the same kind cracks out of the rock one after another and bursts into the air (up to 64; sneak to mine one).
+  ขุดแร่ทีเดียว แร่ชนิดเดียวกันที่ติดกันแตกกระจายออกมาทั้งสาย (ย่อเพื่อขุดทีละก้อน)
+- **Items lie on the ground**: dropped blocks are little 3D cubes resting on the floor, flat things lie flat; they tumble while flying.
+  ของที่ดรอปวางนอนบนพื้นเป็น 3D
+- **Explosions throw blocks** through the air; they land as rubble.
+  ระเบิดแล้วบล็อกปลิวกระเด็นไปตกเป็นซาก
+- **3D flashlight and battery**, and an animation of the battery going into the flashlight.
+  ไฟฉายและแบตเตอรี่เป็น 3D มีท่าใส่แบต
+- **Playground and living room** (craftable, all raise sanity): swing (sit and it swings higher and higher), slide, trampoline (bounces higher each time, no fall damage), basketball hoop + basketball, football goal + football (real bouncing/rolling balls: throw, kick, dribble, score!), arcade machine (the phone games with no battery), TV (turn it on; watching it calms you).
+  เครื่องเล่น (คราฟได้ เพิ่มสติทั้งหมด): ชิงช้า สไลเดอร์ แทรมโพลีน แป้นบาส + ลูกบาส ประตูฟุตบอล + ลูกฟุตบอล (ลูกเด้ง กลิ้ง เตะ ชู้ต ทำคะแนนได้จริง) ตู้เกม (เล่นเกมไม่เปลืองแบต) ทีวี
+- Fixed: the emergency alert's subtitles no longer run under the phone; blood drops are bigger and easier to see.
+- Settings: `[physics]` in `hollowhours-common.toml` (tree felling, vein size, explosion debris), `item_physics` in `hollowhours-client.toml`.
 
 **2.3.0 — the story begins on night 3**
 - The first two nights are completely normal (no ghosts, no fog, your character is cheerful). On day 3 an **emergency alert** comes through your phone: alert tone, a spoken warning (Thai or English, by your game language) with subtitles. From night 3 the haunting starts and your character turns scared and jumpy.

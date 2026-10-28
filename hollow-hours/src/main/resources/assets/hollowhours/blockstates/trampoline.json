@@ -1,0 +1,20 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "hollowhours:block/trampoline",
+   "y": 0
+  },
+  "facing=east": {
+   "model": "hollowhours:block/trampoline",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "hollowhours:block/trampoline",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "hollowhours:block/trampoline",
+   "y": 270
+  }
+ }
+}

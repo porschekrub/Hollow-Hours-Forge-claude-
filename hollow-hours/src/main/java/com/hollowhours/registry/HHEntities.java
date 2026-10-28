@@ -42,6 +42,15 @@ public final class HHEntities {
     public static final RegistryObject<EntityType<HideSeatEntity>> HIDE_SEAT = ENTITIES.register("hide_seat",
             () -> EntityType.Builder.<HideSeatEntity>of(HideSeatEntity::new, MobCategory.MISC).sized(0.4f, 0.2f).clientTrackingRange(10)
                     .noSummon().build(HollowHours.MODID + ":hide_seat"));
+    public static final RegistryObject<EntityType<com.hollowhours.physics.FallingTreeEntity>> FALLING_TREE = ENTITIES.register("falling_tree",
+            () -> EntityType.Builder.<com.hollowhours.physics.FallingTreeEntity>of(com.hollowhours.physics.FallingTreeEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.0f).clientTrackingRange(12).updateInterval(20).noSummon().build(HollowHours.MODID + ":falling_tree"));
+    public static final RegistryObject<EntityType<com.hollowhours.fun.SwingSeatEntity>> SWING_SEAT = ENTITIES.register("swing_seat",
+            () -> EntityType.Builder.<com.hollowhours.fun.SwingSeatEntity>of(com.hollowhours.fun.SwingSeatEntity::new, MobCategory.MISC)
+                    .sized(0.6f, 0.3f).clientTrackingRange(10).updateInterval(20).noSummon().build(HollowHours.MODID + ":swing_seat"));
+    public static final RegistryObject<EntityType<com.hollowhours.fun.BallEntity>> BALL = ENTITIES.register("ball",
+            () -> EntityType.Builder.<com.hollowhours.fun.BallEntity>of(com.hollowhours.fun.BallEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f).clientTrackingRange(10).updateInterval(1).build(HollowHours.MODID + ":ball"));
     public static final RegistryObject<EntityType<BoardsEntity>> BOARDS = ENTITIES.register("boards",
             () -> EntityType.Builder.<BoardsEntity>of(BoardsEntity::new, MobCategory.MISC).sized(0.3f, 0.3f).clientTrackingRange(10)
                     .updateInterval(20).noSummon().build(HollowHours.MODID + ":boards"));

@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
  */
 public class BloodParticle extends TextureSheetParticle {
     static SpriteSet sprites;
+    /** drops made so far (the CI tour checks that blood arrives) */
+    static int made;
     private boolean landed;
     private float splatAngle, splatSize;
     private final int life2;
@@ -36,7 +38,7 @@ public class BloodParticle extends TextureSheetParticle {
         this.gravity = 1.1f;
         this.friction = 0.98f;
         this.hasPhysics = true;
-        this.quadSize = 0.035f + random.nextFloat() * 0.05f;
+        this.quadSize = 0.05f + random.nextFloat() * 0.07f;
         this.lifetime = 50 + random.nextInt(30);
         this.life2 = 160 + random.nextInt(120);
         float shade = 0.8f + random.nextFloat() * 0.3f;
@@ -126,6 +128,7 @@ public class BloodParticle extends TextureSheetParticle {
                 vz = m.dz() * sp + (r.nextDouble() - 0.5) * 0.22;
             }
             mc.particleEngine.add(new BloodParticle(mc.level, x, y, z, vx, vy, vz, m.rgb(), sprites));
+            made++;
         }
     }
 

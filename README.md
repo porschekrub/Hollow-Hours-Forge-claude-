@@ -31,6 +31,18 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
 - **Scared player / ตัวละครกลัวผี**: your character hunches, trembles, hugs itself, looks over its shoulder, flails while running away, limps when hurt and struggles when grabbed; in first person your hands shake and your breathing sways the view.
   ตัวละครเดินหลังค่อม ตัวสั่น กอดตัวเอง หันมองข้างหลัง วิ่งหนีแขนแกว่งมั่ว เดินกะเผลกตอนเลือดน้อย ดิ้นตอนโดนจับ มุมมองบุคคลที่ 1 มือสั่นและจอโยกตามลมหายใจ
 - Test commands (op): `/hollow bloodmoon on|off|random`, `/hollow fog on|off`
+- **The story / เนื้อเรื่อง**: nights 1–2 are normal and your character is cheerful. On day 3 your phone gets an emergency alert (voice + subtitles); from night 3 the ghosts come and your character is scared.
+  คืนที่ 1–2 ปกติ ตัวละครร่าเริง วันที่ 3 โทรศัพท์แจ้งเตือนฉุกเฉิน (มีเสียงพูด + ซับ) คืนที่ 3 ผีเริ่มออก ตัวละครเริ่มกลัว
+- **Phone / โทรศัพท์**: you start with one (random battery). Messages, Snake, Ghost Tap, health. Games raise sanity but drain the battery; the battery wears out with use. Craft a charger (3 charges).
+  เริ่มเกมมีโทรศัพท์ แบตสุ่ม เล่นเกมเพิ่มสติแต่แบตหมดเร็ว ที่ชาร์จคราฟได้ ใช้ได้ 3 ครั้ง
+- **Thirst & sanity / หิวน้ำและค่าสติ**: drink (water bottles, milk, soups, or sneak + right-click water with an empty hand). Sanity drops in the dark, at night, near ghosts; low sanity brings whispers and hallucinations. Light, friends, pets, music, a TV, sleep, games and the playground bring it back.
+  ดื่มน้ำ (ขวดน้ำ นม ซุป หรือย่อ + คลิกขวาที่น้ำ) ค่าสติลดในที่มืด กลางคืน ใกล้ผี สติต่ำจะเห็นภาพหลอน เพิ่มสติด้วยแสงไฟ เพื่อน สัตว์เลี้ยง เพลง ทีวี การนอน เกม และเครื่องเล่น
+- **Blood / เลือด**: hits spray blood in each creature's colour; badly hurt creatures drip. / โดนตีเลือดกระเด็นตามสีของสิ่งมีชีวิต เลือดน้อยจะหยด
+- **Physics / ฟิสิกส์**: trees fall when you chop them, ore veins burst out when you mine one ore, dropped items lie on the ground in 3D, explosions throw blocks. Sneak to break a single block.
+  ตัดต้นไม้ทีเดียวล้มทั้งต้น ขุดแร่ทีเดียวแตกทั้งสาย ของดรอปนอนบนพื้นแบบ 3D ระเบิดแล้วบล็อกปลิว (ย่อเพื่อทุบทีละบล็อก)
+- **Playground / เครื่องเล่น**: swing, slide, trampoline, basketball hoop + ball, football goal + ball, arcade machine, TV — all craftable, all raise sanity.
+  ชิงช้า สไลเดอร์ แทรมโพลีน แป้นบาส ประตูฟุตบอล ตู้เกม ทีวี คราฟได้ทั้งหมด เพิ่มสติ
+- Test commands (op): `/hollow story start|hold|alert`, `/hollow thirst <0-20>`, `/hollow sanity <0-100>`
 - **Sell out a friend / ขายเพื่อน**: 25% of the time the ghost offers to spare you if you tell it where a friend is. Pick a friend or refuse — 10 seconds. Refusing or waiting = death.
   25% ผีจะถามว่า "บอกมาว่าเพื่อนอยู่ไหน แล้วฉันอาจไว้ชีวิต" เลือกเพื่อน หรือ "ไม่ขาย" ภายใน 10 วินาที ไม่ตอบ/ไม่ขาย = ตาย
 - **Talking / คุยกับผี**: type in chat starting with its short name (`wail`, `widow`, `ash`, `void`, `stag`), e.g. `stag please let me go`, or use the guide book → *Talk*. Ask questions, beg, offer items, insult it, or ask it for an item (cursed).

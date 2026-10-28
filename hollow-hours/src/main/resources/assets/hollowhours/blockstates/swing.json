@@ -1,0 +1,36 @@
+{
+ "variants": {
+  "facing=north,occupied=false": {
+   "model": "hollowhours:block/swing",
+   "y": 0
+  },
+  "facing=north,occupied=true": {
+   "model": "hollowhours:block/swing_frame",
+   "y": 0
+  },
+  "facing=east,occupied=false": {
+   "model": "hollowhours:block/swing",
+   "y": 90
+  },
+  "facing=east,occupied=true": {
+   "model": "hollowhours:block/swing_frame",
+   "y": 90
+  },
+  "facing=south,occupied=false": {
+   "model": "hollowhours:block/swing",
+   "y": 180
+  },
+  "facing=south,occupied=true": {
+   "model": "hollowhours:block/swing_frame",
+   "y": 180
+  },
+  "facing=west,occupied=false": {
+   "model": "hollowhours:block/swing",
+   "y": 270
+  },
+  "facing=west,occupied=true": {
+   "model": "hollowhours:block/swing_frame",
+   "y": 270
+  }
+ }
+}

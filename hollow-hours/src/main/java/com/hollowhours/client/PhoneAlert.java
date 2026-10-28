@@ -93,18 +93,25 @@ public final class PhoneAlert {
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
         float time = t + partial;
+        int pw = 104, ph = 160, px = w - pw - 10;
         // ---- the phone sliding up in the bottom-right corner
         if (phone) {
             float in = Mth.clamp(time / 10f, 0, 1), out = Mth.clamp((end - time) / 12f, 0, 1);
             float k = Math.min(in, out);
             k = k * k * (3 - 2 * k);
-            int pw = 92, ph = 150, px = w - pw - 10, py = h - Math.round(ph * k) - 6;
+            int py = h - Math.round(ph * k) - 6;
             boolean flash = time < VOICE_START && (int) (time / 6) % 2 == 0;
             PhoneScreen.drawBody(g, px, py, pw, ph);
             int sx = px + 5, sy = py + 12, sw = pw - 10, sh = ph - 24;
             g.fill(sx, sy, sx + sw, sy + sh, flash ? 0xFFB01010 : 0xFF1A0505);
             g.fill(sx, sy, sx + sw, sy + 16, 0xFFD01818);
-            g.drawCenteredString(font, Component.translatable("hollowhours.alert.title"), sx + sw / 2, sy + 4, 0xFFFFFFFF);
+            Component title = Component.translatable("hollowhours.alert.title");
+            float fit = Math.min(1f, (sw - 4) / (float) font.width(title));
+            g.pose().pushPose();
+            g.pose().translate(sx + sw / 2f, sy + 8 - 4 * fit, 0);
+            g.pose().scale(fit, fit, 1);
+            g.drawCenteredString(font, title, 0, 0, 0xFFFFFFFF);
+            g.pose().popPose();
             List<FormattedCharSequence> body = font.split(Component.translatable("hollowhours.alert.short"), sw - 6);
             int yy = sy + 22;
             for (FormattedCharSequence l : body) {
@@ -118,14 +125,16 @@ public final class PhoneAlert {
         if (time < VOICE_START) sub = Component.translatable(phone ? "hollowhours.alert.sub.tone" : "hollowhours.alert.sub.siren");
         else for (int i = 0; i < LINES; i++) if (time >= starts[i] && time < starts[i] + lens[i] + 8) sub = Component.translatable("hollowhours.alert.line." + i);
         if (sub != null) {
-            List<FormattedCharSequence> lines = font.split(sub, Math.min(w - 40, 320));
+            // centred in the space left of the phone, so the two never overlap
+            int cx = phone ? px / 2 : w / 2, room = phone ? px - 20 : w - 40;
+            List<FormattedCharSequence> lines = font.split(sub, Math.min(room, 320));
             int lh = 11, boxH = lines.size() * lh + 6, top = h - 72 - boxH;
             int maxW = 0;
             for (FormattedCharSequence l : lines) maxW = Math.max(maxW, font.width(l));
-            g.fill(w / 2 - maxW / 2 - 6, top, w / 2 + maxW / 2 + 6, top + boxH, 0xB0000000);
+            g.fill(cx - maxW / 2 - 6, top, cx + maxW / 2 + 6, top + boxH, 0xB0000000);
             int y = top + 4;
             for (FormattedCharSequence l : lines) {
-                g.drawString(font, l, w / 2 - font.width(l) / 2, y, time < VOICE_START ? 0xFFFF8080 : 0xFFFFFFFF, false);
+                g.drawString(font, l, cx - font.width(l) / 2, y, time < VOICE_START ? 0xFFFF8080 : 0xFFFFFFFF, false);
                 y += lh;
             }
         }

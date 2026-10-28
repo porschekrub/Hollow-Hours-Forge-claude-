@@ -1,0 +1,107 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "wood": "hollowhours:block/swing_wood",
+  "seat": "hollowhours:block/swing_seat",
+  "rope": "hollowhours:block/swing_rope",
+  "particle": "hollowhours:block/swing_seat"
+ },
+ "elements": [
+  {
+   "from": [
+    2,
+    0,
+    6
+   ],
+   "to": [
+    14,
+    1,
+    10
+   ],
+   "faces": {
+    "north": {
+     "texture": "#seat"
+    },
+    "south": {
+     "texture": "#seat"
+    },
+    "east": {
+     "texture": "#seat"
+    },
+    "west": {
+     "texture": "#seat"
+    },
+    "up": {
+     "texture": "#seat"
+    },
+    "down": {
+     "texture": "#seat"
+    }
+   }
+  },
+  {
+   "from": [
+    2.5,
+    1,
+    7.75
+   ],
+   "to": [
+    3,
+    23.2,
+    8.25
+   ],
+   "faces": {
+    "north": {
+     "texture": "#rope"
+    },
+    "south": {
+     "texture": "#rope"
+    },
+    "east": {
+     "texture": "#rope"
+    },
+    "west": {
+     "texture": "#rope"
+    },
+    "up": {
+     "texture": "#rope"
+    },
+    "down": {
+     "texture": "#rope"
+    }
+   }
+  },
+  {
+   "from": [
+    13,
+    1,
+    7.75
+   ],
+   "to": [
+    13.5,
+    23.2,
+    8.25
+   ],
+   "faces": {
+    "north": {
+     "texture": "#rope"
+    },
+    "south": {
+     "texture": "#rope"
+    },
+    "east": {
+     "texture": "#rope"
+    },
+    "west": {
+     "texture": "#rope"
+    },
+    "up": {
+     "texture": "#rope"
+    },
+    "down": {
+     "texture": "#rope"
+    }
+   }
+  }
+ ]
+}

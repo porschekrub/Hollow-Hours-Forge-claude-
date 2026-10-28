@@ -73,6 +73,8 @@ public final class GhostEvents {
         });
         bus.addListener(EventPriority.HIGH, GhostEvents::onAttacked);
         bus.addListener(GhostEvents::onBreak);
+        bus.addListener(net.minecraftforge.eventbus.api.EventPriority.LOW, com.hollowhours.physics.Physics::onBreak);
+        bus.addListener(com.hollowhours.physics.Physics::onExplosion);
         bus.addListener(GhostEvents::onPlace);
         bus.addListener(GhostEvents::onMount);
         bus.addListener(EventPriority.HIGHEST, GhostEvents::onDeath);

@@ -32,6 +32,10 @@ public final class ClientSetup {
         e.registerEntityRenderer(HHEntities.CLOSET.get(), ClosetRenderer::new);
         e.registerEntityRenderer(HHEntities.BOARDS.get(), BoardsRenderer::new);
         e.registerEntityRenderer(HHEntities.HIDE_SEAT.get(), NoopRenderer::new);
+        e.registerEntityRenderer(HHEntities.FALLING_TREE.get(), com.hollowhours.client.render.FallingTreeRenderer::new);
+        e.registerEntityRenderer(net.minecraft.world.entity.EntityType.ITEM, com.hollowhours.client.render.ItemPhysicsRenderer::new);
+        e.registerEntityRenderer(HHEntities.SWING_SEAT.get(), com.hollowhours.client.render.SwingSeatRenderer::new);
+        e.registerEntityRenderer(HHEntities.BALL.get(), com.hollowhours.client.render.BallRenderer::new);
     }
 
     /** Players get the scared body animations (the model inside both player renderers is swapped). */
@@ -54,6 +58,12 @@ public final class ClientSetup {
                 HollowHours.LOG.warn("[Hollow Hours] could not add the scared player animations to the {} player model", skin, ex);
             }
         }
+    }
+
+    /** The swing's seat is drawn by its entity, from a model of its own. */
+    @SubscribeEvent
+    public static void extraModels(net.minecraftforge.client.event.ModelEvent.RegisterAdditional e) {
+        e.register(com.hollowhours.client.render.SwingSeatRenderer.MODEL);
     }
 
     @SubscribeEvent

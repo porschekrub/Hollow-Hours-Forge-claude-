@@ -1,0 +1,207 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "side": "hollowhours:block/arcade_side",
+  "lower": "hollowhours:block/arcade_lower",
+  "panel": "hollowhours:block/arcade_panel",
+  "panel_trim": "hollowhours:block/tv_body",
+  "ball": "hollowhours:block/swing_seat",
+  "screen": "hollowhours:block/arcade_screen",
+  "marquee": "hollowhours:block/arcade_marquee",
+  "particle": "hollowhours:block/arcade_side"
+ },
+ "elements": [
+  {
+   "from": [
+    1,
+    0,
+    5
+   ],
+   "to": [
+    15,
+    11,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#lower"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#side"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   }
+  },
+  {
+   "from": [
+    0,
+    10,
+    1
+   ],
+   "to": [
+    16,
+    12,
+    9
+   ],
+   "faces": {
+    "north": {
+     "texture": "#panel_trim"
+    },
+    "south": {
+     "texture": "#panel_trim"
+    },
+    "east": {
+     "texture": "#panel_trim"
+    },
+    "west": {
+     "texture": "#panel_trim"
+    },
+    "up": {
+     "texture": "#panel"
+    },
+    "down": {
+     "texture": "#panel_trim"
+    }
+   }
+  },
+  {
+   "from": [
+    4,
+    12,
+    3
+   ],
+   "to": [
+    5,
+    14.5,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#panel_trim"
+    },
+    "south": {
+     "texture": "#panel_trim"
+    },
+    "east": {
+     "texture": "#panel_trim"
+    },
+    "west": {
+     "texture": "#panel_trim"
+    },
+    "up": {
+     "texture": "#panel_trim"
+    },
+    "down": {
+     "texture": "#panel_trim"
+    }
+   }
+  },
+  {
+   "from": [
+    3.5,
+    14.5,
+    2.5
+   ],
+   "to": [
+    5.5,
+    16.5,
+    4.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#ball"
+    },
+    "south": {
+     "texture": "#ball"
+    },
+    "east": {
+     "texture": "#ball"
+    },
+    "west": {
+     "texture": "#ball"
+    },
+    "up": {
+     "texture": "#ball"
+    },
+    "down": {
+     "texture": "#ball"
+    }
+   }
+  },
+  {
+   "from": [
+    1,
+    12,
+    8
+   ],
+   "to": [
+    15,
+    23,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#screen"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#side"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   }
+  },
+  {
+   "from": [
+    1,
+    23,
+    4
+   ],
+   "to": [
+    15,
+    27,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#marquee"
+    },
+    "south": {
+     "texture": "#side"
+    },
+    "east": {
+     "texture": "#side"
+    },
+    "west": {
+     "texture": "#side"
+    },
+    "up": {
+     "texture": "#side"
+    },
+    "down": {
+     "texture": "#side"
+    }
+   }
+  }
+ ]
+}

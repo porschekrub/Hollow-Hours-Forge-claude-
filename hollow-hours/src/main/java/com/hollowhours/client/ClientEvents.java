@@ -130,6 +130,10 @@ public final class ClientEvents {
             e.setCanceled(true);
             return;
         }
+        if (ReloadAnim.render(e)) {
+            e.setCanceled(true);
+            return;
+        }
         // shaking hands: once per frame (both hands share the pose)
         if (handFrame == Atmos.frame) return;
         handFrame = Atmos.frame;

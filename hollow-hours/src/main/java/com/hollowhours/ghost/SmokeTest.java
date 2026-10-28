@@ -46,6 +46,7 @@ final class SmokeTest {
             aiUnderstanding();
             bloodMoon(server, level, at);
             storyAndSurvival(server, level, at);
+            physicsAndFun(server, level, at);
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
 
@@ -223,6 +224,39 @@ final class SmokeTest {
         check(BloodFx.color(pig) == 0x8A0606 && BloodFx.color(creeper) == 0x3DAA3D && BloodFx.color(zombie) == 0x5A1A0C && BloodFx.color(golem) < 0,
                 "blood colours");
         HollowHours.LOG.info("[smoke] story, phone, thirst and blood OK");
+    }
+
+    static void physicsAndFun(MinecraftServer server, ServerLevel level, Vec3 at) {
+        for (String r : new String[] {"swing", "slide", "trampoline", "basketball_hoop", "soccer_goal", "arcade", "tv", "basketball", "soccer_ball"})
+            check(server.getRecipeManager().byKey(HollowHours.id(r)).isPresent(), "recipe " + r);
+        for (var b : com.hollowhours.registry.HHBlocks.ALL)
+            check(server.getLootData().getLootTable(b.get().getLootTable()) != net.minecraft.world.level.storage.loot.LootTable.EMPTY, "loot table " + b.getId());
+        check(com.hollowhours.physics.Physics.oreKind(net.minecraft.world.level.block.Blocks.DEEPSLATE_IRON_ORE.defaultBlockState())
+                .equals(com.hollowhours.physics.Physics.oreKind(net.minecraft.world.level.block.Blocks.IRON_ORE.defaultBlockState())), "deepslate ore is the same vein");
+
+        // a basketball dropped 4 blocks onto stone bounces back up, and never sinks into the floor
+        net.minecraft.core.BlockPos floor = net.minecraft.core.BlockPos.containing(at).above(30);
+        for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(floor.offset(-3, 0, -3), floor.offset(3, 0, 3)))
+            level.setBlock(b, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
+        var ball = com.hollowhours.registry.HHEntities.BALL.get().create(level);
+        check(ball != null, "ball entity");
+        ball.setKind(com.hollowhours.fun.BallEntity.BASKETBALL);
+        double top = floor.getY() + 1;
+        ball.moveTo(floor.getX() + 0.5, top + 4, floor.getZ() + 0.5, 0, 0);
+        level.addFreshEntity(ball);
+        boolean landed = false;
+        double low = 99, rebound = 0;
+        for (int i = 0; i < 90; i++) {
+            ball.tick();
+            low = Math.min(low, ball.getY() - top);
+            if (ball.onGround()) landed = true;
+            else if (landed) rebound = Math.max(rebound, ball.getY() - top);
+        }
+        ball.discard();
+        for (net.minecraft.core.BlockPos b : net.minecraft.core.BlockPos.betweenClosed(floor.offset(-3, 0, -3), floor.offset(3, 0, 3)))
+            level.setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+        check(landed && low > -0.01 && rebound > 1.2 && rebound < 4, String.format("ball bounce (lowest %.2f, rebound %.2f)", low, rebound));
+        HollowHours.LOG.info("[smoke] physics and playground OK (ball rebound {} blocks)", String.format("%.2f", rebound));
     }
 
     static void check(boolean ok, String what) {
