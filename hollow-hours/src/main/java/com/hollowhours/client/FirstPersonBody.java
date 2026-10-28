@@ -25,8 +25,8 @@ import net.minecraftforge.fml.common.Mod;
 public final class FirstPersonBody {
     private FirstPersonBody() {}
 
-    /** how far behind the eyes the body stands (so you don't see into your own chest) */
-    static final double BACK = 0.3;
+    /** how far behind the eyes the body stands: just enough not to see into your own chest, close enough to see it */
+    static final double BACK = 0.06;
     static boolean drawing;
 
     @SubscribeEvent
@@ -44,7 +44,7 @@ public final class FirstPersonBody {
         Vec3 cam = e.getCamera().getPosition();
         double x = Mth.lerp(partial, p.xo, p.getX()), y = Mth.lerp(partial, p.yo, p.getY()), z = Mth.lerp(partial, p.zo, p.getZ());
         float bodyYaw = Mth.rotLerp(partial, p.yBodyRotO, p.yBodyRot) * Mth.DEG_TO_RAD;
-        double back = BACK + (p.isCrouching() ? 0.12 : 0);
+        double back = BACK + (p.isCrouching() ? 0.14 : 0);
         x += Mth.sin(bodyYaw) * back;
         z -= Mth.cos(bodyYaw) * back;
         // what you hold and the chestplate are drawn by the first-person hands / would hang in the air without arms
