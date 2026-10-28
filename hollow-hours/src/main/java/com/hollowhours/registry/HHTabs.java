@@ -26,6 +26,8 @@ public final class HHTabs {
                 out.accept(HHItems.REPAIR_STONE.get());
                 out.accept(HHItems.REPAIR_GLASS.get());
                 out.accept(HHItems.CLOSET.get());
+                out.accept(HHItems.PHONE.get());
+                out.accept(HHItems.CHARGER.get());
                 HHItems.EGGS.forEach(e -> out.accept(e.get()));
             })
             .build());

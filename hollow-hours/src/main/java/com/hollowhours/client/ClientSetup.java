@@ -65,6 +65,14 @@ public final class ClientSetup {
     public static void overlays(RegisterGuiOverlaysEvent e) {
         e.registerAbove(VanillaGuiOverlay.CHAT_PANEL.id(), "horror_fx", (gui, g, partial, w, h) -> ClientFx.render(g, partial));
         e.registerAboveAll("jumpscare", (gui, g, partial, w, h) -> Jumpscare.render(g, partial));
+        e.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(), "thirst", SurvivalHud::thirst);
+        e.registerAbove(VanillaGuiOverlay.ARMOR_LEVEL.id(), "sanity", SurvivalHud::sanity);
+        e.registerAboveAll("phone_alert", PhoneAlert::render);
+    }
+
+    @SubscribeEvent
+    public static void particles(net.minecraftforge.client.event.RegisterParticleProvidersEvent e) {
+        e.registerSpriteSet(com.hollowhours.registry.HHParticles.BLOOD.get(), BloodParticle.Provider::new);
     }
 
     @SubscribeEvent

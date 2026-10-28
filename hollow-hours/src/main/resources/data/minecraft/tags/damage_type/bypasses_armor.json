@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "hollowhours:ghost_kill",
-    "hollowhours:curse"
+    "hollowhours:curse",
+    "hollowhours:thirst",
+    "hollowhours:madness"
   ]
 }

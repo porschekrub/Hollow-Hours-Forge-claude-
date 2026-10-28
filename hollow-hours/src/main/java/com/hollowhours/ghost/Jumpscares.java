@@ -20,6 +20,7 @@ public final class Jumpscares {
 
     public static void scare(ServerPlayer p, int who, int strength) {
         if (p == null || !p.isAlive()) return;
+        Sanity.shock(p, strength == FLASH ? 2 : strength == DRAG ? 10 : strength == DEATH ? 12 : 8);
         HHNet.toPlayer(p, new S2CJumpscare(who, strength, R.randInt(0, 7)));
         Fx.effect(p, MobEffects.BLINDNESS, strength >= 1 ? 14 : 8, 0);
         if (strength >= 1) {

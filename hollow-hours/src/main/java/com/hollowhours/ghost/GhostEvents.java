@@ -33,6 +33,7 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -65,6 +66,11 @@ public final class GhostEvents {
         bus.addListener(GhostEvents::onUseFinish);
         bus.addListener(GhostEvents::onUseStop);
         bus.addListener(GhostEvents::onHurt);
+        bus.addListener(net.minecraftforge.eventbus.api.EventPriority.LOWEST, GhostEvents::onDamage);
+        bus.addListener(GhostEvents::onLivingTick);
+        bus.addListener((PlayerWakeUpEvent e) -> {
+            if (e.getEntity() instanceof ServerPlayer p && !e.updateLevel()) Sanity.onWakeUp(p);
+        });
         bus.addListener(EventPriority.HIGH, GhostEvents::onAttacked);
         bus.addListener(GhostEvents::onBreak);
         bus.addListener(GhostEvents::onPlace);
@@ -95,15 +101,25 @@ public final class GhostEvents {
         if (now % 5 == 0) safe("music", () -> Director.musicTick(server, now));
         if (now % 10 == 0) safe("dread", () -> Director.dreadTick(server, now));
         if (now % 20 == 0) {
+            safe("story", () -> Story.tick(server, now));
             safe("atmosphere", () -> Atmosphere.tick(server, now));
+            safe("phone", () -> PhoneUse.tick(server, now));
+            safe("survival", () -> {
+                for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+                    Thirst.tick(p, now);
+                    Sanity.tick(p, now);
+                    Survival.sync(p);
+                }
+            });
             safe("soul", () -> Soul.tick(server, now));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
-        if (now % 40 == 0 && !CLIENT_SMOKE) {
+        // the first nights are normal: nothing haunts anyone before the story starts
+        if (now % 40 == 0 && !CLIENT_SMOKE && Story.activeCached()) {
             safe("director", () -> Director.spawnTick(server, now));
             for (ServerLevel level : server.getAllLevels()) safe("cracks", () -> Breach.maintain(level));
         }
-        if (now % 100 == 0 && !CLIENT_SMOKE) {
+        if (now % 100 == 0 && !CLIENT_SMOKE && Story.activeCached()) {
             safe("variety", () -> Variety.tick(server, now));
             safe("stalker schedule", () -> Stalkers.schedule(server, now));
         }
@@ -200,6 +216,10 @@ public final class GhostEvents {
     }
 
     static void onUseFinish(LivingEntityUseItemEvent.Finish e) {
+        if (e.getEntity() instanceof ServerPlayer sp) {
+            Thirst.onFinishUsing(sp, e.getItem());
+            Sanity.onFinishUsing(sp, e.getItem());
+        }
         if (e.getEntity() instanceof ServerPlayer p && Curses.isCursed(e.getItem())) Curses.handleUse(p, "consume", e.getItem());
     }
 
@@ -211,6 +231,15 @@ public final class GhostEvents {
     static void onAttacked(LivingAttackEvent e) {
         if (e.getEntity() instanceof ServerPlayer p && KillSequence.isVictim(p) && !GhostDamage.isGhost(e.getSource())
                 && !e.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) e.setCanceled(true);
+    }
+
+    static void onDamage(net.minecraftforge.event.entity.living.LivingDamageEvent e) {
+        BloodFx.hurt(e.getEntity(), e.getSource(), e.getAmount());
+    }
+
+    static void onLivingTick(net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent e) {
+        var le = e.getEntity();
+        if (!le.level().isClientSide && le.tickCount % 15 == 0) BloodFx.drip(le);
     }
 
     static void onHurt(LivingHurtEvent e) {
@@ -313,7 +342,9 @@ public final class GhostEvents {
     static void onLogin(PlayerEvent.PlayerLoggedInEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p)) return;
         giveGuideIfMissing(p, true);
+        Story.onLogin(p);
         Atmosphere.send(p);
+        Survival.forceSync(p);
         Integer n = FLED_FROM.remove(p.getUUID());
         if (n != null) Later.run(80, () -> punishFlee(p, n));
     }
@@ -338,6 +369,8 @@ public final class GhostEvents {
         Hiding.cleanup(p);
         Flashlight.clearLights(p);
         Sprint.forget(p);
+        PhoneUse.forget(p);
+        Survival.forget(p);
         Perception.forget(p);
         Director.forget(p);
         GhostTalk.forget(p);

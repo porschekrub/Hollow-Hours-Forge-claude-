@@ -49,6 +49,10 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             return;
         }
         if (p.isSleeping() || p.isFallFlying() || p.isVisuallySwimming() || swimAmount > 0 || p.isPassenger() || p.isSpectator()) return;
+        if (!com.hollowhours.client.Atmos.haunted) {
+            happy(p, swing, amount, t);
+            return;
+        }
         float seed = (p.getId() % 97) * 1.37f;
         boolean moving = amount > 0.08f;
         boolean sprint = p.isSprinting() && moving;
@@ -141,6 +145,64 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             leftArm.yRot = Mth.lerp(k, leftArm.yRot, 0.5f);
             leftArm.zRot = Mth.lerp(k, leftArm.zRot, 0.15f);
             head.xRot += 0.15f * k;
+        }
+    }
+
+    /**
+     * Before the story starts: a carefree, happy body. Skipping along with big arm swings, bouncing when running,
+     * bobbing the head to a tune when standing, waving now and then, hitting things with gusto.
+     */
+    void happy(AbstractClientPlayer p, float swing, float amount, float t) {
+        float seed = (p.getId() % 97) * 1.37f;
+        boolean moving = amount > 0.08f;
+        boolean sprint = p.isSprinting() && moving;
+        float hp = p.getHealth() / Math.max(1, p.getMaxHealth());
+        if (moving) {
+            // a skip in every step
+            float hop = Mth.abs(Mth.sin(swing * 0.6662f)) * (sprint ? 1.8f : 1.2f) * Math.min(1, amount * 1.5f);
+            for (ModelPart part : new ModelPart[] {head, body, rightArm, leftArm, rightLeg, leftLeg}) part.y -= hop;
+            float big = sprint ? 1.45f : 1.35f;
+            rightArm.xRot *= big;
+            leftArm.xRot *= big;
+            float out = 0.12f + (sprint ? 0.1f : 0);
+            rightArm.zRot += out;
+            leftArm.zRot -= out;
+            head.zRot += Mth.sin(swing * 0.3331f) * 0.12f;
+            head.xRot -= 0.06f;
+            body.yRot += Mth.sin(swing * 0.6662f) * 0.08f;
+            if (sprint) body.xRot += 0.08f;
+        } else if (!crouching && attackTime <= 0) {
+            // humming along to something
+            float beat = Mth.sin(t * 0.21f + seed);
+            head.zRot += beat * 0.09f;
+            head.xRot += Mth.sin(t * 0.42f + seed) * 0.04f;
+            body.zRot += beat * 0.025f;
+            rightArm.zRot += 0.06f + beat * 0.03f;
+            leftArm.zRot -= 0.06f - beat * 0.03f;
+            // and a wave now and then
+            float window = 150 + (seed % 40);
+            float ph = t % window;
+            if (ph < 36) {
+                float k = Mth.sin(ph / 36f * Mth.PI);
+                k = Math.min(1, k * 1.6f);
+                rightArm.xRot = Mth.lerp(k, rightArm.xRot, -2.7f);
+                rightArm.zRot = Mth.lerp(k, rightArm.zRot, -0.25f + Mth.sin(ph * 0.9f) * 0.35f);
+                head.zRot -= 0.08f * k;
+            }
+        }
+        if (attackTime > 0) {
+            // hitting with gusto
+            body.yRot *= 1.3f;
+            rightArm.xRot -= 0.15f;
+        }
+        if (crouching) {
+            rightArm.zRot += 0.15f;
+            leftArm.zRot -= 0.15f;
+        }
+        if (hp < 0.35f && moving) {
+            float k = 1 - hp / 0.35f;
+            rightLeg.xRot *= 1 - 0.5f * k;
+            body.zRot += Mth.sin(swing * 0.6662f) * 0.08f * k;
         }
     }
 

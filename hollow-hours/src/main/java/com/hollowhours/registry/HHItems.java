@@ -35,6 +35,8 @@ public final class HHItems {
     public static final RegistryObject<Item> REPAIR_STONE = ITEMS.register("repair_stone", () -> new RepairKitItem(new Item.Properties().stacksTo(16), "stone"));
     public static final RegistryObject<Item> REPAIR_GLASS = ITEMS.register("repair_glass", () -> new RepairKitItem(new Item.Properties().stacksTo(16), "glass"));
     public static final RegistryObject<Item> CLOSET = ITEMS.register("closet_item", () -> new ClosetItem(new Item.Properties().stacksTo(4)));
+    public static final RegistryObject<Item> PHONE = ITEMS.register("phone", () -> new com.hollowhours.item.PhoneItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CHARGER = ITEMS.register("charger", () -> new com.hollowhours.item.ChargerItem(new Item.Properties().durability(3)));
 
     public static final List<RegistryObject<Item>> EGGS = new ArrayList<>();
 

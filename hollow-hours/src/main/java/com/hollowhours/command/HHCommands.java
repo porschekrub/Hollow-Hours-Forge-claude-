@@ -76,6 +76,31 @@ public final class HHCommands {
             Curses.askGhost(c.getSource().getPlayerOrException(), StringArgumentType.getString(c, "text"));
             return 1;
         })));
+        root.then(Commands.literal("story")
+                .then(Commands.literal("start").executes(c -> {
+                    com.hollowhours.ghost.Story.force(c.getSource().getServer(), 1);
+                    return reply(c, "the haunting has started");
+                }))
+                .then(Commands.literal("hold").executes(c -> {
+                    com.hollowhours.ghost.Story.force(c.getSource().getServer(), -1);
+                    return reply(c, "the haunting is held back (normal world)");
+                }))
+                .then(Commands.literal("calendar").executes(c -> {
+                    com.hollowhours.ghost.Story.force(c.getSource().getServer(), 0);
+                    return reply(c, "the haunting follows the calendar again (starts on night " + com.hollowhours.config.HHConfig.START_NIGHT.get() + ")");
+                }))
+                .then(Commands.literal("alert").executes(c -> {
+                    com.hollowhours.ghost.Story.sendAlert(c.getSource().getPlayerOrException());
+                    return reply(c, "alert sent");
+                })));
+        root.then(Commands.literal("thirst").then(Commands.argument("value", FloatArgumentType.floatArg(0, 20)).executes(c -> {
+            com.hollowhours.ghost.Thirst.set(c.getSource().getPlayerOrException(), FloatArgumentType.getFloat(c, "value"));
+            return reply(c, "thirst set");
+        })));
+        root.then(Commands.literal("sanity").then(Commands.argument("value", FloatArgumentType.floatArg(0, 100)).executes(c -> {
+            com.hollowhours.ghost.Sanity.set(c.getSource().getPlayerOrException(), FloatArgumentType.getFloat(c, "value"));
+            return reply(c, "sanity set");
+        })));
         root.then(Commands.literal("bloodmoon")
                 .then(Commands.literal("on").executes(c -> {
                     com.hollowhours.ghost.Atmosphere.forceBlood = 1;

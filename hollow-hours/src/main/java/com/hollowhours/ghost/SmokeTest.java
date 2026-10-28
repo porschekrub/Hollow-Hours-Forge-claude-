@@ -45,6 +45,7 @@ final class SmokeTest {
             check("minecraft:iron_pickaxe".equals(Curses.resolveItem("ขออีเต้อเหล็กหน่อย")), "resolve item th");
             aiUnderstanding();
             bloodMoon(server, level, at);
+            storyAndSurvival(server, level, at);
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
 
@@ -182,6 +183,46 @@ final class SmokeTest {
         Atmosphere.forceBlood = 0;
         level.setDayTime(keep);
         HollowHours.LOG.info("[smoke] blood moon OK (ghost damage {})", dmg);
+    }
+
+    /** The calendar, the phone and charger, thirst, blood colours. */
+    static void storyAndSurvival(MinecraftServer server, ServerLevel level, Vec3 at) {
+        long keep = level.getDayTime();
+        Story.force(server, 0);
+        level.setDayTime(18000); // night 1
+        check(!Story.active(server), "night 1 is normal");
+        level.setDayTime(2 * 24000 + 8000); // day 3, afternoon
+        check(!Story.active(server) && Story.alertDue(server), "day 3: alert due, no ghosts yet");
+        level.setDayTime(2 * 24000 + 13000); // night 3
+        check(Story.active(server), "night 3: the haunting starts");
+        Story.force(server, -1);
+        check(!Story.active(server), "story held back");
+        Story.force(server, 1);
+        check(Story.active(server), "story forced on");
+        Story.force(server, 0);
+        level.setDayTime(keep);
+        Story.tick(server, level.getGameTime());
+
+        net.minecraft.world.item.ItemStack phone = com.hollowhours.item.PhoneItem.fresh(level.random);
+        float b = com.hollowhours.item.PhoneItem.battery(phone);
+        check(b >= 15 && b <= 85, "fresh phone battery " + b);
+        check(com.hollowhours.item.PhoneItem.messages(phone).size() == 2, "phone messages");
+        com.hollowhours.item.PhoneItem.addWear(phone, 90);
+        check(Math.abs(com.hollowhours.item.PhoneItem.drainMult(phone) - (1 + (com.hollowhours.item.PhoneItem.wear(phone)) / 90f)) < 1e-4
+                && com.hollowhours.item.PhoneItem.drainMult(phone) >= 2, "battery wear doubles the drain");
+        check(new net.minecraft.world.item.ItemStack(HHItems.CHARGER.get()).getMaxDamage() == 3, "charger has 3 charges");
+
+        check(Thirst.quench(net.minecraft.world.item.alchemy.PotionUtils.setPotion(new ItemStack(Items.POTION), net.minecraft.world.item.alchemy.Potions.WATER)) == 7,
+                "water bottle quenches 7");
+        check(Thirst.quench(new ItemStack(Items.MILK_BUCKET)) > 0 && Thirst.quench(new ItemStack(Items.BREAD)) == 0, "drinks");
+
+        var zombie = net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
+        var creeper = net.minecraft.world.entity.EntityType.CREEPER.create(level);
+        var golem = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(level);
+        var pig = net.minecraft.world.entity.EntityType.PIG.create(level);
+        check(BloodFx.color(pig) == 0x8A0606 && BloodFx.color(creeper) == 0x3DAA3D && BloodFx.color(zombie) == 0x5A1A0C && BloodFx.color(golem) < 0,
+                "blood colours");
+        HollowHours.LOG.info("[smoke] story, phone, thirst and blood OK");
     }
 
     static void check(boolean ok, String what) {

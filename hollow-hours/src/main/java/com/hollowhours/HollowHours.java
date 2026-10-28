@@ -42,6 +42,7 @@ public class HollowHours {
         HHEntities.ENTITIES.register(modBus);
         HHItems.ITEMS.register(modBus);
         HHTabs.TABS.register(modBus);
+        com.hollowhours.registry.HHParticles.PARTICLES.register(modBus);
 
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::attributes);

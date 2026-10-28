@@ -1265,5 +1265,135 @@
    }
   ],
   "subtitle": "subtitles.hollowhours.ghost.flatline"
+ },
+ "phone.notify": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/notify"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.phone.notify"
+ },
+ "phone.eas": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/eas"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.phone.eas"
+ },
+ "phone.click": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/click"
+   }
+  ]
+ },
+ "phone.charge": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/charge"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.phone.charge"
+ },
+ "phone.siren": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/siren"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.phone.siren"
+ },
+ "phone.game": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/game"
+   }
+  ]
+ },
+ "phone.voice.th.0": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_0"
+   }
+  ]
+ },
+ "phone.voice.th.1": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_1"
+   }
+  ]
+ },
+ "phone.voice.th.2": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_2"
+   }
+  ]
+ },
+ "phone.voice.th.3": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_3"
+   }
+  ]
+ },
+ "phone.voice.th.4": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_4"
+   }
+  ]
+ },
+ "phone.voice.th.5": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_th_5"
+   }
+  ]
+ },
+ "phone.voice.en.0": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_0"
+   }
+  ]
+ },
+ "phone.voice.en.1": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_1"
+   }
+  ]
+ },
+ "phone.voice.en.2": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_2"
+   }
+  ]
+ },
+ "phone.voice.en.3": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_3"
+   }
+  ]
+ },
+ "phone.voice.en.4": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_4"
+   }
+  ]
+ },
+ "phone.voice.en.5": {
+  "sounds": [
+   {
+    "name": "hollowhours:phone/alert_en_5"
+   }
+  ]
  }
 }

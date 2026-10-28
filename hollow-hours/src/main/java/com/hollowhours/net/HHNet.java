@@ -8,7 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class HHNet {
-    private static final String VERSION = "3";
+    private static final String VERSION = "4";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(HollowHours.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
     private static boolean registered;
 
@@ -36,6 +36,14 @@ public final class HHNet {
                 .encoder(S2CGuide::encode).decoder(S2CGuide::decode).consumerMainThread(S2CGuide::handle).add();
         CHANNEL.messageBuilder(S2CAtmos.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(S2CAtmos::encode).decoder(S2CAtmos::decode).consumerMainThread(S2CAtmos::handle).add();
+        CHANNEL.messageBuilder(S2CBlood.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CBlood::encode).decoder(S2CBlood::decode).consumerMainThread(S2CBlood::handle).add();
+        CHANNEL.messageBuilder(S2CStats.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CStats::encode).decoder(S2CStats::decode).consumerMainThread(S2CStats::handle).add();
+        CHANNEL.messageBuilder(S2CPhoneAlert.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CPhoneAlert::encode).decoder(S2CPhoneAlert::decode).consumerMainThread(S2CPhoneAlert::handle).add();
+        CHANNEL.messageBuilder(C2SPhone.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SPhone::encode).decoder(C2SPhone::decode).consumerMainThread(C2SPhone::handle).add();
         CHANNEL.messageBuilder(C2SBetrayChoice.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SBetrayChoice::encode).decoder(C2SBetrayChoice::decode).consumerMainThread(C2SBetrayChoice::handle).add();
         CHANNEL.messageBuilder(C2STalk.class, id++, NetworkDirection.PLAY_TO_SERVER)

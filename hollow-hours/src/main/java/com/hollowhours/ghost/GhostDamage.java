@@ -15,6 +15,8 @@ public final class GhostDamage {
     public static final ResourceKey<DamageType> HIT = ResourceKey.create(Registries.DAMAGE_TYPE, HollowHours.id("ghost_hit"));
     public static final ResourceKey<DamageType> KILL = ResourceKey.create(Registries.DAMAGE_TYPE, HollowHours.id("ghost_kill"));
     public static final ResourceKey<DamageType> CURSE = ResourceKey.create(Registries.DAMAGE_TYPE, HollowHours.id("curse"));
+    public static final ResourceKey<DamageType> THIRST = ResourceKey.create(Registries.DAMAGE_TYPE, HollowHours.id("thirst"));
+    public static final ResourceKey<DamageType> MADNESS = ResourceKey.create(Registries.DAMAGE_TYPE, HollowHours.id("madness"));
 
     private GhostDamage() {}
 
@@ -33,6 +35,14 @@ public final class GhostDamage {
 
     public static DamageSource curse(Level level) {
         return of(level, CURSE, null);
+    }
+
+    public static DamageSource thirst(Level level) {
+        return of(level, THIRST, null);
+    }
+
+    public static DamageSource madness(Level level) {
+        return of(level, MADNESS, null);
     }
 
     public static boolean isGhost(DamageSource src) {

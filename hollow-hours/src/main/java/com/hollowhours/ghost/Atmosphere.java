@@ -54,7 +54,7 @@ public final class Atmosphere {
     public static int forceBlood;
     private static boolean bloodNow;
     private static float fogSent = -1;
-    private static boolean bloodSent;
+    private static boolean bloodSent, hauntSent;
 
     static Data data(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_atmosphere");
@@ -82,8 +82,8 @@ public final class Atmosphere {
         boolean night = nightTime(dayTime);
         long nightNo = dayTime / 24000L;
         // ---- blood moon: rolled once per night at dusk, ends at dawn
-        // the CI screenshot tour only gets a blood moon / fog when it asks for one
-        boolean random = forceBlood == 0 && !GhostEvents.CLIENT_SMOKE;
+        // the CI screenshot tour only gets a blood moon / fog when it asks for one; nothing before the story starts
+        boolean random = forceBlood == 0 && !GhostEvents.CLIENT_SMOKE && Story.activeCached();
         if (night && d.rolledNight != nightNo) {
             d.rolledNight = nightNo;
             d.blood = forceBlood > 0 || random && R.chance(HHConfig.BLOOD_MOON_CHANCE.get());
@@ -108,7 +108,7 @@ public final class Atmosphere {
         bloodNow = d.blood;
         // ---- fog
         if (!HHConfig.FOG_ENABLED.get()) d.fogUntil = 0;
-        else if (now >= d.fogUntil && now >= d.nextFogCheck && !GhostEvents.CLIENT_SMOKE) {
+        else if (now >= d.fogUntil && now >= d.nextFogCheck && !GhostEvents.CLIENT_SMOKE && Story.activeCached()) {
             d.nextFogCheck = now + 60 * 20;
             double chance = HHConfig.FOG_CHANCE.get() * (night ? 2 : 1) * (over.isRaining() ? 1.5 : 1);
             if (R.chance(chance)) startFog(server, (long) R.rand(120 * 20, 360 * 20), (float) R.rand(0.55, 1.0));
@@ -155,9 +155,11 @@ public final class Atmosphere {
 
     static void sync(MinecraftServer server, boolean force) {
         float fog = fogNow(server);
-        if (!force && fog == fogSent && bloodNow == bloodSent) return;
+        boolean haunt = Story.activeCached();
+        if (!force && fog == fogSent && bloodNow == bloodSent && haunt == hauntSent) return;
         fogSent = fog;
         bloodSent = bloodNow;
+        hauntSent = haunt;
         for (ServerPlayer p : server.getPlayerList().getPlayers()) send(p);
     }
 
@@ -166,7 +168,7 @@ public final class Atmosphere {
         MinecraftServer server = p.getServer();
         if (server == null) return;
         boolean over = p.level().dimension() == Level.OVERWORLD;
-        HHNet.toPlayer(p, new S2CAtmos(over && bloodNow, over ? fogNow(server) : 0));
+        HHNet.toPlayer(p, new S2CAtmos(over && bloodNow, over ? fogNow(server) : 0, Story.activeCached()));
     }
 
     public static void reset() {

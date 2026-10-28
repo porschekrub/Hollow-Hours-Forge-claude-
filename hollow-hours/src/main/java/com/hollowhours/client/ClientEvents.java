@@ -30,6 +30,7 @@ public final class ClientEvents {
         ClientFx.tick();
         Atmos.tick();
         Fear.tick();
+        PhoneAlert.tick();
         Jumpscare.tick();
         KillCam.tick();
         HorrorMusic.tick();
@@ -61,7 +62,7 @@ public final class ClientEvents {
         // fear: heavy breathing, and a stumbling panicked sway while running
         Minecraft mc = Minecraft.getInstance();
         float sway = (float) (double) com.hollowhours.config.HHClientConfig.CAMERA_SWAY.get();
-        if (kc == null && sway > 0 && mc.player != null && mc.options.getCameraType().isFirstPerson()) {
+        if (kc == null && sway > 0 && Atmos.haunted && mc.player != null && mc.options.getCameraType().isFirstPerson()) {
             float f = Fear.local(partial) * sway;
             if (f > 0.01f) {
                 float t = ClientFx.now() + partial;
@@ -92,8 +93,29 @@ public final class ClientEvents {
         }
     }
 
+    private static long lastSip;
+
+    /** Sneak + right-click water with an empty hand: a sip (the server checks again). */
+    static void trySip(InputEvent.InteractionKeyMappingTriggered e) {
+        Minecraft mc = Minecraft.getInstance();
+        if (!e.isUseItem() || mc.player == null || mc.level == null || !mc.player.isShiftKeyDown() || !mc.player.getMainHandItem().isEmpty()) return;
+        if (SurvivalHud.thirst < 0 || mc.level.getGameTime() - lastSip < 12) return;
+        var eye = mc.player.getEyePosition();
+        var to = eye.add(mc.player.getViewVector(1f).scale(4.5));
+        var hit = mc.level.clip(new net.minecraft.world.level.ClipContext(eye, to, net.minecraft.world.level.ClipContext.Block.OUTLINE,
+                net.minecraft.world.level.ClipContext.Fluid.SOURCE_ONLY, mc.player));
+        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) return;
+        if (!mc.level.getFluidState(hit.getBlockPos()).is(net.minecraft.tags.FluidTags.WATER)) return;
+        lastSip = mc.level.getGameTime();
+        com.hollowhours.net.HHNet.toServer(new com.hollowhours.net.C2SPhone(com.hollowhours.net.C2SPhone.SIP));
+        e.setSwingHand(true);
+        e.setCanceled(true);
+    }
+
     @SubscribeEvent
     public static void interact(InputEvent.InteractionKeyMappingTriggered e) {
+        trySip(e);
+        if (e.isCanceled()) return;
         if (KillCam.active()) {
             e.setCanceled(true);
             e.setSwingHand(false);
@@ -115,6 +137,9 @@ public final class ClientEvents {
         if (sway <= 0 || !com.hollowhours.config.HHClientConfig.PLAYER_ANIMS.get()) return;
         float partial = e.getPartialTick();
         float f = Fear.local(partial) * sway;
+        // after the story starts every swing comes with shaking, paranoid hands
+        Minecraft mcc = Minecraft.getInstance();
+        if (Atmos.haunted && mcc.player != null && mcc.player.swinging) f = Math.max(f, 0.45f * sway);
         if (f < 0.02f) return;
         float t = ClientFx.now() + partial;
         float a = 0.0015f + 0.011f * f;
@@ -149,6 +174,8 @@ public final class ClientEvents {
     public static void logout(ClientPlayerNetworkEvent.LoggingOut e) {
         ClientFx.reset();
         Atmos.reset();
+        PhoneAlert.reset();
+        SurvivalHud.thirst = SurvivalHud.sanity = -1;
         KillCam.reset();
         HorrorMusic.reset();
         Jumpscare.who = -1;

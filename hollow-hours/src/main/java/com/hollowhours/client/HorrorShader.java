@@ -40,7 +40,8 @@ public final class HorrorShader {
     public static void beforeHud(RenderGuiEvent.Pre e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || failed || !HHClientConfig.SHADER.get() || shaderPackLoader()) return;
-        float strength = (float) (double) HHClientConfig.SHADER_STRENGTH.get();
+        // the world looks normal until the story starts, then the horror look fades in
+        float strength = (float) (double) HHClientConfig.SHADER_STRENGTH.get() * Atmos.haunt(e.getPartialTick());
         if (strength <= 0.001f) return;
         RenderTarget main = mc.getMainRenderTarget();
         try {

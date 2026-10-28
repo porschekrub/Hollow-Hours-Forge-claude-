@@ -183,6 +183,16 @@ public final class ClientSmoke {
         return g;
     }
 
+    private static void Thirst_set(ServerPlayer sp, float v) {
+        com.hollowhours.ghost.Thirst.set(sp, v);
+        com.hollowhours.ghost.Survival.forceSync(sp);
+    }
+
+    private static void Sanity_set(ServerPlayer sp, float v) {
+        com.hollowhours.ghost.Sanity.set(sp, v);
+        com.hollowhours.ghost.Survival.forceSync(sp);
+    }
+
     private static void wait(int ticks) {
         STEPS.add(t -> t >= ticks);
     }
@@ -209,6 +219,59 @@ public final class ClientSmoke {
             });
             if (t == 20) shot("world");
             return t >= 30;
+        });
+
+        // before the story: a normal world and a happy player
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> com.hollowhours.ghost.Story.force(sp.server, -1));
+            if (t == 30) Atmos.snap();
+            return t >= 32;
+        });
+        String[] happy = {"idle", "walk", "run", "mine"};
+        for (String hp : happy) {
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                    lookAt = origin.add(0, 1.6, 30);
+                    server(sp -> {
+                        clearAll(sp);
+                        pin(sp);
+                    });
+                }
+                if (t == 2) {
+                    mc.options.keyUp.setDown(!hp.equals("idle") && !hp.equals("mine"));
+                    mc.options.keyLeft.setDown(hp.equals("walk"));
+                    mc.options.keySprint.setDown(hp.equals("run"));
+                    if (hp.equals("run") && mc.player != null) mc.player.setSprinting(true);
+                }
+                if (hp.equals("mine") && mc.player != null && t % 5 == 0) mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                if (t == 14 || t == 24) shot("happy_" + hp + (t == 14 ? "_a" : "_b"));
+                if (t >= 26) {
+                    mc.options.keyUp.setDown(false);
+                    mc.options.keyLeft.setDown(false);
+                    mc.options.keySprint.setDown(false);
+                    if (mc.player != null) mc.player.setSprinting(false);
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    return true;
+                }
+                return false;
+            });
+        }
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.6, 12);
+                server(sp -> {
+                    pin(sp);
+                    sp.removeEffect(MobEffects.NIGHT_VISION);
+                });
+            }
+            if (t == 20) shot("normal_night_before_story");
+            if (t == 22) server(sp -> {
+                com.hollowhours.ghost.Story.force(sp.server, 1);
+                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
+            });
+            if (t == 60) Atmos.snap();
+            return t >= 62;
         });
 
         // every ghost: idle, chasing pose, close-up of the face
@@ -393,6 +456,89 @@ public final class ClientSmoke {
             });
             if (t == 270) Atmos.snap();
             return t >= 272;
+        });
+
+        // the phone: home, messages, the games, health; the emergency alert with subtitles
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                clearAll(sp);
+                pin(sp);
+                net.minecraft.world.item.ItemStack ph = com.hollowhours.item.PhoneItem.fresh(sp.getRandom());
+                com.hollowhours.item.PhoneItem.setBattery(ph, 64);
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ph);
+                com.hollowhours.item.PhoneItem.addMessage(sp, "hollowhours.phone.msg.alert");
+            });
+            if (t == 10) PhoneScreen.open(net.minecraft.world.InteractionHand.MAIN_HAND);
+            if (t == 16) shot("phone_home");
+            if (t == 17 && mc.screen instanceof PhoneScreen ps) ps.app = PhoneScreen.App.MESSAGES;
+            if (t == 20) shot("phone_messages");
+            if (t == 21 && mc.screen instanceof PhoneScreen ps) {
+                ps.app = PhoneScreen.App.SNAKE;
+                ps.snakeStart();
+            }
+            if (t == 40) shot("phone_snake");
+            if (t == 41 && mc.screen instanceof PhoneScreen ps) {
+                ps.app = PhoneScreen.App.TAP;
+                ps.tapStart();
+            }
+            if (t == 60) shot("phone_ghost_tap");
+            if (t == 61 && mc.screen instanceof PhoneScreen ps) ps.app = PhoneScreen.App.HEALTH;
+            if (t == 64) shot("phone_health");
+            if (t == 66) mc.setScreen(null);
+            if (t == 70) server(sp -> {
+                com.hollowhours.item.PhoneItem.setBattery(sp.getMainHandItem(), 0);
+            });
+            if (t == 76) PhoneScreen.open(net.minecraft.world.InteractionHand.MAIN_HAND);
+            if (t == 80) shot("phone_dead");
+            if (t == 82) mc.setScreen(null);
+            return t >= 84;
+        });
+        STEPS.add(t -> {
+            if (t == 0) PhoneAlert.start(true);
+            if (t == 4 || t == 50 || t == 110 || t == 180) shot("alert_t" + t);
+            return !PhoneAlert.active() || t > 900;
+        });
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                Thirst_set(sp, 3.5f);
+                Sanity_set(sp, 18);
+            });
+            if (t == 40) shot("hud_thirsty_low_sanity");
+            if (t == 41) server(sp -> {
+                Thirst_set(sp, 20);
+                Sanity_set(sp, 100);
+            });
+            return t >= 44;
+        });
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 0.6, 4);
+                server(sp -> {
+                    clearAll(sp);
+                    pin(sp);
+                    var l = sp.serverLevel();
+                    net.minecraft.world.entity.EntityType<?>[] types = {net.minecraft.world.entity.EntityType.PIG, net.minecraft.world.entity.EntityType.ZOMBIE,
+                            net.minecraft.world.entity.EntityType.CREEPER, net.minecraft.world.entity.EntityType.SKELETON, net.minecraft.world.entity.EntityType.ENDERMAN};
+                    for (int i = 0; i < types.length; i++) {
+                        var en = types[i].create(l);
+                        if (!(en instanceof net.minecraft.world.entity.Mob m)) continue;
+                        m.setNoAi(true);
+                        m.moveTo(origin.x + (i - 2) * 1.6, origin.y, origin.z + 4, 180, 0);
+                        l.addFreshEntity(m);
+                    }
+                });
+            }
+            if (t >= 5 && t <= 25 && t % 5 == 0) server(sp -> {
+                for (var en : sp.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, sp.getBoundingBox().inflate(8))) {
+                    en.invulnerableTime = 0;
+                    en.hurt(sp.damageSources().playerAttack(sp), 1.5f);
+                    en.setHealth(Math.max(1, en.getHealth()));
+                }
+            });
+            if (t == 9) shot("blood_spray");
+            if (t == 60) shot("blood_splats");
+            if (t == 62) server(ClientSmoke::clearAll);
+            return t >= 64;
         });
 
         // jumpscares (no night vision: as dark as in the game)

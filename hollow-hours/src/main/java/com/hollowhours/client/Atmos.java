@@ -37,6 +37,9 @@ public final class Atmos {
     static final ResourceLocation GLOW = HollowHours.id("textures/environment/blood_moon_glow.png");
 
     static boolean bloodTarget;
+    /** The story has started (from the server); hauntAmt fades the horror look in over a few seconds. */
+    public static boolean haunted;
+    static float hauntAmt, hauntAmtO;
     static float fogTarget;
     /** smoothed 0..1 */
     static float blood, bloodO, fog, fogO;
@@ -47,6 +50,8 @@ public final class Atmos {
     }
 
     public static void reset() {
+        haunted = false;
+        hauntAmt = hauntAmtO = 0;
         bloodTarget = false;
         fogTarget = 0;
         blood = bloodO = fog = fogO = 0;
@@ -54,11 +59,18 @@ public final class Atmos {
 
     /** CI screenshots: jump straight to the target values. */
     static void snap() {
+        hauntAmt = hauntAmtO = haunted ? 1 : 0;
         blood = bloodO = bloodTarget ? 1 : 0;
         fog = fogO = fogTarget;
     }
 
+    public static float haunt(float partial) {
+        return Mth.lerp(partial, hauntAmtO, hauntAmt);
+    }
+
     static void tick() {
+        hauntAmtO = hauntAmt;
+        hauntAmt = approach(hauntAmt, haunted ? 1 : 0, 0.008f);
         bloodO = blood;
         fogO = fog;
         blood = approach(blood, bloodTarget ? 1 : 0, 0.01f);

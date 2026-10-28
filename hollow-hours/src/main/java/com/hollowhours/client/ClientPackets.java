@@ -49,6 +49,20 @@ public final class ClientPackets {
 
     public static void atmos(com.hollowhours.net.S2CAtmos m) {
         Atmos.set(m.bloodMoon(), m.fog());
+        Atmos.haunted = m.haunted();
+    }
+
+    public static void stats(com.hollowhours.net.S2CStats m) {
+        SurvivalHud.thirst = m.thirst();
+        SurvivalHud.sanity = m.sanity();
+    }
+
+    public static void blood(com.hollowhours.net.S2CBlood m) {
+        BloodParticle.spawn(m);
+    }
+
+    public static void phoneAlert(com.hollowhours.net.S2CPhoneAlert m) {
+        PhoneAlert.start(m.phone());
     }
 
     public static void hud(S2CHud m) {

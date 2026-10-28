@@ -44,7 +44,11 @@ public final class Fear {
     static float target(Player p) {
         Minecraft mc = Minecraft.getInstance();
         float partial = 1;
+        // before the story starts nobody is afraid of anything
+        if (!Atmos.haunted) return 0;
         float base = 0.1f + 0.12f * Atmos.night(mc.level, partial) + 0.12f * Atmos.fog(partial) + 0.3f * Atmos.blood(partial);
+        // losing your mind feels like fear too
+        if (p == mc.player && SurvivalHud.sanity >= 0) base += 0.45f * (1 - SurvivalHud.sanity / 100f);
         float hp = p.getHealth() / Math.max(1, p.getMaxHealth());
         if (hp < 0.4f) base += 0.3f * (1 - hp / 0.4f);
         float ghost = 0;

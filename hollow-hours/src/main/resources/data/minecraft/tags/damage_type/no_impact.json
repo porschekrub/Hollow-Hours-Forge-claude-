@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "hollowhours:curse"
+    "hollowhours:curse",
+    "hollowhours:thirst",
+    "hollowhours:madness"
   ]
 }

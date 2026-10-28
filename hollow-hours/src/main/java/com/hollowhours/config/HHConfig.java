@@ -30,6 +30,8 @@ public final class HHConfig {
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED;
     public static final ForgeConfigSpec.DoubleValue BLOOD_MOON_CHANCE, BLOOD_SPAWN_MULT, BLOOD_DAMAGE_MULT, BLOOD_SPEED_MULT, BLOOD_DOUBLE_CHANCE, FOG_CHANCE;
     public static final ForgeConfigSpec.BooleanValue FOG_ENABLED;
+    public static final ForgeConfigSpec.IntValue START_NIGHT;
+    public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
 
@@ -64,6 +66,19 @@ public final class HHConfig {
         RAGE_DAMAGE = b.comment("Damage multiplier while enraged").defineInRange("rageDamage", 2.0, 1, 10);
         BREAK_DOORS = b.comment("Ghosts smash doors, windows, trapdoors, gates and boards").define("breakDoors", true);
         BREAK_WALLS = b.comment("Ghosts may smash through walls when they can't get through a door").define("breakWalls", true);
+        b.pop();
+
+        b.comment("How the story begins").push("story");
+        START_NIGHT = b.comment("The haunting starts on this night (1 = the very first night). Until then the world is perfectly normal.",
+                "On that day an emergency alert comes through everyone's phone.").defineInRange("startNight", 3, 1, 1000);
+        PHONE_ALERT = b.comment("The emergency alert (voice + subtitles) on the day the haunting starts").define("phoneAlert", true);
+        GIVE_PHONE = b.comment("Every player starts with a phone (random battery; craft a charger)").define("givePhone", true);
+        b.pop();
+
+        b.comment("Survival").push("survival");
+        THIRST = b.comment("Thirst: drink water (bottles, or sneak + right-click water with an empty hand)").define("thirst", true);
+        SANITY = b.comment("Sanity: drains in the dark, near ghosts and when they jump at you; play, sleep and stay with friends to keep it").define("sanity", true);
+        BLOOD = b.comment("Blood: hits make every creature bleed in its own colour, badly hurt creatures drip").define("blood", true);
         b.pop();
 
         b.comment("Blood moon nights and rolling fog").push("atmosphere");

@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class HHClientConfig {
     public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.DoubleValue JUMPSCARE_INTENSITY, SHAKE, JUMPSCARE_VOLUME;
-    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX, SHADER, PLAYER_ANIMS;
+    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX, SHADER, PLAYER_ANIMS, BLOOD;
     public static final ForgeConfigSpec.DoubleValue SHADER_STRENGTH, CAMERA_SWAY;
 
     static {
@@ -24,6 +24,7 @@ public final class HHClientConfig {
         SHADER_STRENGTH = b.comment("How strong the shader is").defineInRange("shaderStrength", 1.0, 0, 1.5);
         PLAYER_ANIMS = b.comment("Scared player animations (hunched walk, panicked run, shaking hands ...)").define("playerAnimations", true);
         CAMERA_SWAY = b.comment("First-person breathing / panic sway").defineInRange("cameraSway", 1.0, 0, 2);
+        BLOOD = b.comment("Show blood (sprays, splats on the ground, drips)").define("blood", true);
         b.pop();
         SPEC = b.build();
     }
