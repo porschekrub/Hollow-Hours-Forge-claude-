@@ -13,17 +13,18 @@ import java.util.UUID;
 
 /**
  * All-out sprint (port of sprint.js): while running, tap sneak twice = dash much faster (tap twice again = stop).
- * Full stamina lasts 10 s and refills in 15 s. Running out = exhausted for a moment. Dashing is LOUD.
+ * Full stamina lasts 10 s and refills in 15 s. Running out = out of breath: no running at all (not even a normal
+ * sprint) until stamina is back to 15%. Dashing is LOUD.
  */
 public final class Sprint {
     private Sprint() {}
 
-    static final double DRAIN = 1 / 200.0, REFILL = 1 / 300.0, MIN_START = 0.2;
+    static final double DRAIN = 1 / 200.0, REFILL = 1 / 300.0, MIN_START = 0.15, BREATH_BACK = 0.15;
     static final int TAP_WINDOW = 12, SPRINT_MEMORY = 16;
 
     static final class S {
         double sta = 1;
-        boolean turbo, sneak, hudOn;
+        boolean turbo, sneak, hudOn, outOfBreath;
         long lastPress = -99, lastSprint = -99, nextPant, panting, exhausted, nextFx;
         int slow;
         double lx = Double.NaN, lz;
@@ -83,6 +84,12 @@ public final class Sprint {
             else if (s.slow >= 10) stop(p, s, now, false);
         } else if (s.sta < 1) {
             s.sta = Math.min(1, s.sta + REFILL);
+            if (s.outOfBreath) {
+                if (s.sta >= BREATH_BACK) {
+                    s.outOfBreath = false;
+                    Fx.actionbar(p, Component.translatable("hollowhours.sprint.again"));
+                } else if (p.isSprinting()) p.setSprinting(false);
+            }
             if (now < s.panting && now >= s.nextPant) {
                 s.nextPant = now + 44;
                 Fx.sound(p.level(), "ghost.pant.heavy", p.position(), 0.7f, 1f, 12);
@@ -101,7 +108,7 @@ public final class Sprint {
     }
 
     static void sendHud(ServerPlayer p, S s, long now) {
-        HHNet.toPlayer(p, new S2CHud(0, 0, -1, 0, s.turbo || s.sta < 1 ? (float) s.sta : -1, s.turbo, s.exhausted > now, Soul.get(p)));
+        HHNet.toPlayer(p, new S2CHud(0, 0, -1, 0, s.turbo || s.sta < 1 ? (float) s.sta : -1, s.turbo, s.outOfBreath || s.exhausted > now, Soul.get(p)));
     }
 
     static void start(ServerPlayer p, S s, long now) {
@@ -119,6 +126,7 @@ public final class Sprint {
     static void stop(ServerPlayer p, S s, long now, boolean empty) {
         s.turbo = false;
         if (empty) {
+            s.outOfBreath = true;
             s.exhausted = now + 50;
             Fx.effect(p, MobEffects.MOVEMENT_SLOWDOWN, 50, 1);
             Fx.sound(p.level(), "ghost.pant.heavy", p.position(), 1f, 1f, 12);
@@ -131,6 +139,7 @@ public final class Sprint {
         S s = STATES.get(p.getUUID());
         if (s != null) {
             s.turbo = false;
+            s.outOfBreath = false;
             s.sta = 1;
         }
     }

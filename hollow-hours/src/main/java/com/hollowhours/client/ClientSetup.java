@@ -92,6 +92,8 @@ public final class ClientSetup {
         e.enqueueWork(() -> {
             ItemProperties.register(HHItems.FLASHLIGHT.get(), HollowHours.id("on"),
                     (stack, level, entity, seed) -> Flashlight.on(stack) && Flashlight.charge(stack) > 0 ? 1f : 0f);
+            ItemProperties.register(HHItems.CANTEEN.get(), HollowHours.id("empty"),
+                    (stack, level, entity, seed) -> com.hollowhours.item.CanteenItem.sips(stack) <= 0 ? 1f : 0f);
             // the grave compass needle works like a lodestone compass, pointing at the grave
             ItemProperties.register(HHItems.GRAVE_COMPASS.get(), new net.minecraft.resources.ResourceLocation("angle"),
                     new net.minecraft.client.renderer.item.CompassItemPropertyFunction((level, stack, entity) -> com.hollowhours.grave.GraveCompassItem.target(stack)));

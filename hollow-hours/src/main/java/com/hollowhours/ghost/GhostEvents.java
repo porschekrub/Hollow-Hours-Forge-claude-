@@ -102,6 +102,9 @@ public final class GhostEvents {
         Later.tick(now);
         safe("boards", () -> Boards.tick(now));
         safe("stalkers", () -> Stalkers.tick(server, now));
+        safe("thirst", () -> {
+            for (ServerPlayer p : server.getPlayerList().getPlayers()) Thirst.trackFood(p);
+        });
         if (now % 5 == 0) safe("music", () -> Director.musicTick(server, now));
         if (now % 10 == 0) safe("dread", () -> Director.dreadTick(server, now));
         if (now % 20 == 0) {
@@ -376,6 +379,7 @@ public final class GhostEvents {
         Sprint.forget(p);
         PhoneUse.forget(p);
         Survival.forget(p);
+        Thirst.forget(p);
         Perception.forget(p);
         Director.forget(p);
         GhostTalk.forget(p);

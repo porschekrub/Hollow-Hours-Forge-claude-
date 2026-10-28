@@ -21,15 +21,24 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Thirst 0-20 (like hunger). Drops over time, faster when sprinting, in hot places and in the Nether.
- * Drink: water bottles (+7), milk (+5), other potions, soups, honey, melon, berries... or sneak + right-click water
- * with an empty hand (+2 a sip, river water can make you sick). Below 6 you're slow, below 3 weak, at 0 it hurts.
+ * Thirst 0-20, working like hunger: it goes down with what you do (running, jumping, fighting, mining, healing), 10%
+ * faster than the hunger bar, and drinks also give a hidden "hydration" (like food saturation) that is used up first.
+ * Drink: water bottles (+7), the canteen (+15%), milk (+5), other potions, soups, honey, melon, berries... or sneak +
+ * right-click water with an empty hand (+2 a sip, river water can make you sick). Below 6 you're slow, below 3 weak,
+ * at 0 it hurts.
  */
 public final class Thirst {
     private Thirst() {}
 
-    static final String KEY = "hollowhours_thirst";
+    static final String KEY = "hollowhours_thirst", HYD = "hollowhours_hydration";
     public static final float MAX = 20;
+    /** thirst goes 10% faster than hunger */
+    static final float VS_HUNGER = 1.1f;
+    /** a drink's hidden hydration, as a share of what it quenches (like food saturation) */
+    static final float HYDRATION = 0.6f;
+
+    /** per player: food + saturation last tick, and how much of it was used up since the last thirst tick */
+    private static final java.util.Map<java.util.UUID, float[]> FOOD = new java.util.HashMap<>();
 
     public static float get(Player p) {
         CompoundTag d = Story.persisted(p);
@@ -44,18 +53,44 @@ public final class Thirst {
         set(p, get(p) + v);
     }
 
+    public static float hydration(Player p) {
+        return Math.min(get(p), Story.persisted(p).getFloat(HYD));
+    }
+
+    public static void setHydration(Player p, float v) {
+        Story.persisted(p).putFloat(HYD, Math.max(0, Math.min(get(p), v)));
+    }
+
+    /** Drinking: thirst plus a little hidden hydration. */
+    public static void drink(Player p, float amount) {
+        add(p, amount);
+        setHydration(p, hydration(p) + amount * HYDRATION);
+    }
+
+    /** Every tick: whatever the hunger bar spends (food or saturation), thirst will spend 10% more. */
+    public static void trackFood(ServerPlayer p) {
+        float[] f = FOOD.computeIfAbsent(p.getUUID(), k -> new float[] {Float.NaN, 0});
+        float total = p.getFoodData().getFoodLevel() + p.getFoodData().getSaturationLevel();
+        if (!Float.isNaN(f[0]) && total < f[0]) f[1] += f[0] - total;
+        f[0] = total;
+    }
+
+    public static void forget(ServerPlayer p) {
+        FOOD.remove(p.getUUID());
+    }
+
     /** Every 20 ticks. */
     public static void tick(ServerPlayer p, long now) {
         if (!HHConfig.THIRST.get() || p.isCreative() || p.isSpectator() || !p.isAlive()) return;
-        // a full bar: about an hour walking around, half an hour sprinting
-        float loss = 0.0055f * HHConfig.THIRST_RATE.get().floatValue();
-        if (p.isSprinting()) loss *= 2f;
+        float[] f = FOOD.get(p.getUUID());
+        float use = f == null ? 0 : f[1] * VS_HUNGER * HHConfig.THIRST_RATE.get().floatValue();
+        if (f != null) f[1] = 0;
         Level level = p.level();
-        if (level.dimension() == Level.NETHER) loss *= 2f;
-        else if (level.getBiome(p.blockPosition()).value().getBaseTemperature() > 1.0f) loss *= 1.4f;
-        if (p.isInWater()) loss *= 0.5f;
-        float t = get(p) - loss;
-        set(p, t);
+        // hydration goes first (like saturation), then the bar; on peaceful the bar itself never drops (like hunger)
+        float hyd = hydration(p), fromHyd = Math.min(hyd, use);
+        setHydration(p, hyd - fromHyd);
+        if (level.getDifficulty() != net.minecraft.world.Difficulty.PEACEFUL) set(p, get(p) - (use - fromHyd));
+        float t = get(p);
         if (t <= 0) {
             if (now % 80 == 0) p.hurt(GhostDamage.thirst(level), 1.0f);
         } else if (t < 3) {
@@ -80,7 +115,7 @@ public final class Thirst {
 
     public static void onFinishUsing(ServerPlayer p, ItemStack s) {
         float q = quench(s);
-        if (q > 0) add(p, q);
+        if (q > 0) drink(p, q);
     }
 
     /** Sneak + right-click water with an empty hand (sent by the client, checked here). */
@@ -96,7 +131,7 @@ public final class Thirst {
         BlockPos pos = hit.getBlockPos();
         if (!p.level().getFluidState(pos).is(FluidTags.WATER)) return;
         d.putLong("hollowhours_sip", now);
-        add(p, 2);
+        drink(p, 2);
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.GENERIC_DRINK, net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.1f);
         p.serverLevel().sendParticles(ParticleTypes.SPLASH, hit.getLocation().x, hit.getLocation().y + 0.1, hit.getLocation().z, 6, 0.15, 0.05, 0.15, 0.1);
         p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);

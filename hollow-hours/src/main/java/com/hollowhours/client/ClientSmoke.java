@@ -504,11 +504,29 @@ public final class ClientSmoke {
                 Sanity_set(sp, 18);
             });
             if (t == 40) shot("hud_thirsty_low_sanity");
+            // thirst follows the hunger bar (10% faster); the canteen gives 15% more than a water bottle
+            if (t == 45) server(sp -> {
+                Thirst_set(sp, 12);
+                com.hollowhours.ghost.Thirst.setHydration(sp, 0);
+                sp.getFoodData().setFoodLevel(20);
+                sp.getFoodData().setSaturation(0);
+                sp.causeFoodExhaustion(4.01f);
+            });
+            if (t == 70) server(sp -> {
+                float th = com.hollowhours.ghost.Thirst.get(sp), food = sp.getFoodData().getFoodLevel();
+                var can = new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.CANTEEN.get());
+                can.finishUsingItem(sp.level(), sp);
+                float after = com.hollowhours.ghost.Thirst.get(sp);
+                HollowHours.LOG.info("[client smoke] thirst after one hunger point: {} (food {}), canteen drink: {} -> {}, sips {}", th, food, th, after,
+                        com.hollowhours.item.CanteenItem.sips(can));
+                if (Math.abs(th - (12 - 1.1f)) > 0.05f || Math.abs(after - th - 7 * 1.15f) > 0.05f || com.hollowhours.item.CanteenItem.sips(can) != 2)
+                    HollowHours.LOG.error("[client smoke] thirst / canteen numbers are off (com.hollowhours)");
+            });
             if (t == 41) server(sp -> {
                 Thirst_set(sp, 20);
                 Sanity_set(sp, 100);
             });
-            return t >= 44;
+            return t >= 72;
         });
         STEPS.add(t -> {
             if (t == 0) {

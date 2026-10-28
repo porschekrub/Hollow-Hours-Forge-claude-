@@ -90,6 +90,10 @@ public final class ClientEvents {
             in.up = in.down = in.left = in.right = false;
             in.jumping = false;
             in.shiftKeyDown = false;
+        } else if (ClientFx.outOfBreath() && e.getEntity() == Minecraft.getInstance().player) {
+            // out of breath: no running until stamina is back to 15% (a hair less forward push = sprinting can't start)
+            e.getEntity().setSprinting(false);
+            e.getInput().forwardImpulse = Math.min(e.getInput().forwardImpulse, 0.79f);
         }
     }
 

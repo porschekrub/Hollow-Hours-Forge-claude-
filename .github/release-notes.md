@@ -1,13 +1,20 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.5.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.5.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.5.3.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.5.3.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.5.3**
+- Thirst now works like hunger: it goes down with what you do (running, jumping, fighting, mining, healing), **10% faster than the hunger bar**, and drinks give hidden hydration (like food saturation). Standing still doesn't make you thirsty.
+  หิวน้ำทำงานเหมือนหลอดอาหาร ลดตามสิ่งที่ทำ (วิ่ง กระโดด สู้ ขุด ฟื้นเลือด) เร็วกว่าหลอดอาหาร 10%
+- **Canteen** (leather ×3, glass bottle, iron nugget): 3 drinks, each 15% more water than a water bottle; right-click water to refill.
+  กระติกน้ำ: ดื่มได้ 3 ครั้ง ได้น้ำมากกว่าขวดน้ำ 15% คลิกขวาที่น้ำเพื่อเติม
+- **Out of breath**: when dash stamina runs out you can't run at all (not even a normal sprint) until it's back to 15%.
+  stamina หมด = วิ่งไม่ได้เลย (วิ่งปกติก็ไม่ได้) จนกว่า stamina จะกลับมา 15%
+- Flashlight batteries are back to 5 minutes. / ถ่านไฟฉายกลับเป็น 5 นาทีเหมือนเดิม
 
 **2.5.2**
-- Thirst is slower: a full bar lasts about an hour walking, half an hour sprinting. / หิวน้ำช้าลง: เต็มหลอดอยู่ได้ประมาณ 1 ชั่วโมง (วิ่งตลอด ~30 นาที)
 - The phone battery lasts longer: about 30 minutes of screen time or 12 minutes of games per charge, and it wears out half as fast. / แบตโทรศัพท์อยู่ได้นานขึ้น: เปิดจอ ~30 นาที เล่นเกม ~12 นาที แบตเสื่อมช้าลงครึ่งหนึ่ง
-- A flashlight battery lights for 10 minutes (was 5). / ถ่านไฟฉายส่องได้ 10 นาที (เดิม 5)
 - New settings: `thirstRate` and `phoneDrain` in `[survival]` of `hollowhours-common.toml` (1 = default, 0.5 = half as fast).
 
 **2.5.1**

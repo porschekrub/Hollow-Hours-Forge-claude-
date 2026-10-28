@@ -1,0 +1,24 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  " N ",
+  "LBL",
+  " L "
+ ],
+ "key": {
+  "N": {
+   "item": "minecraft:iron_nugget"
+  },
+  "L": {
+   "item": "minecraft:leather"
+  },
+  "B": {
+   "item": "minecraft:glass_bottle"
+  }
+ },
+ "result": {
+  "item": "hollowhours:canteen",
+  "count": 1
+ }
+}

@@ -80,7 +80,7 @@ public final class HHConfig {
 
         b.comment("Survival").push("survival");
         THIRST = b.comment("Thirst: drink water (bottles, or sneak + right-click water with an empty hand)").define("thirst", true);
-        THIRST_RATE = b.comment("How fast you get thirsty (1 = a full bar lasts about an hour of walking, half that sprinting)").defineInRange("thirstRate", 1.0, 0.1, 5.0);
+        THIRST_RATE = b.comment("How fast you get thirsty (1 = 10% faster than the hunger bar)").defineInRange("thirstRate", 1.0, 0.1, 5.0);
         PHONE_DRAIN = b.comment("How fast the phone battery drains (1 = about 30 minutes of screen time, 12 minutes of games per charge)").defineInRange("phoneDrain", 1.0, 0.1, 5.0);
         SANITY = b.comment("Sanity: drains in the dark, near ghosts and when they jump at you; play, sleep and stay with friends to keep it").define("sanity", true);
         BLOOD = b.comment("Blood: hits make every creature bleed in its own colour, badly hurt creatures drip").define("blood", true);

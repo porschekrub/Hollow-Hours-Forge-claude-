@@ -426,4 +426,35 @@ def lantern(x, y):
 save_png(tex(lantern), 'textures', 'item', 'restorer.png')
 save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/restorer"}}, A, 'models', 'item', 'restorer.json')
 shaped("restorer", [" A ", "GLG", " S "], {"A": "minecraft:amethyst_shard", "G": "minecraft:gold_ingot", "L": "minecraft:soul_lantern", "S": "minecraft:soul_sand"})
+
+
+# ---------------------------------------------------------------- the canteen (3 drinks), full and empty
+def canteen(full):
+    def px(x, y):
+        if 6 <= x <= 9 and y in (1, 2):
+            return (70, 70, 76)                                        # cap
+        if 7 <= x <= 8 and y == 3:
+            return (120, 120, 128)                                     # neck
+        d = ((x - 7.5) / 5.6) ** 2 + ((y - 9.5) / 6.2) ** 2
+        if d <= 1:
+            if d > 0.72:
+                return (64, 74, 52)                                    # canvas rim
+            if 8.5 <= y <= 10.5:
+                return (120, 86, 52)                                   # leather strap
+            c = (92, 112, 74) if (x + y) % 3 else (84, 102, 68)        # olive canvas
+            if full and x <= 5 and 6 <= y <= 9:
+                c = (130, 170, 200)                                    # a glint of water
+            return c
+        if x in (2, 13) and 4 <= y <= 9:
+            return (120, 86, 52)                                       # shoulder strap
+        return None
+    return tex(px)
+
+
+save_png(canteen(True), 'textures', 'item', 'canteen.png')
+save_png(canteen(False), 'textures', 'item', 'canteen_empty.png')
+save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/canteen"},
+           "overrides": [{"predicate": {"hollowhours:empty": 1}, "model": "hollowhours:item/canteen_empty"}]}, A, 'models', 'item', 'canteen.json')
+save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/canteen_empty"}}, A, 'models', 'item', 'canteen_empty.json')
+shaped("canteen", [" N ", "LBL", " L "], {"N": "minecraft:iron_nugget", "L": "minecraft:leather", "B": "minecraft:glass_bottle"})
 print('ok')

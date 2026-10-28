@@ -108,6 +108,11 @@ public final class ClientFx {
         FADES.add(new Fade(rgb, in, hold, out, ticks));
     }
 
+    /** Out of breath: the server says no running until stamina is back to 15%. */
+    public static boolean outOfBreath() {
+        return hud.exhausted() && ticks - hudAt < 40;
+    }
+
     static void hud(S2CHud m) {
         hud = m;
         hudAt = ticks;
