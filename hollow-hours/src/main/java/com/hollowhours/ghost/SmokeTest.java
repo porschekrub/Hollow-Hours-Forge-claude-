@@ -47,6 +47,7 @@ final class SmokeTest {
             bloodMoon(server, level, at);
             storyAndSurvival(server, level, at);
             physicsAndFun(server, level, at);
+            HollowHours.LOG.info("[smoke] {}", com.hollowhours.grave.GraveSmoke.run(server));
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
 

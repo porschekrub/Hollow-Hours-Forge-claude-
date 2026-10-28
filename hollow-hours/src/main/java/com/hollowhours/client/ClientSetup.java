@@ -36,6 +36,7 @@ public final class ClientSetup {
         e.registerEntityRenderer(net.minecraft.world.entity.EntityType.ITEM, com.hollowhours.client.render.ItemPhysicsRenderer::new);
         e.registerEntityRenderer(HHEntities.SWING_SEAT.get(), com.hollowhours.client.render.SwingSeatRenderer::new);
         e.registerEntityRenderer(HHEntities.BALL.get(), com.hollowhours.client.render.BallRenderer::new);
+        e.registerEntityRenderer(HHEntities.GRAVE.get(), com.hollowhours.client.render.GraveRenderer::new);
     }
 
     /** Players get the scared body animations (the model inside both player renderers is swapped). */
@@ -64,6 +65,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void extraModels(net.minecraftforge.client.event.ModelEvent.RegisterAdditional e) {
         e.register(com.hollowhours.client.render.SwingSeatRenderer.MODEL);
+        e.register(com.hollowhours.client.render.GraveRenderer.MODEL);
     }
 
     @SubscribeEvent
@@ -87,7 +89,12 @@ public final class ClientSetup {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
-        e.enqueueWork(() -> ItemProperties.register(HHItems.FLASHLIGHT.get(), HollowHours.id("on"),
-                (stack, level, entity, seed) -> Flashlight.on(stack) && Flashlight.charge(stack) > 0 ? 1f : 0f));
+        e.enqueueWork(() -> {
+            ItemProperties.register(HHItems.FLASHLIGHT.get(), HollowHours.id("on"),
+                    (stack, level, entity, seed) -> Flashlight.on(stack) && Flashlight.charge(stack) > 0 ? 1f : 0f);
+            // the grave compass needle works like a lodestone compass, pointing at the grave
+            ItemProperties.register(HHItems.GRAVE_COMPASS.get(), new net.minecraft.resources.ResourceLocation("angle"),
+                    new net.minecraft.client.renderer.item.CompassItemPropertyFunction((level, stack, entity) -> com.hollowhours.grave.GraveCompassItem.target(stack)));
+        });
     }
 }

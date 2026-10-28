@@ -42,6 +42,8 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
   ตัดต้นไม้ทีเดียวล้มทั้งต้น ขุดแร่ทีเดียวแตกทั้งสาย ของดรอปนอนบนพื้นแบบ 3D ระเบิดแล้วบล็อกปลิว (ย่อเพื่อทุบทีละบล็อก)
 - **Playground / เครื่องเล่น**: swing, slide, trampoline, basketball hoop + ball, football goal + ball, arcade machine, TV — all craftable, all raise sanity.
   ชิงช้า สไลเดอร์ แทรมโพลีน แป้นบาส ประตูฟุตบอล ตู้เกม ทีวี คราฟได้ทั้งหมด เพิ่มสติ
+- **Graves / หลุมศพ**: die and your items + all your XP wait in a grave (15 minutes, only you can open it, 3 hits break it); a compass points to it; a Grave Restorer (3 uses) brings back a lost grave.
+  ตายแล้วของและ XP ทั้งหมดอยู่ในหลุมศพ (15 นาที เปิดได้แค่เจ้าของ ตี 3 ทีพัง) มีเข็มทิศนำทาง ตะเกียงกู้ของ (3 ครั้ง) เอาของจากหลุมที่พังคืนได้
 - Test commands (op): `/hollow story start|hold|alert`, `/hollow thirst <0-20>`, `/hollow sanity <0-100>`
 - **Sell out a friend / ขายเพื่อน**: 25% of the time the ghost offers to spare you if you tell it where a friend is. Pick a friend or refuse — 10 seconds. Refusing or waiting = death.
   25% ผีจะถามว่า "บอกมาว่าเพื่อนอยู่ไหน แล้วฉันอาจไว้ชีวิต" เลือกเพื่อน หรือ "ไม่ขาย" ภายใน 10 วินาที ไม่ตอบ/ไม่ขาย = ตาย

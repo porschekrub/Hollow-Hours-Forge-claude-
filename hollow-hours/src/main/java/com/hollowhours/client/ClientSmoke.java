@@ -157,7 +157,7 @@ public final class ClientSmoke {
         List<Entity> all = new ArrayList<>();
         for (Entity en : level.getAllEntities()) all.add(en); // discarding while iterating breaks the entity map
         for (Entity en : all) {
-            if (en instanceof GhostEntity || en instanceof StalkerEntity || en instanceof ClosetEntity) en.discard();
+            if (en instanceof GhostEntity || en instanceof StalkerEntity || en instanceof ClosetEntity || en instanceof com.hollowhours.grave.GraveEntity) en.discard();
             // superflat slimes from before mob spawning was turned off would kill the player mid-tour
             else if (en instanceof net.minecraft.world.entity.monster.Enemy) en.discard();
         }
@@ -910,6 +910,75 @@ public final class ClientSmoke {
             });
             return t >= 66;
         });
+        // graves: die with things, get a compass, open it; die again, smash it, bring it all back with a restorer
+        for (int round = 0; round < 2; round++) {
+            final int rd = round;
+            final int[] deadAt = {-1};
+            STEPS.add(t -> {
+                if (t == 0) {
+                    lookAt = origin.add(0, 0.6, 3);
+                    server(sp -> {
+                        clearArea(sp);
+                        pin(sp);
+                        sp.getInventory().clearContent();
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+                        sp.getInventory().add(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BREAD, 12));
+                        sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_CHESTPLATE));
+                        sp.setExperienceLevels(12);
+                        sp.teleportTo(origin.x, origin.y, origin.z + 3);
+                    });
+                }
+                if (t == 5) server(sp -> sp.hurt(sp.damageSources().genericKill(), Float.MAX_VALUE));
+                boolean d = mc.player == null || !mc.player.isAlive() || mc.screen instanceof DeathScreen;
+                if (d && deadAt[0] < 0) deadAt[0] = t;
+                if (deadAt[0] >= 0 && t == deadAt[0] + 20 && mc.player != null) {
+                    mc.player.respawn();
+                    mc.setScreen(null);
+                }
+                if (deadAt[0] >= 0 && t == deadAt[0] + 30) server(sp -> {
+                    pin(sp);
+                    sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
+                });
+                if (deadAt[0] >= 0 && t == deadAt[0] + 60) {
+                    shot(rd == 0 ? "grave" : "grave_again");
+                    server(sp -> {
+                        var graves = sp.serverLevel().getEntitiesOfClass(com.hollowhours.grave.GraveEntity.class, sp.getBoundingBox().inflate(8));
+                        boolean compass = sp.getInventory().contains(new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.GRAVE_COMPASS.get()));
+                        HollowHours.LOG.info("[client smoke] grave round {}: graves {} compass {} level {}", rd, graves.size(), compass, sp.experienceLevel);
+                        if (graves.isEmpty() || !compass) HollowHours.LOG.error("[client smoke] no grave or no compass after dying (com.hollowhours)");
+                        if (graves.isEmpty()) return;
+                        var ge = graves.get(0);
+                        if (rd == 0) ge.interact(sp, net.minecraft.world.InteractionHand.MAIN_HAND);
+                        else {
+                            for (int i = 0; i < 3; i++) ge.hurt(sp.damageSources().playerAttack(sp), 1f);
+                            sp.getInventory().add(new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.RESTORER.get()));
+                        }
+                    });
+                }
+                if (rd == 1 && deadAt[0] >= 0 && t == deadAt[0] + 64) server(sp -> {
+                    var r = sp.getInventory().items.stream().filter(it -> it.is(com.hollowhours.registry.HHItems.RESTORER.get())).findFirst().orElse(null);
+                    if (r != null) {
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, r.copy());
+                        r.setCount(0);
+                        sp.getOffhandItem().use(sp.level(), sp, net.minecraft.world.InteractionHand.OFF_HAND);
+                    }
+                });
+                if (deadAt[0] >= 0 && t == deadAt[0] + 70) {
+                    shot(rd == 0 ? "grave_opened" : "grave_restored");
+                    server(sp -> {
+                        boolean sword = sp.getInventory().contains(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+                        boolean graveLeft = !sp.serverLevel().getEntitiesOfClass(com.hollowhours.grave.GraveEntity.class, sp.getBoundingBox().inflate(8)).isEmpty();
+                        HollowHours.LOG.info("[client smoke] grave round {}: sword back {} level {} grave still there {}", rd, sword, sp.experienceLevel, graveLeft);
+                        if (!sword || sp.experienceLevel < 12 || graveLeft) HollowHours.LOG.error("[client smoke] grave round {} did not give everything back (com.hollowhours)", rd);
+                    });
+                }
+                if (t > 400) {
+                    HollowHours.LOG.error("[client smoke] grave round {} never finished (com.hollowhours)", rd);
+                    return true;
+                }
+                return deadAt[0] >= 0 && t >= deadAt[0] + 72;
+            });
+        }
         // explosions throw blocks: a little brick hut blown up (last: it leaves a crater, which is filled back in)
         STEPS.add(t -> {
             if (t == 0) {

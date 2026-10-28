@@ -79,6 +79,8 @@ public final class GhostEvents {
         bus.addListener(GhostEvents::onMount);
         bus.addListener(EventPriority.HIGHEST, GhostEvents::onDeath);
         bus.addListener(GhostEvents::onDrops);
+        bus.addListener(EventPriority.LOW, com.hollowhours.grave.Graves::onDrops);
+        bus.addListener(com.hollowhours.grave.Graves::onXp);
         bus.addListener(GhostEvents::onRespawn);
         bus.addListener(GhostEvents::onLogin);
         bus.addListener((PlayerEvent.PlayerChangedDimensionEvent e) -> {
@@ -114,6 +116,7 @@ public final class GhostEvents {
                 }
             });
             safe("soul", () -> Soul.tick(server, now));
+            safe("graves", () -> com.hollowhours.grave.Graves.tick(server));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
         // the first nights are normal: nothing haunts anyone before the story starts

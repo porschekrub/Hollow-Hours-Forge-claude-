@@ -1,8 +1,19 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.4.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.4.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.5.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.5.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.5.0 — graves**
+- When you die, everything you carried and **all** your experience go into a **grave** where you fell, and you get a **Grave Compass** pointing to it. Right-click the grave to get everything back. Only you can open it.
+  ตายแล้วของทั้งหมดและ XP ทั้งหมดจะอยู่ในหลุมศพตรงที่ตาย ได้เข็มทิศชี้ไปหาหลุมศพ คลิกขวาเพื่อเอาของคืน คนอื่นเปิดไม่ได้
+- Hit your grave 3 times and it crumbles with everything in it. After 15 minutes it crumbles by itself.
+  ตีหลุมศพ 3 ที หลุมศพพังและของหายหมด ถ้าผ่านไป 15 นาทีหลุมศพจะพังเอง
+- **Grave Restorer** (3 uses; soul lantern + gold + amethyst + soul sand) brings back what your last broken or crumbled grave took.
+  ตะเกียงกู้ของ (ใช้ได้ 3 ครั้ง) เอาของจากหลุมศพที่พังหรือหายไปกลับคืนมา
+- Hold right-click on the compass for 3 seconds, twice, to throw it away. If your inventory is full, the compass and restored items wait and come to you when there is room.
+  กดคลิกขวาค้างที่เข็มทิศ 3 วิ 2 รอบเพื่อทิ้ง ถ้ากระเป๋าเต็ม ของจะรอแล้วมาเองเมื่อมีที่ว่าง
+- Settings: `[graves]` in `hollowhours-common.toml`. No graves with the keepInventory game rule.
 
 **2.4.0 — physics and the playground**
 - **Trees fall**: chop one log and the whole tree tips over away from you and crashes down; the logs, leaves, saplings and apples land where it fell. Sneak to break just one log.

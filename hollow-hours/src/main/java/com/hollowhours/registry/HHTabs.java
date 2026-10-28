@@ -28,6 +28,7 @@ public final class HHTabs {
                 out.accept(HHItems.CLOSET.get());
                 out.accept(HHItems.PHONE.get());
                 out.accept(HHItems.CHARGER.get());
+                out.accept(HHItems.RESTORER.get());
                 HHBlocks.ALL.forEach(b -> out.accept(b.get()));
                 out.accept(HHItems.BASKETBALL.get());
                 out.accept(HHItems.SOCCER_BALL.get());

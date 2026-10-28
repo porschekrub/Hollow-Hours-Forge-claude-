@@ -1,0 +1,27 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "category": "misc",
+ "pattern": [
+  " A ",
+  "GLG",
+  " S "
+ ],
+ "key": {
+  "A": {
+   "item": "minecraft:amethyst_shard"
+  },
+  "G": {
+   "item": "minecraft:gold_ingot"
+  },
+  "L": {
+   "item": "minecraft:soul_lantern"
+  },
+  "S": {
+   "item": "minecraft:soul_sand"
+  }
+ },
+ "result": {
+  "item": "hollowhours:restorer",
+  "count": 1
+ }
+}

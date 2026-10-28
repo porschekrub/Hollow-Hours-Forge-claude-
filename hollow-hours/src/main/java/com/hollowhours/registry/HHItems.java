@@ -37,6 +37,8 @@ public final class HHItems {
     public static final RegistryObject<Item> CLOSET = ITEMS.register("closet_item", () -> new ClosetItem(new Item.Properties().stacksTo(4)));
     public static final RegistryObject<Item> PHONE = ITEMS.register("phone", () -> new com.hollowhours.item.PhoneItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> CHARGER = ITEMS.register("charger", () -> new com.hollowhours.item.ChargerItem(new Item.Properties().durability(3)));
+    public static final RegistryObject<Item> GRAVE_COMPASS = ITEMS.register("grave_compass", () -> new com.hollowhours.grave.GraveCompassItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> RESTORER = ITEMS.register("restorer", () -> new com.hollowhours.grave.RestorerItem(new Item.Properties().durability(3).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> BASKETBALL = ITEMS.register("basketball", () -> new com.hollowhours.fun.BallItem(new Item.Properties().stacksTo(4), com.hollowhours.fun.BallEntity.BASKETBALL));
     public static final RegistryObject<Item> SOCCER_BALL = ITEMS.register("soccer_ball", () -> new com.hollowhours.fun.BallItem(new Item.Properties().stacksTo(4), com.hollowhours.fun.BallEntity.SOCCER));
 

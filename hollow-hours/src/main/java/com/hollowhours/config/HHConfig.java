@@ -32,7 +32,8 @@ public final class HHConfig {
     public static final ForgeConfigSpec.BooleanValue FOG_ENABLED;
     public static final ForgeConfigSpec.IntValue START_NIGHT;
     public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD, TREE_FELLING, EXPLOSION_DEBRIS;
-    public static final ForgeConfigSpec.IntValue VEIN_MINING;
+    public static final ForgeConfigSpec.IntValue VEIN_MINING, GRAVE_MINUTES, GRAVE_HITS;
+    public static final ForgeConfigSpec.BooleanValue GRAVES;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
 
@@ -87,6 +88,12 @@ public final class HHConfig {
         VEIN_MINING = b.comment("Mine one ore and up to this many touching ores of the same kind break with it (sneak = just one; 1 = off)")
                 .defineInRange("veinMiningMax", 64, 1, 512);
         EXPLOSION_DEBRIS = b.comment("Explosions throw blocks through the air (they land as rubble)").define("explosionDebris", true);
+        b.pop();
+
+        b.comment("Graves: your items and experience wait where you died (not with keepInventory)").push("graves");
+        GRAVES = b.comment("Make a grave when a player dies").define("enabled", true);
+        GRAVE_MINUTES = b.comment("Minutes before a grave crumbles (its items can then only come back with a Grave Restorer)").defineInRange("minutes", 15, 1, 600);
+        GRAVE_HITS = b.comment("Hits from its owner that break a grave").defineInRange("hitsToBreak", 3, 1, 20);
         b.pop();
 
         b.comment("Blood moon nights and rolling fog").push("atmosphere");

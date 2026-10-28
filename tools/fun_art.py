@@ -1,4 +1,4 @@
-"""Playground / living-room blocks and balls: textures, block + item models, blockstates, loot tables, recipes and
+"""Playground / living-room blocks and balls, and the grave (with its compass and restorer): textures, block + item models, blockstates, loot tables, recipes and
 mining tags. Every model is drawn facing north (its front toward -z); blockstates turn it."""
 from PIL import Image
 import json, math, os, random
@@ -362,4 +362,68 @@ shaped("arcade", ["PGP", "PRP", "PBP"], {"P": "#minecraft:planks", "G": "minecra
 shaped("tv", ["IGI", "IRI", " I "], {"I": "minecraft:iron_ingot", "G": "minecraft:glass_pane", "R": "minecraft:redstone"})
 shapeless("basketball", ["minecraft:leather", "minecraft:orange_dye", "minecraft:slime_ball"])
 shapeless("soccer_ball", ["minecraft:leather", "minecraft:white_dye", "minecraft:black_dye", "minecraft:slime_ball"])
+
+
+# ---------------------------------------------------------------- the grave (drawn by its entity), its compass, the restorer
+def stone(x, y):
+    c = jit((118, 118, 122), 8)
+    if (x * 5 + y * 3) % 13 == 0:
+        c = (92, 96, 88)                      # moss/cracks
+    return c
+
+
+# the headstone front: a cross engraved, R.I.P. under it
+def stone_front(x, y):
+    # (the face shows rows 3..15 and the mound covers the last three)
+    if (x in (7, 8) and 4 <= y <= 8) or (y == 5 and 5 <= x <= 10):
+        return (70, 70, 74)
+    if y == 9 and x in (3, 4, 5, 7, 9, 10, 12) or y == 10 and x in (3, 5, 7, 9, 12) or y == 11 and x in (3, 4, 7, 9, 10, 12) \
+            or y == 12 and x in (3, 5, 7, 9):
+        return (70, 70, 74)
+    return stone(x, y)
+
+
+save_png(tex(stone), 'textures', 'block', 'grave_stone.png')
+save_png(tex(stone_front), 'textures', 'block', 'grave_stone_front.png')
+save_png(tex(lambda x, y: jit((96, 66, 42) if (x * 3 + y) % 7 else (78, 54, 34), 6)), 'textures', 'block', 'grave_dirt.png')
+save_png(tex(lambda x, y: (70, 120, 50) if (x * 7 + y * 5) % 9 < 2 else None), 'textures', 'block', 'grave_grass.png')
+G = {"stone": W + "grave_stone", "front": W + "grave_stone_front", "dirt": W + "grave_dirt", "grass": W + "grave_grass"}
+grave = [
+    el([3, 0, 1], [13, 2, 13], "dirt"),                                   # the mound
+    el([4, 2, 2], [12, 3, 12], "dirt"),
+    plane([3, 2.01, 1], [13, 2.01, 13], "grass", "y"),
+    el([2.5, 0, 12], [13.5, 13, 15], "stone", faces={"north": "front"}),  # the headstone
+    el([3.5, 13, 12], [12.5, 14.5, 15], "stone"),
+    el([5, 14.5, 12], [11, 15.5, 15], "stone"),
+]
+save_json(model(G, grave, W + "grave_stone", render_type="minecraft:cutout"), A, 'models', 'block', 'grave.json')
+
+# the compass: a lodestone-style needle (vanilla compass pictures), glinting
+compass = {"parent": "minecraft:item/generated", "textures": {"layer0": "minecraft:item/compass_16"}, "overrides": []}
+compass["overrides"].append({"predicate": {"angle": 0.0}, "model": "hollowhours:item/grave_compass"})
+for j in range(31):
+    compass["overrides"].append({"predicate": {"angle": 0.015625 + 0.03125 * j}, "model": "minecraft:item/compass_%02d" % ((17 + j) % 32)})
+compass["overrides"].append({"predicate": {"angle": 0.984375}, "model": "hollowhours:item/grave_compass"})
+save_json(compass, A, 'models', 'item', 'grave_compass.json')
+
+
+# the restorer: a little lantern of blue soul fire
+def lantern(x, y):
+    if 5 <= x <= 10 and y in (2, 3):
+        return (60, 60, 70)                                   # cap
+    if x in (7, 8) and y in (0, 1):
+        return (90, 90, 100)                                  # handle
+    if 4 <= x <= 11 and 4 <= y <= 13:
+        if x in (4, 11) or y in (4, 13):
+            return (55, 55, 64)                               # frame
+        d = abs(x - 7.5) + abs(y - 9.5)
+        return (120, 230, 255) if d < 2 else (60, 170, 220) if d < 3.5 else (30, 70, 110)
+    if 5 <= x <= 10 and y == 14:
+        return (55, 55, 64)
+    return None
+
+
+save_png(tex(lantern), 'textures', 'item', 'restorer.png')
+save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/restorer"}}, A, 'models', 'item', 'restorer.json')
+shaped("restorer", [" A ", "GLG", " S "], {"A": "minecraft:amethyst_shard", "G": "minecraft:gold_ingot", "L": "minecraft:soul_lantern", "S": "minecraft:soul_sand"})
 print('ok')
