@@ -7,7 +7,7 @@ public final class HBConfig {
     public static final ForgeConfigSpec SPEC;
 
     public static final ForgeConfigSpec.IntValue SEARCH_RADIUS, MAX_HELPERS_PER_PLAYER, BUILD_SPEED_DEFAULT;
-    public static final ForgeConfigSpec.BooleanValue FREE_BUILD, GIVE_CONTRACT_ON_JOIN, ALLOW_PVP_FIGHT_BACK, TELEPORT_TO_OWNER;
+    public static final ForgeConfigSpec.BooleanValue FREE_BUILD, GIVE_CONTRACT_ON_JOIN, ALLOW_PVP_FIGHT_BACK, TELEPORT_TO_OWNER, KEEP_BOOK;
     public static final ForgeConfigSpec.DoubleValue WORK_SPEED, DAMAGE_MULT;
 
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED, AI_FOR_COMMANDS, AI_FOR_CHAT, AI_FOR_BUILDING;
@@ -26,6 +26,7 @@ public final class HBConfig {
         GIVE_CONTRACT_ON_JOIN = b.comment("Give every player one helper contract the first time they join").define("contractOnFirstJoin", true);
         ALLOW_PVP_FIGHT_BACK = b.comment("Helpers also fight back against other players (only when the server allows PvP)").define("fightBackPlayers", true);
         TELEPORT_TO_OWNER = b.comment("A following helper teleports to its owner when it falls far behind or the owner changes dimension").define("teleportToOwner", true);
+        KEEP_BOOK = b.comment("The command book stays with you when you die").define("keepCommandBookOnDeath", true);
         b.pop();
 
         b.comment("Optional real AI (understands any sentence, chats, designs custom buildings).",

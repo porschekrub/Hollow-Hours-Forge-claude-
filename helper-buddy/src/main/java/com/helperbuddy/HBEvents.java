@@ -28,6 +28,42 @@ public final class HBEvents {
         bus.addListener(HBEvents::hurt);
         bus.addListener(HBEvents::login);
         bus.addListener(HBEvents::started);
+        // before graves (Hollow Hours) or anything else takes the drops
+        bus.addListener(EventPriority.HIGH, HBEvents::keepBookOnDeath);
+        bus.addListener(HBEvents::giveBookBack);
+    }
+
+    static final String KEPT = "helperbuddy_kept";
+
+    /** The command book stays with you when you die (it is handed back when you respawn). */
+    static void keepBookOnDeath(net.minecraftforge.event.entity.living.LivingDropsEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p) || !HBConfig.KEEP_BOOK.get()) return;
+        net.minecraft.nbt.ListTag kept = new net.minecraft.nbt.ListTag();
+        e.getDrops().removeIf(ie -> {
+            if (!ie.getItem().is(HBRegistry.COMMAND_BOOK.get())) return false;
+            kept.add(ie.getItem().save(new CompoundTag()));
+            return true;
+        });
+        if (kept.isEmpty()) return;
+        // the persisted part of a player's data is carried over to the respawned player
+        CompoundTag persisted = p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        net.minecraft.nbt.ListTag old = persisted.getList(KEPT, net.minecraft.nbt.Tag.TAG_COMPOUND);
+        old.addAll(kept);
+        persisted.put(KEPT, old);
+        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+    }
+
+    static void giveBookBack(PlayerEvent.PlayerRespawnEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p)) return;
+        CompoundTag persisted = p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        if (!persisted.contains(KEPT)) return;
+        net.minecraft.nbt.ListTag kept = persisted.getList(KEPT, net.minecraft.nbt.Tag.TAG_COMPOUND);
+        for (int i = 0; i < kept.size(); i++) {
+            ItemStack s = ItemStack.of(kept.getCompound(i));
+            if (!s.isEmpty() && !p.getInventory().add(s)) p.drop(s, false);
+        }
+        persisted.remove(KEPT);
+        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
     }
 
     /** "!ไปตัดไม้", "!chop wood", "Buddy, chop wood", "ทุกคน มานี่" */

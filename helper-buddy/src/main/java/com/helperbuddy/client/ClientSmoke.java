@@ -250,6 +250,33 @@ public final class ClientSmoke {
             if (t == 22) mc.setScreen(null);
             return t >= 24;
         });
+        // dying keeps the command book: it comes back on respawn
+        final int[] deadAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                sp.getInventory().clearContent();
+                sp.getInventory().add(new ItemStack(HBRegistry.COMMAND_BOOK.get()));
+                sp.getInventory().add(new ItemStack(Items.BREAD, 3));
+            });
+            if (t == 5) server(sp -> sp.hurt(sp.damageSources().genericKill(), Float.MAX_VALUE));
+            boolean dead = mc.player == null || !mc.player.isAlive() || mc.screen instanceof net.minecraft.client.gui.screens.DeathScreen;
+            if (dead && deadAt[0] < 0) deadAt[0] = t;
+            if (deadAt[0] >= 0 && t == deadAt[0] + 20 && mc.player != null) {
+                mc.player.respawn();
+                mc.setScreen(null);
+            }
+            if (deadAt[0] >= 0 && t == deadAt[0] + 40) server(sp -> {
+                boolean book = sp.getInventory().items.stream().anyMatch(it -> it.is(HBRegistry.COMMAND_BOOK.get()));
+                HelperBuddy.LOG.info("[client smoke] command book after dying: {}", book);
+                if (!book) HelperBuddy.LOG.error("[client smoke] the command book was lost on death (com.helperbuddy)");
+                pin(sp);
+            });
+            if (t > 300) {
+                HelperBuddy.LOG.error("[client smoke] the death test never finished (com.helperbuddy)");
+                return true;
+            }
+            return deadAt[0] >= 0 && t >= deadAt[0] + 42;
+        });
         // talking: an order chain and a question (the chat shows the answers)
         STEPS.add(t -> {
             if (t == 0) server(sp -> {

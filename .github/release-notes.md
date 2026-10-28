@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.5.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.5.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.5.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.5.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.5.1**
+- Helper Buddy: the command book stays with you when you die (it's back in your inventory when you respawn; `keepCommandBookOnDeath` in `helperbuddy-common.toml`).
+  ผู้ช่วย: หนังสือสั่งงานไม่หายตอนตาย เกิดใหม่แล้วอยู่ในกระเป๋าเหมือนเดิม
 
 **2.5.0 — graves**
 - When you die, everything you carried and **all** your experience go into a **grave** where you fell, and you get a **Grave Compass** pointing to it. Right-click the grave to get everything back. Only you can open it.
