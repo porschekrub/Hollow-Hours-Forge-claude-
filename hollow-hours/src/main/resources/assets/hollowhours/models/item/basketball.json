@@ -17,22 +17,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     },
     "south": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     },
     "east": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     },
     "west": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     }
    }
   },
@@ -49,22 +85,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     },
     "south": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     },
     "east": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     },
     "west": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     }
    }
   },
@@ -81,22 +153,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     },
     "south": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      5,
+      11,
+      11
+     ]
     },
     "east": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     },
     "west": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      4,
+      5,
+      12,
+      11
+     ]
     },
     "up": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     },
     "down": {
-     "texture": "#t"
+     "texture": "#t",
+     "uv": [
+      5,
+      4,
+      11,
+      12
+     ]
     }
    }
   }

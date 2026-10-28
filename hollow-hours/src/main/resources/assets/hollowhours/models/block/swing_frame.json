@@ -20,22 +20,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ]
     },
     "south": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ]
     },
     "east": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "up": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      2,
+      9
+     ]
     },
     "down": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      2,
+      9
+     ]
     }
    },
    "rotation": {
@@ -61,22 +97,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ]
     },
     "south": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ]
     },
     "east": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "up": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      2,
+      9
+     ]
     },
     "down": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      2,
+      9
+     ]
     }
    },
    "rotation": {
@@ -102,22 +174,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ]
     },
     "south": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ]
     },
     "east": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "up": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ]
     },
     "down": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ]
     }
    },
    "rotation": {
@@ -143,22 +251,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0,
+      2,
+      16
+     ]
     },
     "south": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      0,
+      16,
+      16
+     ]
     },
     "east": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "west": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0,
+      9,
+      16
+     ]
     },
     "up": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ]
     },
     "down": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      14,
+      7,
+      16,
+      9
+     ]
     }
    },
    "rotation": {
@@ -184,22 +328,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0.4,
+      16,
+      2.4
+     ]
     },
     "south": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      0.4,
+      16,
+      2.4
+     ]
     },
     "east": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0.4,
+      9,
+      2.4
+     ]
     },
     "west": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      7,
+      0.4,
+      9,
+      2.4
+     ]
     },
     "up": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      16,
+      9
+     ]
     },
     "down": {
-     "texture": "#wood"
+     "texture": "#wood",
+     "uv": [
+      0,
+      7,
+      16,
+      9
+     ]
     }
    }
   }

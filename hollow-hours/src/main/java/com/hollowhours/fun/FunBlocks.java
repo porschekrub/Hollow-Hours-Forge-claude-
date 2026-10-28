@@ -122,8 +122,8 @@ public final class FunBlocks {
             }
             Vec3 v = e.getDeltaMovement();
             if (v.y < 0) {
-                // a little higher every bounce, up to about 6 blocks
-                double up = Math.min(1.45, -v.y * 1.08 + 0.42);
+                // a little higher every bounce, up to about 5 blocks
+                double up = Math.min(0.95, -v.y * 0.9 + 0.35);
                 e.setDeltaMovement(v.x, up, v.z);
                 if (e instanceof Player p && !p.level().isClientSide) {
                     p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.SLIME_JUMP, SoundSource.BLOCKS, 0.6f, 1.3f);

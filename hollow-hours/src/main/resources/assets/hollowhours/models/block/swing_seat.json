@@ -20,22 +20,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      2,
+      15,
+      14,
+      16
+     ]
     },
     "south": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      2,
+      15,
+      14,
+      16
+     ]
     },
     "east": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      6,
+      15,
+      10,
+      16
+     ]
     },
     "west": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      6,
+      15,
+      10,
+      16
+     ]
     },
     "up": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      2,
+      6,
+      14,
+      10
+     ]
     },
     "down": {
-     "texture": "#seat"
+     "texture": "#seat",
+     "uv": [
+      2,
+      6,
+      14,
+      10
+     ]
     }
    }
   },
@@ -52,22 +88,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      13,
+      0,
+      13.5,
+      16
+     ]
     },
     "south": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      2.5,
+      0,
+      3,
+      16
+     ]
     },
     "east": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      7.75,
+      0,
+      8.25,
+      16
+     ]
     },
     "west": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      7.75,
+      0,
+      8.25,
+      16
+     ]
     },
     "up": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      2.5,
+      7.75,
+      3,
+      8.25
+     ]
     },
     "down": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      2.5,
+      7.75,
+      3,
+      8.25
+     ]
     }
    }
   },
@@ -84,22 +156,58 @@
    ],
    "faces": {
     "north": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      2.5,
+      0,
+      3,
+      16
+     ]
     },
     "south": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      13,
+      0,
+      13.5,
+      16
+     ]
     },
     "east": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      7.75,
+      0,
+      8.25,
+      16
+     ]
     },
     "west": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      7.75,
+      0,
+      8.25,
+      16
+     ]
     },
     "up": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      13,
+      7.75,
+      13.5,
+      8.25
+     ]
     },
     "down": {
-     "texture": "#rope"
+     "texture": "#rope",
+     "uv": [
+      13,
+      7.75,
+      13.5,
+      8.25
+     ]
     }
    }
   }

@@ -104,8 +104,8 @@ def flashlight_model(tex):
         "textures": {"t": tex, "particle": tex},
         "elements": elems,
         "display": {
-            "firstperson_righthand": {"rotation": [0, 0, 0], "translation": [1.0, 2.5, -2.5], "scale": [0.85, 0.85, 0.85]},
-            "firstperson_lefthand": {"rotation": [0, 0, 0], "translation": [1.0, 2.5, -2.5], "scale": [0.85, 0.85, 0.85]},
+            "firstperson_righthand": {"rotation": [0, 0, 0], "translation": [1.5, 3.0, -1.0], "scale": [0.65, 0.65, 0.65]},
+            "firstperson_lefthand": {"rotation": [0, 0, 0], "translation": [1.5, 3.0, -1.0], "scale": [0.65, 0.65, 0.65]},
             "thirdperson_righthand": {"rotation": [0, 0, 0], "translation": [0, 2.5, -0.5], "scale": [0.6, 0.6, 0.6]},
             "thirdperson_lefthand": {"rotation": [0, 0, 0], "translation": [0, 2.5, -0.5], "scale": [0.6, 0.6, 0.6]},
             "gui": {"rotation": [30, 135, 0], "translation": [0, 0, 0], "scale": [0.95, 0.95, 0.95]},
@@ -128,8 +128,8 @@ battery = {
         box([7.5, 11, 7.5], [8.5, 11.8, 8.5], {d: {"uv": [8, 12, 12, 16], "texture": "#t"} for d in ("north", "south", "east", "west", "up")}),
     ],
     "display": {
-        "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 3, 0], "scale": [0.9, 0.9, 0.9]},
-        "firstperson_lefthand": {"rotation": [0, 45, 0], "translation": [0, 3, 0], "scale": [0.9, 0.9, 0.9]},
+        "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 3, 0], "scale": [0.7, 0.7, 0.7]},
+        "firstperson_lefthand": {"rotation": [0, 45, 0], "translation": [0, 3, 0], "scale": [0.7, 0.7, 0.7]},
         "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.55, 0.55, 0.55]},
         "thirdperson_lefthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.55, 0.55, 0.55]},
         "gui": {"rotation": [30, 45, 0], "translation": [0, 0, 0], "scale": [1.3, 1.3, 1.3]},

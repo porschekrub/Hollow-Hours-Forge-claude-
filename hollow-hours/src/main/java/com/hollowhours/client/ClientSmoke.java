@@ -621,7 +621,8 @@ public final class ClientSmoke {
         for (Entity en : all)
             if (en instanceof net.minecraft.world.entity.item.ItemEntity || en instanceof net.minecraft.world.entity.ExperienceOrb
                     || en instanceof net.minecraft.world.entity.item.FallingBlockEntity || en instanceof com.hollowhours.fun.BallEntity
-                    || en instanceof com.hollowhours.physics.FallingTreeEntity || en instanceof net.minecraft.world.entity.item.PrimedTnt)
+                    || en instanceof com.hollowhours.physics.FallingTreeEntity || en instanceof net.minecraft.world.entity.item.PrimedTnt
+                    || en instanceof net.minecraft.world.entity.Mob)
                 en.discard();
         if (sp.isPassenger()) sp.stopRiding();
     }

@@ -137,6 +137,28 @@ def f(t, uv=None):
     return d
 
 
+def default_uv(frm, to, d):
+    """the uv Minecraft would pick from the element's position, moved inside the 16x16 texture: parts taller or
+    wider than a block would otherwise read from whatever lies next to the texture in the atlas"""
+    (x0, y0, z0), (x1, y1, z1) = frm, to
+    u0, v0, u1, v1 = {"north": (16 - x1, 16 - y1, 16 - x0, 16 - y0), "south": (x0, 16 - y1, x1, 16 - y0),
+                      "west": (z0, 16 - y1, z1, 16 - y0), "east": (16 - z1, 16 - y1, 16 - z0, 16 - y0),
+                      "up": (x0, z0, x1, z1), "down": (x0, 16 - z1, x1, 16 - z0)}[d]
+
+    def fit(a, b):
+        if b - a >= 16:
+            return 0, 16
+        shift = -16 * math.floor(a / 16)
+        a, b = a + shift, b + shift
+        if b > 16:
+            a, b = 16 - (b - a), 16
+        return round(a, 3), round(b, 3)
+
+    u0, u1 = fit(u0, u1)
+    v0, v1 = fit(v0, v1)
+    return [u0, v0, u1, v1]
+
+
 def el(frm, to, t, faces=None, rot=None, uv=None):
     """an element; t = texture for every face unless faces={dir: tex} overrides some"""
     fs = {}
@@ -144,7 +166,7 @@ def el(frm, to, t, faces=None, rot=None, uv=None):
         name = (faces or {}).get(d, t)
         if name is None:
             continue
-        fs[d] = f(name, (uv or {}).get(d))
+        fs[d] = f(name, (uv or {}).get(d) or default_uv(frm, to, d))
     e = {"from": frm, "to": to, "faces": fs}
     if rot:
         e["rotation"] = rot
@@ -154,7 +176,7 @@ def el(frm, to, t, faces=None, rot=None, uv=None):
 def plane(frm, to, t, axis):
     """a zero-thickness panel (both sides drawn)"""
     faces = {"z": ("north", "south"), "x": ("east", "west"), "y": ("up", "down")}[axis]
-    return {"from": frm, "to": to, "faces": {d: f(t) for d in faces}}
+    return {"from": frm, "to": to, "faces": {d: f(t, default_uv(frm, to, d)) for d in faces}}
 
 
 def model(textures, elements, particle, render_type=None, ao=True):
@@ -266,9 +288,9 @@ for name, scale in (("swing", 0.45), ("slide", 0.55), ("trampoline", 0.625), ("b
         "gui": {"rotation": [30, 225, 0], "translation": [0, -2 if scale < 0.5 else 0, 0], "scale": [scale] * 3},
         "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.25] * 3},
         "fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [scale] * 3},
-        "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.3] * 3},
-        "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.35] * 3},
-        "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.35] * 3},
+        "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [scale * 0.5] * 3},
+        "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [scale * 0.5] * 3},
+        "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [scale * 0.5] * 3},
     }}, A, 'models', 'item', name + '.json')
 
 

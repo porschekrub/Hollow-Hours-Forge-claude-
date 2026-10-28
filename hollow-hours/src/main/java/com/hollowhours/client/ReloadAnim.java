@@ -47,7 +47,7 @@ public final class ReloadAnim {
         PoseStack ps = e.getPoseStack();
         ps.pushPose();
         ps.translate(side * 0.56f - side * 0.18f * tilt, -0.52f + 0.12f * tilt, -0.72f);
-        ps.mulPose(Axis.XP.rotationDegrees(-70 * tilt));
+        ps.mulPose(Axis.XP.rotationDegrees(70 * tilt));
         ps.mulPose(Axis.ZP.rotationDegrees(side * 12 * tilt));
         var ir = mc.getEntityRenderDispatcher().getItemInHandRenderer();
         ir.renderItem(mc.player, stack, right ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !right, ps,
@@ -57,9 +57,10 @@ public final class ReloadAnim {
             float k = Mth.clamp((t - 0.25f) / 0.42f, 0, 1);
             k = k * k * (3 - 2 * k);
             ps.pushPose();
-            ps.translate(0, -0.05f, 0.34f + 0.35f * (1 - k));
-            ps.mulPose(Axis.XP.rotationDegrees(90));
-            ps.scale(0.7f, 0.7f, 0.7f);
+            // along the flashlight's axis (its tail is at z 0.24 in this space, see models3d.py), terminal first
+            ps.translate(side * 0.094f, 0.1875f, 0.50f - 0.40f * k);
+            ps.mulPose(Axis.XP.rotationDegrees(-90));
+            ps.scale(0.55f, 0.55f, 0.55f);
             ir.renderItem(mc.player, new ItemStack(HHItems.BATTERY.get()), ItemDisplayContext.FIXED, false, ps, e.getMultiBufferSource(), e.getPackedLight());
             ps.popPose();
         }
