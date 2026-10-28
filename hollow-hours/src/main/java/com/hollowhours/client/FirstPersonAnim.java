@@ -141,18 +141,18 @@ public final class FirstPersonAnim {
         if (!scared) {
             // ---------------- carefree
             if (move > 0.05f) {
-                y += stepAbs * (sprint ? 0.045f : 0.032f) * move;              // a skip in every step
-                z += s * stepSin * (sprint ? 0.085f : 0.04f) * move;            // arms pumping
-                rz += s * stepSin * (sprint ? 6 : 3.5f) * move;
+                y += stepAbs * (sprint ? 0.08f : 0.055f) * move;               // a skip in every step
+                z += s * stepSin * (sprint ? 0.15f : 0.07f) * move;             // arms pumping
+                rz += s * stepSin * (sprint ? 10 : 6) * move;
                 if (sprint) {
-                    y -= 0.02f;
-                    rx += s * stepSin * 7;
+                    y -= 0.03f;
+                    rx += s * stepSin * 12;
                 }
             } else {
                 // swaying to a tune
-                x += Mth.sin(t * 0.09f) * 0.012f;
-                y += Mth.sin(t * 0.18f) * 0.008f;
-                rz += Mth.sin(t * 0.09f) * 2.5f;
+                x += Mth.sin(t * 0.09f) * 0.02f;
+                y += Mth.sin(t * 0.18f) * 0.013f;
+                rz += Mth.sin(t * 0.09f) * 4;
                 // and waving hello now and then (an empty main hand)
                 float wph = t % 220;
                 if (hand == InteractionHand.MAIN_HAND && stack.isEmpty() && wph < 44 && swing <= 0) {
@@ -164,54 +164,54 @@ public final class FirstPersonAnim {
                 }
             }
             if (sneak) {
-                y -= 0.045f - stepAbs * 0.015f * move;                           // tiptoeing
-                x -= s * 0.03f;
-                rz += s * 5;
+                y -= 0.08f - stepAbs * 0.03f * move;                             // tiptoeing
+                x -= s * 0.05f;
+                rz += s * 9;
             }
             // jumping for joy, a bump on landing
-            y += 0.075f * up;
-            rz -= s * 9 * up;
-            y -= 0.06f * landK;
+            y += 0.17f * up;
+            rz -= s * 16 * up;
+            y -= 0.11f * landK;
         } else {
             // ---------------- scared
             float f = Math.max(Fear.local(partial), 0.35f);
-            x -= s * 0.05f * f;                                                  // hands pulled in close
-            z += 0.035f * f;
-            y -= 0.015f * f;
+            x -= s * 0.09f * f;                                                  // hands pulled in close
+            z += 0.05f * f;
+            y -= 0.02f * f;
             float breath = Mth.sin(t * (0.15f + 0.25f * f)) * 0.01f * (0.5f + f);
             y += breath;
             if (move > 0.05f) {
                 if (sprint) {
                     // running for your life
-                    z += s * stepSin * 0.095f * move;
-                    y += stepAbs * 0.04f * move - 0.03f;
-                    rz += s * stepSin * 9 * move;
-                    rx += Mth.sin(t * 1.9f) * 3 * f;
+                    z += s * stepSin * 0.16f * move;
+                    y += stepAbs * 0.07f * move - 0.04f;
+                    rz += s * stepSin * 15 * move;
+                    rx += Mth.sin(t * 1.9f) * 5 * f;
                 } else {
                     // careful, shaky steps
-                    y += stepAbs * 0.014f * move;
-                    z += s * stepSin * 0.02f * move;
+                    y += stepAbs * 0.025f * move;
+                    z += s * stepSin * 0.035f * move;
                 }
             }
             if (sneak) {
                 // creeping with the hands up, ready to defend
-                y += 0.05f;
-                x -= s * 0.035f;
-                z += 0.03f;
-                rx -= 6;
+                y += 0.1f;
+                x -= s * 0.06f;
+                z += 0.05f;
+                rx -= 10;
             }
             // jumping: shielding the face; landing: a hard jolt
-            y += 0.1f * up;
-            x -= s * 0.06f * up;
-            rz += s * 14 * up;
-            y -= 0.085f * landK;
+            y += 0.2f * up;
+            x -= s * 0.1f * up;
+            rz += s * 24 * up;
+            y -= 0.13f * landK;
             // flinching at nothing
             float fl = ClientFx.now() - flinchT0 + partial;
             if (fl < 12) {
                 float k = Mth.sin(fl / 12f * Mth.PI);
-                y += 0.06f * k;
-                z += 0.06f * k;
-                rz += s * flinchSide * 10 * k;
+                y += 0.09f * k;
+                z += 0.08f * k;
+                rz += s * flinchSide * 14 * k;
             }
             // trembling (stronger when swinging or truly afraid)
             float tf = f * sway;
@@ -287,13 +287,14 @@ public final class FirstPersonAnim {
         // the arm that wasn't on screen comes up from below
         if (!mainArm) ps.translate(0, -0.7f * (1 - k), 0);
         ps.translate((Mth.sin(t * 2.9f + s) * 0.6f + Mth.sin(t * 5.3f) * 0.4f) * shake, (Mth.sin(t * 3.7f + s) * 0.6f) * shake + breath, 0);
-        // roll in across the chest around the shoulder, slide to the middle
+        // turned in across the chest around the shoulder, so the two forearms cross low on the screen
+        // (angles found by projecting the arm's box through this same transform chain)
+        ps.translate(-s * 0.41f * k, (0.29f + (mainArm ? 0 : 0.03f)) * k, (0.11f + (mainArm ? 0 : 0.01f)) * k);
         float bx = s * 0.64f, by = -0.6f, bz = -0.72f;
         ps.translate(bx, by, bz);
-        ps.mulPose(Axis.ZP.rotationDegrees(s * 58 * k));
-        ps.mulPose(Axis.XP.rotationDegrees(-12 * k));
+        ps.mulPose(Axis.YP.rotationDegrees(s * 89 * k));
+        ps.mulPose(Axis.XP.rotationDegrees(-28 * k));
         ps.translate(-bx, -by, -bz);
-        ps.translate(-s * 0.2f * k, 0.07f * k, 0.03f * k + (mainArm ? 0 : 0.01f));
         // the vanilla first-person arm (no swing, fully raised)
         ps.translate(s * 0.64000005f, -0.6f, -0.71999997f);
         ps.mulPose(Axis.YP.rotationDegrees(s * 45));
