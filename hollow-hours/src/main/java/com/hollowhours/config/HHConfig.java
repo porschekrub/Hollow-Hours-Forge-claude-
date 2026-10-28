@@ -33,6 +33,7 @@ public final class HHConfig {
     public static final ForgeConfigSpec.IntValue START_NIGHT;
     public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD, TREE_FELLING, EXPLOSION_DEBRIS;
     public static final ForgeConfigSpec.IntValue VEIN_MINING, GRAVE_MINUTES, GRAVE_HITS;
+    public static final ForgeConfigSpec.DoubleValue THIRST_RATE, PHONE_DRAIN;
     public static final ForgeConfigSpec.BooleanValue GRAVES;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
@@ -79,6 +80,8 @@ public final class HHConfig {
 
         b.comment("Survival").push("survival");
         THIRST = b.comment("Thirst: drink water (bottles, or sneak + right-click water with an empty hand)").define("thirst", true);
+        THIRST_RATE = b.comment("How fast you get thirsty (1 = a full bar lasts about an hour of walking, half that sprinting)").defineInRange("thirstRate", 1.0, 0.1, 5.0);
+        PHONE_DRAIN = b.comment("How fast the phone battery drains (1 = about 30 minutes of screen time, 12 minutes of games per charge)").defineInRange("phoneDrain", 1.0, 0.1, 5.0);
         SANITY = b.comment("Sanity: drains in the dark, near ghosts and when they jump at you; play, sleep and stay with friends to keep it").define("sanity", true);
         BLOOD = b.comment("Blood: hits make every creature bleed in its own colour, badly hurt creatures drip").define("blood", true);
         b.pop();

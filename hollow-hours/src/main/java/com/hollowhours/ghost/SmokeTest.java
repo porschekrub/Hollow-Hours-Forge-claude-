@@ -209,8 +209,8 @@ final class SmokeTest {
         float b = com.hollowhours.item.PhoneItem.battery(phone);
         check(b >= 15 && b <= 85, "fresh phone battery " + b);
         check(com.hollowhours.item.PhoneItem.messages(phone).size() == 2, "phone messages");
-        com.hollowhours.item.PhoneItem.addWear(phone, 90);
-        check(Math.abs(com.hollowhours.item.PhoneItem.drainMult(phone) - (1 + (com.hollowhours.item.PhoneItem.wear(phone)) / 90f)) < 1e-4
+        com.hollowhours.item.PhoneItem.addWear(phone, com.hollowhours.item.PhoneItem.WEAR_DOUBLE);
+        check(Math.abs(com.hollowhours.item.PhoneItem.drainMult(phone) - (1 + (com.hollowhours.item.PhoneItem.wear(phone)) / com.hollowhours.item.PhoneItem.WEAR_DOUBLE)) < 1e-4
                 && com.hollowhours.item.PhoneItem.drainMult(phone) >= 2, "battery wear doubles the drain");
         check(new net.minecraft.world.item.ItemStack(HHItems.CHARGER.get()).getMaxDamage() == 3, "charger has 3 charges");
 

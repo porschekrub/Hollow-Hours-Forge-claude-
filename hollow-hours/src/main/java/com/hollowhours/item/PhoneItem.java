@@ -68,14 +68,17 @@ public class PhoneItem extends Item {
         s.getOrCreateTag().putFloat(WEAR, wear(s) + minutes);
     }
 
-    /** Drain multiplier from wear: twice as fast after 90 minutes of use, three times after 3 hours. */
+    /** minutes of use after which the battery drains twice as fast */
+    public static final float WEAR_DOUBLE = 180;
+
+    /** Drain multiplier from wear: twice as fast after 3 hours of use, three times after 6 hours. */
     public static float drainMult(ItemStack s) {
-        return 1 + wear(s) / 90f;
+        return 1 + wear(s) / WEAR_DOUBLE;
     }
 
     /** Battery health shown in the settings app. */
     public static int health(ItemStack s) {
-        return Math.max(20, Math.round(100 - wear(s) / 3f));
+        return Math.max(20, Math.round(100 - wear(s) / WEAR_DOUBLE * 50));
     }
 
     public static List<String> messages(ItemStack s) {
@@ -132,7 +135,8 @@ public class PhoneItem extends Item {
             return;
         }
         // standby: about 7 hours of real time from full when nobody touches it
-        if (p.tickCount % 100 == slot % 100 && battery(s) > 0) setBattery(s, battery(s) - 0.02f * drainMult(s));
+        if (p.tickCount % 100 == slot % 100 && battery(s) > 0)
+            setBattery(s, battery(s) - 0.012f * drainMult(s) * com.hollowhours.config.HHConfig.PHONE_DRAIN.get().floatValue());
     }
 
     @Override

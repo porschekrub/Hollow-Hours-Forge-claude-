@@ -37,7 +37,8 @@ import java.util.UUID;
 public final class Flashlight {
     private Flashlight() {}
 
-    public static final int FULL = 5 * 60 * 20;
+    /** one battery: 10 minutes of light */
+    public static final int FULL = 10 * 60 * 20;
     static final int RANGE = 28;
     private static final Map<UUID, Set<Long>> LIT = new HashMap<>();
 

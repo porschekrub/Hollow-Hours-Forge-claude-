@@ -61,7 +61,8 @@ public final class PhoneUse {
             }
             ItemStack phone = PhoneItem.find(p, true);
             if (phone == null) continue;
-            float drain = (0.15f + (gaming ? 0.45f : 0)) * PhoneItem.drainMult(phone);
+            // per second: screen on ~30 minutes per charge, games ~12 minutes (more as the battery wears)
+            float drain = (0.055f + (gaming ? 0.085f : 0)) * PhoneItem.drainMult(phone) * com.hollowhours.config.HHConfig.PHONE_DRAIN.get().floatValue();
             PhoneItem.setBattery(phone, PhoneItem.battery(phone) - drain);
             PhoneItem.addWear(phone, 1 / 60f);
             if (gaming) Sanity.add(p, 0.6f);

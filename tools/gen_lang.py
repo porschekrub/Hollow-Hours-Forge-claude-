@@ -52,7 +52,7 @@ k("item.hollowhours.closet_item", "Hiding Closet", "ตู้ซ่อนตั�
 k("item.hollowhours.ghost_guide.tip", "Right-click: who is awake, how to survive, talk to them...", "คลิกขวา: ผีตนไหนตื่นอยู่ วิธีเอาตัวรอด คุยกับมัน...")
 k("item.hollowhours.flashlight.charge", "Battery: %s:%s", "แบตเหลือ: %s:%s")
 k("item.hollowhours.flashlight.tip", "Right-click: on/off · Sneak + right-click: new battery", "คลิกขวา: เปิด/ปิด · ย่อ + คลิกขวา: เปลี่ยนถ่าน")
-k("item.hollowhours.battery.tip", "5 minutes of light. Right-click to load a flashlight.", "ส่องได้ 5 นาที คลิกขวาเพื่อใส่ไฟฉาย")
+k("item.hollowhours.battery.tip", "10 minutes of light. Right-click to load a flashlight.", "ส่องได้ 10 นาที คลิกขวาเพื่อใส่ไฟฉาย")
 k("item.hollowhours.board.tip", "Right-click a closed door or a window to nail it shut", "คลิกขวาที่ประตูที่ปิดอยู่หรือกระจกเพื่อตอกปิด")
 k("item.hollowhours.board.tip.0", "Weakest: most ghosts can smash it", "อ่อนสุด: ผีส่วนใหญ่พังได้")
 k("item.hollowhours.board.tip.1", "Strong: only stronger ghosts get through", "แข็ง: เฉพาะผีที่แรงพอถึงจะพังได้")

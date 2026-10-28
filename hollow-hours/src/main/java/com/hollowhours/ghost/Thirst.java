@@ -47,11 +47,12 @@ public final class Thirst {
     /** Every 20 ticks. */
     public static void tick(ServerPlayer p, long now) {
         if (!HHConfig.THIRST.get() || p.isCreative() || p.isSpectator() || !p.isAlive()) return;
-        float loss = 0.012f;
-        if (p.isSprinting()) loss *= 2.5f;
+        // a full bar: about an hour walking around, half an hour sprinting
+        float loss = 0.0055f * HHConfig.THIRST_RATE.get().floatValue();
+        if (p.isSprinting()) loss *= 2f;
         Level level = p.level();
         if (level.dimension() == Level.NETHER) loss *= 2f;
-        else if (level.getBiome(p.blockPosition()).value().getBaseTemperature() > 1.0f) loss *= 1.6f;
+        else if (level.getBiome(p.blockPosition()).value().getBaseTemperature() > 1.0f) loss *= 1.4f;
         if (p.isInWater()) loss *= 0.5f;
         float t = get(p) - loss;
         set(p, t);
