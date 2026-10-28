@@ -29,7 +29,7 @@ public class GraveRenderer extends EntityRenderer<GraveEntity> {
     public void render(GraveEntity e, float yaw, float partial, PoseStack ps, MultiBufferSource buffers, int light) {
         Minecraft mc = Minecraft.getInstance();
         ps.pushPose();
-        ps.mulPose(Axis.YP.rotationDegrees(-e.getYRot()));
+        ps.mulPose(Axis.YP.rotationDegrees(180 - e.getYRot()));
         ps.translate(-0.5, 0, -0.5);
         mc.getBlockRenderer().getModelRenderer().renderModel(ps.last(), buffers.getBuffer(Sheets.cutoutBlockSheet()), null, mc.getModelManager().getModel(MODEL),
                 1f, 1f, 1f, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());

@@ -943,7 +943,7 @@ public final class ClientSmoke {
                     shot(rd == 0 ? "grave" : "grave_again");
                     server(sp -> {
                         var graves = sp.serverLevel().getEntitiesOfClass(com.hollowhours.grave.GraveEntity.class, sp.getBoundingBox().inflate(8));
-                        boolean compass = sp.getInventory().contains(new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.GRAVE_COMPASS.get()));
+                        boolean compass = sp.getInventory().items.stream().anyMatch(it -> it.is(com.hollowhours.registry.HHItems.GRAVE_COMPASS.get()));
                         HollowHours.LOG.info("[client smoke] grave round {}: graves {} compass {} level {}", rd, graves.size(), compass, sp.experienceLevel);
                         if (graves.isEmpty() || !compass) HollowHours.LOG.error("[client smoke] no grave or no compass after dying (com.hollowhours)");
                         if (graves.isEmpty()) return;

@@ -249,7 +249,7 @@ public final class Graves extends SavedData {
             if (s.isEmpty()) it.remove();
         }
         if (g.xp > 0) {
-            p.giveExperiencePoints(g.xp);
+            giveXp(p, g.xp);
             g.xp = 0;
         }
         p.level().playSound(null, ge.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.8f, 0.8f);
@@ -327,12 +327,21 @@ public final class Graves extends SavedData {
         if (g == null) return false;
         Graves d = get(p.server);
         for (ItemStack s : g.items) d.give(p.getUUID(), s.copy());
-        if (g.xp > 0) p.giveExperiencePoints(g.xp);
+        if (g.xp > 0) giveXp(p, g.xp);
         d.deliver(p);
         p.level().playSound(null, p.blockPosition(), SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 0.8f, 1.3f);
         ((ServerLevel) p.level()).sendParticles(ParticleTypes.SOUL_FIRE_FLAME, p.getX(), p.getY() + 1, p.getZ(), 30, 0.4, 0.6, 0.4, 0.03);
         p.sendSystemMessage(Component.translatable("hollowhours.restorer.done", g.items.size()).withStyle(ChatFormatting.AQUA));
         return true;
+    }
+
+    /** Experience back a level at a time (one big float addition can end a hair short of the last level). */
+    static void giveXp(ServerPlayer p, int xp) {
+        while (xp > 0) {
+            int step = Math.max(1, Math.min(xp, p.getXpNeededForNextLevel() - Math.round(p.experienceProgress * p.getXpNeededForNextLevel())));
+            p.giveExperiencePoints(step);
+            xp -= step;
+        }
     }
 
     /** Queue an item for a player: it arrives as soon as there is room in their inventory. */
