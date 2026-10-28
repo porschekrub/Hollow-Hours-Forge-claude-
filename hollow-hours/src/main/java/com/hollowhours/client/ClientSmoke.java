@@ -513,6 +513,7 @@ public final class ClientSmoke {
                 com.hollowhours.ghost.Thirst.setHydration(sp, 0);
                 sp.getFoodData().setFoodLevel(20);
                 sp.getFoodData().setSaturation(0);
+                com.hollowhours.ghost.Thirst.resetTracking(sp);
                 sp.causeFoodExhaustion(4.01f);
             });
             if (t == 70) server(sp -> {

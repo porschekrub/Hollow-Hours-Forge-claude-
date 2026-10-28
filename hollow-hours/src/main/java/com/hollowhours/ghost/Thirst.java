@@ -79,6 +79,11 @@ public final class Thirst {
         FOOD.remove(p.getUUID());
     }
 
+    /** After food or saturation were set directly (commands, tests): that drop wasn't spent energy. */
+    public static void resetTracking(ServerPlayer p) {
+        FOOD.put(p.getUUID(), new float[] {p.getFoodData().getFoodLevel() + p.getFoodData().getSaturationLevel(), 0});
+    }
+
     /** Every 20 ticks. */
     public static void tick(ServerPlayer p, long now) {
         if (!HHConfig.THIRST.get() || p.isCreative() || p.isSpectator() || !p.isAlive()) return;
