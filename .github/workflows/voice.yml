@@ -1,0 +1,31 @@
+name: Generate voice lines
+# push the branch "gen-voice" to (re)make the phone's emergency-alert voice; the result is pushed to "voice-out"
+on:
+  push:
+    branches: [gen-voice]
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg espeak-ng
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -q transformers numpy
+      - name: Speak
+        run: python tools/gen_voice.py out
+      - name: Publish to the voice-out branch
+        run: |
+          cd out
+          git init -q
+          git checkout -q -b voice-out
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "voice lines"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" voice-out
