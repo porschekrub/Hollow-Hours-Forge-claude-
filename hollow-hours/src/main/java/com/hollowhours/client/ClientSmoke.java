@@ -59,6 +59,8 @@ public final class ClientSmoke {
     private static boolean built, done;
     private static Vec3 origin = Vec3.ZERO;
     private static Vec3 lookAt;
+    /** looking straight ahead along +z with this pitch (first-person body shots), -1 = off */
+    private static float lookDown = -1;
 
     // ------------------------------------------------------------------ events
     @SubscribeEvent
@@ -86,7 +88,12 @@ public final class ClientSmoke {
             if (inWorldTicks < 100) return; // let chunks load and render
             if (!built && mc.screen instanceof net.minecraft.client.gui.screens.ReceivingLevelScreen && inWorldTicks < 1200) return;
             if (!built) build(mc);
-            if (lookAt != null && !KillCam.active() && mc.player.isAlive()) face(mc, lookAt);
+            if (lookDown >= 0 && mc.player.isAlive()) {
+                mc.player.setYRot(0);
+                mc.player.yRotO = 0;
+                mc.player.setXRot(lookDown);
+                mc.player.xRotO = lookDown;
+            } else if (lookAt != null && !KillCam.active() && mc.player.isAlive()) face(mc, lookAt);
             if (stepIndex >= STEPS.size()) return;
             if (STEPS.get(stepIndex).tick(stepTick++)) {
                 stepIndex++;
@@ -671,6 +678,54 @@ public final class ClientSmoke {
                 return false;
             });
         }
+        // looking down at your own body while moving
+        Move[] down = {
+                new Move("idle", false, false, false, false, new int[] {22}),
+                new Move("walk", true, false, false, false, new int[] {18, 23}),
+                new Move("run", true, true, false, false, new int[] {18, 22}),
+                new Move("sneak", true, false, true, false, new int[] {20, 26}),
+                new Move("jump", false, false, false, true, new int[] {14, 20})};
+        for (Move mv : down) {
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    lookDown = 62;
+                    Fear.force = scared ? 0.6f : -1;
+                    server(sp -> {
+                        clearAll(sp);
+                        pin(sp);
+                    });
+                }
+                if (t == 4) keys(mc, mv.up(), mv.sprint(), mv.sneak());
+                if (mv.jump() && t == 10 && mc.player != null) mc.player.jumpFromGround();
+                for (int i = 0; i < mv.shots().length; i++) if (t == mv.shots()[i]) shot("fp_" + tag + "_body_" + mv.name() + "_" + (char) ('a' + i));
+                if (t >= 30) {
+                    keys(mc, false, false, false);
+                    lookDown = -1;
+                    return true;
+                }
+                return false;
+            });
+        }
+        // holding a sword (the arm holds it), swinging it
+        STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.6, 30);
+                server(sp -> {
+                    pin(sp);
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.APPLE));
+                });
+            }
+            if (t == 16) shot("fp_" + tag + "_hold");
+            if (t == 18 && mc.player != null) mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+            if (t == 19 || t == 21) shot("fp_" + tag + "_swing_" + (t == 19 ? "a" : "b"));
+            if (t == 23) server(sp -> {
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+                sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+            });
+            return t >= 26;
+        });
         // scared and standing with empty hands for a while: hugging yourself
         if (scared) STEPS.add(t -> {
             if (t == 0) {

@@ -1,8 +1,17 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.6.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.6.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.7.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.7.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.7.0 — see yourself in first person, 3D food**
+- **Your arm holds what's in your hand** in first person: you see the arm swing the pickaxe, raise the bread to your mouth, tip the canteen.
+  มุมมองบุคคลที่ 1 เห็นแขนถือของ: เห็นแขนเหวี่ยงตอนขุด ยกอาหารเข้าปาก ยกกระติกดื่ม
+- **Look down and see your body and legs**, with the same animations as third person (the happy skip, the scared hunch, sneaking, jumping).
+  ก้มมองจะเห็นตัวและขาตัวเอง ขยับเหมือนมุมมองบุคคลที่ 3
+- **3D food**: bread, apples, steak, fish, potatoes, carrots, berries... are puffy 3D in your hand and on the ground (still the same icons in the inventory).
+  อาหารเป็น 3D ทั้งในมือและบนพื้น
+- Settings (`hollowhours-client.toml`): `firstPersonArms`, `firstPersonBody`.
 
 **2.6.0 — body language**
 - **First person** (like the Actions & Stuff pack): your hands move with what you do — standing, walking, running, sneaking, jumping and landing.

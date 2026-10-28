@@ -6,7 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class HHClientConfig {
     public static final ForgeConfigSpec SPEC;
     public static final ForgeConfigSpec.DoubleValue JUMPSCARE_INTENSITY, SHAKE, JUMPSCARE_VOLUME;
-    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX, SHADER, PLAYER_ANIMS, BLOOD, ITEM_PHYSICS;
+    public static final ForgeConfigSpec.BooleanValue REDUCE_FLASHING, FACE_CLOSEUPS, DEATH_SCREEN_FX, SHADER, PLAYER_ANIMS, BLOOD, ITEM_PHYSICS, FIRST_PERSON_ARMS, FIRST_PERSON_BODY;
     public static final ForgeConfigSpec.DoubleValue SHADER_STRENGTH, CAMERA_SWAY;
 
     static {
@@ -25,6 +25,8 @@ public final class HHClientConfig {
         PLAYER_ANIMS = b.comment("Scared player animations (hunched walk, panicked run, shaking hands ...)").define("playerAnimations", true);
         CAMERA_SWAY = b.comment("First-person breathing / panic sway").defineInRange("cameraSway", 1.0, 0, 2);
         BLOOD = b.comment("Show blood (sprays, splats on the ground, drips)").define("blood", true);
+        FIRST_PERSON_ARMS = b.comment("First person: your arm holds what's in your hand (you see it swing, eat, drink)").define("firstPersonArms", true);
+        FIRST_PERSON_BODY = b.comment("First person: look down and see your own body and legs (with the same animations as in third person)").define("firstPersonBody", true);
         ITEM_PHYSICS = b.comment("Dropped items lie on the ground (no floating / spinning)").define("itemPhysics", true);
         b.pop();
         SPEC = b.build();

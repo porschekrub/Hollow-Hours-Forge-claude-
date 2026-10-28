@@ -111,7 +111,96 @@ public final class FirstPersonAnim {
         last.normal().mul(undoN).mul(m.last().normal());
         applied.set(m.last().pose());
         appliedN.set(m.last().normal());
-        return false;
+        return HHClientConfig.FIRST_PERSON_ARMS.get() && holding(e, p);
+    }
+
+    // ------------------------------------------------------------------ the arm that holds the item
+    /** Items drawn their own way in first person (bows, maps, shields...): left to the game. */
+    static boolean special(ItemStack s) {
+        return s.getItem() instanceof net.minecraft.world.item.ProjectileWeaponItem || s.getItem() instanceof net.minecraft.world.item.TridentItem
+                || s.getItem() instanceof net.minecraft.world.item.MapItem || s.getItem() instanceof net.minecraft.world.item.ShieldItem
+                || s.getItem() instanceof net.minecraft.world.item.SpyglassItem || s.getItem() instanceof net.minecraft.world.item.InstrumentItem
+                || s.getItem() instanceof net.minecraft.world.item.BrushItem
+                || net.minecraftforge.client.extensions.common.IClientItemExtensions.of(s) != net.minecraftforge.client.extensions.common.IClientItemExtensions.DEFAULT;
+    }
+
+    /**
+     * An item in the hand, held by the arm: drawn here the way the game draws it (equip, swing, eating), plus the arm
+     * gripping it from below, moving with it: you see your arm swing the pickaxe, raise the bread to your mouth.
+     */
+    static boolean holding(RenderHandEvent e, LocalPlayer p) {
+        ItemStack stack = e.getItemStack();
+        if (stack.isEmpty() || p.isInvisible() || special(stack) || p.isAutoSpinAttack()) return false;
+        InteractionHand hand = e.getHand();
+        boolean right = (hand == InteractionHand.MAIN_HAND) == (p.getMainArm() == HumanoidArm.RIGHT);
+        boolean using = p.isUsingItem() && p.getUseItemRemainingTicks() > 0 && p.getUsedItemHand() == hand;
+        UseAnim ua = stack.getUseAnimation();
+        boolean eating = using && (ua == UseAnim.EAT || ua == UseAnim.DRINK);
+        if (using && !eating && ua != UseAnim.NONE) return false;
+        float i = right ? 1 : -1, eq = e.getEquipProgress(), sw = e.getSwingProgress(), partial = e.getPartialTick();
+        PoseStack ps = e.getPoseStack();
+        ps.pushPose();
+        if (eating) {
+            // the game's eating motion: up to the mouth, bobbing
+            float f = p.getUseItemRemainingTicks() - partial + 1;
+            float f1 = f / stack.getUseDuration();
+            if (f1 < 0.8f) ps.translate(0, Mth.abs(Mth.cos(f / 4f * Mth.PI) * 0.1f), 0);
+            float f3 = 1 - (float) Math.pow(f1, 27);
+            ps.translate(f3 * 0.6f * i, f3 * -0.5f, 0);
+            ps.mulPose(Axis.YP.rotationDegrees(i * f3 * 90));
+            ps.mulPose(Axis.XP.rotationDegrees(f3 * 10));
+            ps.mulPose(Axis.ZP.rotationDegrees(i * f3 * 30));
+            ps.translate(i * 0.56f, -0.52f + eq * -0.6f, -0.72f);
+        } else if (!using) {
+            // the game's swing
+            float sq = Mth.sqrt(sw);
+            ps.translate(i * -0.4f * Mth.sin(sq * Mth.PI), 0.2f * Mth.sin(sq * Mth.TWO_PI), -0.2f * Mth.sin(sw * Mth.PI));
+            ps.translate(i * 0.56f, -0.52f + eq * -0.6f, -0.72f);
+            float f = Mth.sin(sw * sw * Mth.PI);
+            ps.mulPose(Axis.YP.rotationDegrees(i * (45 + f * -20)));
+            float f1 = Mth.sin(sq * Mth.PI);
+            ps.mulPose(Axis.ZP.rotationDegrees(i * f1 * -20));
+            ps.mulPose(Axis.XP.rotationDegrees(f1 * -80));
+            ps.mulPose(Axis.YP.rotationDegrees(i * -45));
+        } else ps.translate(i * 0.56f, -0.52f + eq * -0.6f, -0.72f);
+        // the arm, from where the item is held back to camera space, so it swings and eats along with it
+        ps.pushPose();
+        ps.translate(i * -0.56f, 0.52f, 0.72f);
+        holdingArm(ps, e.getMultiBufferSource(), e.getPackedLight(), p, right);
+        ps.popPose();
+        Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().renderItem(p, stack,
+                right ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+                !right, ps, e.getMultiBufferSource(), e.getPackedLight());
+        ps.popPose();
+        return true;
+    }
+
+    /** The first-person arm turned about the shoulder so its hand grips the item (angles found by projecting the arm). */
+    static void holdingArm(PoseStack ps, MultiBufferSource buf, int light, AbstractClientPlayer p, boolean right) {
+        float s = right ? 1 : -1;
+        float sx = s * 0.4853f, sy = -0.8315f, sz = -0.5254f;
+        ps.translate(s * -0.006f, 0.003f, 0.334f);
+        ps.translate(sx, sy, sz);
+        ps.mulPose(Axis.YP.rotationDegrees(s * 13.66f));
+        ps.mulPose(Axis.XP.rotationDegrees(18.43f));
+        ps.mulPose(Axis.ZP.rotationDegrees(s * -5.42f));
+        ps.translate(-sx, -sy, -sz);
+        vanillaArm(ps, buf, light, p, right);
+    }
+
+    /** The game's own first-person arm (no swing, fully raised). */
+    static void vanillaArm(PoseStack ps, MultiBufferSource buf, int light, AbstractClientPlayer p, boolean right) {
+        float s = right ? 1 : -1;
+        ps.translate(s * 0.64000005f, -0.6f, -0.71999997f);
+        ps.mulPose(Axis.YP.rotationDegrees(s * 45));
+        ps.translate(s * -1.0f, 3.6f, 3.5f);
+        ps.mulPose(Axis.ZP.rotationDegrees(s * 120));
+        ps.mulPose(Axis.XP.rotationDegrees(200));
+        ps.mulPose(Axis.YP.rotationDegrees(s * -135));
+        ps.translate(s * 5.6f, 0, 0);
+        PlayerRenderer r = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(p);
+        if (right) r.renderRightHand(ps, buf, light, p);
+        else r.renderLeftHand(ps, buf, light, p);
     }
 
     /** Rotate around the hand (not the camera). */
@@ -280,7 +369,6 @@ public final class FirstPersonAnim {
     }
 
     static void drawArm(PoseStack ps, MultiBufferSource buf, int light, AbstractClientPlayer p, boolean right, float k, float t, float breath, float shake) {
-        Minecraft mc = Minecraft.getInstance();
         float s = right ? 1 : -1;
         boolean mainArm = (p.getMainArm() == HumanoidArm.RIGHT) == right;
         ps.pushPose();
@@ -295,17 +383,7 @@ public final class FirstPersonAnim {
         ps.mulPose(Axis.YP.rotationDegrees(s * 89 * k));
         ps.mulPose(Axis.XP.rotationDegrees(-28 * k));
         ps.translate(-bx, -by, -bz);
-        // the vanilla first-person arm (no swing, fully raised)
-        ps.translate(s * 0.64000005f, -0.6f, -0.71999997f);
-        ps.mulPose(Axis.YP.rotationDegrees(s * 45));
-        ps.translate(s * -1.0f, 3.6f, 3.5f);
-        ps.mulPose(Axis.ZP.rotationDegrees(s * 120));
-        ps.mulPose(Axis.XP.rotationDegrees(200));
-        ps.mulPose(Axis.YP.rotationDegrees(s * -135));
-        ps.translate(s * 5.6f, 0, 0);
-        PlayerRenderer r = (PlayerRenderer) mc.getEntityRenderDispatcher().getRenderer(p);
-        if (right) r.renderRightHand(ps, buf, light, p);
-        else r.renderLeftHand(ps, buf, light, p);
+        vanillaArm(ps, buf, light, p, right);
         ps.popPose();
     }
 }
