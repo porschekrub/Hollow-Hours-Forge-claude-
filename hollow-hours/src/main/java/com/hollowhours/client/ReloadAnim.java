@@ -46,7 +46,8 @@ public final class ReloadAnim {
         tilt = tilt * tilt * (3 - 2 * tilt);
         PoseStack ps = e.getPoseStack();
         ps.pushPose();
-        ps.translate(side * 0.56f - side * 0.18f * tilt, -0.52f + 0.12f * tilt, -0.72f);
+        // lifted up into view and toward the middle, so the tail (where the battery goes) is on screen
+        ps.translate(side * 0.56f - side * 0.22f * tilt, -0.52f + 0.40f * tilt, -0.72f - 0.08f * tilt);
         ps.mulPose(Axis.XP.rotationDegrees(70 * tilt));
         ps.mulPose(Axis.ZP.rotationDegrees(side * 12 * tilt));
         var ir = mc.getEntityRenderDispatcher().getItemInHandRenderer();
