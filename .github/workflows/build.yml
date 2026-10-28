@@ -102,7 +102,12 @@ jobs:
           git config user.email "ci@users.noreply.github.com"
           git add -A
           git commit -qm "logs for ${{ github.sha }}"
-          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs-$P
+          # two runs of the same commit (main + release) can race here: retry, and never fail the build over logs
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs-$P && break
+            sleep $((i * 10))
+          done
+          exit 0
 
       - name: Upload logs (on failure)
         if: failure()
