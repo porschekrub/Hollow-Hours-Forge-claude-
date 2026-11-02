@@ -29,7 +29,7 @@ public final class HHClientConfig {
         CAMERA_SWAY = b.comment("First-person breathing / panic sway").defineInRange("cameraSway", 1.0, 0, 2);
         BLOOD = b.comment("Show blood (sprays, splats on the ground, drips)").define("blood", true);
         FIRST_PERSON_ARMS = b.comment("First person: your arm holds what's in your hand (you see it swing, eat, drink)").define("firstPersonArms", false);
-        FIRST_PERSON_BODY = b.comment("First person: look down and see your own body and legs (with the same animations as in third person)").define("firstPersonBody", true);
+        FIRST_PERSON_BODY = b.comment("First person: look down and see your own body and legs (with the same animations as in third person)").define("firstPersonBody", false);
         ITEM_PHYSICS = b.comment("Dropped items lie on the ground (no floating / spinning)").define("itemPhysics", true);
         SKIP_EXPERIMENTAL_WARNING = b.comment("Skip Minecraft's 'Worlds using Experimental Settings' warning (it shows because of the haven, the mod's extra world)")
                 .define("skipExperimentalWarning", true);
@@ -40,10 +40,13 @@ public final class HHClientConfig {
 
     private HHClientConfig() {}
 
-    /** Once per update that needs it: 2 = no first-person arms (the body when looking down stays). */
+    /** Once per update that needs it: 2 = plain first person (no arms holding things, no body when looking down). */
     public static void onLoad(net.minecraftforge.fml.event.config.ModConfigEvent.Loading e) {
         if (e.getConfig().getSpec() != SPEC || SETTINGS_VERSION.get() >= CURRENT) return;
-        if (SETTINGS_VERSION.get() < 2) FIRST_PERSON_ARMS.set(false);
+        if (SETTINGS_VERSION.get() < 2) {
+            FIRST_PERSON_ARMS.set(false);
+            FIRST_PERSON_BODY.set(false);
+        }
         SETTINGS_VERSION.set(CURRENT);
         SPEC.save();
     }
