@@ -338,11 +338,10 @@ public final class FirstPersonAnim {
             if (ua == UseAnim.DRINK) {
                 float cap = hasCap(stack) ? CAP_TICKS : 0;
                 if (used < cap) {
-                    // held just under the chin, top towards you, twisting the cap open
+                    // held where you hold it, a little towards the middle, twisting the cap open
                     float k = 1 - Mth.clamp((used - (cap - 3)) / 3f, 0, 1);
-                    y -= 0.12f * k;
-                    x -= s * 0.05f * k;
-                    rx += 18 * k;
+                    x -= s * 0.08f * k;
+                    y += 0.04f * k;
                     rz += Mth.sin(used * 1.4f) * 24 * k;
                 } else {
                     float k = Mth.clamp((used - cap) / 8f, 0, 1);
@@ -400,7 +399,7 @@ public final class FirstPersonAnim {
         float px = -s * 0.36f, py = -0.48f - 0.35f * (1 - plug), pz = -0.72f;
         // the whole set (bank, phone, cable) a bit smaller and further away than items in hand
         ps.pushPose();
-        ps.translate(0, -0.42f, -0.8f);
+        ps.translate(0, -0.3f, -0.8f);
         ps.scale(0.72f, 0.72f, 0.72f);
         ps.translate(0, 0.5f, 0.72f);
         ps.pushPose();
