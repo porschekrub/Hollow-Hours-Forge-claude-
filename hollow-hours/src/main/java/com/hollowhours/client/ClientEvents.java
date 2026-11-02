@@ -22,6 +22,24 @@ import net.minecraftforge.fml.common.Mod;
 public final class ClientEvents {
     private ClientEvents() {}
 
+    /**
+     * The haven is an extra world (a datapack dimension), and Minecraft warns about any world with one as "experimental".
+     * It's ours and it's fine: press Proceed for the player (can be turned off in the client config).
+     */
+    @SubscribeEvent
+    public static void experimentalWarning(ScreenEvent.Init.Post e) {
+        if (!(e.getScreen() instanceof net.minecraft.client.gui.screens.ConfirmScreen cs) || !com.hollowhours.config.HHClientConfig.SKIP_EXPERIMENTAL_WARNING.get()) return;
+        if (!(cs.getTitle().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents title)
+                || !title.getKey().equals("selectWorld.warning.experimental.title")) return;
+        for (var w : e.getListenersList())
+            if (w instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
+                    && t.getKey().equals("gui.proceed")) {
+                HollowHours.LOG.info("[Hollow Hours] skipping the experimental settings warning (the haven dimension)");
+                Minecraft.getInstance().tell(b::onPress);
+                return;
+            }
+    }
+
     @SubscribeEvent
     public static void tick(TickEvent.ClientTickEvent e) {
         if (e.phase != TickEvent.Phase.END) return;
