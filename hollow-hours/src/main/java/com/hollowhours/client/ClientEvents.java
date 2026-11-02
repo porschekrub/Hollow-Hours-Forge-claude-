@@ -30,7 +30,7 @@ public final class ClientEvents {
     public static void experimentalWarning(ScreenEvent.Init.Post e) {
         if (!(e.getScreen() instanceof net.minecraft.client.gui.screens.ConfirmScreen cs) || !com.hollowhours.config.HHClientConfig.SKIP_EXPERIMENTAL_WARNING.get()) return;
         if (!(cs.getTitle().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents title)
-                || !title.getKey().equals("selectWorld.warning.experimental.title")) return;
+                || !title.getKey().equals("selectWorld.backupQuestion.experimental") && !title.getKey().equals("selectWorld.warning.experimental.title")) return;
         for (var w : e.getListenersList())
             if (w instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
                     && t.getKey().equals("gui.proceed")) {
@@ -38,6 +38,7 @@ public final class ClientEvents {
                 Minecraft.getInstance().tell(b::onPress);
                 return;
             }
+        HollowHours.LOG.warn("[Hollow Hours] the experimental settings warning has no Proceed button we know");
     }
 
     @SubscribeEvent
