@@ -34,7 +34,9 @@ public final class HHConfig {
     public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD, TREE_FELLING, EXPLOSION_DEBRIS;
     public static final ForgeConfigSpec.IntValue VEIN_MINING, GRAVE_MINUTES, GRAVE_HITS;
     public static final ForgeConfigSpec.DoubleValue THIRST_RATE, PHONE_DRAIN;
-    public static final ForgeConfigSpec.BooleanValue GRAVES;
+    public static final ForgeConfigSpec.BooleanValue GRAVES, RESCUE;
+    public static final ForgeConfigSpec.IntValue RESCUE_DAY, RESCUE_MIN_DAYS, RESCUE_MAX_DAYS, RESCUE_PICKUP_MINUTES, INVASION_MIN_DAYS, INVASION_MAX_DAYS;
+    public static final ForgeConfigSpec.DoubleValue MISSED_GHOST_MULT, MISSED_BLOOD_MULT, RETURN_GHOST_MULT, RETURN_BLOOD_MULT;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT;
 
@@ -97,6 +99,20 @@ public final class HHConfig {
         GRAVES = b.comment("Make a grave when a player dies").define("enabled", true);
         GRAVE_MINUTES = b.comment("Minutes before a grave crumbles (its items can then only come back with a Grave Restorer)").defineInRange("minutes", 15, 1, 600);
         GRAVE_HITS = b.comment("Hits from its owner that break a grave").defineInRange("hitsToBreak", 3, 1, 20);
+        b.pop();
+
+        b.comment("The rescue: a helicopter to the haven (a land with no ghosts), the ghosts finding it, the flight back").push("rescue");
+        RESCUE = b.comment("The rescue story").define("enabled", true);
+        RESCUE_DAY = b.comment("The day the message comes: help is on its way").defineInRange("messageDay", 7, 1, 1000);
+        RESCUE_MIN_DAYS = b.comment("Fewest days until the helicopter comes").defineInRange("minDays", 35, 1, 1000);
+        RESCUE_MAX_DAYS = b.comment("Most days until the helicopter comes").defineInRange("maxDays", 100, 1, 1000);
+        RESCUE_PICKUP_MINUTES = b.comment("Minutes the helicopter waits for you").defineInRange("pickupMinutes", 5, 1, 60);
+        INVASION_MIN_DAYS = b.comment("Fewest days in the haven before the ghosts find it").defineInRange("invasionMinDays", 5, 1, 1000);
+        INVASION_MAX_DAYS = b.comment("Most days in the haven before the ghosts find it").defineInRange("invasionMaxDays", 10, 1, 1000);
+        MISSED_GHOST_MULT = b.comment("Missed the helicopter: ghosts this many times as cruel (damage, how often they come)").defineInRange("missedGhostMultiplier", 2.0, 1, 20);
+        MISSED_BLOOD_MULT = b.comment("Missed the helicopter: blood moon ghosts this many times as cruel").defineInRange("missedBloodMoonMultiplier", 5.0, 1, 20);
+        RETURN_GHOST_MULT = b.comment("Back from the haven: ghosts this many times as cruel").defineInRange("returnGhostMultiplier", 3.0, 1, 20);
+        RETURN_BLOOD_MULT = b.comment("Back from the haven: blood moon ghosts this many times as cruel").defineInRange("returnBloodMoonMultiplier", 6.0, 1, 20);
         b.pop();
 
         b.comment("Blood moon nights and rolling fog").push("atmosphere");

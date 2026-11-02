@@ -294,13 +294,15 @@ public class PhoneScreen extends Screen {
         List<String> msgs = PhoneItem.messages(phone());
         int y = top + 18;
         for (int i = msgs.size() - 1; i >= 0 && y < sy + sh - 20; i--) {
-            String key = msgs.get(i);
-            boolean alert = key.endsWith(".alert");
+            String[] parts = msgs.get(i).split("\\|");
+            String key = parts[0];
+            boolean alert = key.endsWith(".alert") || key.endsWith(".missed") || key.endsWith(".invasion") || key.endsWith(".home");
             Component from = Component.translatable(key + ".from");
             g.drawString(f, from, sx + 4, y, alert ? 0xFFFF5050 : 0xFF8FD8EA, false);
             y += 10;
             int y0 = y;
-            y = drawWrapped(g, f, Component.translatable(key), sx + 6, y + 2, sw - 12, 0xFFE8E8E8, false);
+            Object[] args = java.util.Arrays.copyOfRange(parts, 1, parts.length);
+            y = drawWrapped(g, f, Component.translatable(key, args), sx + 6, y + 2, sw - 12, 0xFFE8E8E8, false);
             g.fill(sx + 3, y0, sx + 4, y, alert ? 0xFFFF5050 : 0xFF406080);
             y += 6;
         }

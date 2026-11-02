@@ -1,0 +1,154 @@
+{
+ "carvers": {
+  "air": [
+   "minecraft:cave",
+   "minecraft:cave_extra_underground",
+   "minecraft:canyon"
+  ]
+ },
+ "downfall": 0.4,
+ "effects": {
+  "fog_color": 12638463,
+  "mood_sound": {
+   "block_search_extent": 8,
+   "offset": 2.0,
+   "sound": "minecraft:ambient.cave",
+   "tick_delay": 6000
+  },
+  "sky_color": 7907327,
+  "water_color": 4159204,
+  "water_fog_color": 329011
+ },
+ "features": [
+  [],
+  [
+   "minecraft:lake_lava_underground",
+   "minecraft:lake_lava_surface"
+  ],
+  [
+   "minecraft:amethyst_geode"
+  ],
+  [],
+  [],
+  [],
+  [
+   "minecraft:ore_dirt",
+   "minecraft:ore_gravel",
+   "minecraft:ore_granite_upper",
+   "minecraft:ore_granite_lower",
+   "minecraft:ore_diorite_upper",
+   "minecraft:ore_diorite_lower",
+   "minecraft:ore_andesite_upper",
+   "minecraft:ore_andesite_lower",
+   "minecraft:ore_tuff",
+   "minecraft:ore_coal_upper",
+   "minecraft:ore_coal_lower",
+   "minecraft:ore_iron_upper",
+   "minecraft:ore_iron_middle",
+   "minecraft:ore_iron_small",
+   "minecraft:ore_gold",
+   "minecraft:ore_gold_lower",
+   "minecraft:ore_redstone",
+   "minecraft:ore_redstone_lower",
+   "minecraft:ore_diamond",
+   "minecraft:ore_diamond_large",
+   "minecraft:ore_diamond_buried",
+   "minecraft:ore_lapis",
+   "minecraft:ore_lapis_buried",
+   "minecraft:ore_copper",
+   "minecraft:underwater_magma",
+   "minecraft:disk_sand",
+   "minecraft:disk_clay",
+   "minecraft:disk_gravel",
+   "hollowhours:haven_ore_coal",
+   "hollowhours:haven_ore_iron",
+   "hollowhours:haven_ore_copper",
+   "hollowhours:haven_ore_gold",
+   "hollowhours:haven_ore_redstone",
+   "hollowhours:haven_ore_lapis",
+   "hollowhours:haven_ore_diamond",
+   "hollowhours:haven_ore_emerald"
+  ],
+  [],
+  [
+   "minecraft:spring_water",
+   "minecraft:spring_lava"
+  ],
+  [
+   "minecraft:glow_lichen",
+   "minecraft:flower_default",
+   "minecraft:patch_grass_badlands",
+   "minecraft:brown_mushroom_normal",
+   "minecraft:red_mushroom_normal",
+   "minecraft:patch_sugar_cane",
+   "minecraft:patch_pumpkin"
+  ],
+  [
+   "minecraft:freeze_top_layer"
+  ]
+ ],
+ "has_precipitation": true,
+ "spawn_costs": {},
+ "spawners": {
+  "ambient": [],
+  "axolotls": [],
+  "creature": [
+   {
+    "type": "minecraft:sheep",
+    "weight": 12,
+    "minCount": 2,
+    "maxCount": 4
+   },
+   {
+    "type": "minecraft:pig",
+    "weight": 10,
+    "minCount": 2,
+    "maxCount": 4
+   },
+   {
+    "type": "minecraft:chicken",
+    "weight": 10,
+    "minCount": 2,
+    "maxCount": 4
+   },
+   {
+    "type": "minecraft:cow",
+    "weight": 9,
+    "minCount": 2,
+    "maxCount": 4
+   },
+   {
+    "type": "minecraft:rabbit",
+    "weight": 6,
+    "minCount": 2,
+    "maxCount": 3
+   },
+   {
+    "type": "minecraft:horse",
+    "weight": 4,
+    "minCount": 2,
+    "maxCount": 4
+   },
+   {
+    "type": "minecraft:turtle",
+    "weight": 6,
+    "minCount": 2,
+    "maxCount": 5
+   }
+  ],
+  "misc": [],
+  "monster": [],
+  "underground_water_creature": [
+   {
+    "type": "minecraft:glow_squid",
+    "maxCount": 6,
+    "minCount": 4,
+    "weight": 10
+   }
+  ],
+  "water_ambient": [],
+  "water_creature": []
+ },
+ "temperature": 0.8,
+ "creature_spawn_probability": 0.14
+}

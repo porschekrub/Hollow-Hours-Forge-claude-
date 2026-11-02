@@ -168,7 +168,9 @@ public final class Atmosphere {
         MinecraftServer server = p.getServer();
         if (server == null) return;
         boolean over = p.level().dimension() == Level.OVERWORLD;
-        HHNet.toPlayer(p, new S2CAtmos(over && bloodNow, over ? fogNow(server) : 0, Story.activeCached()));
+        // in the haven nothing haunts you (until they find it)
+        boolean calm = com.hollowhours.rescue.Rescue.inHaven(p) && !com.hollowhours.rescue.Rescue.invaded(p);
+        HHNet.toPlayer(p, new S2CAtmos(over && bloodNow, over ? fogNow(server) : 0, Story.activeCached() && !calm));
     }
 
     public static void reset() {

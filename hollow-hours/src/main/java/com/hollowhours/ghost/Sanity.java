@@ -60,7 +60,7 @@ public final class Sanity {
     /** Every 20 ticks. */
     public static void tick(ServerPlayer p, long now) {
         if (!HHConfig.SANITY.get() || p.isSpectator() || !p.isAlive()) return;
-        if (!Story.activeCached() || p.isCreative()) {
+        if (!Story.activeCached() || p.isCreative() || com.hollowhours.rescue.Rescue.inHaven(p) && !com.hollowhours.rescue.Rescue.invaded(p)) {
             add(p, 0.5f);
             return;
         }

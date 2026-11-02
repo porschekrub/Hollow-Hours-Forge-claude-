@@ -47,6 +47,7 @@ final class SmokeTest {
             bloodMoon(server, level, at);
             storyAndSurvival(server, level, at);
             physicsAndFun(server, level, at);
+            rescue(server);
             HollowHours.LOG.info("[smoke] {}", com.hollowhours.grave.GraveSmoke.run(server));
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");
@@ -258,6 +259,34 @@ final class SmokeTest {
             level.setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
         check(landed && low > -0.01 && rebound > 1.2 && rebound < 4, String.format("ball bounce (lowest %.2f, rebound %.2f)", low, rebound));
         HollowHours.LOG.info("[smoke] physics and playground OK (ball rebound {} blocks)", String.format("%.2f", rebound));
+    }
+
+    /** The haven exists, is rich and safe; the rescue is planned 35-100 days out; the clock reads right. */
+    static void rescue(MinecraftServer server) {
+        ServerLevel haven = server.getLevel(com.hollowhours.rescue.Rescue.HAVEN);
+        check(haven != null, "the haven dimension");
+        java.util.Set<String> seen = new java.util.TreeSet<>();
+        for (int i = 0; i < 64; i++) {
+            BlockPos p = new BlockPos((i % 8 - 4) * 400, 70, (i / 8 - 4) * 400);
+            var b = haven.getBiome(p);
+            String id = b.unwrapKey().map(k -> k.location().toString()).orElse("?");
+            seen.add(id);
+            check(id.startsWith("hollowhours:haven_"), "haven biome at " + p + ": " + id);
+            check(b.value().getMobSettings().getMobs(net.minecraft.world.entity.MobCategory.MONSTER).isEmpty(), "no monsters in " + id);
+        }
+        check(seen.size() >= 3, "haven has several biomes: " + seen);
+        BlockPos spot = com.hollowhours.rescue.Rescue.havenSpot(haven);
+        check(haven.getBlockState(spot.below()).isSolid() && haven.getFluidState(spot.below()).isEmpty(), "haven landing spot on dry land " + spot);
+        check("06:00".equals(com.hollowhours.rescue.Rescue.clock(0)) && "00:00".equals(com.hollowhours.rescue.Rescue.clock(18000))
+                && "12:30".equals(com.hollowhours.rescue.Rescue.clock(6500)), "rescue clock");
+        long now = server.overworld().getDayTime();
+        for (int i = 0; i < 20; i++) {
+            com.hollowhours.rescue.Rescue.schedule(server);
+            long days = com.hollowhours.rescue.Rescue.nextArrival(server) / 24000L - now / 24000L;
+            check(days >= 35 && days <= 100, "rescue in " + days + " days");
+        }
+        com.hollowhours.rescue.Rescue.cancelPlan(server);
+        HollowHours.LOG.info("[smoke] rescue OK: haven biomes {}, landing at {}", seen, spot);
     }
 
     static void check(boolean ok, String what) {

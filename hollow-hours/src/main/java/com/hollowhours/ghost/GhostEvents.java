@@ -92,6 +92,7 @@ public final class GhostEvents {
         bus.addListener(GhostEvents::onLevelLoad);
         bus.addListener(GhostEvents::onServerStarted);
         bus.addListener(GhostEvents::onServerStopping);
+        com.hollowhours.rescue.Rescue.register(bus);
     }
 
     // ------------------------------------------------------------------ ticking
@@ -120,6 +121,7 @@ public final class GhostEvents {
             });
             safe("soul", () -> Soul.tick(server, now));
             safe("graves", () -> com.hollowhours.grave.Graves.tick(server));
+            safe("rescue", () -> com.hollowhours.rescue.Rescue.tick(server));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
         // the first nights are normal: nothing haunts anyone before the story starts
@@ -139,6 +141,10 @@ public final class GhostEvents {
 
     /** CI client screenshots: no natural ghosts or stalkers interrupting the tour */
     static final boolean CLIENT_SMOKE = Boolean.getBoolean("hollowhours.clientsmoke");
+
+    public static boolean clientSmoke() {
+        return CLIENT_SMOKE;
+    }
 
     static void safe(String what, Runnable r) {
         try {

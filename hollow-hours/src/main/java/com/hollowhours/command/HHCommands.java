@@ -101,6 +101,26 @@ public final class HHCommands {
             com.hollowhours.ghost.Sanity.set(c.getSource().getPlayerOrException(), FloatArgumentType.getFloat(c, "value"));
             return reply(c, "sanity set");
         })));
+        root.then(Commands.literal("rescue")
+                .then(Commands.literal("status").executes(c -> {
+                    var p = c.getSource().getPlayerOrException();
+                    long at = com.hollowhours.rescue.Rescue.nextArrival(c.getSource().getServer());
+                    return reply(c, "rescue: phase " + com.hollowhours.rescue.Rescue.phase(p) + " (0 waiting, 1 haven, 2 home), missed "
+                            + com.hollowhours.rescue.Rescue.missed(p) + ", next helicopter "
+                            + (at < 0 ? "none planned" : "day " + (at / 24000 + 1) + " " + com.hollowhours.rescue.Rescue.clock(at)));
+                }))
+                .then(Commands.literal("now").executes(c -> {
+                    com.hollowhours.rescue.Rescue.arriveNow(c.getSource().getServer());
+                    return reply(c, "the helicopter is coming now");
+                }))
+                .then(Commands.literal("invade").executes(c -> {
+                    com.hollowhours.rescue.Rescue.invadeNow(c.getSource().getPlayerOrException());
+                    return reply(c, "the ghosts find the haven (if you're there)");
+                }))
+                .then(Commands.literal("reset").executes(c -> {
+                    com.hollowhours.rescue.Rescue.reset(c.getSource().getPlayerOrException());
+                    return reply(c, "your rescue story starts over");
+                })));
         root.then(Commands.literal("bloodmoon")
                 .then(Commands.literal("on").executes(c -> {
                     com.hollowhours.ghost.Atmosphere.forceBlood = 1;

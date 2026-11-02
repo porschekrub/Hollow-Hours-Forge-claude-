@@ -31,6 +31,7 @@ public final class ClientEvents {
         Atmos.tick();
         Fear.tick();
         PhoneAlert.tick();
+        PhoneNotice.tick();
         FirstPersonAnim.tick();
         Jumpscare.tick();
         KillCam.tick();
@@ -169,6 +170,7 @@ public final class ClientEvents {
         ClientFx.reset();
         Atmos.reset();
         PhoneAlert.reset();
+        PhoneNotice.reset();
         SurvivalHud.thirst = SurvivalHud.sanity = -1;
         KillCam.reset();
         HorrorMusic.reset();

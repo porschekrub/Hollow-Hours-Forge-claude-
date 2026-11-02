@@ -37,6 +37,7 @@ public final class ClientSetup {
         e.registerEntityRenderer(HHEntities.SWING_SEAT.get(), com.hollowhours.client.render.SwingSeatRenderer::new);
         e.registerEntityRenderer(HHEntities.BALL.get(), com.hollowhours.client.render.BallRenderer::new);
         e.registerEntityRenderer(HHEntities.GRAVE.get(), com.hollowhours.client.render.GraveRenderer::new);
+        e.registerEntityRenderer(HHEntities.HELICOPTER.get(), com.hollowhours.client.render.HelicopterRenderer::new);
     }
 
     /** Players get the scared body animations (the model inside both player renderers is swapped). */
@@ -66,6 +67,9 @@ public final class ClientSetup {
     public static void extraModels(net.minecraftforge.client.event.ModelEvent.RegisterAdditional e) {
         e.register(com.hollowhours.client.render.SwingSeatRenderer.MODEL);
         e.register(com.hollowhours.client.render.GraveRenderer.MODEL);
+        e.register(com.hollowhours.client.render.HelicopterRenderer.BODY);
+        e.register(com.hollowhours.client.render.HelicopterRenderer.ROTOR);
+        e.register(com.hollowhours.client.render.HelicopterRenderer.TAIL);
     }
 
     @SubscribeEvent
@@ -80,6 +84,8 @@ public final class ClientSetup {
         e.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(), "thirst", SurvivalHud::thirst);
         e.registerAbove(VanillaGuiOverlay.ARMOR_LEVEL.id(), "sanity", SurvivalHud::sanity);
         e.registerAboveAll("phone_alert", PhoneAlert::render);
+        e.registerAboveAll("phone_notice", PhoneNotice::render);
+        e.registerAboveAll("rescue_fade", RescueFade::render);
     }
 
     @SubscribeEvent

@@ -58,6 +58,10 @@ public final class HHEntities {
             () -> EntityType.Builder.<BoardsEntity>of(BoardsEntity::new, MobCategory.MISC).sized(0.3f, 0.3f).clientTrackingRange(10)
                     .updateInterval(20).noSummon().build(HollowHours.MODID + ":boards"));
 
+    public static final RegistryObject<EntityType<com.hollowhours.rescue.HelicopterEntity>> HELICOPTER = ENTITIES.register("helicopter",
+            () -> EntityType.Builder.<com.hollowhours.rescue.HelicopterEntity>of(com.hollowhours.rescue.HelicopterEntity::new, MobCategory.MISC)
+                    .sized(5.0f, 4.5f).fireImmune().clientTrackingRange(16).updateInterval(1).noSummon().build(HollowHours.MODID + ":helicopter"));
+
     public static GhostKind kindOf(EntityType<?> type) {
         for (int i = 0; i < GHOSTS.size(); i++) if (GHOSTS.get(i).isPresent() && GHOSTS.get(i).get() == type) return GhostKind.values()[i];
         return GhostKind.WAIL;

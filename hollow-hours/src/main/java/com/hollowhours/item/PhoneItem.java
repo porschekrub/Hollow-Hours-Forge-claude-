@@ -110,6 +110,16 @@ public class PhoneItem extends Item {
         }
     }
 
+    /** Adds a message with arguments ("key|arg|arg"), replacing an older one with the same key. */
+    public static void setMessage(ServerPlayer p, String key, String full) {
+        for (ItemStack s : allPhones(p)) {
+            ListTag l = s.getOrCreateTag().getList(MSGS, Tag.TAG_STRING);
+            l.removeIf(e -> e.getAsString().equals(key) || e.getAsString().startsWith(key + "|"));
+            l.add(StringTag.valueOf(full));
+            s.getOrCreateTag().put(MSGS, l);
+        }
+    }
+
     static List<ItemStack> allPhones(Player p) {
         List<ItemStack> out = new ArrayList<>();
         for (ItemStack s : p.getInventory().items) if (s.is(HHItems.PHONE.get())) out.add(s);

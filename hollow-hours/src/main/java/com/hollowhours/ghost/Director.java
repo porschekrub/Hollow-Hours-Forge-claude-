@@ -73,6 +73,8 @@ public final class Director {
         double g = R.chance(HHConfig.QUICK_CHANCE.get()) ? rand(4 * MIN, 6 * MIN) : rand(HHConfig.GAP_MIN.get() * 20, HHConfig.GAP_MAX.get() * 20);
         g *= Variety.moodGap();
         if (Atmosphere.bloodMoon()) g /= HHConfig.BLOOD_SPAWN_MULT.get();
+        // those who missed the helicopter, or came back from the haven, are hunted more often
+        if (harsh > 1) g = Math.max(45 * 20, g / harsh);
         return (long) g;
     }
 
@@ -107,7 +109,11 @@ public final class Director {
     }
 
     // ------------------------------------------------------------------ main schedule (every 40 ticks)
+    /** how much crueller the ghosts are than usual for the players they hunt (see Rescue) */
+    static double harsh = 1;
+
     public static void spawnTick(MinecraftServer server, long now) {
+        harsh = com.hollowhours.rescue.Rescue.harshest(server);
         if (!started) {
             started = true;
             nextSpawnAt = now + (long) rand(HHConfig.FIRST_SPAWN_MIN.get() * 20, HHConfig.FIRST_SPAWN_MAX.get() * 20);
@@ -254,7 +260,7 @@ public final class Director {
     /** A cursed item calls a ghost right now (if none is out). */
     public static boolean summonGhost(ServerPlayer p) {
         MinecraftServer server = p.getServer();
-        if (server == null || !allGhosts(server).isEmpty()) return false;
+        if (server == null || !allGhosts(server).isEmpty() || com.hollowhours.rescue.Rescue.safe(p)) return false;
         Vec3 spot = findSpot(p, true, 22, 30);
         if (spot == null) return false;
         return spawnGhost(p.serverLevel(), randomKind(), spot) != null;

@@ -109,7 +109,7 @@ public final class GhostBrain {
     public static boolean targetable(Player p) {
         if (!(p instanceof ServerPlayer sp) || !p.isAlive() || p.isSpectator()) return false;
         GameType gt = sp.gameMode.getGameModeForPlayer();
-        return gt != GameType.CREATIVE && gt != GameType.SPECTATOR;
+        return gt != GameType.CREATIVE && gt != GameType.SPECTATOR && !com.hollowhours.rescue.Rescue.safe(sp);
     }
 
     public static List<GhostEntity> ghostsNear(ServerLevel level, Vec3 at, double r) {
@@ -509,6 +509,7 @@ public final class GhostBrain {
         float dmg = g.attackDamage();
         if (buff != null && buff.dmg() > 0) dmg *= (float) (1 + buff.dmg());
         dmg *= (float) Soul.damageMult(p);
+        dmg *= (float) com.hollowhours.rescue.Rescue.harshness(p, Atmosphere.bloodMoonFor(g.level()));
         g.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         boolean onCatch = HHConfig.KILL_MODE.get() == HHConfig.KillMode.ON_CATCH;
         float after = CombatRules.getDamageAfterAbsorb(dmg, (float) p.getArmorValue(), (float) p.getAttributeValue(Attributes.ARMOR_TOUGHNESS));

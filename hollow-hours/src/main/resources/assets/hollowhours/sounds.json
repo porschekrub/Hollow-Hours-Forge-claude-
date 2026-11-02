@@ -1395,5 +1395,13 @@
     "name": "hollowhours:phone/alert_en_5"
    }
   ]
+ },
+ "rescue.rotor": {
+  "sounds": [
+   {
+    "name": "hollowhours:rescue/rotor"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.rescue.rotor"
  }
 }

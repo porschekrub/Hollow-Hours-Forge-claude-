@@ -1,8 +1,19 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.8.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.8.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.9.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.9.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.9.0 — the rescue**
+- **Day 7: help is coming.** A message pops up on your phone: a rescue helicopter will pick you up in 35–100 days — the day and the time. When it lands near you it waits **5 minutes**; right-click it to climb aboard (up to 6 people). A countdown and an arrow show the way.
+  วันที่ 7 โทรศัพท์จะแจ้งว่าเฮลิคอปเตอร์กู้ภัยจะมารับในอีก 35–100 วัน พร้อมบอกวันและเวลา พอมันลงจอดใกล้ๆ จะรอแค่ **5 นาที** คลิกขวาเพื่อขึ้น (ได้ 6 คน) มีเวลานับถอยหลังและลูกศรบอกทาง
+- **The haven**: whoever is aboard is flown to a new world — cherry hills, golden meadows, flower woods, a fruit jungle, white beaches and a coral lagoon, with more ore, fruit and animals, **no ghosts and no monsters**. Portals don't work there.
+  ใครขึ้นทันจะได้ไป **ดินแดนสวรรค์**: เนินซากุระ ทุ่งหญ้า ป่าดอกไม้ ป่าผลไม้ หาดทราย ทะเลปะการัง แร่ ผลไม้ สัตว์เยอะ **ไม่มีผีและมอนสเตอร์**
+- **Missed it?** Another helicopter is planned (35–100 days again), but the ghosts are **2× as cruel** (hit harder, come more often) and **blood moons 5×**.
+  ถ้าพลาด จะมีลำใหม่ (สุ่ม 35–100 วันอีกครั้ง) แต่ผีโหดขึ้น **2 เท่า** พระจันทร์สีเลือด **5 เท่า**
+- **They find the haven** after 5–10 days: ghosts hunt you there and a helicopter lands somewhere out there — it waits as long as it takes. It flies you back where it all began, **for good**: ghosts **3×**, blood moons **6×**.
+  อยู่สวรรค์ 5–10 วันผีจะบุก ต้องวิ่งไปขึ้นเฮลิคอปเตอร์ (รอไม่จำกัดเวลา) มันจะพากลับโลกเดิม **ตลอดไป** ผีโหดขึ้น **3 เท่า** พระจันทร์สีเลือด **6 เท่า**
+- Settings in `[rescue]` of `hollowhours-common.toml`; test commands (op): `/hollow rescue now|invade|reset|status`.
 
 **2.8.1**
 - Power bank: the message after charging shows the right numbers (and where you unplugged); the bank, phone and cable sit smaller in first person.

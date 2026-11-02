@@ -62,6 +62,8 @@ public final class HHSounds {
             "phone.notify", "phone.eas", "phone.click", "phone.charge", "phone.siren", "phone.game",
             "phone.voice.th.0", "phone.voice.th.1", "phone.voice.th.2", "phone.voice.th.3", "phone.voice.th.4", "phone.voice.th.5",
             "phone.voice.en.0", "phone.voice.en.1", "phone.voice.en.2", "phone.voice.en.3", "phone.voice.en.4", "phone.voice.en.5",
+            // the rescue
+            "rescue.rotor",
     };
 
     static {
