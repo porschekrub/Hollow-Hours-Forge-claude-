@@ -313,26 +313,31 @@ public final class Rescue {
     public static BlockPos havenSpot(ServerLevel haven) {
         Data d = data(haven.getServer());
         if (d.havenSpot != null) return d.havenSpot;
-        BlockPos best = null;
-        outer:
-        // rings around the middle (each sample may generate a chunk, so not too many)
-        for (int r = 0; r <= 768; r += 64) {
-            for (int a = 0; a < Math.max(1, r / 32); a++) {
-                double ang = a * Math.PI * 2 / Math.max(1, r / 32);
-                int x = (int) (Math.cos(ang) * r), z = (int) (Math.sin(ang) * r);
+        // one sample in the middle of a chunk per ring step (each may generate that chunk - kept few): dry, inland, the flattest wins
+        BlockPos best = null, dry = null;
+        int bestBump = Integer.MAX_VALUE;
+        search:
+        for (int r = 0; r <= 320; r += 64) {
+            int n = Math.max(1, r / 40);
+            for (int a = 0; a < n; a++) {
+                double ang = a * Math.PI * 2 / n;
+                int x = (((int) (Math.cos(ang) * r)) >> 4 << 4) + 8, z = (((int) (Math.sin(ang) * r)) >> 4 << 4) + 8;
                 BlockPos top = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
+                if (!haven.getFluidState(top.below()).isEmpty() || !haven.getBlockState(top.below()).isSolid() || top.getY() <= haven.getSeaLevel()) continue;
+                if (dry == null) dry = top;
                 String biome = haven.getBiome(top).unwrapKey().map(k -> k.location().getPath()).orElse("");
-                boolean flat = true;
-                for (int[] o : new int[][] {{4, 0}, {-4, 0}, {0, 4}, {0, -4}})
-                    if (Math.abs(top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, top.offset(o[0], 0, o[1])).getY() - top.getY()) > 1) flat = false;
-                if (flat && haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 3
-                        && top.getY() < haven.getSeaLevel() + 40 && !biome.equals("haven_beach") && !biome.equals("haven_lagoon")) {
+                if (biome.equals("haven_beach") || biome.equals("haven_lagoon") || top.getY() > haven.getSeaLevel() + 40) continue;
+                int bump = 0;
+                for (int[] o : new int[][] {{5, 0}, {-5, 0}, {0, 5}, {0, -5}})
+                    bump = Math.max(bump, Math.abs(top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, top.offset(o[0], 0, o[1])).getY() - top.getY()));
+                if (bump < bestBump) {
                     best = top;
-                    break outer;
+                    bestBump = bump;
                 }
+                if (bestBump <= 1) break search;
             }
         }
-        if (best == null) best = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.ZERO);
+        if (best == null) best = dry != null ? dry : top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(8, 0, 8));
         d.havenSpot = best;
         d.setDirty();
         return best;
