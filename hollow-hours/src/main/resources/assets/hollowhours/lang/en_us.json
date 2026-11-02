@@ -487,9 +487,9 @@
  "item.hollowhours.phone.battery": "Battery: %s%%",
  "item.hollowhours.phone.health": "Battery health: %s%%",
  "item.hollowhours.phone.tip": "Right-click to use. Games calm you down but drain the battery.",
- "item.hollowhours.charger": "Phone Charger",
+ "item.hollowhours.charger": "Power Bank",
  "item.hollowhours.charger.left": "Charges left: %s",
- "item.hollowhours.charger.tip": "Hold right-click to charge your emptiest phone to 100%",
+ "item.hollowhours.charger.tip": "Hold right-click: plug the cable into your emptiest phone and watch it charge",
  "item.hollowhours.charger.nothing": "No phone that needs charging",
  "item.hollowhours.charger.done": "Phone charged to 100% (charges left: %s)",
  "death.attack.hollowhours.thirst": "%1$s died of thirst",
@@ -583,5 +583,6 @@
  "item.hollowhours.canteen.sips": "Water: %s/%s",
  "item.hollowhours.canteen.tip": "3 drinks, each 15% more than a water bottle. Right-click water to fill it.",
  "item.hollowhours.canteen.empty": "The canteen is empty: right-click water to fill it",
- "hollowhours.sprint.again": "§7You caught your breath: you can run again"
+ "hollowhours.sprint.again": "§7You caught your breath: you can run again",
+ "item.hollowhours.charger.charging": "Charging... %s%%"
 }

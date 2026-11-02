@@ -139,7 +139,9 @@ public final class Thirst {
         drink(p, 2);
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.GENERIC_DRINK, net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.1f);
         p.serverLevel().sendParticles(ParticleTypes.SPLASH, hit.getLocation().x, hit.getLocation().y + 0.1, hit.getLocation().z, 6, 0.15, 0.05, 0.15, 0.1);
-        p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
+        // everyone around sees the scoop with both hands (the drinker's own client has already started it)
+        com.hollowhours.net.HHNet.CHANNEL.send(net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY.with(() -> p),
+                new com.hollowhours.net.S2CAnim(com.hollowhours.net.S2CAnim.SIP, p.getId()));
         // untreated river water
         if (R.chance(0.15)) p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
     }

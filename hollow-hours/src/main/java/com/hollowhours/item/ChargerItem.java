@@ -18,14 +18,23 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 
-/** Hold right-click for 2 seconds: the emptiest phone you carry is charged to 100%. Three charges, then it's used up. */
+/**
+ * A power bank with a cable. Hold right-click: you plug the cable into your emptiest phone, then watch its battery
+ * climb (2% a tick) until it's full or you let go. Three charges, then the power bank is flat.
+ */
 public class ChargerItem extends Item {
+    /** ticks of plugging the cable in before the charge starts */
+    public static final int PLUG = 14;
+    static final float PER_TICK = 2;
+    static final String PLUGGED = "Plugged";
+
     public ChargerItem(Properties props) {
         super(props);
     }
 
+    /** the phone to charge: one in a hand first, else the emptiest one */
     @Nullable
-    static ItemStack target(Player p) {
+    public static ItemStack target(Player p) {
         ItemStack best = null;
         for (InteractionHand h : InteractionHand.values()) {
             ItemStack s = p.getItemInHand(h);
@@ -45,33 +54,65 @@ public class ChargerItem extends Item {
             return InteractionResultHolder.fail(it);
         }
         p.startUsingItem(hand);
-        if (!level.isClientSide && p instanceof ServerPlayer sp) Fx.playSelf(sp, "phone.charge", 0.8f, 1f);
+        if (!level.isClientSide && p instanceof ServerPlayer sp) Fx.playSelf(sp, "phone.click", 0.8f, 0.7f);
         return InteractionResultHolder.consume(it);
     }
 
     @Override
+    public void onUseTick(Level level, LivingEntity who, ItemStack s, int remaining) {
+        if (level.isClientSide || !(who instanceof ServerPlayer p)) return;
+        int held = getUseDuration(s) - remaining;
+        ItemStack phone = target(p);
+        if (held == PLUG) {
+            if (phone == null) {
+                p.stopUsingItem();
+                return;
+            }
+            // plugged in: this is one of the power bank's three charges
+            s.getOrCreateTag().putBoolean(PLUGGED, true);
+            PhoneItem.setCharging(phone, true);
+            Fx.playSelf(p, "phone.charge", 0.8f, 1f);
+        }
+        if (held <= PLUG) return;
+        if (phone == null) {
+            done(p, s, true);
+            return;
+        }
+        PhoneItem.setCharging(phone, true);
+        float b = Math.min(100, PhoneItem.battery(phone) + PER_TICK);
+        PhoneItem.setBattery(phone, b);
+        if (held % 5 == 0) p.displayClientMessage(Component.translatable("item.hollowhours.charger.charging", Math.round(b)).withStyle(ChatFormatting.GREEN), true);
+        if (b >= 100) done(p, s, true);
+    }
+
+    /** Unplugged (full, or you let go): the charge is used up; tell the player. */
+    static void done(ServerPlayer p, ItemStack s, boolean full) {
+        for (ItemStack it : p.getInventory().items) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
+        for (ItemStack it : p.getInventory().offhand) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
+        if (s.hasTag() && s.getTag().getBoolean(PLUGGED)) {
+            s.getTag().remove(PLUGGED);
+            int left = s.getMaxDamage() - s.getDamageValue() - 1;
+            if (full) Fx.playSelf(p, "phone.notify", 0.6f, 1.3f);
+            p.displayClientMessage(Component.translatable("item.hollowhours.charger.done", Math.max(0, left)).withStyle(ChatFormatting.GREEN), true);
+            InteractionHand hand = p.getUsedItemHand();
+            if (p.isUsingItem()) p.stopUsingItem();
+            s.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(hand));
+        } else if (p.isUsingItem()) p.stopUsingItem();
+    }
+
+    @Override
+    public void releaseUsing(ItemStack s, Level level, LivingEntity who, int remaining) {
+        if (!level.isClientSide && who instanceof ServerPlayer p) done(p, s, false);
+    }
+
+    @Override
     public int getUseDuration(ItemStack s) {
-        return 40;
+        return 72000;
     }
 
     @Override
     public UseAnim getUseAnimation(ItemStack s) {
-        return UseAnim.BOW;
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack s, Level level, LivingEntity e) {
-        if (!level.isClientSide && e instanceof ServerPlayer p) {
-            ItemStack phone = target(p);
-            if (phone != null) {
-                PhoneItem.setBattery(phone, 100);
-                Fx.playSelf(p, "phone.notify", 0.6f, 1.3f);
-                int left = s.getMaxDamage() - s.getDamageValue() - 1;
-                p.displayClientMessage(Component.translatable("item.hollowhours.charger.done", Math.max(0, left)).withStyle(ChatFormatting.GREEN), true);
-                s.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(p.getUsedItemHand()));
-            }
-        }
-        return s;
+        return UseAnim.NONE;
     }
 
     @Override

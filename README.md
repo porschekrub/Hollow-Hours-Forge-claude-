@@ -33,8 +33,8 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
 - Test commands (op): `/hollow bloodmoon on|off|random`, `/hollow fog on|off`
 - **The story / เนื้อเรื่อง**: nights 1–2 are normal and your character is cheerful. On day 3 your phone gets an emergency alert (voice + subtitles); from night 3 the ghosts come and your character is scared.
   คืนที่ 1–2 ปกติ ตัวละครร่าเริง วันที่ 3 โทรศัพท์แจ้งเตือนฉุกเฉิน (มีเสียงพูด + ซับ) คืนที่ 3 ผีเริ่มออก ตัวละครเริ่มกลัว
-- **Phone / โทรศัพท์**: you start with one (random battery). Messages, Snake, Ghost Tap, health. Games raise sanity but drain the battery; the battery wears out with use. Craft a charger (3 charges).
-  เริ่มเกมมีโทรศัพท์ แบตสุ่ม เล่นเกมเพิ่มสติแต่แบตหมดเร็ว ที่ชาร์จคราฟได้ ใช้ได้ 3 ครั้ง
+- **Phone / โทรศัพท์**: you start with one (random battery), plus a flashlight and a spare battery. Messages, Snake, Ghost Tap, health. Games raise sanity but drain the battery; the battery wears out with use. Craft a power bank (3 charges): hold right-click to plug the cable in and charge.
+  เริ่มเกมมีโทรศัพท์ (แบตสุ่ม) ไฟฉาย และถ่าน 1 ก้อน เล่นเกมเพิ่มสติแต่แบตหมดเร็ว คราฟพาวเวอร์แบงก์ได้ ใช้ได้ 3 ครั้ง (กดคลิกขวาค้างเพื่อเสียบสายชาร์จ)
 - **Thirst & sanity / หิวน้ำและค่าสติ**: drink (water bottles, milk, soups, or sneak + right-click water with an empty hand). Sanity drops in the dark, at night, near ghosts; low sanity brings whispers and hallucinations. Light, friends, pets, music, a TV, sleep, games and the playground bring it back.
   ดื่มน้ำ (ขวดน้ำ นม ซุป หรือย่อ + คลิกขวาที่น้ำ) ค่าสติลดในที่มืด กลางคืน ใกล้ผี สติต่ำจะเห็นภาพหลอน เพิ่มสติด้วยแสงไฟ เพื่อน สัตว์เลี้ยง เพลง ทีวี การนอน เกม และเครื่องเล่น
 - **Blood / เลือด**: hits spray blood in each creature's colour; badly hurt creatures drip. / โดนตีเลือดกระเด็นตามสีของสิ่งมีชีวิต เลือดน้อยจะหยด

@@ -58,6 +58,16 @@ public class PhoneItem extends Item {
         s.getOrCreateTag().putFloat(BAT, Mth.clamp(v, 0, 100));
     }
 
+    /** plugged into a power bank right now (shows the charging screen) */
+    public static boolean charging(ItemStack s) {
+        return s.hasTag() && s.getTag().getBoolean("Charging");
+    }
+
+    public static void setCharging(ItemStack s, boolean on) {
+        if (on) s.getOrCreateTag().putBoolean("Charging", true);
+        else if (s.hasTag()) s.getTag().remove("Charging");
+    }
+
     /** Minutes of screen time so far. */
     public static float wear(ItemStack s) {
         CompoundTag t = s.getTag();
@@ -128,6 +138,8 @@ public class PhoneItem extends Item {
     @Override
     public void inventoryTick(ItemStack s, Level level, Entity e, int slot, boolean selected) {
         if (level.isClientSide || !(e instanceof Player p)) return;
+        // a charging mark left behind (the power bank was let go some other way)
+        if (charging(s) && !(p.isUsingItem() && p.getUseItem().is(HHItems.CHARGER.get()))) setCharging(s, false);
         CompoundTag t = s.getOrCreateTag();
         if (!t.contains(BAT)) {
             ItemStack f = fresh(p.getRandom());

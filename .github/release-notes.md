@@ -1,8 +1,20 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.7.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.7.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.8.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.8.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.8.0 — everything in 3D, drinking animations, power bank, faster ghosts**
+- **Every item the mods add is 3D**: phone, ghost guide and command book, barricade boards, repair kits, canteen, closet, restorer, grave compass, helper contract, spawn eggs. **Buckets** (water, lava, milk, fish...) and **bottles** (water bottle, potions, honey) are 3D too.
+  ของทุกชิ้นในมอดเป็น 3D: โทรศัพท์ หนังสือ ไม้กั้น ชุดซ่อม กระติกน้ำ ตู้ เข็มทิศหลุมศพ ฯลฯ ถังน้ำ/ถังลาวา/ถังนม และขวดน้ำ/ยา ก็เป็น 3D
+- **Drinking animations**: unscrew the cap of the canteen or water bottle, then drink; **scoop water with both hands** from the sea or a river (first and third person).
+  แอนิเมชันดื่มน้ำ: เปิดฝากระติก/ขวดก่อนแล้วค่อยดื่ม ใช้สองมือวักน้ำจากทะเล/แม่น้ำ (ทั้งบุคคลที่ 1 และ 3)
+- **The charger is now a power bank** with a cable: hold right-click to plug it into your phone and watch the battery climb to 100%. 3 charges.
+  ที่ชาร์จเป็นพาวเวอร์แบงก์มีสาย: กดคลิกขวาค้างเพื่อเสียบสายเข้าโทรศัพท์ เห็นแบตค่อยๆ เพิ่มจนเต็ม ใช้ได้ 3 ครั้ง
+- **New players start with a flashlight and a spare battery** (plus the phone).
+  เริ่มเกมได้ไฟฉาย + ถ่าน 1 ก้อน (และโทรศัพท์)
+- **Ghosts run about 20% faster than your normal sprint** — only a dash (double-tap sprint) gets you away.
+  ผีวิ่งเร็วกว่าผู้เล่นวิ่งปกติ ~20% ต้อง dash (กดวิ่ง 2 ครั้ง) ถึงจะหนีทัน
 
 **2.7.1 — see yourself in first person, 3D food**
 - **Your arm holds what's in your hand** in first person: you see the arm swing the pickaxe, raise the bread to your mouth, tip the canteen.

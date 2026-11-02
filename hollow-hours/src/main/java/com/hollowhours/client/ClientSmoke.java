@@ -225,6 +225,12 @@ public final class ClientSmoke {
                 pin(sp);
             });
             if (t == 20) shot("world");
+            if (t == 22) server(sp -> {
+                boolean flash = sp.getInventory().items.stream().anyMatch(it -> it.is(com.hollowhours.registry.HHItems.FLASHLIGHT.get()));
+                boolean battery = sp.getInventory().items.stream().anyMatch(it -> it.is(com.hollowhours.registry.HHItems.BATTERY.get()));
+                HollowHours.LOG.info("[client smoke] starter kit: flashlight {} battery {}", flash, battery);
+                if (!flash || !battery) HollowHours.LOG.error("[client smoke] no starter flashlight / battery (com.hollowhours)");
+            });
             return t >= 30;
         });
 
@@ -707,6 +713,63 @@ public final class ClientSmoke {
                 return false;
             });
         }
+        // charging the phone from the power bank (first person, then from the front)
+        for (int view = 0; view < 2; view++) {
+            final boolean third = view == 1;
+            STEPS.add(t -> {
+                if (t == 0) {
+                    lookAt = origin.add(0, 1.6, 30);
+                    mc.options.setCameraType(third ? net.minecraft.client.CameraType.THIRD_PERSON_FRONT : net.minecraft.client.CameraType.FIRST_PERSON);
+                    server(sp -> {
+                        pin(sp);
+                        sp.getInventory().clearContent();
+                        var ph = com.hollowhours.item.PhoneItem.fresh(sp.getRandom());
+                        com.hollowhours.item.PhoneItem.setBattery(ph, 30);
+                        sp.getInventory().setItem(1, ph);
+                        sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.CHARGER.get()));
+                    });
+                }
+                if (t == 6) mc.options.keyUse.setDown(true);
+                if (t == 11 || t == 26 || t == 40) shot((third ? "tp_" : "fp_") + tag + "_powerbank_t" + (t - 6));
+                if (t == 42) {
+                    mc.options.keyUse.setDown(false);
+                    server(sp -> {
+                        var ph = sp.getInventory().getItem(1);
+                        HollowHours.LOG.info("[client smoke] power bank: phone battery {} (30 before), uses left {}", com.hollowhours.item.PhoneItem.battery(ph),
+                                sp.getMainHandItem().getMaxDamage() - sp.getMainHandItem().getDamageValue());
+                        if (com.hollowhours.item.PhoneItem.battery(ph) < 60) HollowHours.LOG.error("[client smoke] the power bank did not charge the phone (com.hollowhours)");
+                    });
+                }
+                if (t >= 46) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    server(sp -> sp.getInventory().clearContent());
+                    return true;
+                }
+                return false;
+            });
+        }
+        // the mod's own things in 3D, in both hands
+        if (!scared) STEPS.add(t -> {
+            if (t == 0) {
+                lookAt = origin.add(0, 1.6, 30);
+                server(sp -> {
+                    pin(sp);
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.GHOST_GUIDE.get()));
+                    sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, com.hollowhours.item.PhoneItem.fresh(sp.getRandom()));
+                });
+            }
+            if (t == 16) shot("fp_items_3d");
+            if (t == 17) server(sp -> {
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.CANTEEN.get()));
+                sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.BOARD_WOOD.get()));
+            });
+            if (t == 30) shot("fp_items_3d_b");
+            if (t == 31) server(sp -> {
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+                sp.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+            });
+            return t >= 33;
+        });
         // holding a sword (the arm holds it), swinging it
         STEPS.add(t -> {
             if (t == 0) {
@@ -754,6 +817,7 @@ public final class ClientSmoke {
                 if (t == 24) server(sp -> sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
                         new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.CANTEEN.get())));
                 if (t == 30) mc.options.keyUse.setDown(true);
+                if (t == 35) shot((third ? "tp_" : "fp_") + tag + "_drink_cap");
                 if (t == 44) shot((third ? "tp_" : "fp_") + tag + "_drink");
                 if (t == 46) mc.options.keyUse.setDown(false);
                 if (t == 50) server(sp -> sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY));
@@ -761,6 +825,8 @@ public final class ClientSmoke {
                 if (!third && (t == 58 || t == 66)) shot("fp_" + tag + "_sip_" + (t == 58 ? "a" : "b"));
                 if (third && t == 54 && mc.player != null) mc.player.jumpFromGround();
                 if (third && t == 58) shot("tp_" + tag + "_jump");
+                if (third && t == 62) FirstPersonAnim.startSip();
+                if (third && t == 66) shot("tp_" + tag + "_scoop");
                 if (t >= 72) {
                     mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                     Fear.force = -1;
@@ -852,7 +918,9 @@ public final class ClientSmoke {
                     give(sp, null, null);
                     net.minecraft.world.item.Item[] items = {net.minecraft.world.item.Items.COBBLESTONE, net.minecraft.world.item.Items.OAK_LOG,
                             net.minecraft.world.item.Items.DIAMOND, net.minecraft.world.item.Items.IRON_SWORD, net.minecraft.world.item.Items.APPLE,
-                            com.hollowhours.registry.HHItems.FLASHLIGHT.get(), net.minecraft.world.item.Items.CRAFTING_TABLE, net.minecraft.world.item.Items.BREAD};
+                            com.hollowhours.registry.HHItems.FLASHLIGHT.get(), net.minecraft.world.item.Items.CRAFTING_TABLE, net.minecraft.world.item.Items.BREAD,
+                            com.hollowhours.registry.HHItems.PHONE.get(), com.hollowhours.registry.HHItems.GHOST_GUIDE.get(), com.hollowhours.registry.HHItems.CANTEEN.get(),
+                            com.hollowhours.registry.HHItems.CHARGER.get()};
                     for (int i = 0; i < items.length; i++) {
                         var ie = new net.minecraft.world.entity.item.ItemEntity(sp.serverLevel(), origin.x - 1.4 + (i % 4) * 0.95, origin.y + 0.6,
                                 origin.z + 2.2 + (i / 4) * 0.9, new net.minecraft.world.item.ItemStack(items[i]));

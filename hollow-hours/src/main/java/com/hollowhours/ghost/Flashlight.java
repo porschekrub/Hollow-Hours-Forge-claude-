@@ -122,7 +122,7 @@ public final class Flashlight {
             }
         }
         stamp(flash, FULL, on(flash));
-        com.hollowhours.net.HHNet.toPlayer(p, new com.hollowhours.net.S2CAnim(com.hollowhours.net.S2CAnim.RELOAD));
+        com.hollowhours.net.HHNet.toPlayer(p, new com.hollowhours.net.S2CAnim(com.hollowhours.net.S2CAnim.RELOAD, p.getId()));
         com.hollowhours.util.Later.run(14, () -> Fx.sound(p.level(), "ghost.flashlight.reload", p.position(), 0.9f, 1f, 10));
         Fx.actionbar(p, Component.translatable("hollowhours.flash.reloaded"));
         return true;

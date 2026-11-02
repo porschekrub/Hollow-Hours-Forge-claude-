@@ -65,15 +65,53 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
         return !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.onClimbable() && (p.getY() - p.yo > 0.02 || p.fallDistance > 0.4f);
     }
 
-    /** Eating: the hand at the mouth, chewing. Drinking: the hand higher, head tipped back. */
+    /** Eating: the hand at the mouth, chewing. Drinking: the cap first, then the hand higher, head tipped back.
+     *  Also: scooping water with both hands, and charging the phone from the power bank. */
     void eatDrink(AbstractClientPlayer p, float t) {
+        float partial = Minecraft.getInstance().getFrameTime();
+        float sip = com.hollowhours.client.PlayerAnims.sipProgress(p.getId(), p == Minecraft.getInstance().player, partial);
+        if (sip >= 0) {
+            // bend down, both hands into the water, then up to the mouth
+            float dip = sip < 0.4f ? Mth.sin(sip / 0.4f * Mth.HALF_PI) : 1 - Mth.clamp((sip - 0.4f) / 0.25f, 0, 1);
+            float up = sip < 0.4f ? 0 : Mth.sin((sip - 0.4f) / 0.6f * Mth.PI);
+            hunch(0.45f * dip);
+            float ax = -0.9f * dip - 2.0f * up;
+            rightArm.xRot = ax;
+            leftArm.xRot = ax;
+            rightArm.yRot = -0.35f * (dip + up);
+            leftArm.yRot = 0.35f * (dip + up);
+            rightArm.zRot = leftArm.zRot = 0;
+            head.xRot = 0.5f * dip - 0.2f * up;
+            return;
+        }
         if (!p.isUsingItem()) return;
+        if (p.getUseItem().is(com.hollowhours.registry.HHItems.CHARGER.get())) {
+            // the power bank and the phone held together in front, looking down at the screen
+            rightArm.xRot = -0.95f;
+            leftArm.xRot = -0.95f;
+            rightArm.yRot = -0.3f;
+            leftArm.yRot = 0.3f;
+            rightArm.zRot = leftArm.zRot = 0;
+            head.xRot = Math.max(head.xRot, 0) + 0.45f;
+            return;
+        }
         var ua = p.getUseItem().getUseAnimation();
         if (ua != net.minecraft.world.item.UseAnim.EAT && ua != net.minecraft.world.item.UseAnim.DRINK) return;
         boolean right = (p.getUsedItemHand() == net.minecraft.world.InteractionHand.MAIN_HAND) == (p.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT);
         ModelPart arm = right ? rightArm : leftArm;
         float s = right ? 1 : -1;
-        if (ua == net.minecraft.world.item.UseAnim.DRINK) {
+        if (ua == net.minecraft.world.item.UseAnim.DRINK && com.hollowhours.client.FirstPersonAnim.hasCap(p.getUseItem())
+                && p.getTicksUsingItem() < com.hollowhours.client.FirstPersonAnim.CAP_TICKS) {
+            // twisting the cap open: the bottle at the chest, the other hand on the cap, eyes on it
+            ModelPart other = right ? leftArm : rightArm;
+            arm.xRot = -1.05f;
+            arm.yRot = -s * 0.35f;
+            arm.zRot = 0;
+            other.xRot = -1.15f;
+            other.yRot = s * 0.6f;
+            other.zRot = Mth.sin(t * 1.4f) * 0.25f;
+            head.xRot = Math.max(head.xRot, 0) + 0.4f;
+        } else if (ua == net.minecraft.world.item.UseAnim.DRINK) {
             arm.xRot = -2.05f + Mth.sin(t * 0.5f) * 0.04f;
             arm.yRot = -s * 0.5f;
             arm.zRot = 0;

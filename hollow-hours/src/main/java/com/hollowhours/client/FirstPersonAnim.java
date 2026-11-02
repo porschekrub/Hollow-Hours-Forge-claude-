@@ -37,6 +37,12 @@ public final class FirstPersonAnim {
     static long sipT0 = -1000, flinchT0 = -1000;
     static float flinchSide = 1;
     static final int SIP_TICKS = 18;
+    /** a canteen or a bottle: the first ticks of drinking are spent twisting the cap open */
+    public static final int CAP_TICKS = 10;
+
+    public static boolean hasCap(ItemStack s) {
+        return s.is(com.hollowhours.registry.HHItems.CANTEEN.get()) || s.is(net.minecraft.world.item.Items.POTION);
+    }
 
     // ---- per frame
     static int frame = -1;
@@ -76,6 +82,9 @@ public final class FirstPersonAnim {
         wasGround = ground;
         lastVy = vy;
         // scared: jumping at nothing now and then
+        // the cap comes off with a little pop
+        if (p.isUsingItem() && hasCap(p.getUseItem()) && p.getTicksUsingItem() == CAP_TICKS - 1)
+            mc.level.playLocalSound(p.getX(), p.getEyeY(), p.getZ(), net.minecraft.sounds.SoundEvents.ITEM_PICKUP, net.minecraft.sounds.SoundSource.PLAYERS, 0.5f, 1.9f, false);
         if (scared && ClientFx.now() - flinchT0 > 40) {
             float f = Fear.local(1);
             if (p.getRandom().nextFloat() < 0.003f + 0.012f * f) {
@@ -99,6 +108,17 @@ public final class FirstPersonAnim {
         float hugK = Mth.lerp(partial, hugO, hug);
         if (hugK > 0.02f && emptyHands(p) && !p.isUsingItem()) {
             if (e.getHand() == InteractionHand.MAIN_HAND) hugArms(e, p, hugK, partial);
+            return true;
+        }
+        // scooping river water with both hands
+        float sipK = PlayerAnims.sipProgress(p.getId(), true, partial);
+        if (sipK >= 0 && p.getMainHandItem().isEmpty()) {
+            if (e.getHand() == InteractionHand.MAIN_HAND) scoopArms(e, p, sipK, partial);
+            return true;
+        }
+        // charging the phone from the power bank: bank in one hand, phone in the other, the cable between them
+        if (p.isUsingItem() && p.getUseItem().is(com.hollowhours.registry.HHItems.CHARGER.get())) {
+            if (e.getHand() == p.getUsedItemHand()) powerBank(e, p, partial);
             return true;
         }
         PoseStack m = new PoseStack();
@@ -316,32 +336,23 @@ public final class FirstPersonAnim {
             UseAnim ua = stack.getUseAnimation();
             float used = p.getTicksUsingItem() + partial;
             if (ua == UseAnim.DRINK) {
-                float k = Mth.clamp(used / 8f, 0, 1);
-                rx -= 32 * k;                                                     // tipping it up
-                y += 0.05f * k;
-                x -= s * 0.04f * k;
+                float cap = hasCap(stack) ? CAP_TICKS : 0;
+                if (used < cap) {
+                    // held at the chest, twisting the cap open
+                    float k = 1 - Mth.clamp((used - (cap - 3)) / 3f, 0, 1);
+                    y -= 0.34f * k;
+                    x -= s * 0.1f * k;
+                    rz += Mth.sin(used * 1.4f) * 24 * k;
+                } else {
+                    float k = Mth.clamp((used - cap) / 8f, 0, 1);
+                    rx -= 32 * k;                                                 // tipping it up
+                    y += 0.05f * k;
+                    x -= s * 0.04f * k;
+                }
             } else if (ua == UseAnim.EAT) {
                 float bite = Mth.sin(used * 1.35f);
                 z += bite > 0.55f ? 0.03f : 0;                                    // bites
                 rz += bite * 3;
-            }
-        }
-        // ---- scooping water from a river with an empty hand
-        float sip = ClientFx.now() - sipT0 + partial;
-        if (sip < SIP_TICKS && hand == InteractionHand.MAIN_HAND && stack.isEmpty()) {
-            float k = sip / SIP_TICKS;
-            if (k < 0.4f) {
-                float d = Mth.sin(k / 0.4f * Mth.HALF_PI);
-                y -= 0.3f * d;
-                z -= 0.12f * d;
-                rx += 25 * d;
-            } else {
-                float u = Mth.sin((k - 0.4f) / 0.6f * Mth.PI);
-                float d = 1 - Mth.clamp((k - 0.4f) / 0.25f, 0, 1);
-                y += -0.3f * d + 0.12f * u;
-                z += -0.12f * d + 0.12f * u;
-                x -= s * 0.22f * u;
-                rx += 25 * d - 40 * u;
             }
         }
 
@@ -351,6 +362,73 @@ public final class FirstPersonAnim {
             m.mulPose(Axis.XP.rotationDegrees(frx));
             m.mulPose(Axis.ZP.rotationDegrees(frz));
         });
+    }
+
+    /** Both hands cupped together: down into the water, then up to the mouth. */
+    static void scoopArms(RenderHandEvent e, AbstractClientPlayer p, float k, float partial) {
+        float dip = k < 0.4f ? Mth.sin(k / 0.4f * Mth.HALF_PI) : 1 - Mth.clamp((k - 0.4f) / 0.25f, 0, 1);
+        float up = k < 0.4f ? 0 : Mth.sin((k - 0.4f) / 0.6f * Mth.PI);
+        PoseStack ps = e.getPoseStack();
+        ps.pushPose();
+        ps.translate(0, -0.34f * dip + 0.17f * up, -0.1f * dip + 0.1f * up);
+        ps.mulPose(Axis.XP.rotationDegrees(18 * dip - 22 * up));
+        boolean mainRight = p.getMainArm() == HumanoidArm.RIGHT;
+        float t = ClientFx.now() + partial;
+        drawArm(ps, e.getMultiBufferSource(), e.getPackedLight(), p, !mainRight, 0.8f, t, 0, 0);
+        drawArm(ps, e.getMultiBufferSource(), e.getPackedLight(), p, mainRight, 0.8f, t, 0, 0);
+        ps.popPose();
+    }
+
+    /**
+     * Charging: the power bank comes in toward the middle, the phone comes up in the other hand while the cable
+     * reaches over and plugs into it; then they sit there together while the battery climbs.
+     */
+    static void powerBank(RenderHandEvent e, LocalPlayer p, float partial) {
+        Minecraft mc = Minecraft.getInstance();
+        boolean right = (p.getUsedItemHand() == InteractionHand.MAIN_HAND) == (p.getMainArm() == HumanoidArm.RIGHT);
+        float s = right ? 1 : -1;
+        float plug = Mth.clamp((p.getTicksUsingItem() + partial) / com.hollowhours.item.ChargerItem.PLUG, 0, 1);
+        plug = plug * plug * (3 - 2 * plug);
+        PoseStack ps = e.getPoseStack();
+        MultiBufferSource buf = e.getMultiBufferSource();
+        int light = e.getPackedLight();
+        var ir = mc.getEntityRenderDispatcher().getItemInHandRenderer();
+        var rightCtx = net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
+        var leftCtx = net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+        float bx = s * 0.4f, by = -0.5f, bz = -0.72f;
+        float px = -s * 0.36f, py = -0.48f - 0.35f * (1 - plug), pz = -0.72f;
+        ps.pushPose();
+        ps.translate(bx, by, bz);
+        ir.renderItem(p, p.getUseItem(), right ? rightCtx : leftCtx, !right, ps, buf, light);
+        ps.popPose();
+        ItemStack phone = null;
+        for (ItemStack it : p.getInventory().items) if (it.is(com.hollowhours.registry.HHItems.PHONE.get()) && com.hollowhours.item.PhoneItem.charging(it)) phone = it;
+        if (phone == null) phone = com.hollowhours.item.ChargerItem.target(p);
+        if (phone == null) return;
+        ps.pushPose();
+        ps.translate(px, py, pz);
+        ir.renderItem(p, phone, right ? leftCtx : rightCtx, right, ps, buf, light);
+        ps.popPose();
+        // the cable: from the top of the bank, sagging, to the bottom of the phone (where the item models put them)
+        float ax = bx + s * 0.07f, ay = by + 0.477f, az = bz + 0.012f;
+        float ex = px - s * 0.07f, ey = py - 0.05f, ez = pz + 0.187f;
+        ex = Mth.lerp(plug, ax, ex);
+        ey = Mth.lerp(plug, ay, ey);
+        ez = Mth.lerp(plug, az, ez);
+        var vc = buf.getBuffer(net.minecraft.client.renderer.RenderType.lines());
+        var pose = ps.last();
+        int n = 12;
+        float lx = ax, ly = ay, lz = az;
+        for (int i = 1; i <= n; i++) {
+            float f = i / (float) n;
+            float cx = Mth.lerp(f, ax, ex), cy = Mth.lerp(f, ay, ey) - 0.2f * Mth.sin(f * Mth.PI) * (0.4f + 0.6f * plug), cz = Mth.lerp(f, az, ez);
+            float dx = cx - lx, dy = cy - ly, dz = cz - lz, len = Mth.sqrt(dx * dx + dy * dy + dz * dz) + 1e-6f;
+            vc.vertex(pose.pose(), lx, ly, lz).color(235, 235, 240, 255).normal(pose.normal(), dx / len, dy / len, dz / len).endVertex();
+            vc.vertex(pose.pose(), cx, cy, cz).color(235, 235, 240, 255).normal(pose.normal(), dx / len, dy / len, dz / len).endVertex();
+            lx = cx;
+            ly = cy;
+            lz = cz;
+        }
     }
 
     /** Standing scared with empty hands: both arms come up and cross over the chest, trembling, breathing hard. */

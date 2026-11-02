@@ -398,13 +398,7 @@ grave = [
 ]
 save_json(model(G, grave, W + "grave_stone", render_type="minecraft:cutout"), A, 'models', 'block', 'grave.json')
 
-# the compass: a lodestone-style needle (vanilla compass pictures), glinting
-compass = {"parent": "minecraft:item/generated", "textures": {"layer0": "minecraft:item/compass_16"}, "overrides": []}
-compass["overrides"].append({"predicate": {"angle": 0.0}, "model": "hollowhours:item/grave_compass"})
-for j in range(31):
-    compass["overrides"].append({"predicate": {"angle": 0.015625 + 0.03125 * j}, "model": "minecraft:item/compass_%02d" % ((17 + j) % 32)})
-compass["overrides"].append({"predicate": {"angle": 0.984375}, "model": "hollowhours:item/grave_compass"})
-save_json(compass, A, 'models', 'item', 'grave_compass.json')
+# the grave compass and the canteen models are written by items3d.py (in 3D)
 
 
 # the restorer: a little lantern of blue soul fire
@@ -453,8 +447,5 @@ def canteen(full):
 
 save_png(canteen(True), 'textures', 'item', 'canteen.png')
 save_png(canteen(False), 'textures', 'item', 'canteen_empty.png')
-save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/canteen"},
-           "overrides": [{"predicate": {"hollowhours:empty": 1}, "model": "hollowhours:item/canteen_empty"}]}, A, 'models', 'item', 'canteen.json')
-save_json({"parent": "minecraft:item/generated", "textures": {"layer0": "hollowhours:item/canteen_empty"}}, A, 'models', 'item', 'canteen_empty.json')
 shaped("canteen", [" N ", "LBL", " L "], {"N": "minecraft:iron_nugget", "L": "minecraft:leather", "B": "minecraft:glass_bottle"})
 print('ok')

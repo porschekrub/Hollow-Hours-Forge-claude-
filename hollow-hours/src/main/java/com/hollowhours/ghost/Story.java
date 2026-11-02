@@ -40,7 +40,7 @@ public final class Story {
         }
     }
 
-    static final String ALERTED = "hollowhours_alerted", PHONE_GIVEN = "hollowhours_phone_given";
+    static final String ALERTED = "hollowhours_alerted", PHONE_GIVEN = "hollowhours_phone_given", FLASH_GIVEN = "hollowhours_flashlight_given";
     private static boolean active;
 
     static Data data(MinecraftServer server) {
@@ -111,10 +111,23 @@ public final class Story {
     /** First join: a phone with a random battery. */
     public static void onLogin(ServerPlayer p) {
         CompoundTag d = persisted(p);
-        if (!HHConfig.GIVE_PHONE.get() || d.getBoolean(PHONE_GIVEN)) return;
-        d.putBoolean(PHONE_GIVEN, true);
-        ItemStack phone = PhoneItem.fresh(p.getRandom());
-        if (!p.getInventory().add(phone)) p.drop(phone, false);
+        if (!HHConfig.GIVE_PHONE.get()) return;
+        if (!d.getBoolean(PHONE_GIVEN)) {
+            d.putBoolean(PHONE_GIVEN, true);
+            give(p, PhoneItem.fresh(p.getRandom()));
+        }
+        // a flashlight with a fresh battery in it, and one spare battery
+        if (!d.getBoolean(FLASH_GIVEN)) {
+            d.putBoolean(FLASH_GIVEN, true);
+            ItemStack flash = new ItemStack(HHItems.FLASHLIGHT.get());
+            Flashlight.stamp(flash, Flashlight.FULL, false);
+            give(p, flash);
+            give(p, new ItemStack(HHItems.BATTERY.get()));
+        }
+    }
+
+    static void give(ServerPlayer p, ItemStack s) {
+        if (!p.getInventory().add(s)) p.drop(s, false);
     }
 
     public static void resetAlert(ServerPlayer p) {

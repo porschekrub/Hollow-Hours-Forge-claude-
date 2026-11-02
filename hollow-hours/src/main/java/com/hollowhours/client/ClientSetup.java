@@ -92,6 +92,8 @@ public final class ClientSetup {
         e.enqueueWork(() -> {
             ItemProperties.register(HHItems.FLASHLIGHT.get(), HollowHours.id("on"),
                     (stack, level, entity, seed) -> Flashlight.on(stack) && Flashlight.charge(stack) > 0 ? 1f : 0f);
+            ItemProperties.register(HHItems.PHONE.get(), HollowHours.id("charging"),
+                    (stack, level, entity, seed) -> com.hollowhours.item.PhoneItem.charging(stack) ? 1f : 0f);
             ItemProperties.register(HHItems.CANTEEN.get(), HollowHours.id("empty"),
                     (stack, level, entity, seed) -> com.hollowhours.item.CanteenItem.sips(stack) <= 0 ? 1f : 0f);
             // the grave compass needle works like a lodestone compass, pointing at the grave

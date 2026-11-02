@@ -449,7 +449,9 @@ public final class GhostBrain {
     }
 
     public void applySpeed() {
-        double base = 0.30 * HHConfig.SPEED_MULT.get() * spdBuff() * spdMul;
+        // 0.39: a mob's pace grows with the square of its speed, so this is ~20% faster than a sprinting player
+        // (a dash - tap sneak twice while running - is still faster)
+        double base = 0.39 * HHConfig.SPEED_MULT.get() * spdBuff() * spdMul;
         if (g.isRaged()) base *= HHConfig.RAGE_SPEED.get();
         if (Atmosphere.bloodMoonFor(g.level())) base *= HHConfig.BLOOD_SPEED_MULT.get();
         if (g.isCrawling()) base *= 0.82;

@@ -63,6 +63,7 @@ public final class ClientPackets {
 
     public static void anim(com.hollowhours.net.S2CAnim m) {
         if (m.kind() == com.hollowhours.net.S2CAnim.RELOAD) ReloadAnim.start();
+        else if (m.kind() == com.hollowhours.net.S2CAnim.SIP) PlayerAnims.sip(m.entity());
     }
 
     public static void phoneAlert(com.hollowhours.net.S2CPhoneAlert m) {
