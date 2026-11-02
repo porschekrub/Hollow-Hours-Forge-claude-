@@ -338,10 +338,11 @@ public final class FirstPersonAnim {
             if (ua == UseAnim.DRINK) {
                 float cap = hasCap(stack) ? CAP_TICKS : 0;
                 if (used < cap) {
-                    // held at the chest, twisting the cap open
+                    // held just under the chin, top towards you, twisting the cap open
                     float k = 1 - Mth.clamp((used - (cap - 3)) / 3f, 0, 1);
-                    y -= 0.34f * k;
-                    x -= s * 0.1f * k;
+                    y -= 0.12f * k;
+                    x -= s * 0.05f * k;
+                    rx += 18 * k;
                     rz += Mth.sin(used * 1.4f) * 24 * k;
                 } else {
                     float k = Mth.clamp((used - cap) / 8f, 0, 1);
@@ -397,6 +398,11 @@ public final class FirstPersonAnim {
         var leftCtx = net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
         float bx = s * 0.4f, by = -0.5f, bz = -0.72f;
         float px = -s * 0.36f, py = -0.48f - 0.35f * (1 - plug), pz = -0.72f;
+        // the whole set (bank, phone, cable) a bit smaller and further away than items in hand
+        ps.pushPose();
+        ps.translate(0, -0.42f, -0.8f);
+        ps.scale(0.72f, 0.72f, 0.72f);
+        ps.translate(0, 0.5f, 0.72f);
         ps.pushPose();
         ps.translate(bx, by, bz);
         ir.renderItem(p, p.getUseItem(), right ? rightCtx : leftCtx, !right, ps, buf, light);
@@ -404,7 +410,10 @@ public final class FirstPersonAnim {
         ItemStack phone = null;
         for (ItemStack it : p.getInventory().items) if (it.is(com.hollowhours.registry.HHItems.PHONE.get()) && com.hollowhours.item.PhoneItem.charging(it)) phone = it;
         if (phone == null) phone = com.hollowhours.item.ChargerItem.target(p);
-        if (phone == null) return;
+        if (phone == null) {
+            ps.popPose();
+            return;
+        }
         ps.pushPose();
         ps.translate(px, py, pz);
         ir.renderItem(p, phone, right ? leftCtx : rightCtx, right, ps, buf, light);
@@ -429,6 +438,7 @@ public final class FirstPersonAnim {
             ly = cy;
             lz = cz;
         }
+        ps.popPose();
     }
 
     /** Standing scared with empty hands: both arms come up and cross over the chest, trembling, breathing hard. */

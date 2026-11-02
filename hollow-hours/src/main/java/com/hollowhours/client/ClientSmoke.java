@@ -740,6 +740,11 @@ public final class ClientSmoke {
                         if (com.hollowhours.item.PhoneItem.battery(ph) < 60) HollowHours.LOG.error("[client smoke] the power bank did not charge the phone (com.hollowhours)");
                     });
                 }
+                if (t == 45) server(sp -> {
+                    int left = sp.getMainHandItem().getMaxDamage() - sp.getMainHandItem().getDamageValue();
+                    HollowHours.LOG.info("[client smoke] power bank after unplugging: {} charges left", left);
+                    if (left != 2) HollowHours.LOG.error("[client smoke] unplugging did not use one power bank charge (com.hollowhours)");
+                });
                 if (t >= 46) {
                     mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                     server(sp -> sp.getInventory().clearContent());

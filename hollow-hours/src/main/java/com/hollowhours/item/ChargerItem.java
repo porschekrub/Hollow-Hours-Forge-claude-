@@ -87,17 +87,22 @@ public class ChargerItem extends Item {
 
     /** Unplugged (full, or you let go): the charge is used up; tell the player. */
     static void done(ServerPlayer p, ItemStack s, boolean full) {
-        for (ItemStack it : p.getInventory().items) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
-        for (ItemStack it : p.getInventory().offhand) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
         if (s.hasTag() && s.getTag().getBoolean(PLUGGED)) {
             s.getTag().remove(PLUGGED);
             int left = s.getMaxDamage() - s.getDamageValue() - 1;
             if (full) Fx.playSelf(p, "phone.notify", 0.6f, 1.3f);
-            p.displayClientMessage(Component.translatable("item.hollowhours.charger.done", Math.max(0, left)).withStyle(ChatFormatting.GREEN), true);
+            ItemStack phone = null;
+            for (ItemStack it : p.getInventory().items) if (it.is(HHItems.PHONE.get()) && PhoneItem.charging(it)) phone = it;
+            if (PhoneItem.charging(p.getOffhandItem())) phone = p.getOffhandItem();
+            net.minecraft.network.chat.MutableComponent msg = full ? Component.translatable("item.hollowhours.charger.done", Math.max(0, left))
+                    : Component.translatable("item.hollowhours.charger.unplugged", phone == null ? "?" : Math.round(PhoneItem.battery(phone)), Math.max(0, left));
+            p.displayClientMessage(msg.withStyle(ChatFormatting.GREEN), true);
             InteractionHand hand = p.getUsedItemHand();
             if (p.isUsingItem()) p.stopUsingItem();
             s.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(hand));
         } else if (p.isUsingItem()) p.stopUsingItem();
+        for (ItemStack it : p.getInventory().items) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
+        for (ItemStack it : p.getInventory().offhand) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
     }
 
     @Override

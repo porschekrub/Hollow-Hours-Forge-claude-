@@ -491,7 +491,7 @@
  "item.hollowhours.charger.left": "Charges left: %s",
  "item.hollowhours.charger.tip": "Hold right-click: plug the cable into your emptiest phone and watch it charge",
  "item.hollowhours.charger.nothing": "No phone that needs charging",
- "item.hollowhours.charger.done": "Phone charged to 100% (charges left: %s)",
+ "item.hollowhours.charger.done": "Phone fully charged (%s charges left)",
  "death.attack.hollowhours.thirst": "%1$s died of thirst",
  "death.attack.hollowhours.thirst.player": "%1$s died of thirst",
  "death.attack.hollowhours.madness": "%1$s lost their mind",
@@ -584,5 +584,6 @@
  "item.hollowhours.canteen.tip": "3 drinks, each 15% more than a water bottle. Right-click water to fill it.",
  "item.hollowhours.canteen.empty": "The canteen is empty: right-click water to fill it",
  "hollowhours.sprint.again": "§7You caught your breath: you can run again",
- "item.hollowhours.charger.charging": "Charging... %s%%"
+ "item.hollowhours.charger.charging": "Charging... %s%%",
+ "item.hollowhours.charger.unplugged": "Unplugged at %s%% (%s charges left)"
 }

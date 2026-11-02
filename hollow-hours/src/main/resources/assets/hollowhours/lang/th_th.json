@@ -491,7 +491,7 @@
  "item.hollowhours.charger.left": "ชาร์จได้อีก: %s ครั้ง",
  "item.hollowhours.charger.tip": "กดคลิกขวาค้าง: เสียบสายเข้าโทรศัพท์ที่แบตน้อยที่สุดแล้วชาร์จจนเต็ม",
  "item.hollowhours.charger.nothing": "ไม่มีโทรศัพท์ที่ต้องชาร์จ",
- "item.hollowhours.charger.done": "ชาร์จโทรศัพท์เต็ม 100% แล้ว (ชาร์จได้อีก %s ครั้ง)",
+ "item.hollowhours.charger.done": "ชาร์จโทรศัพท์เต็มแล้ว (ชาร์จได้อีก %s ครั้ง)",
  "death.attack.hollowhours.thirst": "%1$s ตายเพราะขาดน้ำ",
  "death.attack.hollowhours.thirst.player": "%1$s ตายเพราะขาดน้ำ",
  "death.attack.hollowhours.madness": "%1$s เสียสติ",
@@ -584,5 +584,6 @@
  "item.hollowhours.canteen.tip": "ดื่มได้ 3 ครั้ง ได้น้ำมากกว่าขวดน้ำ 15% คลิกขวาที่น้ำเพื่อเติม",
  "item.hollowhours.canteen.empty": "กระติกน้ำหมดแล้ว คลิกขวาที่น้ำเพื่อเติม",
  "hollowhours.sprint.again": "§7หายเหนื่อยแล้ว วิ่งได้อีกครั้ง",
- "item.hollowhours.charger.charging": "กำลังชาร์จ... %s%%"
+ "item.hollowhours.charger.charging": "กำลังชาร์จ... %s%%",
+ "item.hollowhours.charger.unplugged": "ถอดสายที่ %s%% (ชาร์จได้อีก %s ครั้ง)"
 }

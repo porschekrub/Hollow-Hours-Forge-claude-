@@ -1,8 +1,14 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.8.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.8.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.8.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.8.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.8.1**
+- Power bank: the message after charging shows the right numbers (and where you unplugged); the bank, phone and cable sit smaller in first person.
+  แก้ข้อความหลังชาร์จ (แสดงจำนวนครั้งที่เหลือถูกต้อง) และพาวเวอร์แบงก์/โทรศัพท์ในมุมมองบุคคลที่ 1 เล็กลง
+- Opening the cap: the canteen / bottle is held up where you can see it.
+  ตอนเปิดฝา ยกกระติก/ขวดขึ้นมาให้เห็นชัด
 
 **2.8.0 — everything in 3D, drinking animations, power bank, faster ghosts**
 - **Every item the mods add is 3D**: phone, ghost guide and command book, barricade boards, repair kits, canteen, closet, restorer, grave compass, helper contract, spawn eggs. **Buckets** (water, lava, milk, fish...) and **bottles** (water bottle, potions, honey) are 3D too.
