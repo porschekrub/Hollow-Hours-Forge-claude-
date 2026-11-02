@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.2**
+- First person: no arms holding things by default (Minecraft's normal hands); looking down still shows your body and legs. Existing settings are switched once; turn the arms back on with `firstPersonArms = true` in `hollowhours-client.toml`.
+  มุมมองบุคคลที่ 1: ค่าเริ่มต้นไม่เห็นแขน (มือแบบ Minecraft ปกติ) แต่ก้มมองยังเห็นตัวและขา ปรับให้อัตโนมัติ ถ้าอยากเปิดแขนกลับ ตั้ง `firstPersonArms = true`
 
 **2.10.1**
 - Chat: while a friend is dead and hasn't respawned yet, your messages don't get through ("No signal"), and they show as "No signal..." in the contact list — until they respawn.

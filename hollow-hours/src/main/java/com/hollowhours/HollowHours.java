@@ -51,6 +51,7 @@ public class HollowHours {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HHConfig.SPEC, "hollowhours-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HHClientConfig.SPEC, "hollowhours-client.toml");
+        modBus.addListener(com.hollowhours.config.HHClientConfig::onLoad);
 
         GhostEvents.register(MinecraftForge.EVENT_BUS);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
