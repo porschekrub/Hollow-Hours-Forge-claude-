@@ -51,7 +51,10 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
     public static final int FLY_IN = 220, TAKE_OFF = 110, TRANSFER_AT = 95;
     static final int APPROACH = 150;
     /** where the six seats are: right, up, back (blocks from the middle of the door) */
-    static final double[][] SEATS = {{-0.85, 1.05, 1.75}, {0, 1.05, 1.75}, {0.85, 1.05, 1.75}, {0, 1.05, 0.44}, {-0.69, 1.05, -1.69}, {0.69, 1.05, -1.69}};
+    static final double[][] SEATS = {{0, 1.05, 0.44}, {-0.85, 1.05, 1.75}, {0.85, 1.05, 1.75}, {0, 1.05, 1.75}, {-0.69, 1.05, -1.69}, {0.69, 1.05, -1.69}};
+    /** keeps the chunks it flies through loaded and ticking (it may come from beyond where players keep the world going) */
+    static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> TICKET =
+            net.minecraft.server.level.TicketType.create("hollowhours_helicopter", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 100);
 
     private static final EntityDataAccessor<Byte> STATE = SynchedEntityData.defineId(HelicopterEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> KIND = SynchedEntityData.defineId(HelicopterEntity.class, EntityDataSerializers.BYTE);
@@ -73,14 +76,16 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
     }
 
     // ------------------------------------------------------------------ making one
-    /** Flies in from far away and lands on pad. */
+    /** Flies in and lands on pad, coming from about where the player is (so it's in the part of the world that's running). */
     @Nullable
-    public static HelicopterEntity arrive(ServerLevel level, Vec3 pad, int kind) {
+    public static HelicopterEntity arrive(ServerLevel level, Vec3 pad, int kind, Vec3 from) {
         HelicopterEntity h = HHEntities.HELICOPTER.get().create(level);
         if (h == null) return null;
-        double ang = level.random.nextDouble() * Math.PI * 2;
+        double ang = Math.atan2(from.z - pad.z, from.x - pad.x) + (level.random.nextDouble() - 0.5) * 1.6;
         h.pad = pad;
-        h.from = pad.add(Math.cos(ang) * 75, 48, Math.sin(ang) * 75);
+        h.from = pad.add(Math.cos(ang) * 60, 45, Math.sin(ang) * 60);
+        keepLoaded(level, h.from);
+        keepLoaded(level, pad);
         h.setKind(kind);
         h.setState(ARRIVING);
         h.moveTo(h.from.x, h.from.y, h.from.z, yawTo(h.from, pad), 0);
@@ -97,6 +102,11 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
         h.setState(LEAVING);
         h.moveTo(pad.x, pad.y, pad.z, level.random.nextFloat() * 360, 0);
         level.addFreshEntity(h);
+    }
+
+    static void keepLoaded(ServerLevel level, Vec3 at) {
+        var c = new net.minecraft.world.level.ChunkPos(net.minecraft.core.BlockPos.containing(at));
+        level.getChunkSource().addRegionTicket(TICKET, c, 2, c);
     }
 
     static float yawTo(Vec3 a, Vec3 b) {
@@ -183,6 +193,7 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
             clientTick();
             return;
         }
+        if (stateTicks % 40 == 1) keepLoaded((ServerLevel) level(), position());
         switch (state()) {
             case ARRIVING -> flyIn();
             case LANDED -> waitOnGround();

@@ -181,7 +181,7 @@ public final class Rescue {
         for (ServerPlayer p : server.getPlayerList().getPlayers()) if (phase(p) == WAITING && !p.isSpectator()) waiting.add(p);
         // someone still waiting and nothing planned (they missed it, or joined late): another one is coming
         if (d.announced && d.arriveAt < 0 && d.pickupUntil < 0 && !waiting.isEmpty()) schedule(server);
-        if (d.arriveAt >= 0) for (ServerPlayer p : waiting) {
+        if (d.arriveAt > time) for (ServerPlayer p : waiting) {
             if (persisted(p).getLong(TOLD) == d.arriveAt || p.tickCount < 100) continue;
             persisted(p).putLong(TOLD, d.arriveAt);
             notice(p, missed(p) > 0 ? "hollowhours.rescue.again" : "hollowhours.rescue.coming", false, when(server, d.arriveAt, p));
@@ -233,7 +233,7 @@ public final class Rescue {
             if (!near) {
                 Vec3 pad = landing(p.serverLevel(), p.blockPosition(), 14, 26);
                 pads.add(pad);
-                HelicopterEntity.arrive(p.serverLevel(), pad, HelicopterEntity.PICKUP);
+                HelicopterEntity.arrive(p.serverLevel(), pad, HelicopterEntity.PICKUP, p.position());
             }
             notice(p, "hollowhours.rescue.landing", false, String.valueOf(HHConfig.RESCUE_PICKUP_MINUTES.get()));
         }
@@ -284,8 +284,8 @@ public final class Rescue {
         // the helicopter waits somewhere out there, for as long as it takes
         HelicopterEntity h = HelicopterEntity.nearest(p, HelicopterEntity.EXTRACT);
         if (h == null) {
-            Vec3 pad = landing(haven, p.blockPosition(), 55, 90);
-            h = HelicopterEntity.arrive(haven, pad, HelicopterEntity.EXTRACT);
+            Vec3 pad = landing(haven, p.blockPosition(), 35, 60);
+            h = HelicopterEntity.arrive(haven, pad, HelicopterEntity.EXTRACT, p.position());
         }
         if (h != null) Fx.actionbarKey(p, "hollowhours.rescue.hud.extract", Math.round(h.distanceTo(p)), arrow(p, h.position()));
         // and they hunt you all the way there
@@ -321,8 +321,9 @@ public final class Rescue {
                 double ang = a * Math.PI * 2 / Math.max(1, r / 32);
                 int x = (int) (Math.cos(ang) * r), z = (int) (Math.sin(ang) * r);
                 BlockPos top = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
-                if (haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 1
-                        && top.getY() < haven.getSeaLevel() + 40) {
+                String biome = haven.getBiome(top).unwrapKey().map(k -> k.location().getPath()).orElse("");
+                if (haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 3
+                        && top.getY() < haven.getSeaLevel() + 40 && !biome.equals("haven_beach") && !biome.equals("haven_lagoon")) {
                     best = top;
                     break outer;
                 }

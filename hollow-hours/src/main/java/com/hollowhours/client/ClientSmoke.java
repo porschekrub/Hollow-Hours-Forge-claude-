@@ -702,7 +702,7 @@ public final class ClientSmoke {
                 if (!(sp.getVehicle() instanceof com.hollowhours.rescue.HelicopterEntity))
                     HollowHours.LOG.error("[client smoke] could not board the helicopter (com.hollowhours)");
             });
-            if (t > 42) lookAt = h.local(-10, 1.2, 0.5);
+            if (t > 42) lookAt = h.local(-10, 1.6, 0.4);
             if (t == 56) shot("rescue_aboard");
             if (t == 60) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
             if (t == 72) shot("rescue_aboard_tp");
@@ -711,7 +711,8 @@ public final class ClientSmoke {
             if (t == 180) shot("rescue_fade");
             return mc.level.dimension() == com.hollowhours.rescue.Rescue.HAVEN || t > 500;
         });
-        // the haven
+        // the haven (once the new world has loaded)
+        STEPS.add(t -> mc.screen == null && mc.level.dimension() == com.hollowhours.rescue.Rescue.HAVEN && t > 40 || t > 1600);
         STEPS.add(t -> {
             if (t == 0) {
                 HollowHours.LOG.info("[client smoke] in the haven: {}", mc.level.dimension() == com.hollowhours.rescue.Rescue.HAVEN);
@@ -719,12 +720,12 @@ public final class ClientSmoke {
                 server(sp -> sp.serverLevel().setDayTime(5000));
             }
             Vec3 me = mc.player.position();
-            if (t == 70) shot("haven_notice");
-            for (int i = 0; i < 4; i++) if (t == 160 + i * 25 - 10) lookAt = me.add(Math.sin(i * Math.PI / 2) * 40, 4, Math.cos(i * Math.PI / 2) * 40);
-            for (int i = 0; i < 4; i++) if (t == 160 + i * 25) shot("haven_view_" + i);
-            if (t == 270) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
-            if (t == 280) shot("haven_me");
-            if (t == 282) {
+            if (t == 4) shot("haven_notice");
+            for (int i = 0; i < 4; i++) if (t == 60 + i * 25 - 10) lookAt = me.add(Math.sin(i * Math.PI / 2) * 40, 6, Math.cos(i * Math.PI / 2) * 40);
+            for (int i = 0; i < 4; i++) if (t == 60 + i * 25) shot("haven_view_" + i);
+            if (t == 160) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
+            if (t == 170) shot("haven_me");
+            if (t == 172) {
                 mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                 server(sp -> {
                     var l = sp.serverLevel();
@@ -738,55 +739,62 @@ public final class ClientSmoke {
                         HollowHours.LOG.error("[client smoke] the haven is not right (com.hollowhours)");
                 });
             }
-            return t >= 284;
+            return t >= 174;
         });
-        // they find it: the extraction helicopter lands out there, ghosts come (creative so they can't kill the tour)
+        // they find it: the extraction helicopter lands out there, ghosts come (they can't hurt the tour: resistance)
         STEPS.add(t -> {
             if (t == 0) server(sp -> {
-                sp.setGameMode(GameType.CREATIVE);
+                sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 120, 4, false, false));
                 com.hollowhours.rescue.Rescue.invadeNow(sp);
             });
             var h = heliNear(mc);
             GhostEntity ghost = null;
             for (var en : mc.level.entitiesForRendering()) if (en instanceof GhostEntity gh) ghost = gh;
-            if (t == 50) shot("invasion_notice");
-            if (t == 150 && ghost != null) lookAt = ghost.position().add(0, 1.5, 0);
+            if (t == 40) shot("invasion_notice");
+            if (t > 100 && t < 160 && ghost != null) lookAt = ghost.position().add(0, 1.5, 0);
             if (t == 158) shot("invasion_ghost");
-            if (t > 160 && h != null) lookAt = h.position().add(0, 2, 0);
-            if (t == 300) shot("extract_coming");
-            if (t == 330) server(sp -> HollowHours.LOG.info("[client smoke] invasion: ghosts near {}, extraction helicopters {}",
+            if (t >= 160 && h != null) lookAt = h.position().add(0, 2, 0);
+            if (t == 230) shot("extract_coming");
+            if (t == 300) server(sp -> HollowHours.LOG.info("[client smoke] invasion: ghosts near {}, extraction helicopters {}",
                     com.hollowhours.ghost.GhostBrain.ghostsNear(sp.serverLevel(), sp.position(), 64).size(),
                     com.hollowhours.rescue.HelicopterEntity.live(com.hollowhours.rescue.HelicopterEntity.EXTRACT).size()));
-            if (t == 332 && com.hollowhours.rescue.HelicopterEntity.live(com.hollowhours.rescue.HelicopterEntity.EXTRACT).isEmpty())
+            if (t == 302 && com.hollowhours.rescue.HelicopterEntity.live(com.hollowhours.rescue.HelicopterEntity.EXTRACT).isEmpty())
                 HollowHours.LOG.error("[client smoke] no extraction helicopter in the haven (com.hollowhours)");
-            return t >= 334;
+            return t >= 304;
         });
-        // aboard, and home for good
+        // once it has landed: aboard, and home for good
         STEPS.add(t -> {
-            if (t == 0) server(sp -> {
-                var sh = com.hollowhours.rescue.HelicopterEntity.live(com.hollowhours.rescue.HelicopterEntity.EXTRACT);
-                if (sh.isEmpty()) return;
-                var h = sh.get(0);
-                Vec3 v = h.local(-6, 0, 1);
-                sp.teleportTo(v.x, h.getY(), v.z);
-                h.interact(sp, net.minecraft.world.InteractionHand.MAIN_HAND);
+            if (t % 10 == 0 && !(mc.player.getVehicle() instanceof com.hollowhours.rescue.HelicopterEntity)) server(sp -> {
+                for (var h : com.hollowhours.rescue.HelicopterEntity.live(com.hollowhours.rescue.HelicopterEntity.EXTRACT)) {
+                    if (h.state() != com.hollowhours.rescue.HelicopterEntity.LANDED || sp.getVehicle() != null) continue;
+                    Vec3 v = h.local(-6, 0, 1);
+                    sp.teleportTo(v.x, h.getY(), v.z);
+                    h.interact(sp, net.minecraft.world.InteractionHand.MAIN_HAND);
+                    HollowHours.LOG.info("[client smoke] boarded the extraction: {}", sp.getVehicle() == h);
+                }
             });
-            if (t == 30) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
-            if (t == 40) shot("extract_aboard_tp");
-            if (t == 42) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
-            return mc.level.dimension() == net.minecraft.world.level.Level.OVERWORLD || t > 500;
+            var h = heliNear(mc);
+            if (h != null && mc.player.getVehicle() == null) lookAt = h.position().add(0, 2, 0);
+            if (t == 120) shot("extract_waiting");
+            if (mc.player.getVehicle() instanceof com.hollowhours.rescue.HelicopterEntity v && v.isLeaving() && v.stateTicks == 40) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
+                shot("extract_takeoff_tp");
+            }
+            if (mc.player.getVehicle() instanceof com.hollowhours.rescue.HelicopterEntity v && v.isLeaving() && v.stateTicks == 44)
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            return mc.level.dimension() == net.minecraft.world.level.Level.OVERWORLD || t > 900;
         });
+        STEPS.add(t -> mc.screen == null && t > 40 || t > 1200);
         STEPS.add(t -> {
             if (t == 0) lookAt = mc.player.position().add(0, 1.6, 30);
-            if (t == 80) shot("home_notice");
-            if (t == 82) server(sp -> {
+            if (t == 30) shot("home_notice");
+            if (t == 32) server(sp -> {
                 double g = com.hollowhours.rescue.Rescue.harshness(sp, false), b = com.hollowhours.rescue.Rescue.harshness(sp, true);
                 HollowHours.LOG.info("[client smoke] home: phase {}, ghosts x{}, blood moon x{}", com.hollowhours.rescue.Rescue.phase(sp), g, b);
                 if (com.hollowhours.rescue.Rescue.phase(sp) != com.hollowhours.rescue.Rescue.HOME || g != 3 || b != 6)
                     HollowHours.LOG.error("[client smoke] coming home did not work (com.hollowhours)");
-                sp.setGameMode(GameType.SURVIVAL);
             });
-            return t >= 84;
+            return t >= 34;
         });
     }
 
