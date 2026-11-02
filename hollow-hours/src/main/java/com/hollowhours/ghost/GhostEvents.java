@@ -123,7 +123,7 @@ public final class GhostEvents {
             safe("graves", () -> com.hollowhours.grave.Graves.tick(server));
             safe("rescue", () -> com.hollowhours.rescue.Rescue.tick(server));
             safe("chat", () -> com.hollowhours.phone.PhoneChat.tick(server));
-            if (now % 40 == 0) safe("phone info", () -> com.hollowhours.phone.PhoneInfo.tick(server));
+            safe("phone info", () -> com.hollowhours.phone.PhoneInfo.tick(server));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
         // the first nights are normal: nothing haunts anyone before the story starts

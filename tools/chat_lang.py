@@ -69,6 +69,7 @@ UI = {
  "hollowhours.chat.you.short": ("Me", "ฉัน"),
  "hollowhours.chat.location": ("◉ My location: %s, %s, %s (tap to go there)", "◉ ตำแหน่ง: %s, %s, %s (แตะเพื่อนำทาง)"),
  "hollowhours.chat.failed": ("✗ Not delivered", "✗ ส่งไม่สำเร็จ"),
+ "hollowhours.chat.failed.nosignal": ("✗ No signal (they're dead, waiting to respawn)", "✗ ไม่มีสัญญาณ (เพื่อนตายอยู่ ยังไม่เกิดใหม่)"),
  "hollowhours.chat.typing": ("typing%s", "กำลังพิมพ์%s"),
  "hollowhours.chat.hint": ("Type a message...", "พิมพ์ข้อความ..."),
  "hollowhours.chat.notice.player.title": ("New message", "ข้อความใหม่"),

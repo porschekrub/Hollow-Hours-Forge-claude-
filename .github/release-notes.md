@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.1**
+- Chat: while a friend is dead and hasn't respawned yet, your messages don't get through ("No signal"), and they show as "No signal..." in the contact list — until they respawn.
+  แชท: ตอนเพื่อนตายแล้วยังไม่กดเกิดใหม่ ส่งข้อความไปจะขึ้น "ไม่มีสัญญาณ" และในรายชื่อจะขึ้น "ไม่มีสัญญาณ..." จนกว่าเพื่อนจะเกิด
 
 **2.10.0 — the phone's new apps**
 - **Rescue** app: the countdown to the helicopter (days, hours, minutes; the day and time), the countdown while it waits, your part of the story.

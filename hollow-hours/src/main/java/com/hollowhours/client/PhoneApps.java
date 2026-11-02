@@ -66,8 +66,13 @@ final class PhoneApps {
         return out;
     }
 
+    static boolean dead(String contact) {
+        return ClientPhone.info != null && ClientPhone.info.dead().contains(contact);
+    }
+
     static boolean online(String contact) {
         if (PhoneChat.isNpc(contact)) return !lost();
+        if (dead(contact)) return false;
         Minecraft mc = Minecraft.getInstance();
         if (mc.getConnection() == null) return false;
         for (PlayerInfo pi : mc.getConnection().getOnlinePlayers()) if (contact.equals("p:" + pi.getProfile().getId())) return true;
@@ -109,7 +114,7 @@ final class PhoneApps {
             g.drawCenteredString(f, letter, s.sx + 12, y + 7, 0xFFFFFFFF);
             g.drawString(f, c[1], s.sx + 24, y + 2, on ? 0xFFFFFFFF : 0xFF9090A0, false);
             ClientPhone.Chat ch = ClientPhone.CHATS.get(id);
-            Component sub = !on ? Component.translatable(npc ? "hollowhours.chat.nosignal" : "hollowhours.chat.offline")
+            Component sub = !on ? Component.translatable(npc || dead(id) ? "hollowhours.chat.nosignal" : "hollowhours.chat.offline")
                     : ch == null || ch.lines.isEmpty() ? Component.translatable("hollowhours.chat.empty") : preview(ch.lines.get(ch.lines.size() - 1));
             String line = f.plainSubstrByWidth(sub.getString(), s.sw - 34);
             g.drawString(f, line, s.sx + 24, y + 12, 0xFF8090A8, false);
@@ -139,7 +144,7 @@ final class PhoneApps {
         return switch (p[1]) {
             case "k" -> Component.translatable(p[2]);
             case "l" -> location(p[2]);
-            case "x" -> p[2].matches("-?\\d+,-?\\d+,-?\\d+,.*") ? location(p[2]) : Component.literal(p[2]);
+            case "x", "n" -> p[2].matches("-?\\d+,-?\\d+,-?\\d+,.*") ? location(p[2]) : Component.literal(p[2]);
             default -> Component.literal(p[2]);
         };
     }
@@ -164,7 +169,7 @@ final class PhoneApps {
         // messages, newest at the bottom
         int wrap = s.sw - 34, y = inputTop - 4;
         boolean typing = PhoneChat.isNpc(chatWith) && !lost() && !ch.lines.isEmpty() && ch.lines.get(ch.lines.size() - 1).startsWith("me|")
-                && !ch.lines.get(ch.lines.size() - 1).startsWith("me|x|") && System.currentTimeMillis() - ch.lastSentAt < 12000;
+                && !ch.lines.get(ch.lines.size() - 1).startsWith("me|x|") && !ch.lines.get(ch.lines.size() - 1).startsWith("me|n|") && System.currentTimeMillis() - ch.lastSentAt < 12000;
         if (typing) {
             String dots = ".".repeat(1 + (s.ticks / 6) % 3);
             g.drawString(f, Component.translatable("hollowhours.chat.typing", dots), s.sx + 6, y - 9, 0xFF8090A8, false);
@@ -174,7 +179,7 @@ final class PhoneApps {
         for (int i = ch.lines.size() - 1 - scroll; i >= 0 && y > areaTop; i--) {
             String[] p = ch.lines.get(i).split("\\|", 3);
             if (p.length < 3) continue;
-            boolean me = p[0].equals("me"), failed = p[1].equals("x"), loc = p[1].equals("l") || failed && p[2].matches("-?\\d+,-?\\d+,-?\\d+,.*");
+            boolean me = p[0].equals("me"), nosig = p[1].equals("n"), failed = p[1].equals("x") || nosig, loc = p[1].equals("l") || failed && p[2].matches("-?\\d+,-?\\d+,-?\\d+,.*");
             List<FormattedCharSequence> rows = f.split(body(p), wrap);
             int w = 0;
             for (FormattedCharSequence r : rows) w = Math.max(w, f.width(r));
@@ -188,7 +193,7 @@ final class PhoneApps {
                 g.drawString(f, r, bx + 3, ty, 0xFFFFFFFF, false);
                 ty += 10;
             }
-            if (failed) g.drawString(f, Component.translatable("hollowhours.chat.failed"), bx + 3, ty, 0xFFFF8080, false);
+            if (failed) g.drawString(f, Component.translatable(nosig ? "hollowhours.chat.failed.nosignal" : "hollowhours.chat.failed"), bx + 3, ty, 0xFFFF8080, false);
             if (loc && !failed) {
                 String[] c = p[2].split(",");
                 final String who = me ? Component.translatable("hollowhours.chat.you.short").getString() : name;
@@ -208,7 +213,7 @@ final class PhoneApps {
         g.fill(s.sx + 2, inputTop + 1, s.sx + 16, inputTop + 15, 0xFF1F7A5A);
         g.drawCenteredString(f, "◉", s.sx + 9, inputTop + 4, 0xFFFFFFFF);
         g.fill(s.sx + 18, inputTop + 1, s.sx + s.sw - 18, inputTop + 15, 0xFF22262E);
-        String shown = typed.length() == 0 ? Component.translatable(can ? "hollowhours.chat.hint" : "hollowhours.chat.offline").getString() : typed.toString();
+        String shown = typed.length() == 0 ? Component.translatable(can ? "hollowhours.chat.hint" : dead(chatWith) ? "hollowhours.chat.nosignal" : "hollowhours.chat.offline").getString() : typed.toString();
         String fit = typed.length() == 0 ? f.plainSubstrByWidth(shown, s.sw - 40) : tail(f, shown, s.sw - 42);
         g.drawString(f, fit + (typed.length() > 0 && (s.ticks / 8) % 2 == 0 ? "_" : ""), s.sx + 21, inputTop + 4, typed.length() == 0 ? 0xFF707888 : 0xFFFFFFFF, false);
         g.fill(s.sx + s.sw - 16, inputTop + 1, s.sx + s.sw - 2, inputTop + 15, 0xFF2F6FD0);

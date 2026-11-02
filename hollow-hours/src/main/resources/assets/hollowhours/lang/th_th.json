@@ -780,5 +780,6 @@
  "hollowhours.rescue.app.safe": "ที่นี่ไม่มีผี พักผ่อน กิน สร้างบ้านได้... แค่ตอนนี้",
  "hollowhours.rescue.app.nobody": "จะไม่มีใครมาช่วยอีกแล้ว",
  "hollowhours.rescue.app.navigate": "นำทางไปเฮลิคอปเตอร์",
- "hollowhours.chat.dad.hello": "ว่าไงลูก บ้านใหม่เป็นไงบ้าง มีอะไรโทรหาพ่อได้เลยนะ"
+ "hollowhours.chat.dad.hello": "ว่าไงลูก บ้านใหม่เป็นไงบ้าง มีอะไรโทรหาพ่อได้เลยนะ",
+ "hollowhours.chat.failed.nosignal": "✗ ไม่มีสัญญาณ (เพื่อนตายอยู่ ยังไม่เกิดใหม่)"
 }

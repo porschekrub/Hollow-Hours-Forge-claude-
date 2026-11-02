@@ -22,6 +22,12 @@ public final class PhoneInfo {
         for (ServerPlayer p : server.getPlayerList().getPlayers()) send(p);
     }
 
+    static List<String> dead(MinecraftServer server) {
+        List<String> out = new ArrayList<>();
+        for (ServerPlayer o : server.getPlayerList().getPlayers()) if (!o.isAlive()) out.add("p:" + o.getUUID());
+        return out;
+    }
+
     public static void send(ServerPlayer p) {
         MinecraftServer server = p.server;
         List<S2CPhoneInfo.Target> t = new ArrayList<>();
@@ -50,6 +56,6 @@ public final class PhoneInfo {
         for (Graves.Grave g : Graves.get(server).standing(p.getUUID()))
             t.add(new S2CPhoneInfo.Target("grave", g.pos.getX(), g.pos.getY(), g.pos.getZ(), g.dim.location().toString()));
         HHNet.toPlayer(p, new S2CPhoneInfo(Rescue.nextArrival(server), left, Rescue.phase(p), Rescue.missed(p), Rescue.invaded(p),
-                (float) Rescue.harshness(p, false), (float) Rescue.harshness(p, true), t));
+                (float) Rescue.harshness(p, false), (float) Rescue.harshness(p, true), t, dead(server)));
     }
 }

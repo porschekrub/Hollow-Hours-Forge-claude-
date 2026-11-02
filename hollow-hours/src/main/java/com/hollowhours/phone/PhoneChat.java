@@ -30,7 +30,7 @@ import java.util.UUID;
  * them sends one last message. After that nothing gets through to them.
  *
  * A chat line is "who|type|payload": who = me / them / sys; type t = text, k = translation key (the game's language),
- * l = a location "x,y,z,dimension", x = not delivered.
+ * l = a location "x,y,z,dimension", x = not delivered, n = no signal (the friend is dead, not respawned yet).
  */
 public final class PhoneChat {
     private PhoneChat() {}
@@ -182,6 +182,11 @@ public final class PhoneChat {
             add(p, contact, "me|x|" + payload);
             return;
         }
+        // dead and not respawned yet: no signal until they're back
+        if (!o.isAlive()) {
+            add(p, contact, "me|n|" + payload);
+            return;
+        }
         add(p, contact, "me|" + type + "|" + payload);
         String back = "p:" + p.getUUID();
         add(o, back, "them|" + type + "|" + payload);
@@ -256,7 +261,7 @@ public final class PhoneChat {
         List<String> log = log(p, who);
         for (String line : log.subList(Math.max(0, log.size() - 10), log.size())) {
             String[] s = line.split("\\|", 3);
-            if (s.length < 3 || s[1].equals("x")) continue;
+            if (s.length < 3 || s[1].equals("x") || s[1].equals("n")) continue;
             String text = s[1].equals("l") ? "(sent their location)" : s[1].equals("k") ? "(earlier message)" : s[2];
             out.add(new AiBridge.Msg(s[0].equals("me") ? "user" : "assistant", text));
         }
