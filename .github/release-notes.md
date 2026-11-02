@@ -1,8 +1,18 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.9.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.9.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.0 — the phone's new apps**
+- **Rescue** app: the countdown to the helicopter (days, hours, minutes; the day and time), the countdown while it waits, your part of the story.
+  แอป **กู้ภัย**: นับถอยหลังว่าเฮลิคอปเตอร์จะมาในอีกกี่วัน กี่ชั่วโมง กี่นาที (บอกวันและเวลา) นับถอยหลังตอนมันรอ และสถานะเนื้อเรื่อง
+- **Location** app: a map around you, your coordinates and which way you face. Tap home, the helicopter, your grave or a friend's location to **navigate** — an arrow and the distance stay on screen until you get there.
+  แอป **ตำแหน่ง**: แผนที่รอบตัว พิกัด ทิศที่หัน แตะ บ้าน / เฮลิคอปเตอร์ / หลุมศพ / ตำแหน่งเพื่อน เพื่อ**นำทาง** มีลูกศรและระยะทางบนจอจนกว่าจะถึง
+- **Chat** app: chat with your real friends (they get a pop-up) and **send your location** (they tap it to navigate to you). Chat with **Mom, Dad (new) and your best friend** — they answer in Thai or English (with the AI if it's on).
+  แอป **แชท**: แชทกับเพื่อนจริงๆ (เด้งแจ้งเตือนที่โทรศัพท์เพื่อน) และ**ส่งตำแหน่ง**ให้เพื่อน (เพื่อนแตะเพื่อนำทางมาหา) แชทกับ **แม่ พ่อ (ใหม่) และเพื่อนสนิท** ได้ ตอบเป็นภาษาไทย/อังกฤษ (ใช้ AI ถ้าเปิดไว้)
+- The story comes through the chat: after the emergency alert they're worried, around day 8 it gets bad where they are, and **on night 15** each sends a last message — "we didn't make it, don't let it see you". After that nothing gets through. (`contactsLostNight` in `[story]`)
+  เนื้อเรื่องผ่านแชท: หลังแจ้งเตือนฉุกเฉินพวกเขาจะเป็นห่วง วันที่ 8 เริ่มแย่ **คืนที่ 15** แต่ละคนจะส่งข้อความสุดท้าย "พวกเราไม่รอดแล้ว อย่าให้มันเห็นเด็ดขาด" หลังจากนั้นส่งข้อความไปไม่ถึงอีกเลย
 
 **2.9.0 — the rescue**
 - **Day 7: help is coming.** A message pops up on your phone: a rescue helicopter will pick you up in 35–100 days — the day and the time. When it lands near you it waits **5 minutes**; right-click it to climb aboard (up to 6 people). A countdown and an arrow show the way.

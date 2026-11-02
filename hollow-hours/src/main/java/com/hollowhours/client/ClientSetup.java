@@ -86,6 +86,7 @@ public final class ClientSetup {
         e.registerAboveAll("phone_alert", PhoneAlert::render);
         e.registerAboveAll("phone_notice", PhoneNotice::render);
         e.registerAboveAll("rescue_fade", RescueFade::render);
+        e.registerAbove(VanillaGuiOverlay.BOSS_EVENT_PROGRESS.id(), "phone_nav", NavOverlay::render);
     }
 
     @SubscribeEvent

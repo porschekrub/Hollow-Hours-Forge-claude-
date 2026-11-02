@@ -147,6 +147,13 @@ public final class Graves extends SavedData {
         return d;
     }
 
+    /** This player's graves that are still standing (the phone's map shows them). */
+    public List<Grave> standing(UUID owner) {
+        List<Grave> out = new ArrayList<>();
+        for (Grave g : active.values()) if (g.owner.equals(owner)) out.add(g);
+        return out;
+    }
+
     public static Graves get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(Graves::load, Graves::new, NAME);
     }

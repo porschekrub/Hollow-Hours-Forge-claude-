@@ -130,6 +130,10 @@ public final class Story {
         if (!p.getInventory().add(s)) p.drop(s, false);
     }
 
+    public static boolean alerted(Player p) {
+        return persisted(p).getBoolean(ALERTED);
+    }
+
     public static void resetAlert(ServerPlayer p) {
         persisted(p).remove(ALERTED);
     }

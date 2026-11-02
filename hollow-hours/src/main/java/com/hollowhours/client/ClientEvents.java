@@ -190,6 +190,7 @@ public final class ClientEvents {
         Atmos.reset();
         PhoneAlert.reset();
         PhoneNotice.reset();
+        ClientPhone.reset();
         SurvivalHud.thirst = SurvivalHud.sanity = -1;
         KillCam.reset();
         HorrorMusic.reset();

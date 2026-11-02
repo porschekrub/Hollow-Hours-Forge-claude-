@@ -48,6 +48,8 @@ final class SmokeTest {
             storyAndSurvival(server, level, at);
             physicsAndFun(server, level, at);
             rescue(server);
+            check(com.hollowhours.phone.PhoneChat.category("ช่วยด้วย ผีมา").equals("scared") && com.hollowhours.phone.PhoneChat.category("love you").equals("love")
+                    && com.hollowhours.phone.PhoneChat.category("แม่อยู่ไหน").equals("where") && com.hollowhours.phone.PhoneChat.category("hello").equals("greet"), "chat categories");
             HollowHours.LOG.info("[smoke] {}", com.hollowhours.grave.GraveSmoke.run(server));
             ItemStack cursed = Curses.makeCursed(Items.IRON_SWORD, 1, 3);
             check(Curses.isCursed(cursed), "curse item");

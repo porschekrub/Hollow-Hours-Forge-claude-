@@ -8,7 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class HHNet {
-    private static final String VERSION = "7";
+    private static final String VERSION = "8";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(HollowHours.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
     private static boolean registered;
 
@@ -46,12 +46,18 @@ public final class HHNet {
                 .encoder(S2CAnim::encode).decoder(S2CAnim::decode).consumerMainThread(S2CAnim::handle).add();
         CHANNEL.messageBuilder(S2CNotice.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(S2CNotice::encode).decoder(S2CNotice::decode).consumerMainThread(S2CNotice::handle).add();
+        CHANNEL.messageBuilder(S2CChat.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CChat::encode).decoder(S2CChat::decode).consumerMainThread(S2CChat::handle).add();
+        CHANNEL.messageBuilder(S2CPhoneInfo.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CPhoneInfo::encode).decoder(S2CPhoneInfo::decode).consumerMainThread(S2CPhoneInfo::handle).add();
         CHANNEL.messageBuilder(C2SPhone.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SPhone::encode).decoder(C2SPhone::decode).consumerMainThread(C2SPhone::handle).add();
         CHANNEL.messageBuilder(C2SBetrayChoice.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SBetrayChoice::encode).decoder(C2SBetrayChoice::decode).consumerMainThread(C2SBetrayChoice::handle).add();
         CHANNEL.messageBuilder(C2STalk.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2STalk::encode).decoder(C2STalk::decode).consumerMainThread(C2STalk::handle).add();
+        CHANNEL.messageBuilder(C2SChat.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SChat::encode).decoder(C2SChat::decode).consumerMainThread(C2SChat::handle).add();
         CHANNEL.messageBuilder(C2SGuideRequest.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SGuideRequest::encode).decoder(C2SGuideRequest::decode).consumerMainThread(C2SGuideRequest::handle).add();
     }

@@ -66,6 +66,14 @@ public final class ClientPackets {
         else if (m.kind() == com.hollowhours.net.S2CAnim.SIP) PlayerAnims.sip(m.entity());
     }
 
+    public static void chat(com.hollowhours.net.S2CChat m) {
+        ClientPhone.update(m);
+    }
+
+    public static void phoneInfo(com.hollowhours.net.S2CPhoneInfo m) {
+        ClientPhone.infoUpdated(m);
+    }
+
     public static void notice(com.hollowhours.net.S2CNotice m) {
         PhoneNotice.show(m.key(), m.args(), m.danger());
     }

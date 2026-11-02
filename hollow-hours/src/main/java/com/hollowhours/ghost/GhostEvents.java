@@ -122,6 +122,8 @@ public final class GhostEvents {
             safe("soul", () -> Soul.tick(server, now));
             safe("graves", () -> com.hollowhours.grave.Graves.tick(server));
             safe("rescue", () -> com.hollowhours.rescue.Rescue.tick(server));
+            safe("chat", () -> com.hollowhours.phone.PhoneChat.tick(server));
+            if (now % 40 == 0) safe("phone info", () -> com.hollowhours.phone.PhoneInfo.tick(server));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
         }
         // the first nights are normal: nothing haunts anyone before the story starts
@@ -358,6 +360,7 @@ public final class GhostEvents {
         giveGuideIfMissing(p, true);
         Story.onLogin(p);
         Atmosphere.send(p);
+        com.hollowhours.phone.PhoneChat.syncAll(p);
         Survival.forceSync(p);
         Integer n = FLED_FROM.remove(p.getUUID());
         if (n != null) Later.run(80, () -> punishFlee(p, n));

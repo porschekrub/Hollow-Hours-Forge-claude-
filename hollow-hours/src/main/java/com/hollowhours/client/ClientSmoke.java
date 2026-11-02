@@ -509,6 +509,78 @@ public final class ClientSmoke {
             if (t == 82) mc.setScreen(null);
             return t >= 84;
         });
+        // the phone's chat (Mom answers, a location to Dad), the map, the rescue countdown, the last messages, navigating
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                net.minecraft.world.item.ItemStack ph = com.hollowhours.item.PhoneItem.fresh(sp.getRandom());
+                com.hollowhours.item.PhoneItem.setBattery(ph, 80);
+                sp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ph);
+                com.hollowhours.phone.PhoneChat.reset(sp);
+                com.hollowhours.rescue.Rescue.schedule(sp.server);
+                com.hollowhours.phone.PhoneInfo.send(sp);
+            });
+            if (t == 10) PhoneScreen.open(net.minecraft.world.InteractionHand.MAIN_HAND);
+            if (t == 12) shot("phone_home_apps");
+            if (t == 14 && mc.screen instanceof PhoneScreen ps) ps.app = PhoneScreen.App.CHAT;
+            if (t == 18) shot("phone_chat_contacts");
+            if (t == 20) {
+                PhoneApps.chatWith = "mom";
+                PhoneApps.typed.append("hi mom, are you okay?");
+            }
+            if (t == 22 && mc.screen instanceof PhoneScreen ps) PhoneApps.sendTyped(ps);
+            if (t == 28) shot("phone_chat_typing");
+            if (t == 150) shot("phone_chat_mom");
+            if (t == 152 && mc.screen instanceof PhoneScreen ps) {
+                PhoneApps.chatWith = "dad";
+                PhoneApps.sendLocation(ps);
+            }
+            if (t == 260) shot("phone_chat_dad_location");
+            if (t == 262 && mc.screen instanceof PhoneScreen ps) ps.app = PhoneScreen.App.MAP;
+            if (t == 270) shot("phone_map");
+            if (t == 272 && mc.screen instanceof PhoneScreen ps) ps.app = PhoneScreen.App.RESCUE;
+            if (t == 276) shot("phone_rescue");
+            if (t == 278) server(sp -> com.hollowhours.phone.PhoneChat.storyMessages(sp, 3));
+            if (t == 290 && mc.screen instanceof PhoneScreen ps) {
+                ps.app = PhoneScreen.App.CHAT;
+                PhoneApps.chatWith = null;
+            }
+            if (t == 300) shot("phone_final_notice");
+            if (t == 600) {
+                PhoneApps.chatWith = "friend";
+                shot("phone_chat_contacts_lost");
+            }
+            if (t == 604) shot("phone_chat_final");
+            if (t == 606 && mc.screen instanceof PhoneScreen ps) {
+                PhoneApps.typed.append("hello?? answer me");
+                PhoneApps.sendTyped(ps);
+            }
+            if (t == 620) shot("phone_chat_failed");
+            if (t == 622) server(sp -> {
+                List<String> l = com.hollowhours.phone.PhoneChat.log(sp, "friend");
+                boolean finalCame = l.stream().anyMatch(x -> x.endsWith("friend.final")), failed = l.get(l.size() - 1).startsWith("me|x|");
+                List<String> mom = com.hollowhours.phone.PhoneChat.log(sp, "mom"), dad = com.hollowhours.phone.PhoneChat.log(sp, "dad");
+                boolean momAnswered = mom.size() >= 3 && mom.get(2).startsWith("them|"), dadGotLocation = dad.stream().anyMatch(x -> x.startsWith("me|l|"));
+                HollowHours.LOG.info("[client smoke] chat: mom answered {}, location to dad {}, last messages {}, then not delivered {}", momAnswered, dadGotLocation, finalCame, failed);
+                if (!momAnswered || !dadGotLocation || !finalCame || !failed) HollowHours.LOG.error("[client smoke] the phone chat is not right (com.hollowhours)");
+            });
+            if (t == 624) {
+                var info = ClientPhone.info;
+                if (info != null) for (var tg : info.targets())
+                    if (tg.kind().equals("home")) ClientPhone.navigate(new ClientPhone.Nav("home", "Home", tg.x() + 40, tg.y(), tg.z() + 25, tg.dim()));
+                mc.setScreen(null);
+                lookAt = origin.add(0, 1.6, 30);
+            }
+            if (t == 640) shot("nav_arrow");
+            if (t == 642) {
+                if (ClientPhone.nav == null) HollowHours.LOG.error("[client smoke] navigation did not start (com.hollowhours)");
+                ClientPhone.navigate(null);
+                server(sp -> {
+                    com.hollowhours.phone.PhoneChat.reset(sp);
+                    com.hollowhours.rescue.Rescue.cancelPlan(sp.server);
+                });
+            }
+            return t >= 644;
+        });
         STEPS.add(t -> {
             if (t == 0) PhoneAlert.start(true);
             if (t == 4 || t == 50 || t == 110 || t == 180) shot("alert_t" + t);

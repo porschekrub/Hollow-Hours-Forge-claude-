@@ -30,7 +30,7 @@ public final class HHConfig {
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED;
     public static final ForgeConfigSpec.DoubleValue BLOOD_MOON_CHANCE, BLOOD_SPAWN_MULT, BLOOD_DAMAGE_MULT, BLOOD_SPEED_MULT, BLOOD_DOUBLE_CHANCE, FOG_CHANCE;
     public static final ForgeConfigSpec.BooleanValue FOG_ENABLED;
-    public static final ForgeConfigSpec.IntValue START_NIGHT;
+    public static final ForgeConfigSpec.IntValue START_NIGHT, CONTACTS_LOST_NIGHT;
     public static final ForgeConfigSpec.BooleanValue PHONE_ALERT, GIVE_PHONE, THIRST, SANITY, BLOOD, TREE_FELLING, EXPLOSION_DEBRIS;
     public static final ForgeConfigSpec.IntValue VEIN_MINING, GRAVE_MINUTES, GRAVE_HITS;
     public static final ForgeConfigSpec.DoubleValue THIRST_RATE, PHONE_DRAIN;
@@ -78,6 +78,7 @@ public final class HHConfig {
                 "On that day an emergency alert comes through everyone's phone.").defineInRange("startNight", 3, 1, 1000);
         PHONE_ALERT = b.comment("The emergency alert (voice + subtitles) on the day the haunting starts").define("phoneAlert", true);
         GIVE_PHONE = b.comment("Every player starts with a phone (random battery; craft a charger)").define("givePhone", true);
+        CONTACTS_LOST_NIGHT = b.comment("The night Mom, Dad and your best friend send their last message (then they can't be reached)").defineInRange("contactsLostNight", 15, 1, 1000);
         b.pop();
 
         b.comment("Survival").push("survival");

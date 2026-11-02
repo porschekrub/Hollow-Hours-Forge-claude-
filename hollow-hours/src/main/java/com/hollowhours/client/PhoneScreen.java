@@ -30,7 +30,7 @@ import java.util.List;
  * The arcade machine opens the same games on its own screen: no battery, and a bit more fun.
  */
 public class PhoneScreen extends Screen {
-    enum App { HOME, MESSAGES, SNAKE, TAP, HEALTH }
+    enum App { HOME, MESSAGES, CHAT, MAP, RESCUE, SNAKE, TAP, HEALTH }
 
     final InteractionHand hand;
     /** the arcade machine being played, or null for the phone */
@@ -182,9 +182,14 @@ public class PhoneScreen extends Screen {
         g.fill(bx + 12, by + 2, bx + 13, by + 4, 0xFFFFFFFF);
         g.fill(bx + 1, by + 1, bx + 1 + Math.round(10 * bat / 100f), by + 5, bat < 20 ? 0xFFFF4040 : 0xFF60E060);
         int top = sy + 13;
+        PhoneApps.HITS.clear();
+        if (app != App.CHAT) ClientPhone.open = null;
         switch (app) {
             case HOME -> renderHome(g, f, mx, my, top);
             case MESSAGES -> renderMessages(g, f, top);
+            case CHAT -> PhoneApps.renderChat(this, g, f, mx, my, top);
+            case MAP -> PhoneApps.renderMap(this, g, f, mx, my, top);
+            case RESCUE -> PhoneApps.renderRescue(this, g, f, top);
             case SNAKE -> renderSnake(g, f, top);
             case TAP -> renderTap(g, f, top, partial);
             case HEALTH -> renderHealth(g, f, top);
@@ -204,7 +209,7 @@ public class PhoneScreen extends Screen {
         return mc.level == null ? 1 : mc.level.getDayTime() / 24000 + 1;
     }
 
-    static final App[] ICONS = {App.MESSAGES, App.SNAKE, App.TAP, App.HEALTH}, ARCADE_ICONS = {App.SNAKE, App.TAP};
+    static final App[] ICONS = {App.MESSAGES, App.CHAT, App.MAP, App.RESCUE, App.SNAKE, App.TAP, App.HEALTH}, ARCADE_ICONS = {App.SNAKE, App.TAP};
 
     App[] icons() {
         return arcade == null ? ICONS : ARCADE_ICONS;
@@ -213,6 +218,9 @@ public class PhoneScreen extends Screen {
     static int iconColor(App a) {
         return switch (a) {
             case MESSAGES -> 0xFF35C759;
+            case CHAT -> 0xFF2E9BF0;
+            case MAP -> 0xFF3AAE6E;
+            case RESCUE -> 0xFFE07A20;
             case SNAKE -> 0xFF2FA84F;
             case TAP -> 0xFF7A3FD1;
             default -> 0xFFE0425A;
@@ -222,6 +230,9 @@ public class PhoneScreen extends Screen {
     static String iconGlyph(App a) {
         return switch (a) {
             case MESSAGES -> "✉";
+            case CHAT -> "☺";
+            case MAP -> "⌖";
+            case RESCUE -> "✈";
             case SNAKE -> "§";
             case TAP -> "☠";
             default -> "♥";
@@ -229,9 +240,11 @@ public class PhoneScreen extends Screen {
     }
 
     int[] iconRect(int i, int top) {
-        int size = Math.min(34, (sw - 30) / 2), gap = (sw - size * 2) / 3;
-        int col = i % 2, row = i / 2;
-        int x = sx + gap + col * (size + gap), y = top + 40 + row * (size + 22);
+        // three to a row on the phone, two on the arcade
+        int cols = arcade == null ? 3 : 2;
+        int size = Math.min(arcade == null ? 30 : 34, (sw - 12 * (cols + 1)) / cols), gap = (sw - size * cols) / (cols + 1);
+        int col = i % cols, row = i / cols;
+        int x = sx + gap + col * (size + gap), y = top + 40 + row * (size + 20);
         return new int[] {x, y, size};
     }
 
@@ -258,7 +271,8 @@ public class PhoneScreen extends Screen {
             g.pose().popPose();
             Component name = Component.translatable("hollowhours.phone.app." + icons[i].name().toLowerCase(java.util.Locale.ROOT));
             g.drawCenteredString(f, name, r[0] + r[2] / 2, r[1] + r[2] + 3, 0xFFFFFFFF);
-            if (icons[i] == App.MESSAGES && unread()) g.fill(r[0] + r[2] - 6, r[1] - 2, r[0] + r[2] + 2, r[1] + 6, 0xFFFF3030);
+            if (icons[i] == App.MESSAGES && unread() || icons[i] == App.CHAT && ClientPhone.unreadAll() > 0)
+                g.fill(r[0] + r[2] - 6, r[1] - 2, r[0] + r[2] + 2, r[1] + 6, 0xFFFF3030);
         }
     }
 
@@ -458,9 +472,22 @@ public class PhoneScreen extends Screen {
     }
 
     @Override
+    public boolean charTyped(char c, int mods) {
+        if (app == App.CHAT && PhoneApps.chatChar(c)) return true;
+        return super.charTyped(c, mods);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double delta) {
+        if (app == App.CHAT) PhoneApps.chatScroll(delta);
+        return true;
+    }
+
+    @Override
     public boolean mouseClicked(double mx, double my, int button) {
         if (dead()) return super.mouseClicked(mx, my, button);
         int top = arcade != null ? sy + 2 : sy + 13;
+        if ((app == App.CHAT || app == App.MAP || app == App.RESCUE) && PhoneApps.click(mx, my)) return true;
         if (app != App.HOME && my >= top && my < top + 14 && mx < sx + 30) {
             app = App.HOME;
             sound("phone.click", 1.0f);
@@ -503,6 +530,11 @@ public class PhoneScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
+        if (app == App.CHAT && key == GLFW.GLFW_KEY_ESCAPE && PhoneApps.chatWith != null) {
+            PhoneApps.chatWith = null;
+            return true;
+        }
+        if (app == App.CHAT && PhoneApps.chatKey(this, key)) return true;
         if (key == GLFW.GLFW_KEY_ESCAPE && app != App.HOME) {
             app = App.HOME;
             return true;
