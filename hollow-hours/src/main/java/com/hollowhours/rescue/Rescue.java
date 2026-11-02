@@ -337,7 +337,30 @@ public final class Rescue {
                 if (bestBump <= 1) break search;
             }
         }
-        if (best == null) best = dry != null ? dry : top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(8, 0, 8));
+        // all sea so far: look farther out for any dry land (a few more chunks)
+        if (best == null && dry == null)
+            far:
+            for (int r = 448; r <= 1024; r += 128) {
+                int n = r / 96;
+                for (int a = 0; a < n; a++) {
+                    double ang = a * Math.PI * 2 / n;
+                    BlockPos t = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos((int) (Math.cos(ang) * r) >> 4 << 4 | 8, 0, (int) (Math.sin(ang) * r) >> 4 << 4 | 8));
+                    if (haven.getFluidState(t.below()).isEmpty() && haven.getBlockState(t.below()).isSolid() && t.getY() > haven.getSeaLevel()) {
+                        dry = t;
+                        break far;
+                    }
+                }
+            }
+        if (best == null) best = dry;
+        // still nothing: a little island of grass in the sea
+        if (best == null) {
+            int y = haven.getSeaLevel() + 1;
+            for (int dx = -4; dx <= 4; dx++)
+                for (int dz = -4; dz <= 4; dz++)
+                    for (int dy = -3; dy < 0; dy++)
+                        haven.setBlockAndUpdate(new BlockPos(8 + dx, y + dy, 8 + dz), dy == -1 ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.DIRT.defaultBlockState());
+            best = new BlockPos(8, y, 8);
+        }
         d.havenSpot = best;
         d.setDirty();
         return best;
