@@ -322,7 +322,10 @@ public final class Rescue {
                 int x = (int) (Math.cos(ang) * r), z = (int) (Math.sin(ang) * r);
                 BlockPos top = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
                 String biome = haven.getBiome(top).unwrapKey().map(k -> k.location().getPath()).orElse("");
-                if (haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 3
+                boolean flat = true;
+                for (int[] o : new int[][] {{4, 0}, {-4, 0}, {0, 4}, {0, -4}})
+                    if (Math.abs(top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, top.offset(o[0], 0, o[1])).getY() - top.getY()) > 1) flat = false;
+                if (flat && haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 3
                         && top.getY() < haven.getSeaLevel() + 40 && !biome.equals("haven_beach") && !biome.equals("haven_lagoon")) {
                     best = top;
                     break outer;
@@ -374,8 +377,10 @@ public final class Rescue {
             d.putInt(PHASE, IN_HAVEN);
             d.putLong(INVADE_AT, invade);
             d.putBoolean(INVADED, false);
+            // each on the ground of their own spot (never inside a hillside)
             double a = i++ * 1.3;
-            move(p, haven, Vec3.atBottomCenterOf(spot).add(Math.cos(a) * 2.5, 0, Math.sin(a) * 2.5));
+            BlockPos at = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.containing(spot.getX() + 0.5 + Math.cos(a) * 2.5, 0, spot.getZ() + 0.5 + Math.sin(a) * 2.5));
+            move(p, haven, Vec3.atBottomCenterOf(at));
             Later.run(60, () -> {
                 if (p.hasDisconnected()) return;
                 Atmosphere.send(p);
@@ -481,7 +486,7 @@ public final class Rescue {
         if (phase(p) == IN_HAVEN && !inHaven(p)) {
             ServerLevel haven = p.server.getLevel(HAVEN);
             if (haven == null) return;
-            move(p, haven, Vec3.atBottomCenterOf(havenSpot(haven)));
+            move(p, haven, Vec3.atBottomCenterOf(top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, havenSpot(haven))));
         } else if (phase(p) != IN_HAVEN && inHaven(p)) {
             ServerLevel over = p.server.overworld();
             move(p, over, Vec3.atBottomCenterOf(top(over, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos())));
