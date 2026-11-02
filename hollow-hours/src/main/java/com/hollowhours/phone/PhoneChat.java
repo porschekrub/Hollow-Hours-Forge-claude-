@@ -137,6 +137,7 @@ public final class PhoneChat {
     /** Each of them writes, a few seconds apart. */
     public static void storyMessages(ServerPlayer p, int stage) {
         String part = stage == 1 ? "story1" : stage == 2 ? "story2" : "final";
+        persisted(p).putInt(STAGE, Math.max(stage, persisted(p).getInt(STAGE)));
         int delay = 40;
         for (String n : NPCS) {
             Later.run(delay, () -> {

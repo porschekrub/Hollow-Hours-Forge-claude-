@@ -270,7 +270,13 @@ public class PhoneScreen extends Screen {
             g.drawString(f, glyph, -f.width(glyph) / 2, 0, 0xFFFFFFFF, false);
             g.pose().popPose();
             Component name = Component.translatable("hollowhours.phone.app." + icons[i].name().toLowerCase(java.util.Locale.ROOT));
-            g.drawCenteredString(f, name, r[0] + r[2] / 2, r[1] + r[2] + 3, 0xFFFFFFFF);
+            // the name shrinks to fit under its icon
+            float k = Math.min(1f, (r[2] + 14f) / Math.max(1, f.width(name)));
+            g.pose().pushPose();
+            g.pose().translate(r[0] + r[2] / 2f, r[1] + r[2] + 3, 0);
+            g.pose().scale(k, k, 1);
+            g.drawCenteredString(f, name, 0, 0, 0xFFFFFFFF);
+            g.pose().popPose();
             if (icons[i] == App.MESSAGES && unread() || icons[i] == App.CHAT && ClientPhone.unreadAll() > 0)
                 g.fill(r[0] + r[2] - 6, r[1] - 2, r[0] + r[2] + 2, r[1] + 6, 0xFFFF3030);
         }
