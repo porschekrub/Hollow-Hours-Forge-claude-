@@ -154,7 +154,7 @@ final class SmokeTest {
                 AiBridge.geminiBase = "http://127.0.0.1:" + http.getAddress().getPort() + "/v1beta/models/";
                 GhostTalk.Understood gm = GhostTalk.understand(null, null, new GhostTalk.Memory(), "please let me go").get(15, java.util.concurrent.TimeUnit.SECONDS);
                 check(gm != null && gm.intent().equals("plead"), "gemini native: " + gm + " " + paths);
-                check(paths.get(paths.size() - 1).equals("/v1beta/models/gemini-flash-latest:generateContent"), "gemini path " + paths);
+                check(paths.get(paths.size() - 1).equals("/v1beta/models/gemini-flash-lite-latest:generateContent"), "gemini path " + paths);
             } finally {
                 AiBridge.geminiBase = baseWas;
             }

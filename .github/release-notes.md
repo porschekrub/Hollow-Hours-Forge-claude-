@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.3.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.3.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.3**
+- AI (both mods): the default Gemini model is now `gemini-flash-lite-latest` (works with free API keys). Leave `model = ""` in the config to use it.
+  AI (ทั้ง 2 มอด): โมเดล Gemini เริ่มต้นเป็น `gemini-flash-lite-latest` (ใช้กับคีย์ฟรีได้) ปล่อย `model = ""` ไว้ได้เลย
 
 **2.10.2**
 - First person is plain again by default: no arms holding things, no body when looking down (Minecraft's normal view). Existing settings are switched once; turn them back on with `firstPersonArms` / `firstPersonBody = true` in `hollowhours-client.toml`.

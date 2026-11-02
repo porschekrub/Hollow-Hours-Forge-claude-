@@ -57,7 +57,7 @@ public final class AiBridge {
             case "ollama" -> "llama3.1";
             case "openrouter" -> "openrouter/auto";
             case "groq" -> "llama-3.3-70b-versatile";
-            default -> "gemini-flash-latest";
+            default -> "gemini-flash-lite-latest";
         };
     }
 
