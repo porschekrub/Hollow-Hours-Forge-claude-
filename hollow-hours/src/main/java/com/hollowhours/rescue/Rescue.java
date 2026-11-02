@@ -303,6 +303,12 @@ public final class Rescue {
         }
     }
 
+    /** The surface at a column, generating the chunk if it isn't there yet (getHeightmapPos only knows loaded chunks). */
+    static BlockPos top(ServerLevel level, Heightmap.Types type, BlockPos at) {
+        var chunk = level.getChunk(at.getX() >> 4, at.getZ() >> 4);
+        return new BlockPos(at.getX(), chunk.getHeight(type, at.getX() & 15, at.getZ() & 15) + 1, at.getZ());
+    }
+
     /** Where helicopters set down in the haven: open dry land near the middle of the world. */
     public static BlockPos havenSpot(ServerLevel haven) {
         Data d = data(haven.getServer());
@@ -314,7 +320,7 @@ public final class Rescue {
             for (int a = 0; a < Math.max(1, r / 32); a++) {
                 double ang = a * Math.PI * 2 / Math.max(1, r / 32);
                 int x = (int) (Math.cos(ang) * r), z = (int) (Math.sin(ang) * r);
-                BlockPos top = haven.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
+                BlockPos top = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, 0, z));
                 if (haven.getFluidState(top.below()).isEmpty() && haven.getBlockState(top.below()).isSolid() && top.getY() > haven.getSeaLevel() + 1
                         && top.getY() < haven.getSeaLevel() + 40) {
                     best = top;
@@ -322,7 +328,7 @@ public final class Rescue {
                 }
             }
         }
-        if (best == null) best = haven.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.ZERO);
+        if (best == null) best = top(haven, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.ZERO);
         d.havenSpot = best;
         d.setDirty();
         return best;
@@ -333,17 +339,17 @@ public final class Rescue {
         for (int i = 0; i < 80; i++) {
             double ang = R.rand(0, Math.PI * 2), dist = R.rand(min, max);
             int x = near.getX() + (int) (Math.cos(ang) * dist), z = near.getZ() + (int) (Math.sin(ang) * dist);
-            BlockPos top = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(x, 0, z));
+            BlockPos top = top(level, Heightmap.Types.MOTION_BLOCKING, new BlockPos(x, 0, z));
             if (!level.getFluidState(top.below()).isEmpty() || !level.getBlockState(top.below()).isSolid()) continue;
             boolean flat = true;
             for (int dx = -3; dx <= 3 && flat; dx += 3)
                 for (int dz = -4; dz <= 4 && flat; dz += 4) {
-                    BlockPos t = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(x + dx, 0, z + dz));
+                    BlockPos t = top(level, Heightmap.Types.MOTION_BLOCKING, new BlockPos(x + dx, 0, z + dz));
                     if (Math.abs(t.getY() - top.getY()) > 1 || !level.getFluidState(t.below()).isEmpty()) flat = false;
                 }
             if (flat) return new Vec3(x + 0.5, top.getY(), z + 0.5);
         }
-        BlockPos top = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, near);
+        BlockPos top = top(level, Heightmap.Types.MOTION_BLOCKING, near);
         return new Vec3(near.getX() + 0.5, top.getY(), near.getZ() + 0.5);
     }
 
@@ -398,7 +404,7 @@ public final class Rescue {
                 if (v.isPresent()) to = v.get();
             }
             if (to == null) {
-                BlockPos s = over.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos());
+                BlockPos s = top(over, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos());
                 to = Vec3.atBottomCenterOf(s);
             }
             move(p, over, to);
@@ -477,7 +483,7 @@ public final class Rescue {
             move(p, haven, Vec3.atBottomCenterOf(havenSpot(haven)));
         } else if (phase(p) != IN_HAVEN && inHaven(p)) {
             ServerLevel over = p.server.overworld();
-            move(p, over, Vec3.atBottomCenterOf(over.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos())));
+            move(p, over, Vec3.atBottomCenterOf(top(over, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos())));
         } else return;
         Later.run(10, () -> Atmosphere.send(p));
     }
