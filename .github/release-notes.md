@@ -14,6 +14,9 @@
 - **They find the haven** after 5–10 days: ghosts hunt you there and a helicopter lands somewhere out there — it waits as long as it takes. It flies you back where it all began, **for good**: ghosts **3×**, blood moons **6×**.
   อยู่สวรรค์ 5–10 วันผีจะบุก ต้องวิ่งไปขึ้นเฮลิคอปเตอร์ (รอไม่จำกัดเวลา) มันจะพากลับโลกเดิม **ตลอดไป** ผีโหดขึ้น **3 เท่า** พระจันทร์สีเลือด **6 เท่า**
 - Settings in `[rescue]` of `hollowhours-common.toml`; test commands (op): `/hollow rescue now|invade|reset|status`.
+- The haven is an extra world, which makes Minecraft show an "Experimental Settings" warning when you open the world — the mod presses Proceed for you (`skipExperimentalWarning` in `hollowhours-client.toml`).
+  ดินแดนสวรรค์เป็นโลกเพิ่ม Minecraft จะเตือน "Experimental Settings" ตอนเปิดโลก มอดกด Proceed ให้อัตโนมัติ
+- First person: the canteen stays in view while you twist the cap open; the power bank set sits a little higher.
 
 **2.8.1**
 - Power bank: the message after charging shows the right numbers (and where you unplugged); the bank, phone and cable sit smaller in first person.
