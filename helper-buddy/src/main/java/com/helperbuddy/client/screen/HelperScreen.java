@@ -358,6 +358,9 @@ public class HelperScreen extends Screen {
             });
             if (i % 5 == 4) y += 22;
         }
+        boolean pvp = d.getBoolean("pvp");
+        btn(8, y + 4, 304, pvp ? "§c⚔ ตีเพื่อนได้: เปิด §7(ทุกคนในโลก)" : "§a✘ ตีเพื่อนได้: ปิด §7(ทุกคนในโลก)",
+                pvp ? "§c⚔ Friendly fire: ON §7(whole world)" : "§a✘ Friendly fire: OFF §7(whole world)", b -> act("pvp"));
     }
 
     // ------------------------------------------------------------------ talk

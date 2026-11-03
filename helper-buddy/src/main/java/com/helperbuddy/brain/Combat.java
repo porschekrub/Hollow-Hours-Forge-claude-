@@ -86,7 +86,7 @@ public final class Combat {
         if (e == null || !e.isAlive() || e == h || e instanceof HelperEntity) return false;
         if (e instanceof Player p) {
             if (h.isOwner(p) || p.isCreative() || p.isSpectator()) return false;
-            return explicit && HBConfig.ALLOW_PVP_FIGHT_BACK.get() && h.getServer() != null && h.getServer().isPvpAllowed();
+            return explicit && HBConfig.ALLOW_PVP_FIGHT_BACK.get() && h.getServer() != null && h.getServer().isPvpAllowed() && com.helperbuddy.PvpRule.on(h.getServer());
         }
         if (e instanceof AbstractVillager || e instanceof IronGolem || e instanceof SnowGolem) return false;
         if (e instanceof net.minecraft.world.entity.decoration.ArmorStand) return false;

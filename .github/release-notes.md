@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.3.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.3.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.4.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.4.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.4**
+- Helper Buddy: **friendly fire is OFF by default** - players can't hurt each other (sword, arrows, tridents, potions) and helpers never attack other players. Turn it on for the whole world in any helper's menu → Settings → "Friendly fire" (everyone gets a chat message when it changes).
+  Helper Buddy: **ปิดการตีเพื่อนเป็นค่าเริ่มต้น** ผู้เล่นตีกันไม่โดน (ดาบ ธนู ตรีศูล ยา) และผู้ช่วยจะไม่ตีผู้เล่นคนอื่น เปิดได้ที่เมนูผู้ช่วย → ตั้งค่า → "ตีเพื่อนได้" (มีผลทั้งโลก และทุกคนจะเห็นข้อความแจ้ง)
 
 **2.10.3**
 - AI (both mods): the default Gemini model is now `gemini-flash-lite-latest` (works with free API keys). Leave `model = ""` in the config to use it.
