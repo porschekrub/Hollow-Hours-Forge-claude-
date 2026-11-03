@@ -1,10 +1,8 @@
-import json
+import glob
 from faster_whisper import WhisperModel
 m = WhisperModel('large-v3', device='cpu', compute_type='int8')
-segs, info = m.transcribe('audio.mp3', language='th', word_timestamps=True, vad_filter=False, beam_size=5)
-out = []
-for s in segs:
-    w = [(x.start, x.end, x.word) for x in s.words]
-    out.append({'start': s.start, 'end': s.end, 'text': s.text, 'words': w})
-    print('%.2f-%.2f %s' % (s.start, s.end, s.text), flush=True)
-json.dump(out, open('out/segs.json', 'w'), ensure_ascii=False, indent=1)
+for f in sorted(glob.glob('clips/*.wav')):
+    segs, _ = m.transcribe(f, language='th', beam_size=5, word_timestamps=True)
+    ws = [w for s in segs for w in s.words]
+    print(f, ''.join(w.word for w in ws), '| first:', ' '.join('%.2f%s' % (w.start, w.word.strip()) for w in ws[:4]), flush=True)
+open('out/done','w').write('ok')
