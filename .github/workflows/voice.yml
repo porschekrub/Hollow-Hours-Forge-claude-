@@ -20,7 +20,7 @@ jobs:
           pip install -q --index-url https://download.pytorch.org/whl/cpu torch
           pip install -q transformers numpy
       - name: Speak
-        run: mkdir -p out && python tools/gen_voice.py out 2>&1 | tee out/log.txt
+        run: mkdir -p out && python tools/clip_voice.py out 2>&1 | tee out/log.txt
       - name: Publish to the voice-out branch
         run: |
           cd out
