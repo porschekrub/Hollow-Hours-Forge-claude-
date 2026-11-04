@@ -165,7 +165,7 @@ public class RecipeScreen extends Screen {
 
     int boxW(Shown s) {
         int inner = 6 + s.cols * 18 + 8 + 16 + 8 + 22 + 6;
-        int label = 16 + font.width(s.label(th()) + (s.shapeless ? "  " + t("ไม่ต้องเรียง", "shapeless") : "")) + 6;
+        int label = 16 + font.width(s.label(th())) + (s.shapeless ? 6 + font.width(t("ไม่ต้องเรียง", "shapeless")) : 0) + 6;
         return Math.min(rx1 - rx0, Math.max(inner, label));
     }
 
@@ -233,15 +233,21 @@ public class RecipeScreen extends Screen {
                     "Search by name, or @mod", "Click items inside a recipe to follow them, Backspace = back", "Hold Shift = stop cycling items",
                     "", "§7" + RecipeIndex.items().size() + " items, " + RecipeIndex.recipeCount() + " recipes (other mods included)"};
             for (String l : help) {
-                g.drawString(font, font.plainSubstrByWidth(l, rx1 - rx0), rx0, y, 0xD0D0D0);
-                y += 11;
+                if (l.isEmpty()) {
+                    y += 6;
+                    continue;
+                }
+                for (var line : font.split(Component.literal(l), rx1 - rx0)) {
+                    g.drawString(font, line, rx0, y, 0xD0D0D0);
+                    y += 11;
+                }
             }
         } else {
             int hx = rx0 + (history.isEmpty() ? 0 : 22);
             item(g, focus, hx, 6, mx, my, true);
             String name = focus.getHoverName().getString();
             g.drawString(font, font.plainSubstrByWidth(name, rx1 - hx - 22), hx + 21, 7, 0xFFFFFF);
-            g.drawString(font, font.plainSubstrByWidth("§7" + (uses ? t("ใช้ทำได้ ", "Used in ") : t("วิธีทำ ", "Made by ")) + shown.size() + t(" สูตร", " recipes")
+            g.drawString(font, font.plainSubstrByWidth("§7" + (uses ? t("ใช้ทำได้ ", "Used in ") : t("วิธีทำ ", "Made by ")) + shown.size() + t(" สูตร", shown.size() == 1 ? " recipe" : " recipes")
                     + "  §9" + modName(BuiltInRegistries.ITEM.getKey(focus.getItem()).getNamespace()), rx1 - hx - 22), hx + 21, 17, 0xFFFFFF);
             for (int i = 0; i < shown.size(); i++) {
                 int[] p = place[i];
@@ -295,8 +301,13 @@ public class RecipeScreen extends Screen {
             g.pose().popPose();
             tx = x + 16;
         }
-        String label = s.label(th()) + (s.shapeless ? "  §8" + t("ไม่ต้องเรียง", "shapeless") : "");
-        g.drawString(font, font.plainSubstrByWidth(label, x + w - tx - 2), tx, y + 3, 0xC8C8C8);
+        String label = font.plainSubstrByWidth(s.label(th()), x + w - tx - 2);
+        g.drawString(font, label, tx, y + 3, 0xC8C8C8);
+        if (s.shapeless) {
+            int sx = tx + font.width(label) + 6;
+            String sl = t("ไม่ต้องเรียง", "shapeless");
+            if (sx + font.width(sl) <= x + w - 2) g.drawString(font, sl, sx, y + 3, 0x707070);
+        }
         // inputs
         int gx = x + 6, gy = y + 15, gridH = s.rows * 18;
         if (gridH < 22) gy += (22 - gridH) / 2;

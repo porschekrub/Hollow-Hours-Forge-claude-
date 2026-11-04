@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.5.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.5.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.6.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.6.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.10.6**
+- Hollow Hours: **recipe book** (like JEI). Press **K**: every item of the game - other mods too - on the right (search by name, `@mod` for one mod), click an item to see how it's made (crafting table, furnace, blast furnace, smoker, campfire, stonecutter, smithing table and other mods' own recipe types), right click to see what it's used for. In any inventory hover an item and press **R** (recipe) or **U** (uses). Click items inside a recipe to follow them, Backspace goes back, hold Shift to stop the cycling. (With JEI installed, R/U stay JEI's; K still opens this book.)
+  Hollow Hours: **สมุดสูตรคราฟ** (แบบ JEI) กด **K** ด้านขวามีของทุกชิ้นในเกม รวมของมอดอื่น (ค้นหาด้วยชื่อ หรือ `@ชื่อมอด`) คลิกซ้าย = ดูวิธีทำ คลิกขวา = ดูว่าใช้ทำอะไร ในกระเป๋า/หีบ ชี้ของแล้วกด **R** (สูตร) หรือ **U** (ใช้ทำ) คลิกของในสูตรเพื่อดูต่อ Backspace = ย้อนกลับ กด Shift ค้าง = หยุดสลับของ
 
 **2.10.5**
 - Helper Buddy: the world-wide "friendly fire" switch from 2.10.4 is gone (players hit each other like normal Minecraft again). Instead every helper has its own switch in Settings: **"May hit other players"** - OFF by default, so your helper never attacks your friends (even when they hit you or it).
