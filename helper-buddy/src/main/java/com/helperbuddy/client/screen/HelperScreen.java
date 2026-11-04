@@ -325,7 +325,7 @@ public class HelperScreen extends Screen {
             {"pickup", "เก็บของที่ตก", "Pick up drops"}, {"chest", "เก็บของเข้าหีบเมื่อเต็ม", "Use chests when full"},
             {"needBlocks", "สร้างด้วยบล็อกจริง", "Build with real blocks"}, {"chestBuild", "เอาบล็อกจากหีบ", "Take blocks from chests"},
             {"keepJunk", "เก็บหิน/ดินทั้งหมด", "Keep all rubble"}, {"selfCare", "ดูแลตัวเอง (กิน/ทำอาหาร)", "Look after itself"},
-            {"torches", "ปักคบเพลิงในเหมือง", "Torches in mines"}, {"teleport", "วาร์ปตามเมื่อไกล", "Teleport when far"}};
+            {"torches", "ปักคบเพลิงในเหมือง", "Torches in mines"}, {"teleport", "วาร์ปตามเมื่อไกล", "Teleport when far"}, {"hitPlayers", "ตีผู้เล่นคนอื่นได้", "May hit other players"}};
     static final String[][] ORE_NAMES = {{"coal", "ถ่านหิน", "Coal"}, {"copper", "ทองแดง", "Copper"}, {"iron", "เหล็ก", "Iron"}, {"gold", "ทอง", "Gold"},
             {"redstone", "เรดสโตน", "Redstone"}, {"lapis", "ลาพิส", "Lapis"}, {"diamond", "เพชร", "Diamond"}, {"emerald", "มรกต", "Emerald"},
             {"nether", "แร่เนเธอร์", "Nether ores"}, {"debris", "เศษโบราณ", "Ancient debris"}};
@@ -345,6 +345,7 @@ public class HelperScreen extends Screen {
             });
             if (i % 2 == 1) y += 22;
         }
+        if (FLAG_NAMES.length % 2 == 1) y += 22;
         y += 6;
         for (int i = 0; i < ORE_NAMES.length; i++) {
             String[] n = ORE_NAMES[i];
@@ -358,9 +359,6 @@ public class HelperScreen extends Screen {
             });
             if (i % 5 == 4) y += 22;
         }
-        boolean pvp = d.getBoolean("pvp");
-        btn(8, y + 4, 304, pvp ? "§c⚔ ตีเพื่อนได้: เปิด §7(ทุกคนในโลก)" : "§a✘ ตีเพื่อนได้: ปิด §7(ทุกคนในโลก)",
-                pvp ? "§c⚔ Friendly fire: ON §7(whole world)" : "§a✘ Friendly fire: OFF §7(whole world)", b -> act("pvp"));
     }
 
     // ------------------------------------------------------------------ talk

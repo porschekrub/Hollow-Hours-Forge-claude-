@@ -53,12 +53,17 @@ public final class Physics {
     }
 
     // ------------------------------------------------------------------ trees
-    static void fell(ServerPlayer p, ServerLevel level, BlockPos stump) {
+    static void fell(ServerPlayer p, ServerLevel level, BlockPos hit) {
+        // the whole tree comes down wherever it was hit: the trunk below the cut goes too (no stump left to chop again)
+        BlockPos stump = hit;
+        while (stump.getY() > level.getMinBuildHeight() && level.getBlockState(stump.below()).is(BlockTags.LOGS) && hit.getY() - stump.getY() < 12)
+            stump = stump.below();
         List<BlockPos> logs = new ArrayList<>();
         ArrayDeque<BlockPos> q = new ArrayDeque<>();
         Set<BlockPos> seen = new HashSet<>();
         q.add(stump);
         seen.add(stump);
+        if (!stump.equals(hit)) logs.add(stump);
         while (!q.isEmpty() && logs.size() < 300) {
             BlockPos c = q.poll();
             for (int dx = -1; dx <= 1; dx++)
@@ -67,7 +72,7 @@ public final class Physics {
                         BlockPos n = c.offset(dx, dy, dz);
                         if (n.getY() < stump.getY() || !seen.add(n)) continue;
                         if (level.getBlockState(n).is(BlockTags.LOGS)) {
-                            logs.add(n);
+                            if (!n.equals(hit)) logs.add(n); // the block that was hit drops by itself
                             q.add(n);
                         }
                     }

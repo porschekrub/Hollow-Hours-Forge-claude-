@@ -277,10 +277,8 @@ public final class FirstPersonAnim {
                 x -= s * 0.05f;
                 rz += s * 9;
             }
-            // jumping for joy, a bump on landing
-            y += 0.17f * up;
-            rz -= s * 16 * up;
-            y -= 0.11f * landK;
+            // a small bump on landing (no arm movement for the jump itself)
+            y -= 0.06f * landK;
         } else {
             // ---------------- scared
             float f = Math.max(Fear.local(partial), 0.35f);
@@ -309,11 +307,8 @@ public final class FirstPersonAnim {
                 z += 0.05f;
                 rx -= 10;
             }
-            // jumping: shielding the face; landing: a hard jolt
-            y += 0.2f * up;
-            x -= s * 0.1f * up;
-            rz += s * 24 * up;
-            y -= 0.13f * landK;
+            // landing: a jolt (no arm movement for the jump itself)
+            y -= 0.07f * landK;
             // flinching at nothing
             float fl = ClientFx.now() - flinchT0 + partial;
             if (fl < 12) {

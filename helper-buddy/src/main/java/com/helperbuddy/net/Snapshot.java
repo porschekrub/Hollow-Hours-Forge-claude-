@@ -61,7 +61,6 @@ public final class Snapshot {
         t.putBoolean("ai", AiBridge.enabled());
         t.putBoolean("aiBuild", AiBridge.enabled() && HBConfig.AI_FOR_BUILDING.get());
         t.putBoolean("thai", th);
-        t.putBoolean("pvp", com.helperbuddy.PvpRule.on(p.server));
         t.putBoolean("freeBuild", HBConfig.FREE_BUILD.get());
         return t;
     }

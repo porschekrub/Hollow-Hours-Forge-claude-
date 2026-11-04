@@ -18,7 +18,6 @@ import net.minecraft.util.Mth;
  * - mining / hitting: hands shaking on every swing
  * - badly hurt: limping, one hand pressed to the side
  * - grabbed by a ghost: kicking and clawing at the air
- * - jumping: arms up to shield the head (before the story: arms thrown up for joy)
  * - eating and drinking: the hand to the mouth, chewing / head tipped back
  * The first-person arm (drawn through this model with all-zero arguments) is left alone.
  */
@@ -200,20 +199,6 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             head.xRot += 0.18f * k + breath * 0.5f;
         }
 
-        // ---- jumping / falling: arms up over the head, knees pulled up
-        if (airborne(p)) {
-            float k = Mth.clamp(0.6f + f, 0, 1);
-            rightArm.xRot = Mth.lerp(k, rightArm.xRot, -2.45f);
-            leftArm.xRot = Mth.lerp(k, leftArm.xRot, -2.45f);
-            rightArm.yRot = Mth.lerp(k, rightArm.yRot, -0.45f);
-            leftArm.yRot = Mth.lerp(k, leftArm.yRot, 0.45f);
-            rightArm.zRot = Mth.lerp(k, rightArm.zRot, 0.25f);
-            leftArm.zRot = Mth.lerp(k, leftArm.zRot, -0.25f);
-            head.xRot += 0.3f * k;
-            rightLeg.xRot = -0.55f;
-            leftLeg.xRot = 0.25f;
-        }
-
         // ---- mining / hitting with shaking hands
         if (attack) {
             rightArm.xRot += Mth.sin(t * 3.1f + seed) * (0.03f + 0.1f * f);
@@ -290,17 +275,6 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             rightArm.zRot += 0.3f;
             leftArm.zRot -= 0.3f;
             head.zRot += Mth.sin(t * 0.3f) * 0.12f;
-        }
-        if (airborne(p)) {
-            // a jump for joy: arms up wide, legs kicked
-            rightArm.xRot = -2.85f;
-            leftArm.xRot = -2.85f;
-            rightArm.zRot = 0.5f;
-            leftArm.zRot = -0.5f;
-            rightArm.yRot = leftArm.yRot = 0;
-            rightLeg.xRot = -0.45f;
-            leftLeg.xRot = 0.6f;
-            head.xRot -= 0.15f;
         }
         if (hp < 0.35f && moving) {
             float k = 1 - hp / 0.35f;

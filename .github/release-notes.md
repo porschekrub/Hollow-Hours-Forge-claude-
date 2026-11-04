@@ -1,12 +1,18 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.4.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.4.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.10.5.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.10.5.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
 
-**2.10.4**
-- Helper Buddy: **friendly fire is OFF by default** - players can't hurt each other (sword, arrows, tridents, potions) and helpers never attack other players. Turn it on for the whole world in any helper's menu → Settings → "Friendly fire" (everyone gets a chat message when it changes).
-  Helper Buddy: **ปิดการตีเพื่อนเป็นค่าเริ่มต้น** ผู้เล่นตีกันไม่โดน (ดาบ ธนู ตรีศูล ยา) และผู้ช่วยจะไม่ตีผู้เล่นคนอื่น เปิดได้ที่เมนูผู้ช่วย → ตั้งค่า → "ตีเพื่อนได้" (มีผลทั้งโลก และทุกคนจะเห็นข้อความแจ้ง)
+**2.10.5**
+- Helper Buddy: the world-wide "friendly fire" switch from 2.10.4 is gone (players hit each other like normal Minecraft again). Instead every helper has its own switch in Settings: **"May hit other players"** - OFF by default, so your helper never attacks your friends (even when they hit you or it).
+  Helper Buddy: เอาระบบ "ตีเพื่อน" ของ 2.10.4 ออกแล้ว (ผู้เล่นตีกันได้ตามปกติ) แทนด้วยปุ่มในตั้งค่าของผู้ช่วยแต่ละตัว **"ตีผู้เล่นคนอื่นได้"** เริ่มต้นปิด ผู้ช่วยจะไม่ตีเพื่อนเราเลย (ถึงเพื่อนจะตีเราหรือตีผู้ช่วย)
+- Hollow Hours: jumping no longer moves your hands/item up to your face, and the body's jump pose (arms over the head) is gone.
+  Hollow Hours: กระโดดแล้วมือ/ของในมือไม่ตบหน้าแล้ว และเอาท่ากระโดดยกแขนของตัวละครออก
+- Hollow Hours: dropped tools, buckets, bottles and other 3D items lie flat on the ground instead of standing upright.
+  Hollow Hours: ของที่ดรอป (เครื่องมือ ถัง ขวด ไอเท็ม 3D) นอนราบกับพื้น ไม่ตั้งตรงแล้ว
+- Hollow Hours: a tree falls in one go wherever you chop it - the trunk below the cut comes down too, no stump left to chop again.
+  Hollow Hours: ตัดต้นไม้ตรงไหนก็ล้มทั้งต้นในครั้งเดียว ลำต้นด้านล่างล้มไปด้วย ไม่ต้องตีตอซ้ำ
 
 **2.10.3**
 - AI (both mods): the default Gemini model is now `gemini-flash-lite-latest` (works with free API keys). Leave `model = ""` in the config to use it.

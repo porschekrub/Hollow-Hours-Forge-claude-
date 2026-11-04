@@ -25,6 +25,7 @@ public final class Settings {
         DEFAULTS.put("selfCare", true);    // eat, cook and go find food when hungry
         DEFAULTS.put("torches", true);     // place torches in dark places while working (if it has any)
         DEFAULTS.put("teleport", true);    // teleport to the owner when left far behind
+        DEFAULTS.put("hitPlayers", false); // may attack other players (friends) - off: never hits a player
     }
 
     private final Map<String, Boolean> flags = new LinkedHashMap<>(DEFAULTS);

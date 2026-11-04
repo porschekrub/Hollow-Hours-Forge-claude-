@@ -38,7 +38,8 @@ public class ItemPhysicsRenderer extends ItemEntityRenderer {
         if (stack.isEmpty()) return;
         rnd.setSeed(net.minecraft.world.item.Item.getId(stack.getItem()) * 31L + e.getId());
         BakedModel model = items.getModel(stack, e.level(), null, e.getId());
-        boolean block = model.isGui3d();
+        // only real blocks sit as little cubes; everything else (3D tools, buckets, bottles too) lies down
+        boolean block = stack.getItem() instanceof net.minecraft.world.item.BlockItem && model.isGui3d();
         int copies = stack.getCount() > 48 ? 5 : stack.getCount() > 32 ? 4 : stack.getCount() > 16 ? 3 : stack.getCount() > 1 ? 2 : 1;
         float restYaw = (e.getId() * 47 % 360);
         boolean resting = e.onGround() || e.isInWater() && Math.abs(e.getDeltaMovement().y) < 0.02;

@@ -25,7 +25,6 @@ public final class HBEvents {
 
     public static void register(IEventBus bus) {
         bus.addListener(EventPriority.HIGH, HBEvents::chat);
-        bus.addListener(EventPriority.HIGH, PvpRule::attack);
         bus.addListener(HBEvents::hurt);
         bus.addListener(HBEvents::login);
         bus.addListener(HBEvents::started);

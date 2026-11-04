@@ -43,7 +43,6 @@ public final class SmokeTest {
         server = s;
         try {
             staticChecks();
-            check(!PvpRule.on(s), "friendly fire is off by default");
             ServerLevel level = s.overworld();
             BlockPos sp = level.getSharedSpawnPos();
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());

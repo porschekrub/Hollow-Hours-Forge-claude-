@@ -67,9 +67,8 @@ public final class Actions {
             case "toggle" -> {
                 String k = a.getString("k");
                 h.settings.set(k, !h.settings.get(k));
-                if (k.equals("fight") && !h.settings.get("fight")) h.brain().combat().setTarget(null, false, false);
+                if ((k.equals("fight") || k.equals("hitPlayers")) && !h.settings.get(k)) h.brain().combat().setTarget(null, false, false);
             }
-            case "pvp" -> com.helperbuddy.PvpRule.toggle(p);
             case "ore" -> {
                 String k = a.getString("k");
                 h.settings.setOre(k, !h.settings.ore(k));
