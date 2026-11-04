@@ -38,6 +38,7 @@ public class HelperScreen extends Screen {
         super(Component.literal(data.getString("name")));
         this.d = data;
         this.tab = tab;
+        com.helperbuddy.client.recipes.RecipeScreen.thaiHint = data.getBoolean("thai");
     }
 
     boolean th() {

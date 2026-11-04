@@ -5,5 +5,7 @@
  "item.helperbuddy.command_book": "หนังสือสั่งงาน",
  "item.helperbuddy.command_book.tip": "สั่งผู้ช่วยได้จากทุกที่",
  "item.helperbuddy.helper_spawn_egg": "ไข่เรียกผู้ช่วย",
- "itemGroup.helperbuddy": "Helper Buddy"
+ "itemGroup.helperbuddy": "Helper Buddy",
+ "key.helperbuddy.recipes": "สมุดสูตรคราฟ (ดูสูตรทั้งหมด)",
+ "key.categories.helperbuddy": "Helper Buddy"
 }
