@@ -250,39 +250,6 @@ public final class ClientSmoke {
             if (t == 22) mc.setScreen(null);
             return t >= 24;
         });
-        // the recipe book: how things are made, what they are used for, the item list
-        STEPS.add(t -> {
-            if (t == 0) {
-                com.helperbuddy.client.recipes.RecipeIndex.clear();
-                mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE), false));
-                int n = com.helperbuddy.client.recipes.RecipeIndex.recipeCount(), items = com.helperbuddy.client.recipes.RecipeIndex.items().size();
-                HelperBuddy.LOG.info("[client smoke] recipe book: {} items, {} recipes", items, n);
-                if (n < 500 || items < 800) HelperBuddy.LOG.error("[client smoke] FAILED: recipe book index too small ({} items, {} recipes) (com.helperbuddy)", items, n);
-                int pick = com.helperbuddy.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE), false).size();
-                int ingot = com.helperbuddy.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), true).size();
-                int sword = com.helperbuddy.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SWORD), false).size();
-                HelperBuddy.LOG.info("[client smoke] recipe book: iron pickaxe made by {}, iron ingot used in {}, netherite sword made by {}", pick, ingot, sword);
-                if (pick < 1 || ingot < 20 || sword < 1) HelperBuddy.LOG.error("[client smoke] FAILED: recipe lookups wrong (com.helperbuddy)");
-            }
-            if (t == 15) shot("recipes_iron_pickaxe");
-            if (t == 16) mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), true));
-            if (t == 30) shot("recipes_uses_iron_ingot");
-            if (t == 31) mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SWORD), false));
-            if (t == 45) shot("recipes_smithing");
-            if (t == 46) mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), false));
-            if (t == 60) shot("recipes_smelting");
-            if (t == 61) mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(null, net.minecraft.world.item.ItemStack.EMPTY, false));
-            if (t == 75) shot("recipes_browser");
-            if (t == 76) mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
-            if (t == 80) mc.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(mc.screen, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TORCH), false));
-            if (t == 94) shot("recipes_from_inventory");
-            if (t == 95 && mc.screen != null) mc.screen.onClose();
-            if (t == 100) {
-                if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.InventoryScreen)) HelperBuddy.LOG.error("[client smoke] FAILED: closing the recipe book did not go back to the inventory (com.helperbuddy)");
-                mc.setScreen(null);
-            }
-            return t >= 102;
-        });
         // dying keeps the command book: it comes back on respawn
         final int[] deadAt = {-1};
         STEPS.add(t -> {

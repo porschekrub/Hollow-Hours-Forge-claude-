@@ -781,5 +781,7 @@
  "hollowhours.rescue.app.nobody": "Nobody is coming anymore.",
  "hollowhours.rescue.app.navigate": "Navigate to the helicopter",
  "hollowhours.chat.dad.hello": "Hey kiddo. Settled in at the new place? Call me if you need anything.",
- "hollowhours.chat.failed.nosignal": "✗ No signal (they're dead, waiting to respawn)"
+ "hollowhours.chat.failed.nosignal": "✗ No signal (they're dead, waiting to respawn)",
+ "key.hollowhours.recipes": "Recipe book (all recipes)",
+ "key.categories.hollowhours": "Hollow Hours"
 }

@@ -1,6 +1,6 @@
-package com.helperbuddy.client.recipes;
+package com.hollowhours.client.recipes;
 
-import com.helperbuddy.HelperBuddy;
+import com.hollowhours.HollowHours;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,7 +21,7 @@ import org.lwjgl.glfw.GLFW;
 import java.lang.reflect.Field;
 
 /** K opens the recipe book; in any inventory, hovering an item and pressing R (recipes) or U (uses) opens it there. */
-@Mod.EventBusSubscriber(modid = HelperBuddy.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = HollowHours.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class RecipeEvents {
     private RecipeEvents() {}
 

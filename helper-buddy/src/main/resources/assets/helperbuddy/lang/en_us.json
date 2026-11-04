@@ -5,7 +5,5 @@
  "item.helperbuddy.command_book": "Command Book",
  "item.helperbuddy.command_book.tip": "Order your helpers from anywhere",
  "item.helperbuddy.helper_spawn_egg": "Helper Spawn Egg",
- "itemGroup.helperbuddy": "Helper Buddy",
- "key.helperbuddy.recipes": "Recipe book (all recipes)",
- "key.categories.helperbuddy": "Helper Buddy"
+ "itemGroup.helperbuddy": "Helper Buddy"
 }

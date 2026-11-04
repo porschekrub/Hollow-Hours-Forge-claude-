@@ -1,6 +1,6 @@
-package com.helperbuddy.client.recipes;
+package com.hollowhours.client.recipes;
 
-import com.helperbuddy.HelperBuddy;
+import com.hollowhours.HollowHours;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -131,7 +131,7 @@ public final class RecipeIndex {
                 seen.add(s.getItem());
             }
         } catch (Throwable ex) {
-            HelperBuddy.LOG.warn("[recipes] creative tabs could not be read", ex);
+            HollowHours.LOG.warn("[recipes] creative tabs could not be read", ex);
         }
         for (Item it : BuiltInRegistries.ITEM)
             if (it != Items.AIR && !seen.contains(it) && it.isEnabled(features)) {
@@ -165,7 +165,7 @@ public final class RecipeIndex {
         all = shown;
         byOut = outs;
         byIn = ins;
-        HelperBuddy.LOG.info("[recipes] {} items, {} recipes indexed ({} skipped) in {} ms", list.size(), shown.size(), failed, (System.nanoTime() - t0) / 1_000_000);
+        HollowHours.LOG.info("[recipes] {} items, {} recipes indexed ({} skipped) in {} ms", list.size(), shown.size(), failed, (System.nanoTime() - t0) / 1_000_000);
     }
 
     public static synchronized List<ItemStack> items() {

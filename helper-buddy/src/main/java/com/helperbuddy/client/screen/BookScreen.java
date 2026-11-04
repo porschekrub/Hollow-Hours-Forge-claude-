@@ -25,7 +25,6 @@ public class BookScreen extends Screen {
     public BookScreen(CompoundTag data) {
         super(Component.literal("Helper Buddy"));
         this.d = data;
-        com.helperbuddy.client.recipes.RecipeScreen.thaiHint = data.getBoolean("thai");
     }
 
     boolean th() {
@@ -57,8 +56,6 @@ public class BookScreen extends Screen {
             addRenderableWidget(Button.builder(Component.literal(t("เรียก", "Call")), b -> HBNet.toServer(new C2SAction(id, uuid, "come", new CompoundTag())))
                     .bounds(left + W - 54, y, 50, 20).build());
         }
-        addRenderableWidget(Button.builder(Component.literal(t("สูตรคราฟ (K)", "Recipes (K)")), b -> minecraft.setScreen(new com.helperbuddy.client.recipes.RecipeScreen(this, net.minecraft.world.item.ItemStack.EMPTY, false)))
-                .bounds(left + W - 84, top + 2, 80, 14).build());
         box = new EditBox(font, left + 4, top + 34 + rows * 24, W - 66, 20, Component.literal("talk"));
         box.setMaxLength(300);
         addRenderableWidget(box);

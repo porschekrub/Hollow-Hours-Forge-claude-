@@ -233,6 +233,42 @@ public final class ClientSmoke {
             });
             return t >= 30;
         });
+        // the recipe book (K): how things are made, what they are used for, every item of every mod
+        STEPS.add(t -> {
+            if (t == 0) {
+                com.hollowhours.client.recipes.RecipeIndex.clear();
+                mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE), false));
+                int n = com.hollowhours.client.recipes.RecipeIndex.recipeCount(), items = com.hollowhours.client.recipes.RecipeIndex.items().size();
+                HollowHours.LOG.info("[client smoke] recipe book: {} items, {} recipes", items, n);
+                if (n < 500 || items < 800) HollowHours.LOG.error("[client smoke] recipe book index too small ({} items, {} recipes) (com.hollowhours)", items, n);
+                int pick = com.hollowhours.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_PICKAXE), false).size();
+                int ingot = com.hollowhours.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), true).size();
+                int sword = com.hollowhours.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SWORD), false).size();
+                int mod = com.hollowhours.client.recipes.RecipeIndex.forItem(new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.FLASHLIGHT.get()), false).size();
+                HollowHours.LOG.info("[client smoke] recipe book: iron pickaxe made by {}, iron ingot used in {}, netherite sword made by {}, flashlight made by {}", pick, ingot, sword, mod);
+                if (pick < 1 || ingot < 20 || sword < 1) HollowHours.LOG.error("[client smoke] recipe lookups are wrong (com.hollowhours)");
+            }
+            if (t == 15) shot("recipes_iron_pickaxe");
+            if (t == 16) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), true));
+            if (t == 30) shot("recipes_uses_iron_ingot");
+            if (t == 31) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SWORD), false));
+            if (t == 45) shot("recipes_smithing");
+            if (t == 46) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT), false));
+            if (t == 60) shot("recipes_smelting");
+            if (t == 61) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, new net.minecraft.world.item.ItemStack(com.hollowhours.registry.HHItems.FLASHLIGHT.get()), false));
+            if (t == 75) shot("recipes_mod_item");
+            if (t == 76) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(null, net.minecraft.world.item.ItemStack.EMPTY, false));
+            if (t == 90) shot("recipes_browser");
+            if (t == 91) mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+            if (t == 95) mc.setScreen(new com.hollowhours.client.recipes.RecipeScreen(mc.screen, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.TORCH), false));
+            if (t == 109) shot("recipes_from_inventory");
+            if (t == 110 && mc.screen != null) mc.screen.onClose();
+            if (t == 115) {
+                if (!(mc.screen instanceof net.minecraft.client.gui.screens.inventory.InventoryScreen)) HollowHours.LOG.error("[client smoke] closing the recipe book did not go back to the inventory (com.hollowhours)");
+                mc.setScreen(null);
+            }
+            return t >= 118;
+        });
 
         // before the story: a normal world and a happy player
         STEPS.add(t -> {

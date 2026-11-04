@@ -1,6 +1,6 @@
-package com.helperbuddy.client.recipes;
+package com.hollowhours.client.recipes;
 
-import com.helperbuddy.client.recipes.RecipeIndex.Shown;
+import com.hollowhours.client.recipes.RecipeIndex.Shown;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -31,9 +31,6 @@ import java.util.Optional;
  * = what it is used in; click any item inside a recipe to follow it, Backspace / the arrow goes back.
  */
 public class RecipeScreen extends Screen {
-    /** Set by the helper screens: the player talks Thai to their helper. */
-    @Nullable
-    public static Boolean thaiHint;
     static String query = "";
     static int savedListPage;
 
@@ -64,7 +61,6 @@ public class RecipeScreen extends Screen {
     }
 
     static boolean th() {
-        if (thaiHint != null) return thaiHint;
         String l = Minecraft.getInstance().getLanguageManager().getSelected();
         return l != null && l.toLowerCase(Locale.ROOT).startsWith("th");
     }
