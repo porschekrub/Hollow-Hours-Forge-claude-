@@ -84,8 +84,8 @@ jobs:
           cp run/options.txt $M/options.txt
           printf "earlyWindowControl = false\n" > $M/config/fml.toml
           export LIBGL_ALWAYS_SOFTWARE=1
-          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M forge:1.21.1 -u Dev --join-world smoke --resolution 960x540 \
-              --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true,-Xmx3G > prod-client.log 2>&1 || true
+          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M forge:1.21.1 -u Dev --resolution 960x540 \
+              --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true,-Dhollowhours.menuload=true,-Dhelperbuddy.menuload=true,-Xmx3G > prod-client.log 2>&1 || true
           grep -a "forge" prod-client.log | head -5
           cp $M/logs/latest.log prod-client-latest.log || true
           mkdir -p run/screenshots-prod && cp -r $M/screenshots/* run/screenshots-prod/ 2>/dev/null || true

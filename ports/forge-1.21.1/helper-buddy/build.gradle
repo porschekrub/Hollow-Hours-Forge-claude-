@@ -48,7 +48,9 @@ minecraft {
             systemProperty 'helperbuddy.clientsmoke', System.getenv('HELPER_CLIENTSMOKE') ?: 'false'
             systemProperty 'helperbuddy.promo', System.getenv('HOLLOW_PROMO') ?: 'false'
             if (System.getenv('HELPER_CLIENTSMOKE')) {
-                args '--quickPlaySingleplayer', 'smoke', '--width', System.getenv('MC_WIDTH') ?: '960', '--height', System.getenv('MC_HEIGHT') ?: '540'
+                // Forge 1.21 loses its loot modifiers when a world is opened by quick play: the test opens it from the title screen
+                systemProperty 'helperbuddy.menuload', 'true'
+                args '--width', System.getenv('MC_WIDTH') ?: '960', '--height', System.getenv('MC_HEIGHT') ?: '540'
             }
         }
         register('server') {

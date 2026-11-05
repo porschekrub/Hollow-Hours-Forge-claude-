@@ -220,6 +220,23 @@ def drop_unused_imports(text):
     return '\n'.join(lines)
 
 
+# Fabric: the Forge API the shared code uses is provided by the mod's own small "shim" (fired from Fabric hooks); the
+# config classes come from the Forge Config API Port library, which keeps their Forge names
+FABRIC_KEEP = ('net.minecraftforge.common.ForgeConfigSpec', 'net.minecraftforge.fml.config.ModConfig')
+
+
+def rename_fabric(text, shim):
+    keep = {}
+    for i, k in enumerate(FABRIC_KEEP):
+        token = '\x00KEEP%d\x00' % i
+        keep[token] = k
+        text = text.replace(k, token)
+    text = text.replace('net.minecraftforge.', shim + '.')
+    for token, k in keep.items():
+        text = text.replace(token, k)
+    return text
+
+
 def rename_neo(text):
     for a, b in NEO_RENAMES:
         text = text.replace(a, b)
@@ -299,6 +316,7 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--flags', default='')
     ap.add_argument('--check')
+    ap.add_argument('--shim', default='')
     a = ap.parse_args()
 
     if a.check:
@@ -348,6 +366,8 @@ def main():
                     text = '\n'.join(vertex_chain_121(l) for l in text.split('\n'))
                 if neo:
                     text = rename_neo(text)
+                if flags.get('FABRIC') and a.shim:
+                    text = rename_fabric(text, a.shim)
                 text = drop_unused_imports(text)
                 write_if_changed(os.path.join(a.out, kind, rel), text, produced)
             else:
