@@ -102,7 +102,7 @@ public final class ClientSetup {
     //$$         else e.registerAbove(above, HollowHours.id(l.name()), draw);
     //$$     }
     //$$ }
-    //#elif MC>=12100
+    //#elif MC>=12100 && !FABRIC
     //$$ @SubscribeEvent
     //$$ public static void overlays(net.minecraftforge.client.event.AddGuiOverlayLayersEvent e) {
     //$$     var root = e.getLayeredDraw();

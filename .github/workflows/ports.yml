@@ -28,6 +28,8 @@ jobs:
           - { target: forge-1.21.1, project: helper-buddy }
           - { target: fabric-1.20.1, project: helper-buddy }
           - { target: fabric-1.21.1, project: helper-buddy }
+          - { target: fabric-1.20.1, project: hollow-hours }
+          - { target: fabric-1.21.1, project: hollow-hours }
     defaults:
       run:
         working-directory: ports/${{ matrix.target }}/${{ matrix.project }}
@@ -72,12 +74,12 @@ jobs:
           printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:6\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nguiScale:2\n" > run/options.txt
           mkdir -p run/config && printf "earlyWindowControl = false\n" > run/config/fml.toml
           export HOLLOW_CLIENTSMOKE=true HELPER_CLIENTSMOKE=true LIBGL_ALWAYS_SOFTWARE=1
-          for try in 1 2; do
+          for try in 1 2 3; do
             rm -f run/logs/latest.log
             timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" ./gradlew runClient --no-daemon > client.log 2>&1 || true
-            # a download of the game's assets that timed out: once more
-            grep -q "HttpTimeoutException\|SocketTimeoutException\|Connection reset" client.log && [ ! -f run/logs/latest.log ] || break
-            echo "download failed, trying again"
+            # a download of the game's assets that failed (Mojang's servers): again, a little later
+            grep -q "HttpTimeoutException\|SocketTimeoutException\|Connection reset\|Failed to download" client.log && [ ! -f run/logs/latest.log ] || break
+            echo "download failed, trying again"; sleep 30
           done
           cp run/logs/latest.log client-latest.log || true
           tail -n 60 client-latest.log || tail -n 80 client.log
@@ -108,8 +110,13 @@ jobs:
           cp run/options.txt $M/options.txt
           printf "earlyWindowControl = false\n" > $M/config/fml.toml
           export LIBGL_ALWAYS_SOFTWARE=1
-          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev $JOIN --resolution 960x540 \
-              --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true$MENU,-Xmx3G > prod-client.log 2>&1 || true
+          for try in 1 2 3; do
+            rm -f $M/logs/latest.log
+            timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev $JOIN --resolution 960x540 \
+                --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true$MENU,-Xmx3G > prod-client.log 2>&1 || true
+            [ -f $M/logs/latest.log ] && break
+            echo "the game did not start (downloads?), trying again"; sleep 30
+          done
           grep -a "Loading version\|forge\|fabric" prod-client.log | head -5
           cp $M/logs/latest.log prod-client-latest.log || true
           mkdir -p run/screenshots-prod && cp -r $M/screenshots/* run/screenshots-prod/ 2>/dev/null || true

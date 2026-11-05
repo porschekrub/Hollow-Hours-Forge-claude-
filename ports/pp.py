@@ -234,7 +234,40 @@ FABRIC_RENAMES_RE = [
     (r'\.getSoundType\((?:[^(),]|\([^()]*\))+,(?:[^(),]|\([^()]*\))+,(?:[^(),]|\([^()]*\))+\)', '.getSoundType()'),
     (r'\bItemStack (\w+) = (\w+)\.getCraftingRemainingItem\(\)', r'ItemStack \1 = \2.getRecipeRemainder()'),
     (r'\b(\w+)\.getLanguage\(\)', r'net.minecraftforge.internal.Lang.of(\1)'),
+    (r'\bnew SimpleParticleType\((\w+)\)', r'net.fabricmc.fabric.api.particle.v1.FabricParticleTypes.simple(\1)'),
+    (r'\b(\w+)\.setForcedPose\(', r'net.minecraftforge.internal.Poses.force(\1, '),
+    (r'\bnew KeyMapping\(([^,]+), (?:[\w.]*KeyConflictContext\.\w+), ', r'new KeyMapping(\1, '),
+    (r', (?:[\w.]*ModelData\.EMPTY), (?:null|RenderType\.\w+\(\))\)', ')'),
+    (r'\b(\w+)\.getSlotUnderMouse\(\)', r'net.minecraftforge.internal.ClientExt.hoveredSlot(\1)'),
+    (r'\b(\w+)\.getModelManager\(\)\.getModel\(', r'net.minecraftforge.internal.ClientExt.model(\1.getModelManager(), '),
+    (r'\bnet\.minecraftforge\.common\.util\.FakePlayer\b', 'net.fabricmc.fabric.api.entity.FakePlayer'),
+    (r'\bIShapedRecipe<\?>', 'net.minecraft.world.item.crafting.ShapedRecipe'),
+    (r'\.getRecipeWidth\(\)', '.getWidth()'),
+    (r'\.getRecipeHeight\(\)', '.getHeight()'),
+    (r'\b([\w.]+\.key[A-Z]\w*)\.getKey\(\)', r'net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper.getBoundKeyOf(\1)'),
 ]
+
+# Forge's extra methods on Minecraft classes, overridden in the mods: on Fabric they are plain methods (no @Override,
+# no super call); the shim calls the ones that matter (see internal.Ext)
+FORGE_ONLY_METHODS = ('onAddedToWorld', 'onRemovedFromWorld', 'shouldRiderSit', 'canRiderInteract', 'shouldCauseReequipAnimation',
+                      'canApplyAtEnchantingTable', 'initializeClient')
+
+
+def fabric_forge_methods(text, flags):
+    names = '|'.join(FORGE_ONLY_METHODS)
+    text = re.sub(r'@Override(\s*\n\s*public [\w<>\[\], .]+? (?:' + names + r')\()', r'\1', text)
+    text = re.sub(r'\bsuper\.(?:' + names + r')\([^;]*\);', '', text)
+    # the re-equip animation: Fabric asks the item when only the stack's data changed
+    # (on the same line: line numbers stay the same)
+    m = re.search(r'\n(\s*)public boolean shouldCauseReequipAnimation\(', text)
+    if m:
+        name = 'allowComponentsUpdateAnimation' if flags.get('MC', 0) >= 12100 else 'allowNbtUpdateAnimation'
+        bridge = (f'@Override public boolean {name}(net.minecraft.world.entity.player.Player shimPlayer, net.minecraft.world.InteractionHand shimHand,'
+                  f' net.minecraft.world.item.ItemStack shimOld, net.minecraft.world.item.ItemStack shimNew) {{'
+                  f' return shouldCauseReequipAnimation(shimOld, shimNew, false); }} ')
+        at = m.end(1)
+        text = text[:at] + bridge + text[at:]
+    return text
 
 
 def rename_fabric(text, shim):
@@ -491,6 +524,7 @@ def main():
                 text = fabric_listeners(text, index, rel)
                 for x, y in FABRIC_RENAMES_RE:
                     text = re.sub(x, y, text)
+                text = fabric_forge_methods(text, flags)
                 text = PERSISTENT.sub(r'net.minecraftforge.internal.Persist.of(\1)', text)
             if neo:
                 text = rename_neo(text)

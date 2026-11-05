@@ -7,7 +7,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.internal.Hooks;
+import net.minecraftforge.internal.Poses;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +20,34 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
-public abstract class PlayerMixin {
+public abstract class PlayerMixin implements Poses.Holder {
+    @Unique
+    private Pose shim$pose;
+
+    @Override
+    public Pose shim$forcedPose() {
+        return shim$pose;
+    }
+
+    @Override
+    public void shim$forcePose(Pose pose) {
+        shim$pose = pose;
+    }
+
+    /** Forge's forced pose wins over the one the player would take. */
+    @Inject(method = "updatePlayerPose", at = @At("HEAD"), cancellable = true)
+    private void shim$pose(CallbackInfo ci) {
+        if (shim$pose != null) {
+            ((Player) (Object) this).setPose(shim$pose);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+    private void shim$attack(Entity target, CallbackInfo ci) {
+        if (Hooks.post(new AttackEntityEvent((Player) (Object) this, target))) ci.cancel();
+    }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void shim$tickStart(CallbackInfo ci) {
         Hooks.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.START, (Player) (Object) this));

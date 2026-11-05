@@ -45,7 +45,7 @@ public final class Hud {
         //$$     case BOSS -> net.neoforged.neoforge.client.gui.VanillaGuiLayers.BOSS_OVERLAY;
         //$$     case TOP -> null;
         //$$ };
-        //#elif MC>=12100
+        //#elif MC>=12100 && !FABRIC
         //$$ return switch (a) {
         //$$     case CHAT -> net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.CHAT_OVERLAY;
         //$$     case FOOD, ARMOR -> net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.HOTBAR;
@@ -84,7 +84,7 @@ public final class Hud {
     }
 
     // the next free row above the hotbar on the right (food side) and the left (health side)
-    //#if MC>=12100 && !NEOFORGE
+    //#if (MC>=12100 && !NEOFORGE) || FABRIC
     //$$ private static int extraRight, extraLeft;
     //$$ private static long frame = -1;
     //$$ private static void sync() {

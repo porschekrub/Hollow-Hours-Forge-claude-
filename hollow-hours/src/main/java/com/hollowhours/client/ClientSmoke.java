@@ -57,7 +57,7 @@ public final class ClientSmoke {
     //$$ public static void promoOverlays(net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre e) {
     //$$     if (!ON || !PROMO) return;
     //$$     String id = e.getName().toString();
-    //#elif MC>=12100
+    //#elif MC>=12100 && !FABRIC
     //$$ public static void promoOverlays(net.minecraftforge.client.event.RenderLevelStageEvent e) {
     //$$     if (!ON || !PROMO) return;
     //$$     String id = "";

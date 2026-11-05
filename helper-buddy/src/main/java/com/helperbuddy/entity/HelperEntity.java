@@ -411,7 +411,10 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     //$$     return false;
     //$$ }
     //#elif MC>=12100
-    //$$ // Fabric 1.21: the entity type is in the tag minecraft:can_breathe_under_water (ports/fabric-common)
+    //$$ /** Fabric 1.21 (canBreatheUnderwater is final): asked by the shim's LivingEntity mixin. */
+    //$$ public boolean breathesUnderwater() {
+    //$$     return true;
+    //$$ }
     //#else
     @Override
     public boolean canBreatheUnderwater() {

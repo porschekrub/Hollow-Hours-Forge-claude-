@@ -124,6 +124,15 @@ public final class Net {
     }
     //#endif
 
+    /** A message as a ready packet (to send with others, in a bundle). */
+    public net.minecraft.network.protocol.Packet<?> packet(Object msg) {
+        //#if MC>=12100
+        //$$ return ServerPlayNetworking.createS2CPacket(wrap(msg));
+        //#else
+        return ServerPlayNetworking.createS2CPacket(entry(msg).id, write(msg));
+        //#endif
+    }
+
     public void toPlayer(ServerPlayer p, Object msg) {
         if (p == null || p.connection == null || p instanceof net.fabricmc.fabric.api.entity.FakePlayer) return;
         //#if MC>=12100

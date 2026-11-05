@@ -18,7 +18,7 @@ import net.minecraftforge.client.model.data.ModelData;
 
 /** A headstone on a mound of earth, with the owner's name and the time left above it. */
 public class GraveRenderer extends EntityRenderer<GraveEntity> {
-    //#if MC>=12100
+    //#if MC>=12100 && !FABRIC
     //$$ public static final net.minecraft.client.resources.model.ModelResourceLocation MODEL = com.hollowhours.compat.ClientCompat.model("block/grave");
     //#else
     public static final ResourceLocation MODEL = HollowHours.id("block/grave");

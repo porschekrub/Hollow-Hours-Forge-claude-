@@ -7,7 +7,11 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.internal.Drops;
+import net.minecraftforge.internal.Hooks;
+import org.spongepowered.asm.mixin.Shadow;
 import net.minecraftforge.internal.Persist;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -52,6 +56,33 @@ public abstract class EntityMixin implements Persist.Holder, Drops.Holder {
     @Inject(method = "load", at = @At("RETURN"))
     private void shim$load(CompoundTag tag, CallbackInfo ci) {
         if (tag.contains(SHIM_KEY, Tag.TAG_COMPOUND)) shim$data = tag.getCompound(SHIM_KEY);
+    }
+
+    @Shadow
+    private Entity vehicle;
+
+    @Shadow
+    public abstract Level level();
+
+    @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z", at = @At("HEAD"), cancellable = true)
+    private void shim$mount(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
+        Entity self = (Entity) (Object) this;
+        if (vehicle != self.getVehicle() && Hooks.post(new EntityMountEvent(self, vehicle, level(), true))) cir.setReturnValue(false);
+    }
+
+    @Inject(method = "removeVehicle", at = @At("HEAD"), cancellable = true)
+    private void shim$dismount(CallbackInfo ci) {
+        if (vehicle != null && Hooks.post(new EntityMountEvent((Entity) (Object) this, vehicle, level(), false))) ci.cancel();
+    }
+
+    @Inject(method = "changeDimension", at = @At("HEAD"), cancellable = true)
+    //#if MC>=12100
+    //$$ private void shim$travel(net.minecraft.world.level.portal.DimensionTransition to, CallbackInfoReturnable<Entity> cir) {
+    //$$     if (Hooks.post(new EntityTravelToDimensionEvent((Entity) (Object) this, to.newLevel().dimension()))) cir.setReturnValue(null);
+    //#else
+    private void shim$travel(net.minecraft.server.level.ServerLevel to, CallbackInfoReturnable<Entity> cir) {
+        if (Hooks.post(new EntityTravelToDimensionEvent((Entity) (Object) this, to.dimension()))) cir.setReturnValue(null);
+    //#endif
     }
 
     @WrapOperation(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;",

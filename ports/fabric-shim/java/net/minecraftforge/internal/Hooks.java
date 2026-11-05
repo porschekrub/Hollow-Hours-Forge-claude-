@@ -11,6 +11,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,6 +82,22 @@ public final class Hooks {
         ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((p, from, to) ->
                 post(new PlayerEvent.PlayerChangedDimensionEvent(p, from.dimension(), to.dimension())));
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((e, src, amount) -> !post(new LivingAttackEvent(e, src, amount)));
+        ServerEntityEvents.ENTITY_LOAD.register((e, l) -> Ext.call(e, "onAddedToWorld"));
+        ServerEntityEvents.ENTITY_UNLOAD.register((e, l) -> Ext.call(e, "onRemovedFromWorld"));
+        PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, be) -> !post(new BlockEvent.BreakEvent(level, pos, state, player)));
+        UseBlockCallback.EVENT.register((player, level, hand, hit) -> {
+            PlayerInteractEvent.RightClickBlock e = new PlayerInteractEvent.RightClickBlock(player, hand, hit);
+            if (!post(e)) return InteractionResult.PASS;
+            // cancelled: nothing more happens (Fabric goes on with PASS, so "nothing" is FAIL here)
+            return e.getCancellationResult() == InteractionResult.PASS ? InteractionResult.FAIL : e.getCancellationResult();
+        });
+        UseItemCallback.EVENT.register((player, level, hand) -> {
+            PlayerInteractEvent.RightClickItem e = new PlayerInteractEvent.RightClickItem(player, hand);
+            if (!post(e)) return InteractionResultHolder.pass(player.getItemInHand(hand));
+            InteractionResult r = e.getCancellationResult();
+            return r == InteractionResult.PASS || r == InteractionResult.FAIL ? InteractionResultHolder.fail(player.getItemInHand(hand))
+                    : new InteractionResultHolder<>(r, player.getItemInHand(hand));
+        });
         EntitySleepEvents.STOP_SLEEPING.register((e, pos) -> {
             if (e instanceof Player p) post(new PlayerWakeUpEvent(p, false, false));
         });

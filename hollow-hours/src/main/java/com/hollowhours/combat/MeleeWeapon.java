@@ -19,7 +19,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+//#if FABRIC
+//$$
+//#else
 import net.minecraftforge.common.ForgeMod;
+//#endif
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -105,7 +109,11 @@ public class MeleeWeapon extends SwordItem {
         if (extra == null) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
             b.putAll(base);
+            //#if FABRIC
+            //$$ // Fabric 1.20.1 has no reach attribute: the longer reach is left out
+            //#else
             b.put(ForgeMod.ENTITY_REACH.get(), new AttributeModifier(REACH, "weapon reach", reach, AttributeModifier.Operation.ADDITION));
+            //#endif
             extra = b.build();
         }
         return extra;

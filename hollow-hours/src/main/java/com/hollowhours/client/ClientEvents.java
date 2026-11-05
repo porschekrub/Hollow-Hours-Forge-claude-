@@ -167,7 +167,7 @@ public final class ClientEvents {
     //$$ public static void hud(net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre e) {
     //$$     if (KillCam.active() && Hud.hiddenInKill(e.getName())) e.setCanceled(true);
     //$$ }
-    //#elif MC>=12100
+    //#elif MC>=12100 && !FABRIC
     //$$ public static void hud(net.minecraftforge.client.event.RenderLevelStageEvent e) {
     //$$     // Forge 1.21 has no per-layer event: the vanilla HUD stays during the kill cinematic
     //$$ }

@@ -12,6 +12,10 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.internal.Drops;
 import net.minecraftforge.internal.Hooks;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,6 +34,14 @@ public abstract class LivingEntityMixin {
     protected int lastHurtByPlayerTime;
     @Shadow
     protected Player lastHurtByPlayer;
+
+    //#if MC>=12100
+    //$$ /** canBreatheUnderwater is final in 1.21: the mods' entities answer with a plain method. */
+    //$$ @com.llamalad7.mixinextras.injector.ModifyReturnValue(method = "canBreatheUnderwater", at = @At("RETURN"))
+    //$$ private boolean shim$breathe(boolean can) {
+    //$$     return can || net.minecraftforge.internal.Ext.bool(this, "breathesUnderwater", false);
+    //$$ }
+    //#endif
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void shim$tick(CallbackInfo ci) {
@@ -50,6 +62,24 @@ public abstract class LivingEntityMixin {
         LivingDamageEvent e = new LivingDamageEvent((LivingEntity) (Object) this, source, amount);
         Hooks.post(e);
         return e.getAmount();
+    }
+
+    @WrapOperation(method = "completeUsingItem", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/item/ItemStack;finishUsingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/item/ItemStack;"))
+    private ItemStack shim$useFinish(ItemStack stack, Level level, LivingEntity self, Operation<ItemStack> original) {
+        ItemStack copy = stack.copy();
+        int left = self.getUseItemRemainingTicks();
+        ItemStack result = original.call(stack, level, self);
+        LivingEntityUseItemEvent.Finish e = new LivingEntityUseItemEvent.Finish(self, copy, left, result);
+        Hooks.post(e);
+        return e.getResultStack();
+    }
+
+    @WrapOperation(method = "releaseUsingItem", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/item/ItemStack;releaseUsing(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)V"))
+    private void shim$useStop(ItemStack stack, Level level, LivingEntity self, int left, Operation<Void> original) {
+        if (Hooks.post(new LivingEntityUseItemEvent.Stop(self, stack, left))) return;
+        original.call(stack, level, self, left);
     }
 
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)

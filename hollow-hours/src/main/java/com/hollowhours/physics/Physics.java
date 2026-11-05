@@ -194,6 +194,8 @@ public final class Physics {
         Explosion ex = e.getExplosion();
         //#if MC>=12100
         //$$ Vec3 c = ex.center();
+        //#elif FABRIC
+        //$$ Vec3 c = net.minecraftforge.internal.Explosions.center(ex);
         //#else
         Vec3 c = ex.getPosition();
         //#endif

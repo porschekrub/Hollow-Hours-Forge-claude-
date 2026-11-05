@@ -70,7 +70,10 @@ public class GraveCompassItem extends Item {
     }
 
     @Override
-    //#if MC>=12100
+    //#if MC>=12100 && FABRIC
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //$$     Level level = net.minecraftforge.internal.Sides.clientLevel();
+    //#elif MC>=12100
     //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
     //$$     Level level = tooltipContext.level();
     //#else

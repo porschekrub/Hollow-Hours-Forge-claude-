@@ -4,14 +4,37 @@
   "package": "net.minecraftforge.internal.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockItemMixin",
     "BlockMixin",
     "EntityMixin",
+    "ExplosionAccess",
+    "ExplosionMixin",
     "LivingEntityMixin",
     "PlayerMixin",
+    "ResultSlotMixin",
+    "ServerEntityMixin",
     "ServerPlayerAccess",
     "ServerPlayerMixin"
   ],
-  "client": [],
+  "client": [
+    "client.AbstractClientPlayerMixin",
+    "client.AbstractContainerScreenAccess",
+    "client.BossHealthOverlayMixin",
+    "client.CameraAccess",
+    "client.ChatComponentMixin",
+    "client.ClientPacketListenerMixin",
+    "client.EntityRenderDispatcherAccess",
+    "client.EntityRenderDispatcherMixin",
+    "client.FogRendererMixin",
+    "client.GameRendererMixin",
+    "client.GuiMixin",
+    "client.ItemInHandRendererMixin",
+    "client.LevelRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.LocalPlayerMixin",
+    "client.MinecraftMixin",
+    "client.PlayerRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

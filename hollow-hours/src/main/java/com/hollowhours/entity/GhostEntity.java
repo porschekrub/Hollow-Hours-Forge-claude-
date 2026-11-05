@@ -299,10 +299,15 @@ public class GhostEntity extends Monster implements GeoEntity {
         return false;
     }
 
-    //#if MC>=12100
+    //#if MC>=12100 && !FABRIC
     //$$ @Override
     //$$ public boolean canDrownInFluidType(net.minecraftforge.fluids.FluidType type) {
     //$$     return false;
+    //$$ }
+    //#elif MC>=12100
+    //$$ /** Fabric 1.21 (canBreatheUnderwater is final): asked by the shim's LivingEntity mixin. */
+    //$$ public boolean breathesUnderwater() {
+    //$$     return true;
     //$$ }
     //#else
     @Override
