@@ -10,8 +10,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mods: [ none ]
-        forge: [ latest, recommended, "52.1.10", "52.1.0", "52.0.40" ]
+        mods: [ helper-buddy ]
+        forge: [ recommended ]
+        open: [ quickplay, menu ]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -53,7 +54,8 @@ jobs:
             *) VER=forge::1.21.1-$F;;
           esac
           echo "testing $VER"
-          timeout 240 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev --join-world smoke > run.log 2>&1 || true
+          if [ "${{ matrix.open }}" = menu ]; then JOIN=""; PROP=-Dhelperbuddy.menuload=true; else JOIN="--join-world smoke"; PROP=-Dx=y; fi
+          timeout 240 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev $JOIN --jvm-arg=$PROP > run.log 2>&1 || true
           echo "== loader"; grep -a "Loading version" run.log | head -2
           echo "== result"; grep -a "LootModifierManager\|lootcheck tick\|Experimental\|Ticking" $M/logs/latest.log | head -8
           grep -ac "lootcheck tick" $M/logs/latest.log || true

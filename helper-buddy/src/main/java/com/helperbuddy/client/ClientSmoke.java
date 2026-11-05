@@ -47,7 +47,8 @@ public final class ClientSmoke {
 
     private static final List<Step> STEPS = new ArrayList<>();
     private static int stepIndex = -1, stepTick, waitTicks, shotNo, inWorldTicks;
-    private static boolean built, done;
+    private static boolean built, done, menuOpened;
+    private static final boolean MENU_LOAD = Boolean.getBoolean("helperbuddy.menuload");
     private static Vec3 origin = Vec3.ZERO;
     private static Vec3 lookAt;
 
@@ -59,6 +60,15 @@ public final class ClientSmoke {
             mc.options.pauseOnLostFocus = false;
             if (mc.player == null || mc.level == null) {
                 waitTicks++;
+                // CI on a real install: the world is opened from the title screen, like a player would
+                if (MENU_LOAD && !menuOpened && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen && waitTicks > 40) {
+                    menuOpened = true;
+                    //#if MC>=12100
+                    //$$ mc.createWorldOpenFlows().openWorld("smoke", () -> {});
+                    //#else
+                    mc.createWorldOpenFlows().loadLevel(mc.screen, "smoke");
+                    //#endif
+                }
                 //#if MC>=12100
             //$$ if (waitTicks == 900) mc.createWorldOpenFlows().openWorld("smoke", () -> {});
             //#else
