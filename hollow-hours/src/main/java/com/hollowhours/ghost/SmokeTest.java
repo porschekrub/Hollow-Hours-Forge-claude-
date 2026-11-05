@@ -61,6 +61,7 @@ final class SmokeTest {
                 g.discard();
             }
             combat(level, at);
+            endgame(server, level, at);
             for (StalkerKind k : StalkerKind.values()) {
                 StalkerEntity s = HHEntities.stalker(k).create(level);
                 check(s != null, "stalker " + k);
@@ -92,6 +93,74 @@ final class SmokeTest {
             HollowHours.LOG.error("SMOKE TEST FAILED", t);
         }
         server.halt(false);
+    }
+
+    /**
+     * The last chapter end to end: the five kept down, the map, the mountain built (somewhere out of the way), the
+     * boss rising and beaten, the rift, and the world at peace afterwards. Everything is reset at the end.
+     */
+    static void endgame(MinecraftServer server, ServerLevel level, Vec3 at) {
+        long t0 = System.currentTimeMillis();
+        com.hollowhours.endgame.Endgame.reset(server);
+        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        fp.moveTo(at.x, at.y, at.z);
+        // the hunt: every one knocked out stays down; the last one brings the map
+        com.hollowhours.endgame.Endgame.data(server).stage = com.hollowhours.endgame.Endgame.HUNT;
+        java.util.List<GhostEntity> five = new java.util.ArrayList<>();
+        for (GhostKind k : GhostKind.values()) {
+            GhostEntity g = Director.spawnGhost(level, k, at.add(k.n * 3, 0, 5));
+            check(g != null, "endgame ghost " + k.n);
+            five.add(g);
+            GhostBrain b = g.brain();
+            for (int i = 0; i < 300 && b.mode != GhostBrain.Mode.KO; i++) com.hollowhours.combat.GhostCombat.poiseHit(g, fp, 20, false);
+            check(b.mode == GhostBrain.Mode.KO, "endgame ghost " + k.n + " knocked out");
+            b.timers.put("koUntil", b.now());
+            com.hollowhours.combat.GhostCombat.tickKnockedOut(b, b.now());
+            check(b.mode == GhostBrain.Mode.KO, "endgame ghost " + k.n + " stays down");
+        }
+        check(com.hollowhours.endgame.Endgame.data(server).down == 0b111110, "all five counted");
+        com.hollowhours.endgame.Endgame.toMap(server);
+        check(com.hollowhours.endgame.Endgame.stage(server) == com.hollowhours.endgame.Endgame.MAP, "map stage");
+        for (GhostEntity g : five) g.discard();
+        // the mountain, 300 blocks away so it doesn't spoil the other tests
+        BlockPos site = BlockPos.containing(at).offset(300, 0, 40);
+        com.hollowhours.endgame.Endgame.setSite(server, site);
+        ItemStack map = com.hollowhours.endgame.Endgame.makeMap(level, site);
+        check(com.hollowhours.endgame.Endgame.isMountainMap(map), "mountain map");
+        for (int cx = (site.getX() - 72) >> 4; cx <= (site.getX() + 72) >> 4; cx++)
+            for (int cz = (site.getZ() - 72) >> 4; cz <= (site.getZ() + 72) >> 4; cz++) level.getChunk(cx, cz);
+        com.hollowhours.endgame.Arena.planNow(level);
+        int ops = com.hollowhours.endgame.Arena.queued();
+        while (com.hollowhours.endgame.Arena.building()) com.hollowhours.endgame.Arena.serverTick(server);
+        BlockPos center = com.hollowhours.endgame.Endgame.center(server);
+        check(center != null && com.hollowhours.endgame.Endgame.data(server).built == 2, "mountain built");
+        check(!level.getBlockState(center.below()).isAir() && level.getBlockState(center.above(5)).isAir(), "cavern floor and air");
+        // the boss: rises, takes the beating, sinks; the rift opens; stepping in ends the story
+        com.hollowhours.endgame.Arena.spawnBoss(level, Vec3.atBottomCenterOf(center));
+        var bosses = level.getEntitiesOfClass(com.hollowhours.endgame.WeepingEntity.class, new net.minecraft.world.phys.AABB(center).inflate(8));
+        check(bosses.size() == 1, "boss spawned");
+        var boss = bosses.get(0);
+        for (int i = 0; i < 90; i++) boss.tick();
+        check(boss.anim() == com.hollowhours.endgame.WeepingEntity.A_IDLE && Math.abs(boss.getMaxHealth() - com.hollowhours.config.HHConfig.BOSS_HEALTH.get()) < 1, "boss risen (" + boss.getMaxHealth() + ")");
+        int hits = 0;
+        while (boss.isAlive() && hits < 500) {
+            boss.invulnerableTime = 0;
+            boss.hurt(level.damageSources().playerAttack(fp), 25);
+            hits++;
+        }
+        check(!boss.isAlive() && com.hollowhours.endgame.Endgame.stage(server) == com.hollowhours.endgame.Endgame.RIFT, "boss beaten (" + hits + " hits)");
+        for (int i = 0; i < 150 && !boss.isRemoved(); i++) boss.tick();
+        check(boss.isRemoved(), "boss gone after sinking");
+        com.hollowhours.endgame.RiftEntity rift = HHEntities.RIFT.get().create(level);
+        check(rift != null, "rift");
+        rift.moveTo(center.getX() + 0.5, center.getY() + 1.2, center.getZ() + 0.5, 0, 0);
+        level.addFreshEntity(rift);
+        com.hollowhours.endgame.Endgame.enterRift(fp);
+        check(com.hollowhours.endgame.Endgame.peaceful(server) && !Story.active(server), "peace after the rift");
+        rift.discard();
+        fp.setInvulnerable(false);
+        HollowHours.LOG.info("[smoke] endgame OK: mountain {} blocks, boss beaten in {} hits, {} ms", ops, hits, System.currentTimeMillis() - t0);
+        com.hollowhours.endgame.Endgame.reset(server);
     }
 
     /** Weapons knock ghosts out (and they get up again), armour and strength numbers, a gun reloads from ammo. */

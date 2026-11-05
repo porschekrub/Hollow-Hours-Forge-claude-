@@ -38,6 +38,8 @@ public final class HHConfig {
     public static final ForgeConfigSpec.BooleanValue KNOCKOUT, STRUGGLE, FITNESS;
     public static final ForgeConfigSpec.IntValue KO_SECONDS;
     public static final ForgeConfigSpec.DoubleValue STRUGGLE_SECONDS, GHOST_TOUGHNESS;
+    public static final ForgeConfigSpec.BooleanValue ENDGAME;
+    public static final ForgeConfigSpec.IntValue ENDGAME_DAYS, ENDGAME_DISTANCE, BOSS_HEALTH;
     public static final ForgeConfigSpec.IntValue RESCUE_DAY, RESCUE_MIN_DAYS, RESCUE_MAX_DAYS, RESCUE_PICKUP_MINUTES, INVASION_MIN_DAYS, INVASION_MAX_DAYS;
     public static final ForgeConfigSpec.DoubleValue MISSED_GHOST_MULT, MISSED_BLOOD_MULT, RETURN_GHOST_MULT, RETURN_BLOOD_MULT;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
@@ -166,6 +168,12 @@ public final class HHConfig {
         STRUGGLE = b.comment("When a ghost grabs you: mash a key to break free (easier when you are stronger / better armoured)").define("struggle", true);
         STRUGGLE_SECONDS = b.comment("Time you get to break free").defineInRange("struggleSeconds", 5.0, 1, 20);
         FITNESS = b.comment("Strength: playing sports on the playground makes you stronger (more health, harder hits, easier struggles)").define("fitness", true);
+        b.pop();
+        b.comment("The last chapter: some days after coming home all five come at once; knock them all out, follow the map to the mountain, beat what is under it").push("endgame");
+        ENDGAME = b.comment("The final hunt, the mountain, the boss and the ending").define("enabled", true);
+        ENDGAME_DAYS = b.comment("Days after coming home from the haven until all five come").defineInRange("daysAfterReturn", 20, 1, 1000);
+        ENDGAME_DISTANCE = b.comment("How far away (blocks) the mountain is").defineInRange("mountainDistance", 520, 120, 5000);
+        BOSS_HEALTH = b.comment("Health of the thing under the mountain (more with more players)").defineInRange("bossHealth", 500, 50, 100000);
         b.pop();
 
         SPEC = b.build();

@@ -752,6 +752,7 @@ public final class ClientSmoke {
         }
 
         rescue(mc);
+        endgame(mc);
     }
 
     // ------------------------------------------------------------------ the rescue: helicopter, haven, invasion, home
@@ -904,6 +905,305 @@ public final class ClientSmoke {
                     HollowHours.LOG.error("[client smoke] coming home did not work (com.hollowhours)");
             });
             return t >= 34;
+        });
+    }
+
+    // ------------------------------------------------------------------ the last chapter: five down, the map, the mountain, the boss, the end
+    static Vec3 egCenter = Vec3.ZERO, egDir = new Vec3(1, 0, 0), egHome = Vec3.ZERO;
+    static float egYaw;
+
+    @javax.annotation.Nullable
+    private static com.hollowhours.endgame.WeepingEntity serverBoss(ServerPlayer sp) {
+        var l = sp.serverLevel().getEntitiesOfClass(com.hollowhours.endgame.WeepingEntity.class, sp.getBoundingBox().inflate(64));
+        return l.isEmpty() ? null : l.get(0);
+    }
+
+    @javax.annotation.Nullable
+    private static com.hollowhours.endgame.WeepingEntity clientBoss(Minecraft mc) {
+        for (var en : mc.level.entitiesForRendering()) if (en instanceof com.hollowhours.endgame.WeepingEntity w) return w;
+        return null;
+    }
+
+    /** the player stands `dist` blocks in front of the boss (at its feet level), facing it */
+    private static void standBefore(ServerPlayer sp, double dist, double side) {
+        Vec3 f = new Vec3(-Math.sin(Math.toRadians(egYaw)), 0, Math.cos(Math.toRadians(egYaw)));
+        Vec3 r = new Vec3(-f.z, 0, f.x);
+        Vec3 at = egCenter.add(f.scale(dist)).add(r.scale(side));
+        sp.teleportTo(at.x, egCenter.y, at.z);
+        sp.setDeltaMovement(Vec3.ZERO);
+        sp.setHealth(sp.getMaxHealth());
+        sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 60, 3, false, false));
+    }
+
+    private static void endgame(Minecraft mc) {
+        // all five come at once; each one knocked out stays down
+        STEPS.add(t -> {
+            if (t == 0) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                egHome = mc.player.position();
+                lookAt = egHome.add(0, 1.6, 20);
+                server(sp -> {
+                    clearAll(sp);
+                    sp.serverLevel().setDayTime(18000);
+                    sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
+                    sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 60 * 10, 4, false, false));
+                    int st = com.hollowhours.endgame.Endgame.stage(sp.server);
+                    HollowHours.LOG.info("[client smoke] endgame after coming home: {}", com.hollowhours.endgame.Endgame.status(sp.server));
+                    if (st != com.hollowhours.endgame.Endgame.COUNTDOWN) HollowHours.LOG.error("[client smoke] coming home did not start the countdown (com.hollowhours)");
+                    com.hollowhours.endgame.Endgame.startHunt(sp.server);
+                });
+            }
+            if (t == 30) shot("endgame_hunt_title");
+            // knock each one out as it comes, then line them up in front of the player
+            if (t > 40 && t % 10 == 0 && t < 330) server(sp -> {
+                net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(sp.serverLevel());
+                for (GhostEntity g : Director.allGhosts(sp.server)) {
+                    if (com.hollowhours.combat.GhostCombat.knockedOut(g.brain())) continue;
+                    for (int i = 0; i < 300 && !com.hollowhours.combat.GhostCombat.knockedOut(g.brain()); i++) com.hollowhours.combat.GhostCombat.poiseHit(g, sp, 25, false);
+                }
+            });
+            if (t == 330) server(sp -> {
+                int i = 0;
+                for (GhostEntity g : Director.allGhosts(sp.server)) {
+                    double a = Math.toRadians(-50 + 25 * i++);
+                    g.moveTo(egHome.x + Math.sin(a) * 7, egHome.y, egHome.z + Math.cos(a) * 7, g.getYRot(), 0);
+                }
+                var d = com.hollowhours.endgame.Endgame.data(sp.server);
+                HollowHours.LOG.info("[client smoke] final hunt: {} ghosts, down mask {}, stage {}", Director.allGhosts(sp.server).size(), Integer.toBinaryString(d.down), d.stage);
+                if (Integer.bitCount(d.down) < 5) HollowHours.LOG.error("[client smoke] not all five were counted down (com.hollowhours)");
+            });
+            if (t == 345) lookAt = egHome.add(0, 0.5, 7);
+            if (t == 360) shot("endgame_five_down");
+            if (t == 470) shot("endgame_they_remember");
+            if (t == 720) shot("endgame_map_given");
+            return t >= 724;
+        });
+        // the old map in hand
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                int slot = -1;
+                for (int i = 0; i < 9; i++) if (com.hollowhours.endgame.Endgame.isMountainMap(sp.getInventory().getItem(i))) slot = i;
+                if (slot < 0) for (int i = 9; i < 36; i++) if (com.hollowhours.endgame.Endgame.isMountainMap(sp.getInventory().getItem(i))) {
+                    var m = sp.getInventory().getItem(i);
+                    sp.getInventory().setItem(i, sp.getInventory().getItem(0));
+                    sp.getInventory().setItem(0, m);
+                    slot = 0;
+                }
+                HollowHours.LOG.info("[client smoke] mountain map in slot {}, stage {}", slot, com.hollowhours.endgame.Endgame.status(sp.server));
+                if (slot < 0) HollowHours.LOG.error("[client smoke] no map to the mountain (com.hollowhours)");
+                else {
+                    sp.getInventory().selected = slot;
+                    sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(slot));
+                }
+                sp.containerMenu.broadcastChanges();
+            });
+            if (t == 2) lookAt = mc.player.position().add(0, 0.2, 6);
+            if (t == 40) shot("endgame_map_in_hand");
+            return t >= 42;
+        });
+        // the mountain is built near here (for the tour); look at it from outside
+        final int[] builtAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                net.minecraft.core.BlockPos site = net.minecraft.core.BlockPos.containing(egHome).offset(110, 0, 0);
+                com.hollowhours.endgame.Endgame.setSite(sp.server, site);
+                Vec3 dir = com.hollowhours.endgame.Arena.mouthDir(sp.server);
+                egDir = dir;
+                Vec3 view = Vec3.atBottomCenterOf(site).add(dir.scale(82));
+                int y = sp.serverLevel().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) view.x, (int) view.z);
+                sp.teleportTo(view.x, y + 6, view.z);
+                sp.getAbilities().flying = true;
+                sp.getAbilities().mayfly = true;
+                sp.onUpdateAbilities();
+            });
+            if (t > 5 && builtAt[0] < 0 && t % 10 == 0) server(sp -> {
+                if (com.hollowhours.endgame.Endgame.data(sp.server).built == 2 && builtAt[0] < 0) {
+                    builtAt[0] = 0;
+                    egCenter = Vec3.atBottomCenterOf(com.hollowhours.endgame.Endgame.center(sp.server));
+                }
+            });
+            if (builtAt[0] >= 0) {
+                builtAt[0]++;
+                net.minecraft.core.BlockPos site = net.minecraft.core.BlockPos.containing(egHome).offset(110, 0, 0);
+                if (builtAt[0] == 2) lookAt = Vec3.atBottomCenterOf(site).add(0, 12, 0);
+                if (builtAt[0] == 40) shot("endgame_mountain");
+                if (builtAt[0] == 42) server(sp -> {
+                    Vec3 at = egCenter.add(egDir.scale(com.hollowhours.endgame.Arena.TRENCH + 6));
+                    int y = sp.serverLevel().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(at.x), (int) Math.floor(at.z));
+                    sp.teleportTo(at.x, y + 1.5, at.z);
+                });
+                if (builtAt[0] == 46) {
+                    Vec3 m = egCenter.add(egDir.scale(com.hollowhours.endgame.Arena.MOUTH));
+                    lookAt = new Vec3(m.x, mc.player.getEyeY() - 2.5, m.z);
+                }
+                if (builtAt[0] == 80) shot("endgame_mine_mouth");
+                if (builtAt[0] == 82) server(sp -> {
+                    Vec3 at = egCenter.add(egDir.scale(com.hollowhours.endgame.Arena.RX + 0.5));
+                    var c = com.hollowhours.endgame.Endgame.center(sp.server);
+                    sp.getAbilities().flying = false;
+                    sp.onUpdateAbilities();
+                    sp.teleportTo(at.x, c.getY() + (com.hollowhours.endgame.Arena.ledge(sp.server) - c.getY()) + 0.1, at.z);
+                });
+                if (builtAt[0] == 86) lookAt = egCenter.add(0, 1.5, 0);
+                if (builtAt[0] == 130) shot("endgame_cavern_from_ledge");
+                return builtAt[0] >= 132;
+            }
+            if (t > 900) {
+                HollowHours.LOG.error("[client smoke] the mountain was never built (com.hollowhours)");
+                return true;
+            }
+            return false;
+        });
+        // down into the cavern: it wakes and rises out of the floor
+        final int[] riseAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                Vec3 at = egCenter.add(egDir.scale(9));
+                sp.teleportTo(at.x, egCenter.y, at.z);
+            });
+            if (t == 2) lookAt = egCenter.add(0, 3.5, 0);
+            if (riseAt[0] < 0 && clientBoss(mc) != null) {
+                riseAt[0] = t;
+                server(sp -> {
+                    var b = serverBoss(sp);
+                    if (b != null) {
+                        b.ciHold(100000);
+                        egYaw = b.getYRot();
+                    }
+                });
+            }
+            if (riseAt[0] >= 0) {
+                int d = t - riseAt[0];
+                if (d == 20 || d == 50 || d == 90) shot("boss_rise_t" + d);
+                if (d == 100) server(sp -> {
+                    var b = serverBoss(sp);
+                    HollowHours.LOG.info("[client smoke] boss: health {}/{} anim {}", b == null ? -1 : b.getHealth(), b == null ? -1 : b.getMaxHealth(), b == null ? -1 : b.anim());
+                    if (b == null || b.anim() != com.hollowhours.endgame.WeepingEntity.A_IDLE) HollowHours.LOG.error("[client smoke] the boss did not rise (com.hollowhours)");
+                    else egYaw = b.getYRot();
+                });
+                if (d == 104) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
+                    shot("boss_idle_tp");
+                }
+                if (d == 106) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                return d >= 110;
+            }
+            if (t > 400) {
+                HollowHours.LOG.error("[client smoke] the boss never woke up (com.hollowhours)");
+                return true;
+            }
+            return false;
+        });
+        // every attack, one by one
+        String[][] attacks = {{"slam_near", "5.2", "0"}, {"slam_far", "7.4", "0"}, {"sweep", "4.5", "0"}, {"scream", "6", "0"}, {"weep", "8", "0"}, {"grab", "4.6", "0"}};
+        for (String[] atk : attacks) {
+            String name = atk[0];
+            double dist = Double.parseDouble(atk[1]);
+            final int[] freedAt = {-1};
+            STEPS.add(t -> {
+                if (t == 0) {
+                    freedAt[0] = -1;
+                    server(sp -> standBefore(sp, dist, 0));
+                }
+                if (t == 2) lookAt = egCenter.add(0, 3.2, 0);
+                if (t == 6) mc.options.setCameraType(name.startsWith("slam") || name.equals("sweep") ? net.minecraft.client.CameraType.THIRD_PERSON_BACK : net.minecraft.client.CameraType.FIRST_PERSON);
+                if (t == 8) server(sp -> {
+                    var b = serverBoss(sp);
+                    if (b == null) HollowHours.LOG.error("[client smoke] no boss for {} (com.hollowhours)", name);
+                    else b.ciAttack(name, sp);
+                });
+                int[] at = switch (name) {
+                    case "slam_near", "slam_far" -> new int[]{18, 29, 31, 40};
+                    case "sweep" -> new int[]{20, 29, 33, 38};
+                    case "scream" -> new int[]{18, 26, 40};
+                    case "weep" -> new int[]{25, 40, 55, 75};
+                    default -> new int[]{16, 22, 34};
+                };
+                for (int k = 0; k < at.length; k++) if (t == at[k]) shot("boss_" + name + "_" + (k + 1));
+                if (name.equals("grab") && t > 34 && freedAt[0] < 0) {
+                    if (CombatClient.struggling()) {
+                        if (t % 2 == 0) net.minecraft.client.KeyMapping.click(mc.options.keyJump.getKey());
+                        if (t == 50) shot("boss_grab_struggle");
+                    } else if (t > 40) {
+                        freedAt[0] = t;
+                        HollowHours.LOG.info("[client smoke] boss grab over: result {}", CombatClient.result);
+                        if (CombatClient.result != 1) HollowHours.LOG.error("[client smoke] could not break free of the boss (com.hollowhours)");
+                    }
+                }
+                if (name.equals("grab")) {
+                    if (freedAt[0] >= 0 && t == freedAt[0] + 6) shot("boss_grab_freed_stun");
+                    if (t > 260 && freedAt[0] < 0) {
+                        HollowHours.LOG.error("[client smoke] the boss grab never ended (com.hollowhours)");
+                        return true;
+                    }
+                    return freedAt[0] >= 0 && t >= freedAt[0] + 50;
+                }
+                if (t == at[at.length - 1] + 2) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                return t >= at[at.length - 1] + 40;
+            });
+        }
+        // beaten: it stops crying, reaches up, sinks; the rift opens
+        final int[] riftAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                standBefore(sp, 9, 0);
+                var b = serverBoss(sp);
+                if (b != null) b.hurt(b.damageSources().genericKill(), 100000);
+            });
+            if (t == 2) lookAt = egCenter.add(0, 4, 0);
+            if (t == 20 || t == 60 || t == 110) shot("boss_defeat_t" + t);
+            if (t == 130) shot("boss_won_title");
+            if (t > 150 && riftAt[0] < 0) for (var en : mc.level.entitiesForRendering())
+                if (en instanceof com.hollowhours.endgame.RiftEntity) riftAt[0] = t;
+            if (riftAt[0] >= 0) {
+                int d = t - riftAt[0];
+                if (d == 2) lookAt = egCenter.add(0, 2, 0);
+                if (d == 50) shot("rift");
+                if (d == 52) server(sp -> HollowHours.LOG.info("[client smoke] after the boss: {}", com.hollowhours.endgame.Endgame.status(sp.server)));
+                return d >= 54;
+            }
+            if (t > 500) {
+                HollowHours.LOG.error("[client smoke] no rift after the boss (com.hollowhours)");
+                return true;
+            }
+            return false;
+        });
+        // into the light: the flash, the boom, the credits; home, and the world at peace
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> sp.teleportTo(egCenter.x, egCenter.y + 0.5, egCenter.z));
+            if (t == 3 || t == 10) shot("ending_flash_t" + t);
+            if (mc.screen instanceof CreditsScreen cs) {
+                if (cs.ticks == 25) shot("credits_start");
+                if (cs.ticks == 40) cs.scroll = 260;
+                if (cs.ticks == 45) shot("credits_epilogue");
+                if (cs.ticks == 46) cs.scroll = 560;
+                if (cs.ticks == 50) shot("credits_five");
+                if (cs.ticks == 51) cs.scroll = 1000;
+                if (cs.ticks == 55) shot("credits_names");
+                if (cs.ticks == 56) cs.scroll = cs.total - cs.height * 0.5f;
+                if (cs.ticks == 62) shot("credits_end");
+                if (cs.ticks == 64) cs.onClose();
+            }
+            if (t > 80 && mc.screen == null) {
+                server(sp -> {
+                    boolean peace = com.hollowhours.endgame.Endgame.peaceful(sp.server), story = com.hollowhours.ghost.Story.active(sp.server);
+                    HollowHours.LOG.info("[client smoke] the end: peaceful {} story {} home {} ghosts {}", peace, story, sp.position().distanceTo(egHome) < 40,
+                            Director.allGhosts(sp.server).size());
+                    if (!peace || story) HollowHours.LOG.error("[client smoke] the world is not at peace after the end (com.hollowhours)");
+                });
+                return true;
+            }
+            if (t > 600) {
+                HollowHours.LOG.error("[client smoke] the credits never rolled (com.hollowhours)");
+                mc.setScreen(null);
+                return true;
+            }
+            return false;
+        });
+        STEPS.add(t -> {
+            if (t == 0) lookAt = mc.player.position().add(0, 1.6, 30);
+            if (t == 40) shot("endgame_peaceful_home");
+            return t >= 42;
         });
     }
 

@@ -147,6 +147,7 @@ public final class GhostCombat {
         level.playSound(null, g.getX(), g.getY(), g.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.HOSTILE, 1.4f, 0.5f);
         Fx.sound(level, "ghost.voice.g" + b.kind.n + ".rage", g.eye(), 2.2f, 0.8f, 40);
         KO_COUNT[b.kind.n]++;
+        com.hollowhours.endgame.Endgame.onKnockOut(b);
         Fitness.addSkill(by, false, 10);
         for (ServerPlayer o : level.players()) {
             if (o.position().distanceTo(g.position()) > 40) continue;

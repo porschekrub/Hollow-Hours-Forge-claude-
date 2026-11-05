@@ -1,8 +1,20 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.11.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.11.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.12.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.12.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.12.0 — the last chapter**
+- Hollow Hours now has an **ending**. 20 days after you come home from the haven (`daysAfterReturn`), the crying under the mountain starts... and on that night **all five ghosts come at once**.
+  Hollow Hours มี**ตอนจบ**แล้ว! กลับบ้านจากดินแดนปลอดภัยได้ 20 วัน (`daysAfterReturn`) จะเริ่มได้ยินเสียงร้องไห้ใต้ภูเขา... แล้วคืนนั้น **ผีทั้ง 5 ตนจะมาพร้อมกัน**
+- **Knock out all five** - this time once they're down, they stay down. With the last one down they remember who they were, point the way and fade, and everyone gets an **old map of Mist Hollow** (hold it to see how far and which way).
+  **ทำให้ผีสลบให้ครบทั้ง 5 ตน** คราวนี้สลบแล้วจะไม่ฟื้น พอตนสุดท้ายล้ม พวกเขาจะจำได้ว่าตัวเองเคยเป็นใคร บอกทาง แล้วจางหายไป ทุกคนได้ **แผนที่เก่าของหุบหมอก** (ถือไว้จะบอกระยะและทิศทาง)
+- Follow it to **the mountain** and the old gold mine under it (a chest of supplies waits at the mine mouth). In the cavern below sits **The Thing That Weeps Under the Mountain**: it slams the floor (get out of the red ring, then hit the hand while it's down), sweeps the floor (jump over it), grabs you (mash to break free, or friends hit it hard), rains black tears and screams. It gets angrier below 2/3 and 1/3 of its health; more players = more health.
+  ตามแผนที่ไปที่**ภูเขา** และเหมืองทองเก่าข้างใต้ (มีหีบเสบียงรออยู่ที่ปากเหมือง) ในถ้ำข้างล่างคือ **สิ่งที่ร้องไห้ใต้ภูเขา** มันฟาดมือลงพื้น (ออกจากวงสีแดง แล้วตีมือมันตอนวางอยู่บนพื้น) กวาดมือไปตามพื้น (กระโดดข้าม) จับตัวเรา (กดรัวให้หลุด หรือให้เพื่อนตีมันแรงๆ) ทำน้ำตาสีดำตกจากเพดาน และกรีดร้อง เลือดเหลือ 2/3 และ 1/3 มันจะดุขึ้น ยิ่งผู้เล่นเยอะ มันยิ่งเลือดเยอะ
+- Beat it and a **rift** of light opens where it sank. Step in: a flash, a boom - and the **end credits**. Afterwards you're home and the world is **at peace**: no more ghosts. Keep playing as long as you like.
+  ชนะแล้วจะมี**รอยแยก**แสงสีขาวเปิดขึ้น เดินเข้าไป: แสงวาบ เสียงบึ้ม แล้ว**เครดิตตอนจบ**ขึ้น หลังจากนั้นกลับมาที่บ้าน และโลก**สงบ**แล้ว ไม่มีผีอีก เล่นต่อได้ตามสบาย
+- Settings in `[endgame]` (on/off, days after coming home, how far the mountain is, the boss's health). Commands for admins: `/hollow endgame status | countdown | hunt | map | boss | win | credits | reset`.
+  ตั้งค่าได้ใน `[endgame]` (เปิด/ปิด, จำนวนวันหลังกลับบ้าน, ระยะทางไปภูเขา, เลือดบอส) คำสั่งแอดมิน: `/hollow endgame status | countdown | hunt | map | boss | win | credits | reset`
 
 **2.11.0 — fighting back**
 - Hollow Hours: **weapons**. Guns: pistol, assault rifle (hold right-click), shotgun, sniper rifle; ammo for each, and hand grenades. Melee: combat knife, warrior's blade, battle axe, stun baton (slows what it hits), spear (longer reach). All craftable - press **K** for the recipes.

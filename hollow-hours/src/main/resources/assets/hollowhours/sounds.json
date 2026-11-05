@@ -1467,5 +1467,125 @@
    }
   ],
   "subtitle": "subtitles.hollowhours.gun.empty"
+ },
+ "boss.cry": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_cry"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.cry"
+ },
+ "boss.scream": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_scream"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.scream"
+ },
+ "boss.slam": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_slam"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.slam"
+ },
+ "boss.rise": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_rise"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.rise"
+ },
+ "boss.defeat": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_defeat"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.defeat"
+ },
+ "boss.release": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_release"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.release"
+ },
+ "boss.windup": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_windup"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.windup"
+ },
+ "boss.sweep": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_sweep"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.sweep"
+ },
+ "boss.grab": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_grab"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.grab"
+ },
+ "boss.tear": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_tear"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.tear"
+ },
+ "boss.hurt": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/boss_hurt"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.boss.hurt"
+ },
+ "rift.hum": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/rift_hum"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.rift.hum"
+ },
+ "ending.boom": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/ending_boom"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.ending.boom"
+ },
+ "ghost.music.boss": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/music_boss",
+    "stream": true
+   }
+  ]
+ },
+ "ghost.music.credits": {
+  "sounds": [
+   {
+    "name": "hollowhours:endgame/music_credits",
+    "stream": true
+   }
+  ]
  }
 }

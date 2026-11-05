@@ -321,6 +321,37 @@ COMBAT = {
 }
 
 
+# the last chapter: "hunt" (all five come at once), "release" (knocked out for good, they remember who they were)
+ENDGAME = {
+    "en": {
+        1: {"hunt": ["all of us... all of us... all of us... tonight...", "can you hear her crying... crying... crying..."],
+            "release": ["...my daughter... that was never her voice... it's under the mountain... under... under...",
+                        "the gold... i followed the gold down... go to the mountain... make it stop... stop... stop..."]},
+        2: {"hunt": ["we're all here for you tonight...", "the mountain called us. all of us."],
+            "release": ["...tell Manop i waited... i waited so long... it's under the mountain. go.", "my name was Buakhao... i remember now... the mountain. please."]},
+        3: {"hunt": ["ALL FIVE OF US! TONIGHT!", "THE MOUNTAIN IS SCREAMING! CAN'T YOU HEAR IT?!"],
+            "release": ["I TOLD THEM! CLOSE THE MINE! ...go. GO TO THE MOUNTAIN. FINISH IT!", "...Khamsaeng. My name is Khamsaeng. ...now go and shut that thing up."]},
+        4: {"hunt": ["everyone's here :) it's a party :)", "five of us :) and one of you :)"],
+            "release": ["...you looked at me. nobody ever looked at me :) ...it's under the mountain. go :)", "my name is Yim :) ...will you go? for me? :)"]},
+        5: {"hunt": ["...all. ...tonight.", "...it calls. ...we come."],
+            "release": ["...Boon. ...i ate the deer. ...nothing guards it now. ...mountain. go.", "...not hungry. ...first time. ...it's below the mountain."]},
+    },
+    "th": {
+        1: {"hunt": ["ทุกคน... ทุกคน... ทุกคน... คืนนี้...", "ได้ยินเสียงเธอร้องไห้ไหม... ร้องไห้... ร้องไห้..."],
+            "release": ["...ลูกพ่อ... นั่นไม่เคยเป็นเสียงลูกเลย... มันอยู่ใต้ภูเขา... ใต้... ใต้...",
+                        "ทองคำ... ฉันตามสายแร่ลงไป... ไปที่ภูเขา... ทำให้มันหยุด... หยุด... หยุด..."]},
+        2: {"hunt": ["คืนนี้พวกเรามากันครบเพื่อเธอ...", "ภูเขาเรียกพวกเรา ทุกคน"],
+            "release": ["...บอกมานพด้วยว่าฉันรอ... รอนานมาก... มันอยู่ใต้ภูเขา ไปเถอะ", "ฉันชื่อบัวขาว... ฉันจำได้แล้ว... ภูเขา... ขอร้องล่ะ"]},
+        3: {"hunt": ["มากันครบห้าตน! คืนนี้!", "ภูเขามันกรีดร้องอยู่! ไม่ได้ยินรึไง!"],
+            "release": ["ยายบอกพวกมันแล้ว! ให้ปิดเหมือง! ...ไปซะ ไปที่ภูเขา จัดการมันซะ!", "...คำแสง ยายชื่อคำแสง ...ทีนี้ไปทำให้ไอ้ตัวนั้นมันเงียบซะ"]},
+        4: {"hunt": ["ทุกคนมากันหมดแล้ว :) ปาร์ตี้ไง :)", "พวกเรามีห้าคน :) เธอมีคนเดียว :)"],
+            "release": ["...เธอมองผม ไม่เคยมีใครมองผมเลย :) ...มันอยู่ใต้ภูเขานะ ไปสิ :)", "ผมชื่อยิ้มนะ :) ...ไปให้ผมได้ไหม :)"]},
+        5: {"hunt": ["...ครบ. ...คืนนี้.", "...มันเรียก. ...เรามา."],
+            "release": ["...บุญ. ...ข้ากินกวาง. ...ไม่มีอะไรเฝ้ามันแล้ว. ...ภูเขา. ไป.", "...ไม่หิว. ...ครั้งแรก. ...มันอยู่ใต้ภูเขา."]},
+    },
+}
+
+
 def merged_lines():
     out = {}
     for lang in ("en", "th"):
@@ -334,6 +365,8 @@ def merged_lines():
                         cur[k].append(line)
             for k, v in COMBAT[lang][g].items():
                 cur[k] = list(v)
+            for k, v in ENDGAME[lang][g].items():
+                cur[k] = list(v)
             out[lang][str(g)] = cur
     return out
 
@@ -343,7 +376,7 @@ def main():
     # sanity: every intent the code can ask for exists in both languages
     need = ["greet", "question", "plead", "bargain", "taunt", "other", "success", "rage", "who", "bye", "kind", "fear", "threat", "repeat",
             "plead_many", "taunt_many", "hurt", "cave", "water", "night", "nothave", "refuse", "why", "want",
-            "ask_give", "ask_refuse", "ask_unknown", "ask_limit", "ko", "mutter", "wake", "freed"]
+            "ask_give", "ask_refuse", "ask_unknown", "ask_limit", "ko", "mutter", "wake", "freed", "hunt", "release"]
     for lang in lines:
         for g in lines[lang]:
             for k in need:

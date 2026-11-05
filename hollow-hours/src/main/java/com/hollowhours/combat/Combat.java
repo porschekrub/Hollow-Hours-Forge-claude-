@@ -54,7 +54,9 @@ public final class Combat {
 
     public static void input(ServerPlayer p, C2SCombat m) {
         switch (m.type()) {
-            case C2SCombat.STRUGGLE -> KillSequence.struggle(p);
+            case C2SCombat.STRUGGLE -> {
+                if (!com.hollowhours.endgame.WeepingEntity.struggle(p)) KillSequence.struggle(p);
+            }
             case C2SCombat.RELOAD -> {
                 if (p.getMainHandItem().getItem() instanceof GunItem g) g.startReload(p, p.getMainHandItem());
             }

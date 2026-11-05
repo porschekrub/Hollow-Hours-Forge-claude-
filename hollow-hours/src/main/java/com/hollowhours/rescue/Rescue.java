@@ -451,6 +451,7 @@ public final class Rescue {
             });
         }
         if (last != null) HelicopterEntity.leaveFrom(over, landing(over, BlockPos.containing(last), 8, 14));
+        com.hollowhours.endgame.Endgame.onHome(server);
     }
 
     static String fmt(double d) {

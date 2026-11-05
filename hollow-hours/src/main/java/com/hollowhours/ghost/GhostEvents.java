@@ -102,6 +102,7 @@ public final class GhostEvents {
         long now = server.overworld().getGameTime();
         Later.tick(now);
         safe("boards", () -> Boards.tick(now));
+        safe("mountain", () -> com.hollowhours.endgame.Arena.serverTick(server));
         safe("stalkers", () -> Stalkers.tick(server, now));
         safe("thirst", () -> {
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Thirst.trackFood(p);
@@ -122,6 +123,7 @@ public final class GhostEvents {
             safe("soul", () -> Soul.tick(server, now));
             safe("graves", () -> com.hollowhours.grave.Graves.tick(server));
             safe("rescue", () -> com.hollowhours.rescue.Rescue.tick(server));
+            safe("endgame", () -> com.hollowhours.endgame.Endgame.tick(server, now));
             safe("chat", () -> com.hollowhours.phone.PhoneChat.tick(server));
             safe("phone info", () -> com.hollowhours.phone.PhoneInfo.tick(server));
             for (ServerPlayer p : server.getPlayerList().getPlayers()) Curses.hasteTick(p);
@@ -164,6 +166,7 @@ public final class GhostEvents {
             Hiding.tick(p);
             Sprint.tick(p, now);
             Flashlight.tick(p, now);
+            com.hollowhours.endgame.Endgame.playerTick(p, now);
         } catch (Exception ex) {
             HollowHours.LOG.error("[Hollow Hours] player tick failed", ex);
         }

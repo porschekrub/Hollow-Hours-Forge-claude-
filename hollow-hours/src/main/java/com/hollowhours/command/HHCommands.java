@@ -143,6 +143,48 @@ public final class HHCommands {
                     com.hollowhours.ghost.Atmosphere.stopFog(c.getSource().getServer());
                     return reply(c, "fog cleared");
                 })));
+        // the last chapter: /hollow endgame status | countdown | hunt | map | boss | win | credits | reset
+        root.then(Commands.literal("endgame")
+                .then(Commands.literal("status").executes(c -> reply(c, com.hollowhours.endgame.Endgame.status(c.getSource().getServer()))))
+                .then(Commands.literal("countdown").executes(c -> {
+                    com.hollowhours.endgame.Endgame.skipCountdown(c.getSource().getServer());
+                    return reply(c, "countdown over: all five come tonight (after nightfall)");
+                }))
+                .then(Commands.literal("hunt").executes(c -> {
+                    com.hollowhours.endgame.Endgame.startHunt(c.getSource().getServer());
+                    return reply(c, "the final hunt starts now");
+                }))
+                .then(Commands.literal("map").executes(c -> {
+                    com.hollowhours.endgame.Endgame.toMap(c.getSource().getServer());
+                    return reply(c, "all five are down: here is the map");
+                }))
+                .then(Commands.literal("boss").executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    var server = c.getSource().getServer();
+                    if (com.hollowhours.endgame.Endgame.stage(server) < com.hollowhours.endgame.Endgame.MAP) com.hollowhours.endgame.Endgame.toMap(server);
+                    com.hollowhours.endgame.Endgame.setSite(server, p.blockPosition().offset(60, 0, 0));
+                    return reply(c, "the mountain will rise 60 blocks east of you (walk over there)");
+                }))
+                .then(Commands.literal("win").executes(c -> {
+                    var server = c.getSource().getServer();
+                    int n = 0;
+                    for (var l : server.getAllLevels())
+                        for (var e : l.getAllEntities())
+                            if (e instanceof com.hollowhours.endgame.WeepingEntity w) {
+                                w.hurt(w.damageSources().genericKill(), 100000);
+                                n++;
+                            }
+                    return reply(c, n > 0 ? "it is beaten" : "it is not here (go under the mountain first)");
+                }))
+                .then(Commands.literal("credits").executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    com.hollowhours.net.HHNet.toPlayer(p, new com.hollowhours.net.S2CEnding(com.hollowhours.net.S2CEnding.CREDITS, java.util.List.of(p.getGameProfile().getName())));
+                    return reply(c, "rolling the credits");
+                }))
+                .then(Commands.literal("reset").executes(c -> {
+                    com.hollowhours.endgame.Endgame.reset(c.getSource().getServer());
+                    return reply(c, "the last chapter is reset (the story goes on)");
+                })));
         root.then(Commands.literal("clear").executes(c -> {
             int n = 0;
             for (GhostEntity g : Director.allGhosts(c.getSource().getServer())) {

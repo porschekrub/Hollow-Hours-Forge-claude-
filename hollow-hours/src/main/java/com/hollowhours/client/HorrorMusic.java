@@ -56,7 +56,7 @@ public final class HorrorMusic {
         if (!HHSounds.has(name)) return;
         Minecraft mc = Minecraft.getInstance();
         mc.getMusicManager().stopPlaying();
-        boolean loop = key.equals("spawn") || key.equals("chase");
+        boolean loop = key.equals("spawn") || key.equals("chase") || key.equals("boss");
         current = new Track(HHSounds.get(name), loop);
         mc.getSoundManager().play(current);
     }

@@ -57,6 +57,12 @@ public final class HHEntities {
     public static final RegistryObject<EntityType<com.hollowhours.combat.Grenade.Thrown>> GRENADE = ENTITIES.register("grenade",
             () -> EntityType.Builder.<com.hollowhours.combat.Grenade.Thrown>of(com.hollowhours.combat.Grenade.Thrown::new, MobCategory.MISC)
                     .sized(0.25f, 0.25f).clientTrackingRange(8).updateInterval(2).build(HollowHours.MODID + ":grenade"));
+    public static final RegistryObject<EntityType<com.hollowhours.endgame.WeepingEntity>> WEEPING = ENTITIES.register("weeping",
+            () -> EntityType.Builder.<com.hollowhours.endgame.WeepingEntity>of(com.hollowhours.endgame.WeepingEntity::new, MobCategory.MONSTER)
+                    .sized(3.6f, 6.4f).fireImmune().clientTrackingRange(16).updateInterval(1).build(HollowHours.MODID + ":weeping"));
+    public static final RegistryObject<EntityType<com.hollowhours.endgame.RiftEntity>> RIFT = ENTITIES.register("rift",
+            () -> EntityType.Builder.<com.hollowhours.endgame.RiftEntity>of(com.hollowhours.endgame.RiftEntity::new, MobCategory.MISC)
+                    .sized(1.6f, 2.6f).fireImmune().clientTrackingRange(12).updateInterval(20).noSummon().build(HollowHours.MODID + ":rift"));
     public static final RegistryObject<EntityType<BoardsEntity>> BOARDS = ENTITIES.register("boards",
             () -> EntityType.Builder.<BoardsEntity>of(BoardsEntity::new, MobCategory.MISC).sized(0.3f, 0.3f).clientTrackingRange(10)
                     .updateInterval(20).noSummon().build(HollowHours.MODID + ":boards"));
