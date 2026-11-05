@@ -33,7 +33,7 @@ jobs:
             V=$(curl -s https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml | grep -o '<version>1\.21\.1-[^<]*</version>' | sed 's/<[^>]*>//g' | sort -V | tail -1)
             curl -sL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/$V/forge-$V-mdk.zip"
             mkdir mdk && cd mdk && unzip -q ../mdk.zip && cd ..
-            DEP="implementation fg.deobf(\"software.bernie.geckolib:geckolib-forge-1.21.1:$GV\")"
+            DEP="implementation \"software.bernie.geckolib:geckolib-forge-1.21.1:$GV\""
           fi
           echo "$T $V geckolib $GV" | tee versions.txt
           cd mdk && chmod +x gradlew
@@ -49,6 +49,7 @@ jobs:
           }
           def cpOut = file("\${rootDir}/../out/cp")
           tasks.register('exportClasspath') {
+              if (tasks.names.contains('createMinecraftArtifacts')) dependsOn 'createMinecraftArtifacts'
               doLast {
                   def out = cpOut
                   out.mkdirs()
