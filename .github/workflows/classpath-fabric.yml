@@ -71,7 +71,7 @@ jobs:
               modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$FCAPV"
           }
           def cpOut = file("\${rootDir}/../out/cp")
-          tasks.register('exportClasspath') {
+          tasks.register('dumpClasspath') {
               doLast {
                   cpOut.mkdirs()
                   sourceSets.main.compileClasspath.files.findAll { it.isFile() && it.name.endsWith('.jar') }.each { f -> copy { from f; into cpOut } }
@@ -81,7 +81,7 @@ jobs:
           sed -i 's/^          //' settings.gradle build.gradle
           printf "org.gradle.jvmargs=-Xmx3G\norg.gradle.configuration-cache=false\n" > gradle.properties
           mkdir -p ../out && cp ../versions.txt ../out/
-          ./gradlew exportClasspath --no-daemon 2>&1 | tail -30
+          ./gradlew dumpClasspath --no-daemon 2>&1 | tail -30
           ls ../out/cp | wc -l; du -sh ../out/cp
           cp build.gradle settings.gradle ../out/
       - name: Publish
