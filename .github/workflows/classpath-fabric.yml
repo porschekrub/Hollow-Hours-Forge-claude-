@@ -25,12 +25,14 @@ jobs:
         run: |
           MC=${{ matrix.mc }}
           meta() { curl -s "$1" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g'; }
-          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v SNAPSHOT | sort -V | tail -1)
+          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v -- "-" | sort -V | tail -1)
+          GRADLE=$(curl -s https://services.gradle.org/versions/current | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])")
+          echo "GRADLE=$GRADLE" >> $GITHUB_ENV
           LOADER=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-loader/maven-metadata.xml | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -1)
           FAPI=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | grep "+$MC\$" | sort -V | tail -1)
           GECKO=$(meta https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/software/bernie/geckolib/geckolib-fabric-$MC/maven-metadata.xml | sort -V | tail -1)
           FCAP=$(meta https://raw.githubusercontent.com/Fuzss/modresources/main/maven/fuzs/forgeconfigapiport/forgeconfigapiport-fabric/maven-metadata.xml | sort -V | tr '\n' ' ')
-          echo "mc=$MC loom=$LOOM loader=$LOADER fabric-api=$FAPI geckolib=$GECKO" | tee versions.txt
+          echo "mc=$MC gradle=$GRADLE loom=$LOOM loader=$LOADER fabric-api=$FAPI geckolib=$GECKO" | tee versions.txt
           echo "fcap: $FCAP" | tee -a versions.txt
           echo "LOOM=$LOOM" >> $GITHUB_ENV; echo "LOADER=$LOADER" >> $GITHUB_ENV; echo "FAPI=$FAPI" >> $GITHUB_ENV; echo "GECKO=$GECKO" >> $GITHUB_ENV
           # Forge Config API Port: 8.x for 1.20.1, 21.1.x for 1.21.1
@@ -40,6 +42,8 @@ jobs:
         run: |
           mkdir -p fab/src/main/java && cd fab
           cp -r ../ports/neoforge-1.21.1/hollow-hours/gradle . && cp ../ports/neoforge-1.21.1/hollow-hours/gradlew . && chmod +x gradlew
+          sed -i "s#distributionUrl=.*#distributionUrl=https\\\\://services.gradle.org/distributions/gradle-$GRADLE-bin.zip#" gradle/wrapper/gradle-wrapper.properties
+          cat gradle/wrapper/gradle-wrapper.properties
           cat > settings.gradle <<EOF
           pluginManagement {
               repositories {
