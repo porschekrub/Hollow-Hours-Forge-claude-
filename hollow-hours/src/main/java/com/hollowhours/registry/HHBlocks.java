@@ -43,7 +43,11 @@ public final class HHBlocks {
         Supplier<Block> b = BLOCKS.register(name, () -> make.apply(props));
         HHItems.ITEMS.register(name, () -> new BlockItem(b.get(), new Item.Properties()) {
             @Override
+            //#if MC>=12100
+            //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+            //#else
             public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+            //#endif
                 tip.add(Component.translatable("block.hollowhours." + name + ".tip").withStyle(ChatFormatting.GRAY));
             }
         });

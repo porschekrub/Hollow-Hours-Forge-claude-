@@ -34,7 +34,11 @@ public class RestorerItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("item.hollowhours.restorer.tip").withStyle(ChatFormatting.GRAY));
         tip.add(Component.translatable("item.hollowhours.restorer.left", s.getMaxDamage() - s.getDamageValue()).withStyle(ChatFormatting.AQUA));
     }

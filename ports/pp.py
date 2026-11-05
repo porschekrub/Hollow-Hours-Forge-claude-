@@ -39,6 +39,22 @@ NEO_RENAMES = [
     ('MinecraftForge.EVENT_BUS', 'NeoForge.EVENT_BUS'),
     ('net.minecraftforge.common.ForgeConfigSpec', 'net.neoforged.neoforge.common.ModConfigSpec'),
     ('ForgeConfigSpec', 'ModConfigSpec'),
+    ('@Mod.EventBusSubscriber(', '@net.neoforged.fml.common.EventBusSubscriber('),
+    ('Mod.EventBusSubscriber.Bus.FORGE', 'net.neoforged.fml.common.EventBusSubscriber.Bus.GAME'),
+    ('Mod.EventBusSubscriber.Bus.MOD', 'net.neoforged.fml.common.EventBusSubscriber.Bus.MOD'),
+    # tick events: one class per phase, the mods only use the end of a tick
+    ('TickEvent.ClientTickEvent e', 'net.neoforged.neoforge.client.event.ClientTickEvent.Post e'),
+    ('TickEvent.ServerTickEvent e', 'net.neoforged.neoforge.event.tick.ServerTickEvent.Post e'),
+    ('TickEvent.PlayerTickEvent e', 'net.neoforged.neoforge.event.tick.PlayerTickEvent.Post e'),
+    ('e.phase != TickEvent.Phase.END', 'false'),
+    ('e.player instanceof', 'e.getEntity() instanceof'),
+    ('import net.minecraftforge.event.TickEvent;\n', ''),
+    # damage: the first damage event (before armour) has the amount and can be cancelled
+    ('LivingHurtEvent', 'LivingIncomingDamageEvent'),
+    ('LivingAttackEvent', 'LivingIncomingDamageEvent'),
+    ('onAddedToWorld()', 'onAddedToLevel()'),
+    ('onRemovedFromWorld()', 'onRemovedFromLevel()'),
+    ('IEntityAdditionalSpawnData', 'IEntityWithComplexSpawn'),
     ('net.minecraftforge.', 'net.neoforged.neoforge.'),
 ]
 
@@ -154,6 +170,21 @@ def check_java(text, path):
     return bad
 
 
+IMPORT = re.compile(r'^import\s+([\w.]+)\.(\w+)\s*;\s*$')
+
+
+def drop_unused_imports(text):
+    """Imports whose class the (preprocessed) file never names are dropped: code for another version may have been
+    the only user, and the class may not exist on this one."""
+    lines = text.split('\n')
+    body = '\n'.join(l for l in lines if not l.startswith('import '))
+    for i, l in enumerate(lines):
+        m = IMPORT.match(l)
+        if m and not re.search(r'\b' + re.escape(m.group(2)) + r'\b', body):
+            lines[i] = ''
+    return '\n'.join(lines)
+
+
 def rename_neo(text):
     for a, b in NEO_RENAMES:
         text = text.replace(a, b)
@@ -258,6 +289,7 @@ def main():
                         text = text.replace(x, y)
                 if neo:
                     text = rename_neo(text)
+                text = drop_unused_imports(text)
                 write_if_changed(os.path.join(a.out, kind, rel), text, produced)
             else:
                 out_rel = map_resource(rel, flags) if kind == 'resources' else rel

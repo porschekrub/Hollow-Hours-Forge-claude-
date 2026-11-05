@@ -22,7 +22,11 @@ public class RiftEntity extends Entity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {}
+    //#else
     protected void defineSynchedData() {}
+    //#endif
 
     @Override
     public void tick() {
@@ -73,8 +77,10 @@ public class RiftEntity extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag t) {}
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
+    //#endif
 }

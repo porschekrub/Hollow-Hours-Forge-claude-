@@ -108,8 +108,13 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //$$     super.defineSynchedData(entityData);
+    //#else
     protected void defineSynchedData() {
         super.defineSynchedData();
+    //#endif
         entityData.define(ANIM, A_IDLE);
         entityData.define(SEQ, 0);
     }

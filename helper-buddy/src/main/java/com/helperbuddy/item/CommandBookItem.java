@@ -36,7 +36,11 @@ public class CommandBookItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("item.helperbuddy.command_book.tip").withStyle(ChatFormatting.GRAY));
     }
 }

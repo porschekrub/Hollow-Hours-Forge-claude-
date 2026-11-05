@@ -124,7 +124,11 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {}
+    //#else
     protected void defineSynchedData() {}
+    //#endif
 
     @Override
     protected void readAdditionalSaveData(CompoundTag t) {
@@ -140,10 +144,12 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
         return false;
     }
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buf) {

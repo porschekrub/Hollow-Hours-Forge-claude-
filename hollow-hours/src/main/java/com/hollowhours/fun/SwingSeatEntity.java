@@ -1,5 +1,6 @@
 package com.hollowhours.fun;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.registry.HHBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -71,7 +72,11 @@ public class SwingSeatEntity extends Entity implements IEntityAdditionalSpawnDat
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(AMP, 0.05f);
     }
 
@@ -111,7 +116,7 @@ public class SwingSeatEntity extends Entity implements IEntityAdditionalSpawnDat
         if (!hasPassenger(rider)) return;
         Vec3 s = seat(0);
         // sitting: the hips (0.75 above the feet) on the seat board; a player's riding offset already lowers it 0.35
-        move.accept(rider, s.x, s.y - 0.34 + rider.getMyRidingOffset(), s.z);
+        move.accept(rider, s.x, s.y - 0.34 + Compat.ridingOffset(rider), s.z);
     }
 
     @Override
@@ -152,10 +157,12 @@ public class SwingSeatEntity extends Entity implements IEntityAdditionalSpawnDat
     @Override
     protected void addAdditionalSaveData(CompoundTag t) {}
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buf) {

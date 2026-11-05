@@ -138,14 +138,27 @@ public class GuideScreen extends Screen {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public boolean mouseScrolled(double mx, double my, double scrollX, double delta) {
+    //#else
     public boolean mouseScrolled(double mx, double my, double delta) {
+    //#endif
         scroll = Math.max(0, scroll - delta * 12);
         return true;
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {} // drawn once, by render()
+    //$$
+    //#endif
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
+        //#if MC>=12100
+        //$$ renderTransparentBackground(g);
+        //#else
         renderBackground(g);
+        //#endif
         RenderSystem.enableBlend();
         g.blit(BG, px, py, 0, 0, pw, ph, pw, ph);
         // a title that won't stay still

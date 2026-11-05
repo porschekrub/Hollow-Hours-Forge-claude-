@@ -45,6 +45,11 @@ public final class HHNet {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), msg);
     }
 
+    /** To every player who sees the entity (and the entity itself when it is a player and andSelf). */
+    public static void toTracking(net.minecraft.world.entity.Entity e, Object msg, boolean andSelf) {
+        CHANNEL.send((andSelf ? PacketDistributor.TRACKING_ENTITY_AND_SELF : PacketDistributor.TRACKING_ENTITY).with(() -> e), msg);
+    }
+
     public static void toServer(Object msg) {
         CHANNEL.sendToServer(msg);
     }

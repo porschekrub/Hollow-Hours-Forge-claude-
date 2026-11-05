@@ -35,9 +35,14 @@ public class HollowHours {
     public static final String MODID = "hollowhours";
     public static final Logger LOG = LoggerFactory.getLogger("HollowHours");
 
+    //#if NEOFORGE
+    //$$ public HollowHours(IEventBus modBus, net.neoforged.fml.ModContainer container) {
+    //$$     HHNet.register(modBus);
+    //#else
     @SuppressWarnings("removal")
     public HollowHours() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    //#endif
         HHSounds.SOUNDS.register(modBus);
         HHEntities.ENTITIES.register(modBus);
         com.hollowhours.registry.HHBlocks.BLOCKS.register(modBus);
@@ -49,8 +54,13 @@ public class HollowHours {
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::attributes);
 
+        //#if NEOFORGE
+        //$$ container.registerConfig(ModConfig.Type.COMMON, HHConfig.SPEC, "hollowhours-common.toml");
+        //$$ container.registerConfig(ModConfig.Type.CLIENT, HHClientConfig.SPEC, "hollowhours-client.toml");
+        //#else
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HHConfig.SPEC, "hollowhours-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, HHClientConfig.SPEC, "hollowhours-client.toml");
+        //#endif
         modBus.addListener(com.hollowhours.config.HHClientConfig::onLoad);
 
         GhostEvents.register(MinecraftForge.EVENT_BUS);

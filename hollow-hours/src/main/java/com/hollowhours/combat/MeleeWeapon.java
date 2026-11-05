@@ -96,7 +96,11 @@ public class MeleeWeapon extends SwordItem {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public int getUseDuration(ItemStack stack, net.minecraft.world.entity.LivingEntity user) {
+    //#else
     public int getUseDuration(ItemStack stack) {
+    //#endif
         return 72000;
     }
 
@@ -113,7 +117,11 @@ public class MeleeWeapon extends SwordItem {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("hollowhours.weapon.poise", Math.round(poise * 100)).withStyle(ChatFormatting.DARK_PURPLE));
         tip.add(Component.translatable("hollowhours.weapon.melee.hint").withStyle(ChatFormatting.GRAY));
     }

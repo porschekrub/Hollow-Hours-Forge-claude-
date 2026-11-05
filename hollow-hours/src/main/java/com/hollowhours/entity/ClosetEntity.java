@@ -1,5 +1,6 @@
 package com.hollowhours.entity;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.ghost.Hiding;
 import com.hollowhours.registry.HHItems;
 import com.hollowhours.util.Fx;
@@ -55,7 +56,11 @@ public class ClosetEntity extends Entity implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(DOOR, DOOR_SHUT);
     }
 
@@ -132,7 +137,9 @@ public class ClosetEntity extends Entity implements GeoEntity {
         return false;
     }
 
+    //#if MC<12100
     @Override
+    //#endif
     public double getPassengersRidingOffset() {
         return 0.05;
     }
@@ -141,7 +148,7 @@ public class ClosetEntity extends Entity implements GeoEntity {
     protected void positionRider(Entity rider, MoveFunction move) {
         if (!hasPassenger(rider)) return;
         Vec3 f = front();
-        move.accept(rider, getX() - f.x * SEAT_BACK, getY() + getPassengersRidingOffset() + rider.getMyRidingOffset(), getZ() - f.z * SEAT_BACK);
+        move.accept(rider, getX() - f.x * SEAT_BACK, getY() + getPassengersRidingOffset() + Compat.ridingOffset(rider), getZ() - f.z * SEAT_BACK);
     }
 
     @Override
@@ -194,10 +201,12 @@ public class ClosetEntity extends Entity implements GeoEntity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {}
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 
     // ------------------------------------------------------------------ animation
     static final RawAnimation SHUT = RawAnimation.begin().thenPlayAndHold("animation.ghost_closet.shut");

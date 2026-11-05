@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.compat.ItemData;
 import com.hollowhours.item.FlashlightItem;
 import com.hollowhours.registry.HHItems;
@@ -234,7 +235,11 @@ public final class Flashlight {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag tag) {
+        //#endif
             ListTag l = new ListTag();
             for (long x : placed) l.add(LongTag.valueOf(x));
             tag.put("lights", l);
@@ -243,7 +248,7 @@ public final class Flashlight {
     }
 
     static Data data(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_flashlights");
+        return Compat.saved(level.getDataStorage(), Data::load, Data::new, "hollowhours_flashlights");
     }
 
     /** On world load: remove light blocks left behind. */

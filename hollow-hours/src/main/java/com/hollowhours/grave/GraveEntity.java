@@ -59,7 +59,11 @@ public class GraveEntity extends Entity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(OWNER_NAME, "");
         entityData.define(LEFT, 0);
     }
@@ -162,8 +166,10 @@ public class GraveEntity extends Entity {
         t.putString("OwnerName", ownerName());
     }
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 }

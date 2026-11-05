@@ -130,9 +130,18 @@ public class PhoneScreen extends Screen {
         for (int i = 0; i < 3; i++) g.fill(x + w - 40 + i * 12, by + 4, x + w - 32 + i * 12, by + 12, new int[] {0xFF30C0FF, 0xFFFFD040, 0xFF40E060}[i]);
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {} // drawn once, by render()
+    //$$
+    //#endif
     @Override
     public void render(GuiGraphics g, int mx, int my, float partial) {
+        //#if MC>=12100
+        //$$ renderTransparentBackground(g);
+        //#else
         renderBackground(g);
+        //#endif
         Minecraft mc = Minecraft.getInstance();
         Font f = mc.font;
         if (arcade != null) {
@@ -489,7 +498,11 @@ public class PhoneScreen extends Screen {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public boolean mouseScrolled(double mx, double my, double scrollX, double delta) {
+    //#else
     public boolean mouseScrolled(double mx, double my, double delta) {
+    //#endif
         if (app == App.CHAT) PhoneApps.chatScroll(delta);
         return true;
     }

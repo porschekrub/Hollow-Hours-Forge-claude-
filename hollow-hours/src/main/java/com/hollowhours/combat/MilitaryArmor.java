@@ -110,7 +110,11 @@ public final class MilitaryArmor {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public void appendHoverText(ItemStack stack, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+        //#else
         public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+        //#endif
             tip.add(Component.translatable("hollowhours.armor.set." + mat.name).withStyle(ChatFormatting.GOLD));
             tip.add(Component.translatable("hollowhours.armor.bonus", Math.round(mat.ghostCut * 100), Math.round(mat.struggle * 100)).withStyle(ChatFormatting.GRAY));
         }

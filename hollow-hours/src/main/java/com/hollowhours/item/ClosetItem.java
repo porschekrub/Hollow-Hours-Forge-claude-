@@ -57,7 +57,11 @@ public class ClosetItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack it, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack it, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("item.hollowhours.closet_item.tip").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }
 }

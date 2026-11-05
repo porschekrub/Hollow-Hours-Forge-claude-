@@ -88,14 +88,19 @@ public class GhostEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //$$     super.defineSynchedData(entityData);
+    //#else
     protected void defineSynchedData() {
         super.defineSynchedData();
-        this.entityData.define(ANIM, GhostAnim.SPAWN.ordinal());
-        this.entityData.define(RAGE, false);
-        this.entityData.define(CRAWL, false);
-        this.entityData.define(TRACK, -1);
-        this.entityData.define(SEQ, 0);
-        this.entityData.define(KO, false);
+    //#endif
+        entityData.define(ANIM, GhostAnim.SPAWN.ordinal());
+        entityData.define(RAGE, false);
+        entityData.define(CRAWL, false);
+        entityData.define(TRACK, -1);
+        entityData.define(SEQ, 0);
+        entityData.define(KO, false);
     }
 
     @Override
@@ -362,7 +367,9 @@ public class GhostEntity extends Monster implements GeoEntity {
         move.accept(passenger, x, y, z);
     }
 
+    //#if MC<12100
     @Override
+    //#endif
     public double getPassengersRidingOffset() {
         return 1.0;
     }

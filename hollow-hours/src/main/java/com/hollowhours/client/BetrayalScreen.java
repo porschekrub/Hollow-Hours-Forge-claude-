@@ -143,5 +143,9 @@ public class BetrayalScreen extends Screen {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {}
+    //#else
     public void renderBackground(GuiGraphics g) {}
+    //#endif
 }

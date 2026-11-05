@@ -1,5 +1,6 @@
 package com.hollowhours.rescue;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.HollowHours;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.entity.GhostEntity;
@@ -77,7 +78,11 @@ public final class Rescue {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag t) {
+        //#endif
             t.putLong("arriveAt", arriveAt);
             t.putLong("pickupUntil", pickupUntil);
             t.putBoolean("announced", announced);
@@ -87,7 +92,7 @@ public final class Rescue {
     }
 
     public static Data data(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_rescue");
+        return Compat.saved(server.overworld().getDataStorage(), Data::load, Data::new, "hollowhours_rescue");
     }
 
     static CompoundTag persisted(Player p) {

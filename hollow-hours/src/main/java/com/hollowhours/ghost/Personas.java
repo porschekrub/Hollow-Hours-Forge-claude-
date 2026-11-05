@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.util.Fx;
 import com.hollowhours.util.R;
 import com.hollowhours.util.W;
@@ -93,7 +94,7 @@ public final class Personas {
         }
         b.spdMul = on ? 1.9 : 0.85;
         if (on) b.lastDetect = now;
-        if (bestD < 5) best.setSecondsOnFire(3);
+        if (bestD < 5) Compat.ignite(best, 3);
     }
 
     private static void voidG(GhostBrain b, ServerPlayer best, double bestD, long now, boolean chasing) {
@@ -166,7 +167,7 @@ public final class Personas {
                 if (R.chance(0.4)) Fx.puff(level, ParticleTypes.LARGE_SMOKE, g.position(), 0.2);
                 if (R.chance(0.12)) Fx.playAt(best, "fire.fire", g.getX(), g.getY(), g.getZ(), 1.5f, R.pitch(0.6, 1.0));
                 if (R.chance(0.03)) Fx.playAt(best, "mob.blaze.breathe", g.getX(), g.getY(), g.getZ(), 1.5f, 0.5f);
-                if (chasing && bestD <= 3.5) best.setSecondsOnFire(4);
+                if (chasing && bestD <= 3.5) Compat.ignite(best, 4);
             }
             case 4 -> {
                 if (!chasing && b.stalking && R.chance(0.2)) {          // the image twitches

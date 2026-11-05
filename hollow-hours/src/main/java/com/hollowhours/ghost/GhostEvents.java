@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.HollowHours;
 import com.hollowhours.entity.GhostEntity;
 import com.hollowhours.entity.GhostKind;
@@ -230,7 +231,7 @@ public final class GhostEvents {
                 e.setCanceled(true);
                 return;
             }
-            if (Curses.isCursed(e.getItemStack()) && !e.getItemStack().isEdible()) Curses.handleUse(p, "use", e.getItemStack());
+            if (Curses.isCursed(e.getItemStack()) && !Compat.isFood(e.getItemStack())) Curses.handleUse(p, "use", e.getItemStack());
         }
     }
 

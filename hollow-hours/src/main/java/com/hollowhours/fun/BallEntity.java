@@ -70,7 +70,11 @@ public class BallEntity extends Entity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(KIND, BASKETBALL);
     }
 
@@ -251,8 +255,10 @@ public class BallEntity extends Entity {
         t.putInt("Kind", kind());
     }
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 }

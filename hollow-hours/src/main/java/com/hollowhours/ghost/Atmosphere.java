@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.net.HHNet;
 import com.hollowhours.net.S2CAtmos;
@@ -40,7 +41,11 @@ public final class Atmosphere {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag t) {
+        //#endif
             t.putBoolean("blood", blood);
             t.putLong("rolledNight", rolledNight);
             t.putLong("fogUntil", fogUntil);
@@ -57,7 +62,7 @@ public final class Atmosphere {
     private static boolean bloodSent, hauntSent;
 
     static Data data(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_atmosphere");
+        return Compat.saved(server.overworld().getDataStorage(), Data::load, Data::new, "hollowhours_atmosphere");
     }
 
     /** Is a blood moon up right now (overworld night)? */

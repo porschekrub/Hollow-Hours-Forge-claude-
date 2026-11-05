@@ -201,9 +201,18 @@ public class RecipeScreen extends Screen {
     }
 
     // ------------------------------------------------------------------ drawing
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {} // drawn once, by render()
+    //$$
+    //#endif
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
+        //#if MC>=12100
+        //$$ renderTransparentBackground(g);
+        //#else
         renderBackground(g);
+        //#endif
         hits.clear();
         g.fill(lx - 5, 3, lx + listW + 5, height - 3, 0xD0101418);
         g.fill(4, 3, lx - 9, height - 3, 0xD0101418);
@@ -358,7 +367,11 @@ public class RecipeScreen extends Screen {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public boolean mouseScrolled(double mx, double my, double scrollX, double delta) {
+    //#else
     public boolean mouseScrolled(double mx, double my, double delta) {
+    //#endif
         int d = delta > 0 ? -1 : 1;
         if (mx >= lx - 5) listPage = Math.floorMod(listPage + d, listPages());
         else if (pages > 1) recPage = Math.floorMod(recPage + d, pages);

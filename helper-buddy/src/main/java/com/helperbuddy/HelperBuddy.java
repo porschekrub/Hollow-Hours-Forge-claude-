@@ -29,15 +29,24 @@ public class HelperBuddy {
     public static final String MODID = "helperbuddy";
     public static final Logger LOG = LoggerFactory.getLogger("HelperBuddy");
 
+    //#if NEOFORGE
+    //$$ public HelperBuddy(IEventBus modBus, net.neoforged.fml.ModContainer container) {
+    //$$     HBNet.register(modBus);
+    //#else
     @SuppressWarnings("removal")
     public HelperBuddy() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    //#endif
         HBRegistry.ENTITIES.register(modBus);
         HBRegistry.ITEMS.register(modBus);
         HBRegistry.TABS.register(modBus);
         modBus.addListener(this::commonSetup);
         modBus.addListener(this::attributes);
+        //#if NEOFORGE
+        //$$ container.registerConfig(ModConfig.Type.COMMON, HBConfig.SPEC, "helperbuddy-common.toml");
+        //#else
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, HBConfig.SPEC, "helperbuddy-common.toml");
+        //#endif
         HBEvents.register(MinecraftForge.EVENT_BUS);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }

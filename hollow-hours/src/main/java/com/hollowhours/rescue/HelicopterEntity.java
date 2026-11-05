@@ -1,5 +1,6 @@
 package com.hollowhours.rescue;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.registry.HHEntities;
 import com.hollowhours.util.Fx;
 import net.minecraft.core.particles.ParticleTypes;
@@ -144,7 +145,11 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
 
     // ------------------------------------------------------------------ state
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(STATE, (byte) ARRIVING);
         entityData.define(KIND, (byte) PICKUP);
     }
@@ -316,7 +321,7 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
         if (i < 0) return;
         double[] s = SEATS[i];
         Vec3 v = local(s[0], s[1], s[2]);
-        move.accept(rider, v.x, v.y + rider.getMyRidingOffset(), v.z);
+        move.accept(rider, v.x, v.y + Compat.ridingOffset(rider), v.z);
     }
 
     @Override
@@ -401,10 +406,12 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
     @Override
     protected void addAdditionalSaveData(CompoundTag t) {}
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 
     @Override
     public void writeSpawnData(FriendlyByteBuf buf) {

@@ -73,7 +73,11 @@ public class GunItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public int getUseDuration(ItemStack stack, net.minecraft.world.entity.LivingEntity user) {
+    //#else
     public int getUseDuration(ItemStack stack) {
+    //#endif
         return 72000;
     }
 
@@ -89,7 +93,11 @@ public class GunItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity e, ItemStack s, int left) {
         if (level.isClientSide || !(e instanceof ServerPlayer p) || !spec.auto) return;
+        //#if MC>=12100
+        //$$ int used = getUseDuration(s, e) - left;
+        //#else
         int used = getUseDuration(s) - left;
+        //#endif
         if (used > 0 && used % spec.delay == 0) trigger(p, s);
     }
 
@@ -244,7 +252,11 @@ public class GunItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("hollowhours.gun.ammo", ammo(s), spec.mag).withStyle(ChatFormatting.YELLOW));
         tip.add(Component.translatable("hollowhours.gun.uses", Component.translatable(spec.ammo.get().getDescriptionId())).withStyle(ChatFormatting.GRAY));
         tip.add(Component.translatable("hollowhours.weapon.gunstats", Math.round(spec.damage * spec.pellets), Math.round(spec.poise * spec.pellets)).withStyle(ChatFormatting.DARK_PURPLE));

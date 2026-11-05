@@ -62,7 +62,11 @@ public class ChargerItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity who, ItemStack s, int remaining) {
         if (level.isClientSide || !(who instanceof ServerPlayer p)) return;
+        //#if MC>=12100
+        //$$ int held = getUseDuration(s, who) - remaining;
+        //#else
         int held = getUseDuration(s) - remaining;
+        //#endif
         ItemStack phone = target(p);
         if (held == PLUG) {
             if (phone == null) {
@@ -112,7 +116,11 @@ public class ChargerItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity user) {
+    //#else
     public int getUseDuration(ItemStack s) {
+    //#endif
         return 72000;
     }
 
@@ -122,7 +130,11 @@ public class ChargerItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("item.hollowhours.charger.left", s.getMaxDamage() - s.getDamageValue()).withStyle(ChatFormatting.GRAY));
         tip.add(Component.translatable("item.hollowhours.charger.tip").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
     }

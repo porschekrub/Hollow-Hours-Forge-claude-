@@ -185,7 +185,11 @@ public class PhoneItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         int b = Math.round(battery(s));
         tip.add(Component.translatable("item.hollowhours.phone.battery", b).withStyle(b > 20 ? ChatFormatting.GREEN : ChatFormatting.RED));
         tip.add(Component.translatable("item.hollowhours.phone.health", health(s)).withStyle(ChatFormatting.GRAY));

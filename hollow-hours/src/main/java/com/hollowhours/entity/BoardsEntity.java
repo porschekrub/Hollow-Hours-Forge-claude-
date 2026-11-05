@@ -65,7 +65,11 @@ public class BoardsEntity extends Entity implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //#else
     protected void defineSynchedData() {
+    //#endif
         entityData.define(KIND, KIND_DOOR);
         entityData.define(AXIS, 0);
         entityData.define(SIDE, 0);
@@ -284,10 +288,12 @@ public class BoardsEntity extends Entity implements GeoEntity {
         tag.putDouble("h", h);
     }
 
+    //#if MC<12100
     @Override
     public Packet<ClientGamePacketListener> getAddEntityPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
     }
+    //#endif
 
     @Override
     public boolean shouldRenderAtSqrDistance(double d) {

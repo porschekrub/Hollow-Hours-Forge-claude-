@@ -74,7 +74,11 @@ public final class Fx {
     }
 
     // ------------------------------------------------------------------ effects
+    //#if MC>=12100
+    //$$ public static void effect(ServerPlayer p, net.minecraft.core.Holder<MobEffect> e, int ticks, int amp) {
+    //#else
     public static void effect(ServerPlayer p, MobEffect e, int ticks, int amp) {
+    //#endif
         if (p != null && ticks > 0) p.addEffect(new MobEffectInstance(e, ticks, Math.max(0, amp), false, false, false));
     }
 

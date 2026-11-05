@@ -77,9 +77,18 @@ public class BookScreen extends Screen {
         return super.keyPressed(key, scan, mods);
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {} // drawn once, by render()
+    //$$
+    //#endif
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
+        //#if MC>=12100
+        //$$ renderTransparentBackground(g);
+        //#else
         renderBackground(g);
+        //#endif
         ListTag l = helpers();
         int rows = Math.min(7, l.size());
         g.fill(left - 4, top - 4, left + W + 4, top + 60 + rows * 24 + 4, 0xE0101418);

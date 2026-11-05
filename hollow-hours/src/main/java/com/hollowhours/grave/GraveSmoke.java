@@ -30,7 +30,11 @@ public final class GraveSmoke {
         check(d.lost.get(owner) != null && d.lost.get(owner).size() == 1 && d.active.size() >= Graves.KEEP_LOST + 1, "an old grave crumbles, new ones stay");
         for (Graves.Grave g : d.active.values().stream().filter(g -> g.owner.equals(owner)).toList()) Graves.crumble(d, g);
         check(d.lost.get(owner).size() == Graves.KEEP_LOST, "only the newest crumbled graves are kept");
+        //#if MC>=12100
+        //$$ Graves loaded = Graves.load(d.save(new net.minecraft.nbt.CompoundTag(), com.hollowhours.compat.Compat.registries()));
+        //#else
         Graves loaded = Graves.load(d.save(new net.minecraft.nbt.CompoundTag()));
+        //#endif
         check(loaded.lost.get(owner).size() == Graves.KEEP_LOST, "graves survive saving");
         Graves.Grave newest = Graves.popLost(server, owner);
         check(newest != null && newest.items.get(0).getCount() == Graves.KEEP_LOST + 2 && newest.xp == 10 + Graves.KEEP_LOST + 1, "the restorer brings back the newest");

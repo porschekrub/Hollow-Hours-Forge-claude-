@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.item.PhoneItem;
 import com.hollowhours.net.HHNet;
@@ -34,7 +35,11 @@ public final class Story {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag t) {
+        //#endif
             t.putInt("forced", forced);
             return t;
         }
@@ -44,7 +49,7 @@ public final class Story {
     private static boolean active;
 
     static Data data(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_story");
+        return Compat.saved(server.overworld().getDataStorage(), Data::load, Data::new, "hollowhours_story");
     }
 
     /** Day number of the world (1 = the first day). */

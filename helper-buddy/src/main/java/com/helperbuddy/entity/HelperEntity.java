@@ -116,8 +116,13 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder entityData) {
+    //$$     super.defineSynchedData(entityData);
+    //#else
     protected void defineSynchedData() {
         super.defineSynchedData();
+    //#endif
         entityData.define(MODE, Mode.FOLLOW.name());
         entityData.define(STATUS, "");
         entityData.define(HNAME, "");
@@ -660,10 +665,12 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         return Component.literal(helperName());
     }
 
+    //#if MC<12100
     @Override
     public double getMyRidingOffset() {
         return 0.1;
     }
+    //#endif
 
     /** Owner + a list tag helper for the bag (used by saves of old versions). */
     public static ListTag emptyList() {

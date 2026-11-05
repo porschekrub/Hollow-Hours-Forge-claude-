@@ -1,5 +1,6 @@
 package com.hollowhours.grave;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.HollowHours;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.registry.HHEntities;
@@ -96,21 +97,25 @@ public final class Graves extends SavedData {
 
     static ListTag saveItems(List<ItemStack> items) {
         ListTag l = new ListTag();
-        for (ItemStack s : items) if (!s.isEmpty()) l.add(s.save(new CompoundTag()));
+        for (ItemStack s : items) if (!s.isEmpty()) l.add(Compat.saveStack(s));
         return l;
     }
 
     static List<ItemStack> loadItems(ListTag l) {
         List<ItemStack> out = new ArrayList<>();
         for (int i = 0; i < l.size(); i++) {
-            ItemStack s = ItemStack.of(l.getCompound(i));
+            ItemStack s = Compat.loadStack(l.getCompound(i));
             if (!s.isEmpty()) out.add(s);
         }
         return out;
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+    //#else
     public CompoundTag save(CompoundTag t) {
+    //#endif
         ListTag a = new ListTag();
         active.values().forEach(g -> a.add(g.save()));
         t.put("Active", a);
@@ -156,7 +161,7 @@ public final class Graves extends SavedData {
     }
 
     public static Graves get(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(Graves::load, Graves::new, NAME);
+        return Compat.saved(server.overworld().getDataStorage(), Graves::load, Graves::new, NAME);
     }
 
     static long now(MinecraftServer server) {

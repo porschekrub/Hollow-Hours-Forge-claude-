@@ -1,5 +1,6 @@
 package com.hollowhours.endgame;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.compat.ItemData;
 import com.hollowhours.HollowHours;
 import com.hollowhours.config.HHConfig;
@@ -88,7 +89,11 @@ public final class Endgame {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag t) {
+        //#endif
             t.putInt("stage", stage);
             t.putLong("fromDay", fromDay);
             t.putInt("down", down);
@@ -102,7 +107,7 @@ public final class Endgame {
     }
 
     public static Data data(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_endgame");
+        return Compat.saved(server.overworld().getDataStorage(), Data::load, Data::new, "hollowhours_endgame");
     }
 
     public static int stage(MinecraftServer server) {

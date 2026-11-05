@@ -1,5 +1,6 @@
 package com.helperbuddy.client.screen;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.brain.BuildJob;
 import com.helperbuddy.entity.Settings;
 import com.helperbuddy.gen.ExtraGen;
@@ -397,9 +398,18 @@ public class HelperScreen extends Screen {
     }
 
     // ------------------------------------------------------------------ drawing
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {} // drawn once, by render()
+    //$$
+    //#endif
     @Override
     public void render(GuiGraphics g, int mx, int my, float pt) {
+        //#if MC>=12100
+        //$$ renderTransparentBackground(g);
+        //#else
         renderBackground(g);
+        //#endif
         g.fill(left - 4, top - 26, left + W + 4, top + H + 4, 0xE0101418);
         g.fill(left - 4, top - 26, left + W + 4, top - 25, 0xFF3A7BD5);
         super.render(g, mx, my, pt);
@@ -427,7 +437,7 @@ public class HelperScreen extends Screen {
         y += 12;
         g.drawString(font, "§f" + d.getString("modeLabel") + (d.getString("status").isEmpty() ? "" : " §7• " + d.getString("status")), x, y, 0xFFFFFF);
         y += 12;
-        ItemStack tool = ItemStack.of(d.getCompound("tool"));
+        ItemStack tool = Compat.loadStack(d.getCompound("tool"));
         g.drawString(font, "§7" + t("ถือ: ", "Holding: ") + (tool.isEmpty() ? t("ไม่มี", "nothing") : "§b" + tool.getHoverName().getString())
                 + "   §7" + t("กระเป๋า ", "Bag ") + d.getInt("bagUsed") + "/" + d.getInt("bagSize"), x, y, 0xFFFFFF);
         y += 12;

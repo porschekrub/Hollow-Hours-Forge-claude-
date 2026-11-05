@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -222,7 +223,7 @@ public final class GhostTalk {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack it = inv.getItem(i);
             if (it.isEmpty()) continue;
-            if (o.food ? !it.isEdible() : !o.items.contains(it.getItem())) continue;
+            if (o.food ? !Compat.isFood(it) : !o.items.contains(it.getItem())) continue;
             it.shrink(1);
             return true;
         }
@@ -509,7 +510,7 @@ public final class GhostTalk {
         Item it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(id));
         if (it == Items.AIR) return null;
         double bonus = path.contains("netherite") ? 0.25 : path.contains("diamond") ? 0.15 : path.contains("gold") || path.contains("emerald") ? 0.08
-                : it.isEdible() ? 0.05 : 0.03;
+                : Compat.isFood(it) ? 0.05 : 0.03;
         return new Offer(id, bonus, Set.of(it), false);
     }
 

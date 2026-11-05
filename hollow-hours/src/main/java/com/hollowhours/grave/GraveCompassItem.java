@@ -70,7 +70,11 @@ public class GraveCompassItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         GlobalPos g = target(s);
         if (g != null) {
             tip.add(Component.translatable("item.hollowhours.grave_compass.pos", g.pos().getX(), g.pos().getY(), g.pos().getZ()).withStyle(ChatFormatting.GRAY));
@@ -81,7 +85,11 @@ public class GraveCompassItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity user) {
+    //#else
     public int getUseDuration(ItemStack s) {
+    //#endif
         return 72000;
     }
 
@@ -99,7 +107,11 @@ public class GraveCompassItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity who, ItemStack s, int remaining) {
         if (level.isClientSide || !(who instanceof ServerPlayer p)) return;
+        //#if MC>=12100
+        //$$ int held = getUseDuration(s, who) - remaining;
+        //#else
         int held = getUseDuration(s) - remaining;
+        //#endif
         if (held < HOLD) {
             if (held % 20 == 0) Fx.actionbar(p, Component.translatable("item.hollowhours.grave_compass.holding", 3 - held / 20));
             return;

@@ -74,7 +74,11 @@ public class FlashlightItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack it, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack it, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         int sec = Flashlight.charge(it) / 20;
         tip.add(Component.translatable("item.hollowhours.flashlight.charge", sec / 60, String.format("%02d", sec % 60)).withStyle(ChatFormatting.GRAY));
         tip.add(Component.translatable("item.hollowhours.flashlight.tip").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));

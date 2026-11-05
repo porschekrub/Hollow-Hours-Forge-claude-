@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Map;
 
@@ -70,6 +69,6 @@ public final class BloodFx {
     }
 
     static void send(Entity e, S2CBlood m) {
-        HHNet.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> e), m);
+        HHNet.toTracking(e, m, true);
     }
 }

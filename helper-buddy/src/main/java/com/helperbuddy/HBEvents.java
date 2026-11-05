@@ -1,5 +1,6 @@
 package com.helperbuddy;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.registry.HBRegistry;
@@ -41,7 +42,7 @@ public final class HBEvents {
         net.minecraft.nbt.ListTag kept = new net.minecraft.nbt.ListTag();
         e.getDrops().removeIf(ie -> {
             if (!ie.getItem().is(HBRegistry.COMMAND_BOOK.get())) return false;
-            kept.add(ie.getItem().save(new CompoundTag()));
+            kept.add(Compat.saveStack(ie.getItem()));
             return true;
         });
         if (kept.isEmpty()) return;
@@ -59,7 +60,7 @@ public final class HBEvents {
         if (!persisted.contains(KEPT)) return;
         net.minecraft.nbt.ListTag kept = persisted.getList(KEPT, net.minecraft.nbt.Tag.TAG_COMPOUND);
         for (int i = 0; i < kept.size(); i++) {
-            ItemStack s = ItemStack.of(kept.getCompound(i));
+            ItemStack s = Compat.loadStack(kept.getCompound(i));
             if (!s.isEmpty() && !p.getInventory().add(s)) p.drop(s, false);
         }
         persisted.remove(KEPT);

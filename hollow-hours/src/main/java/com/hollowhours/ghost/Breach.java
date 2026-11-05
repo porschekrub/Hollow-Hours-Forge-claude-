@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.entity.BoardsEntity;
 import com.hollowhours.util.Fx;
 import com.hollowhours.util.R;
@@ -88,7 +89,11 @@ public final class Breach {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag tag) {
+        //#endif
             ListTag list = new ListTag();
             for (CompoundTag c : cracks.values()) if (!c.getBoolean("tmp")) list.add(c);
             tag.put("cracks", list);
@@ -97,7 +102,7 @@ public final class Breach {
     }
 
     public static Data data(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(Data::load, Data::new, "hollowhours_cracks");
+        return Compat.saved(level.getDataStorage(), Data::load, Data::new, "hollowhours_cracks");
     }
 
     @Nullable

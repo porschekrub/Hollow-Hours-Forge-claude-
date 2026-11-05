@@ -79,7 +79,11 @@ public class CanteenItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity user) {
+    //#else
     public int getUseDuration(ItemStack s) {
+    //#endif
         return 32;
     }
 
@@ -104,7 +108,11 @@ public class CanteenItem extends Item {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext tooltipContext, List<Component> tip, TooltipFlag flag) {
+    //#else
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> tip, TooltipFlag flag) {
+    //#endif
         tip.add(Component.translatable("item.hollowhours.canteen.sips", sips(s), SIPS).withStyle(ChatFormatting.AQUA));
         tip.add(Component.translatable("item.hollowhours.canteen.tip").withStyle(ChatFormatting.GRAY));
     }

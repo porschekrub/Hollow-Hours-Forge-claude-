@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.HollowHours;
 import com.hollowhours.compat.ItemData;
 import com.hollowhours.config.HHConfig;
@@ -70,14 +71,18 @@ public final class Curses {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider registries) {
+        //#else
         public CompoundTag save(CompoundTag t) {
+        //#endif
             t.putDouble("pool", pool);
             return t;
         }
     }
 
     static BuffData buffData(ServerLevel level) {
-        return level.getServer().overworld().getDataStorage().computeIfAbsent(BuffData::load, BuffData::new, "hollowhours_buff");
+        return Compat.saved(level.getServer().overworld().getDataStorage(), BuffData::load, BuffData::new, "hollowhours_buff");
     }
 
     static final String[] RARE = {"diamond", "netherite", "emerald", "nether_star", "elytra", "totem", "beacon", "dragon", "trident", "heart_of_the_sea",
@@ -258,7 +263,11 @@ public final class Curses {
     // ------------------------------------------------------------------ drawbacks
     private static int POT = 1;
 
+    //#if MC>=12100
+    //$$ static void eff(ServerPlayer p, net.minecraft.core.Holder<MobEffect> e, int ticks, double amp) {
+    //#else
     static void eff(ServerPlayer p, MobEffect e, int ticks, double amp) {
+    //#endif
         int base = Math.max(0, (int) Math.floor(amp)), a = base, t = ticks;
         if (POT > 1 && e != MobEffects.LEVITATION) {
             int cap = e == MobEffects.MOVEMENT_SLOWDOWN || e == MobEffects.DIG_SLOWDOWN ? 4 : e == MobEffects.WITHER ? 1 : e == MobEffects.POISON ? 5 : 6;
@@ -341,7 +350,7 @@ public final class Curses {
                 eff(p, MobEffects.BLINDNESS, 120, 0);
                 eff(p, MobEffects.WEAKNESS, 500, 1);
             }
-            case "burn" -> p.setSecondsOnFire((int) Math.min(14, (7 + Math.floor(f * 7)) * POT));
+            case "burn" -> Compat.ignite(p, (int) Math.min(14, (7 + Math.floor(f * 7)) * POT));
             case "lightning" -> {
                 LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
                 if (bolt != null) {
@@ -404,7 +413,7 @@ public final class Curses {
                 List<Integer> idx = new ArrayList<>();
                 for (int i = 0; i < p.getInventory().items.size(); i++) {
                     ItemStack s = p.getInventory().items.get(i);
-                    if (s.isEdible() && !s.is(Items.ROTTEN_FLESH)) idx.add(i);
+                    if (Compat.isFood(s) && !s.is(Items.ROTTEN_FLESH)) idx.add(i);
                 }
                 if (idx.isEmpty()) eff(p, MobEffects.HUNGER, 300, 2);
                 for (int k = 0; k < POT + 1 && !idx.isEmpty(); k++) {
@@ -618,7 +627,7 @@ public final class Curses {
                 Fx.effect(p, MobEffects.MOVEMENT_SLOWDOWN, 120, 1);
             }
             case 3 -> {
-                p.setSecondsOnFire(4);
+                Compat.ignite(p, 4);
                 Fx.effect(p, MobEffects.HUNGER, 200, 1);
             }
             case 4 -> {
@@ -950,7 +959,7 @@ public final class Curses {
         int left = limit - used - 1;
         Item item = BuiltInRegistries.ITEM.get(HollowHours.rl(id));
         if (R.chance(HHConfig.ASK_GIVE_CHANCE.get())) {
-            int max = item.getMaxStackSize();
+            int max = Compat.maxStack(item);
             int n = Math.max(1, Math.min(qty, max > 1 ? max : 8));
             if (max > 1) give(p, makeCursed(item, n, kind.n));
             else for (int i = 0; i < n; i++) give(p, makeCursed(item, 1, kind.n));

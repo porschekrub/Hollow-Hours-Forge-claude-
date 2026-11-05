@@ -1,5 +1,6 @@
 package com.helperbuddy.net;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.brain.Bag;
 import com.helperbuddy.brain.Brain;
 import com.helperbuddy.config.HBConfig;
@@ -32,7 +33,7 @@ public final class Snapshot {
         t.putString("modeLabel", h.mode().label(th));
         t.putString("status", h.status());
         t.putBoolean("ko", h.isKO());
-        t.put("tool", h.tool().save(new CompoundTag()));
+        t.put("tool", Compat.saveStack(h.tool()));
         t.putInt("bagUsed", Bag.usedSlots(h));
         t.putInt("bagSize", h.bag.getContainerSize());
         CompoundTag flags = new CompoundTag();
