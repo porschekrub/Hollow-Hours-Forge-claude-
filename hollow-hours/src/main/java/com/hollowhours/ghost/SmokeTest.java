@@ -111,7 +111,7 @@ final class SmokeTest {
         check(b.mode == GhostBrain.Mode.KO && g.isKnockedOut(), "ghost knocked out (" + hits + " pistol hits, poise " + max + ")");
         check(!KillSequence.begin(b, fp), "a knocked-out ghost can't grab");
         b.timers.put("koUntil", b.now());
-        g.tick();
+        com.hollowhours.combat.GhostCombat.tickKnockedOut(b, b.now()); // (no players here: a ticking ghost would just vanish)
         check(b.mode != GhostBrain.Mode.KO && !g.isKnockedOut(), "ghost wakes up");
         HollowHours.LOG.info("[smoke] combat: {} pistol hits knock ghost {} out (poise {})", hits, g.kind.n, max);
         g.discard();
