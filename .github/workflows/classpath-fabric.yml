@@ -24,10 +24,10 @@ jobs:
       - name: Versions
         run: |
           MC=${{ matrix.mc }}
+          # 1.20.1 libraries build with Loom 1.11 (Gradle 8.14); 1.21.1 ones with Loom 1.17 (Gradle 9); newer Loom wants Java 25
+          case $MC in 1.20.1) LOOMMINOR=11; GRADLE=8.14.3;; *) LOOMMINOR=17; GRADLE=9.2.1;; esac
           meta() { curl -s "$1" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g'; }
-          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v -- "-" | grep "^1\.11\." | sort -V | tail -1)
-          # Loom 1.11 still runs on Java 21 (newer ones want Java 25)
-          GRADLE=8.14.3
+          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v -- "-" | grep "^1\.$LOOMMINOR\." | sort -V | tail -1)
           echo "GRADLE=$GRADLE" >> $GITHUB_ENV
           LOADER=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-loader/maven-metadata.xml | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -1)
           FAPI=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | grep "+$MC\$" | sort -V | tail -1)
