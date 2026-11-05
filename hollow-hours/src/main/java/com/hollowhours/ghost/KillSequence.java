@@ -272,7 +272,8 @@ public final class KillSequence {
         GhostBrain b = s.b;
         float pull = 0.0068f * PULL[b.kind.n] * (Atmosphere.bloodMoonFor(b.g.level()) ? 1.3f : 1f)
                 * (float) Math.min(2.0, Math.sqrt(com.hollowhours.rescue.Rescue.harshness(p, Atmosphere.bloodMoonFor(b.g.level()))));
-        s.prog -= pull;
+        // a full bar wins before the ghost pulls again (presses cap it at 1, so checking after the pull never won)
+        if (s.prog < 1f) s.prog -= pull;
         if (now % 2 == 0) HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, s.prog, s.strEnd - now, 0));
         if (s.prog >= 1f || s.prog <= 0 || now >= s.strEnd)
             com.hollowhours.HollowHours.LOG.info("[Hollow Hours] {} struggle {}: {} presses, pull {}/tick", p.getGameProfile().getName(),
