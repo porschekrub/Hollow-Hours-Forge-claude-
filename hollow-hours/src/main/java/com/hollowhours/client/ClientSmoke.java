@@ -2162,15 +2162,15 @@ public final class ClientSmoke {
             double a = r.nextDouble() * Math.PI * 2, rad = 3.3 + r.nextDouble() * 6;
             net.minecraft.core.BlockPos b = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
             if (l.getBlockState(b).isAir() && !l.getBlockState(b.below()).isAir())
-                put.accept(b, i % 9 == 0 ? B.s(net.minecraft.world.level.block.Blocks.BONE_BLOCK) : B.s(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE));
+                put.accept(b, i % 11 == 0 ? B.s(net.minecraft.world.level.block.Blocks.SKELETON_SKULL) : B.s(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE));
         }
         // the five, close, each by a cold lantern, all looking at you
         GhostAnim[] anims = {GhostAnim.GRAB, GhostAnim.CHASE, GhostAnim.LAUGH, GhostAnim.STALK, GhostAnim.CRAWL_CHASE};
         int[] kinds = {1, 3, 4, 5, 2};
-        double[] rads = {4.2, 4.6, 6.4, 4.8, 3.9};
+        double[] rads = {4.2, 4.6, 6.4, 4.8, 2.9};
         for (int i = 0; i < 5; i++) {
             double a = Math.toRadians(ghostAng[i]);
-            Vec3 at = c.add(Math.cos(a) * rads[i], 0, Math.sin(a) * rads[i]);
+            Vec3 at = c.add(Math.cos(a) * rads[i], kinds[i] == 2 ? 1 : 0, Math.sin(a) * rads[i]);
             GhostEntity g = showGhost(sp, GhostKind.byN(kinds[i]), at, anims[i]);
             if (g != null) {
                 float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
@@ -2203,6 +2203,14 @@ public final class ClientSmoke {
     private static void panorama(Minecraft mc, String name) {
         try {
             mc.grabPanoramixScreenshot(mc.gameDirectory, 1024, 1024);
+        } catch (Throwable e) {
+            HollowHours.LOG.error("[client smoke] panorama {} failed (com.hollowhours)", name, e);
+        }
+    }
+
+    /** (a few ticks after panorama(): the six files are written on another thread) */
+    private static void keepPanorama(Minecraft mc, String name) {
+        try {
             java.nio.file.Path dir = mc.gameDirectory.toPath().resolve("screenshots");
             for (int i = 0; i < 6; i++) {
                 java.nio.file.Path f = dir.resolve("panorama_" + i + ".png");
@@ -2246,12 +2254,14 @@ public final class ClientSmoke {
                 shot("covershot_blood_dark");
                 panorama(mc, "blood_dark");
             }
+            if (t == 240) keepPanorama(mc, "blood_dark");
             if (t == 222) server(sp -> com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 60, 0.45f));
             if (t == 270) {
                 face(mc, look[0]);
                 shot("covershot_blood_fog");
                 panorama(mc, "blood_fog");
             }
+            if (t == 290) keepPanorama(mc, "blood_fog");
             // 2: a little brighter (night vision)
             if (t == 272) server(sp -> {
                 com.hollowhours.ghost.Atmosphere.stopFog(sp.server);
@@ -2262,6 +2272,7 @@ public final class ClientSmoke {
                 shot("covershot_blood_bright");
                 panorama(mc, "blood_bright");
             }
+            if (t == 320) keepPanorama(mc, "blood_bright");
             // 3: no blood moon, a plain dark night
             if (t == 302) server(sp -> {
                 sp.removeEffect(MobEffects.NIGHT_VISION);
@@ -2274,6 +2285,7 @@ public final class ClientSmoke {
                 shot("covershot_night_dark");
                 panorama(mc, "night_dark");
             }
+            if (t == 420) keepPanorama(mc, "night_dark");
             if (t == 402) {
                 mc.options.gamma().set(gamma[0]);
                 server(sp -> {
