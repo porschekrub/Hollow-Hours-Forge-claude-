@@ -2082,12 +2082,25 @@ public final class ClientSmoke {
             }
         // dead trees all round
         double[] ghostAng = {15, 85, 160, 235, 305};
-        for (int i = 0; i < 22; i++) {
-            double a = r.nextDouble() * Math.PI * 2, rad = 10 + r.nextDouble() * 22;
+        // low mounds further out, so the land isn't flat to the horizon
+        for (int dx = -36; dx <= 36; dx++)
+            for (int dz = -36; dz <= 36; dz++) {
+                double d = Math.sqrt(dx * dx + dz * dz);
+                if (d < 17 || d > 36) continue;
+                double hh = (1.4 + Math.sin(dx * 0.31) * Math.cos(dz * 0.27) + 0.6 * Math.sin((dx + dz) * 0.13)) * Math.min(1, (d - 17) / 8);
+                int hgt = (int) Math.round(hh);
+                for (int y = 0; y < hgt; y++)
+                    put.accept(o.offset(dx, y, dz), B.s(y == hgt - 1 ? (r.nextInt(3) == 0 ? net.minecraft.world.level.block.Blocks.COARSE_DIRT : net.minecraft.world.level.block.Blocks.PODZOL)
+                            : net.minecraft.world.level.block.Blocks.DIRT));
+            }
+        for (int i = 0; i < 46; i++) {
+            double a = r.nextDouble() * Math.PI * 2, rad = 9 + r.nextDouble() * 27;
             boolean clash = false;
-            for (double ga : ghostAng) if (Math.abs(Math.toDegrees(Math.atan2(Math.sin(a - Math.toRadians(ga)), Math.cos(a - Math.toRadians(ga))))) < 14 && rad < 16) clash = true;
+            for (double ga : ghostAng) if (Math.abs(Math.toDegrees(Math.atan2(Math.sin(a - Math.toRadians(ga)), Math.cos(a - Math.toRadians(ga))))) < 16 && rad < 18) clash = true;
             if (clash) continue;
-            net.minecraft.core.BlockPos b = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
+            net.minecraft.core.BlockPos b0 = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
+            net.minecraft.core.BlockPos b = b0;
+            while (!l.getBlockState(b).isAir() && b.getY() < b0.getY() + 4) b = b.above();
             int h = 6 + r.nextInt(6);
             for (int y = 0; y < h; y++) put.accept(b.above(y), B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_LOG));
             for (int br = 0; br < 3; br++) {
@@ -2134,7 +2147,7 @@ public final class ClientSmoke {
         }
         // the five, each by a cold lantern, all looking at you
         GhostAnim[] anims = {GhostAnim.STALK, GhostAnim.IDLE, GhostAnim.CHASE, GhostAnim.LAUGH, GhostAnim.STALK};
-        double[] rads = {6.0, 7.0, 6.5, 7.5, 6.2};
+        double[] rads = {4.4, 5.0, 4.6, 5.4, 4.5};
         for (int i = 0; i < 5; i++) {
             double a = Math.toRadians(ghostAng[i]);
             Vec3 at = c.add(Math.cos(a) * rads[i], 0, Math.sin(a) * rads[i]);
@@ -2155,7 +2168,7 @@ public final class ClientSmoke {
         double[] st = {50, 192, 268};
         for (int i = 0; i < 3; i++) {
             double a = Math.toRadians(st[i]);
-            Vec3 at = c.add(Math.cos(a) * 21, 0, Math.sin(a) * 21);
+            Vec3 at = c.add(Math.cos(a) * 15, 0, Math.sin(a) * 15);
             StalkerEntity s = HHEntities.stalker(StalkerKind.values()[i]).create(l);
             if (s == null) continue;
             float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
@@ -2184,9 +2197,11 @@ public final class ClientSmoke {
     }
 
     private static void cover(Minecraft mc) {
+        Vec3[] look = {Vec3.ZERO};
         STEPS.add(t -> {
             if (t == 0) {
                 coverAt = origin.add(-240, 0, 160);
+                look[0] = coverAt.add(Math.cos(Math.toRadians(15)) * 5, 1.62, Math.sin(Math.toRadians(15)) * 5);
                 mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                 server(sp -> {
                     clearAll(sp);
@@ -2200,42 +2215,31 @@ public final class ClientSmoke {
                 sp.teleportTo(coverAt.x, coverAt.y, coverAt.z);
                 coverScene(sp, coverAt);
             });
-            if (t == 62) lookAt = coverAt.add(Math.cos(Math.toRadians(15)) * 6, 1.6, Math.sin(Math.toRadians(15)) * 6);
+            if (t == 62) lookAt = look[0];
             if (t == 100) {
                 shot("covershot_dusk");
+                face(mc, look[0]);
                 panorama(mc, "dusk");
             }
             if (t == 102) server(sp -> {
-                sp.serverLevel().setDayTime(18000);
-                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
-            });
-            if (t == 140) {
-                shot("covershot_night");
-                panorama(mc, "night");
-            }
-            if (t == 142) server(sp -> com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 120, 0.7f));
-            if (t == 190) {
-                shot("covershot_fog");
-                panorama(mc, "fog");
-            }
-            if (t == 192) server(sp -> {
-                com.hollowhours.ghost.Atmosphere.stopFog(sp.server);
                 sp.serverLevel().setDayTime(15000);
+                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
                 com.hollowhours.ghost.Atmosphere.forceBlood = 1;
             });
-            if (t == 240) Atmos.snap();
-            if (t == 400) {
+            if (t == 150) Atmos.snap();
+            if (t == 300) {
                 shot("covershot_blood");
+                face(mc, look[0]);
                 panorama(mc, "blood");
             }
-            if (t == 402) server(sp -> {
+            if (t == 302) server(sp -> {
                 com.hollowhours.ghost.Atmosphere.forceBlood = 0;
                 sp.serverLevel().setDayTime(18000);
                 clearAll(sp);
                 pin(sp);
             });
-            if (t == 430) Atmos.snap();
-            return t >= 432;
+            if (t == 330) Atmos.snap();
+            return t >= 332;
         });
     }
 
