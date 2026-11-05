@@ -63,9 +63,16 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri mesa-utils > /dev/null
           pip install --quiet --break-system-packages pillow || true
-          U=$(curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest | python3 -c "import sys,json; a=json.load(sys.stdin)['assets']; print([x['browser_download_url'] for x in a if 'x86_64-unknown-linux-gnu' in x['name'] and x['name'].endswith('.tar.gz')][0])")
+          curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest > pmc-release.json
+          U=$(python3 -c "
+          import json; a=json.load(open('pmc-release.json')).get('assets', [])
+          print('assets:', [x['name'] for x in a], file=__import__('sys').stderr)
+          ok=[x['browser_download_url'] for x in a if 'linux' in x['name'].lower() and ('x86_64' in x['name'] or 'amd64' in x['name']) and x['name'].endswith(('.tar.gz', '.zip'))]
+          print(ok[0] if ok else '')")
           echo "portablemc: $U"
-          mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
+          mkdir -p pmc
+          case "$U" in *.zip) curl -sL -o pmc.zip "$U" && unzip -q pmc.zip -d pmc;; *) curl -sL "$U" | tar xz -C pmc;; esac
+          find pmc | head
           PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
           echo "PMC=$PMC" >> $GITHUB_ENV
           V=$(awk '{print $2}' neo-version.txt); echo "NEOV=$V" >> $GITHUB_ENV
