@@ -54,7 +54,7 @@ jobs:
             *) VER=forge::1.21.1-$F;;
           esac
           echo "testing $VER"
-          if [ "${{ matrix.open }}" = menu ]; then JOIN=""; PROP=-Dhelperbuddy.menuload=true; else JOIN="--join-world smoke"; PROP=-Dx=y; fi
+          if [ "${{ matrix.open }}" = menu ]; then JOIN=""; PROP=-Dhelperbuddy.menuload=true,-Dhelperbuddy.clientsmoke=true; else JOIN="--join-world smoke"; PROP=-Dhelperbuddy.clientsmoke=true; fi
           timeout 240 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev $JOIN --jvm-arg=$PROP > run.log 2>&1 || true
           echo "== loader"; grep -a "Loading version" run.log | head -2
           echo "== result"; grep -a "LootModifierManager\|lootcheck tick\|Experimental\|Ticking" $M/logs/latest.log | head -8
