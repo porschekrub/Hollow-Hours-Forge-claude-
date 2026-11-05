@@ -1,0 +1,51 @@
+name: Forge 1.21.1 loot check
+# push "forge-loot-check": does a plain Forge 1.21.1 client (no mods, then each of our mods) crash on loot in singleplayer?
+on:
+  push:
+    branches: [forge-loot-check]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        mods: [ none, hollow-hours, helper-buddy ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build the mod
+        if: matrix.mods != 'none'
+        run: cd ports/forge-1.21.1/${{ matrix.mods }} && chmod +x gradlew && ./gradlew build --no-daemon -q && ls build/libs
+      - name: Run
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest > pmc-release.json
+          U=$(python3 -c "
+          import json; a=json.load(open('pmc-release.json')).get('assets', [])
+          ok=[x['browser_download_url'] for x in a if 'linux' in x['name'].lower() and 'x86_64' in x['name'] and x['name'].endswith('.tar.gz')]
+          print(ok[0] if ok else '')")
+          mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
+          PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
+          M=$PWD/mc; mkdir -p $M/mods $M/saves $M/config
+          if [ "${{ matrix.mods }}" != none ]; then cp ports/forge-1.21.1/${{ matrix.mods }}/build/libs/*.jar $M/mods/; fi
+          # a world made by a plain Forge server, with a data pack that makes pigs and kills them every few seconds
+          V=$(curl -s https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml | grep -o '<version>1\.21\.1-[^<]*</version>' | sed 's/<[^>]*>//g' | sort -V | tail -1)
+          mkdir -p srv && cd srv && curl -sL -o i.jar "https://maven.minecraftforge.net/net/minecraftforge/forge/$V/forge-$V-installer.jar" && java -jar i.jar --installServer > /dev/null 2>&1
+          echo eula=true > eula.txt; printf "online-mode=false\nlevel-type=minecraft\\:flat\n" > server.properties
+          (sleep 90; echo stop) | timeout 300 ./run.sh nogui > /dev/null 2>&1 || true
+          cd .. && cp -r srv/world $M/saves/smoke && rm -f $M/saves/smoke/session.lock
+          D=$M/saves/smoke/datapacks/lootcheck; mkdir -p $D/data/lootcheck/function $D/data/minecraft/tags/function
+          echo '{"pack":{"pack_format":48,"description":"loot check"}}' > $D/pack.mcmeta
+          echo '{"values":["lootcheck:tick"]}' > $D/data/minecraft/tags/function/tick.json
+          printf 'summon minecraft:pig ~ ~ ~\nkill @e[type=minecraft:pig]\nsay lootcheck tick\n' > $D/data/lootcheck/function/tick.mcfunction
+          printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:4\nnarrator:0\n" > $M/options.txt
+          export LIBGL_ALWAYS_SOFTWARE=1
+          timeout 240 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M forge:1.21.1 -u Dev --join-world smoke > run.log 2>&1 || true
+          echo "== loader"; grep -a "Loading version" run.log | head -2
+          echo "== result"; grep -a "LootModifierManager\|lootcheck tick\|Experimental\|Ticking" $M/logs/latest.log | head -8
+          grep -ac "lootcheck tick" $M/logs/latest.log || true
