@@ -651,7 +651,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
         p.setDeltaMovement(Vec3.ZERO);
         p.fallDistance = 0;
         float pull = 0.0095f * (1 + 0.18f * (phase - 1));
-        prog -= pull;
+        if (prog < 1f) prog -= pull; // (a full bar wins before it pulls again)
         if (tickCount % 2 == 0) HHNet.toPlayer(p, new S2CCombat(S2CCombat.STRUGGLE, Math.max(0, prog), holdEnd - tickCount, 0));
         if (tickCount % 10 == 0) sl.sendParticles(ParticleTypes.FALLING_OBSIDIAN_TEAR, h.x, h.y + 1.5, h.z, 3, 0.4, 0.2, 0.4, 0);
         if (prog >= 1) release(true, true);
