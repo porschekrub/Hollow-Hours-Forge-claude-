@@ -119,7 +119,9 @@ final class SmokeTest {
         for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> it : HHItems.ARMOR)
             if (it.get() instanceof com.hollowhours.combat.MilitaryArmor.Piece pc && pc.mat == com.hollowhours.combat.MilitaryArmor.Mat.HUNTER)
                 fp.setItemSlot(pc.getEquipmentSlot(), new ItemStack(pc));
-        check(Math.abs(com.hollowhours.combat.MilitaryArmor.ghostCut(fp) - 0.30f) < 0.01f && fp.getArmorValue() >= 20, "hunter armour set (" + fp.getArmorValue() + ")");
+        int defense = 0; // (attributes from worn armour only update when the player ticks)
+        for (ItemStack worn : fp.getArmorSlots()) if (worn.getItem() instanceof net.minecraft.world.item.ArmorItem ai) defense += ai.getDefense();
+        check(Math.abs(com.hollowhours.combat.MilitaryArmor.ghostCut(fp) - 0.30f) < 0.01f && defense >= 20, "hunter armour set (" + defense + ", cut " + com.hollowhours.combat.MilitaryArmor.ghostCut(fp) + ")");
         com.hollowhours.combat.Fitness.setStrength(fp, 50);
         check(Math.abs(com.hollowhours.combat.Fitness.strength(fp) - 50) < 0.01f
                 && fp.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getValue() >= 23.9, "strength gives health");
