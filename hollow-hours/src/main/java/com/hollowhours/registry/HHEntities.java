@@ -54,6 +54,9 @@ public final class HHEntities {
     public static final RegistryObject<EntityType<com.hollowhours.grave.GraveEntity>> GRAVE = ENTITIES.register("grave",
             () -> EntityType.Builder.<com.hollowhours.grave.GraveEntity>of(com.hollowhours.grave.GraveEntity::new, MobCategory.MISC)
                     .sized(0.8f, 1.0f).fireImmune().clientTrackingRange(10).updateInterval(20).noSummon().build(HollowHours.MODID + ":grave"));
+    public static final RegistryObject<EntityType<com.hollowhours.combat.Grenade.Thrown>> GRENADE = ENTITIES.register("grenade",
+            () -> EntityType.Builder.<com.hollowhours.combat.Grenade.Thrown>of(com.hollowhours.combat.Grenade.Thrown::new, MobCategory.MISC)
+                    .sized(0.25f, 0.25f).clientTrackingRange(8).updateInterval(2).build(HollowHours.MODID + ":grenade"));
     public static final RegistryObject<EntityType<BoardsEntity>> BOARDS = ENTITIES.register("boards",
             () -> EntityType.Builder.<BoardsEntity>of(BoardsEntity::new, MobCategory.MISC).sized(0.3f, 0.3f).clientTrackingRange(10)
                     .updateInterval(20).noSummon().build(HollowHours.MODID + ":boards"));

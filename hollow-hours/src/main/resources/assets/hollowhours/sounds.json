@@ -1403,5 +1403,69 @@
    }
   ],
   "subtitle": "subtitles.hollowhours.rescue.rotor"
+ },
+ "gun.pistol": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/pistol"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.pistol"
+ },
+ "gun.rifle": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/rifle"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.rifle"
+ },
+ "gun.shotgun": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/shotgun"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.shotgun"
+ },
+ "gun.sniper": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/sniper"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.sniper"
+ },
+ "gun.grenade": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/grenade"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.grenade"
+ },
+ "gun.reload": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/reload"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.reload"
+ },
+ "gun.cock": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/cock"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.cock"
+ },
+ "gun.empty": {
+  "sounds": [
+   {
+    "name": "hollowhours:combat/empty"
+   }
+  ],
+  "subtitle": "subtitles.hollowhours.gun.empty"
  }
 }

@@ -48,6 +48,14 @@ public final class FunBlocks {
         if (now - d.getLong(key) < cooldown) return;
         d.putLong(key, now);
         Sanity.add(sp, amount);
+        // sport makes you stronger (scoring the most)
+        float fit = switch (kind) {
+            case "basket", "goal" -> 0.9f;
+            case "swing", "slide" -> 0.03f;
+            case "arcade", "tv" -> 0f;
+            default -> amount * 0.08f;
+        };
+        com.hollowhours.combat.Fitness.addStrength(sp, fit);
     }
 
     // ------------------------------------------------------------------ swing

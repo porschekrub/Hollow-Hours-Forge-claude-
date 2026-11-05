@@ -188,6 +188,7 @@ public class BallEntity extends Entity {
             setDeltaMovement(look.scale(power).add(0, 0.12, 0));
             hurtMarked = true;
             touchedBy(by);
+            if (by instanceof net.minecraft.server.level.ServerPlayer sp) com.hollowhours.combat.Fitness.addStrength(sp, 0.05f);
             playSound(kind() == SOCCER ? SoundEvents.WOOL_HIT : SoundEvents.BASALT_HIT, 1f, kind() == SOCCER ? 0.6f : 1.2f);
         }
         return true;

@@ -138,6 +138,25 @@
     "ask_limit": [
      "no more... you've taken enough from the dark",
      "nothing left... only crying"
+    ],
+    "ko": [
+     "ow... ow... ow... that echoed",
+     "you hit me... hit me... hit me...",
+     "the dark is spinning... spinning..."
+    ],
+    "mutter": [
+     "...ow...",
+     "...my head hums...",
+     "...so rude... rude... rude..."
+    ],
+    "wake": [
+     "i'm awake... awake... and i remember your face",
+     "that hurt... hurt... now you will cry with me",
+     "back again... again... again..."
+    ],
+    "freed": [
+     "you slipped... slipped away...",
+     "come back... back... back..."
     ]
    },
    "2": {
@@ -271,6 +290,25 @@
     "ask_limit": [
      "the lake has nothing more for you",
      "you've taken enough from me..."
+    ],
+    "ko": [
+     "you knocked my veil off...",
+     "...i only wanted the ring back",
+     "the water's going dark..."
+    ],
+    "mutter": [
+     "...cold...",
+     "...where did my ring go...",
+     "...why does everyone hurt me..."
+    ],
+    "wake": [
+     "you ruined my dress...",
+     "i was dreaming of the lake... you woke me",
+     "i'll forgive you... in the water"
+    ],
+    "freed": [
+     "don't let go of me... please...",
+     "everyone always leaves..."
     ]
    },
    "3": {
@@ -406,6 +444,25 @@
     "ask_limit": [
      "NO! NO MORE! BURN!",
      "ENOUGH! NOW YOU PAY!"
+    ],
+    "ko": [
+     "OW! OW! THAT'S IT, I'M ON FIRE AGAIN!",
+     "YOU HIT AN OLD WOMAN?!",
+     "MY BACK! MY BACK!"
+    ],
+    "mutter": [
+     "...STILL BURNING...",
+     "...WHO RAISED YOU...",
+     "...ASH IN MY MOUTH..."
+    ],
+    "wake": [
+     "I'M UP! AND I'M ANGRY!",
+     "NOBODY LOCKS ME DOWN!",
+     "YOU'LL PAY FOR THAT! WITH SMOKE!"
+    ],
+    "freed": [
+     "COME BACK HERE!",
+     "SLIPPERY BRAT!"
     ]
    },
    "4": {
@@ -541,6 +598,25 @@
     "ask_limit": [
      "that's three :) my turn to take something",
      "all gone :) but i still want something from you"
+    ],
+    "ko": [
+     "that wasn't very nice :)",
+     "ow :) you got me :)",
+     "lying down for a bit :) don't go anywhere"
+    ],
+    "mutter": [
+     "...still smiling :)",
+     "...i can see you from down here :)",
+     "...ten... nine... eight... :)"
+    ],
+    "wake": [
+     "i'm back :) did you miss me",
+     "that was rude :) i'm still behind you",
+     "good morning :) where were we"
+    ],
+    "freed": [
+     "ooh, wriggly :)",
+     "you can't get far :)"
     ]
    },
    "5": {
@@ -675,6 +751,25 @@
     "ask_limit": [
      "...gone.",
      "...no more. ...eat."
+    ],
+    "ko": [
+     "...ugh.",
+     "...hit. ...hungry.",
+     "...down."
+    ],
+    "mutter": [
+     "...hungry.",
+     "...smell you.",
+     "...cold."
+    ],
+    "wake": [
+     "...up. ...hungrier.",
+     "...again.",
+     "...remember."
+    ],
+    "freed": [
+     "...slipped.",
+     "...not done."
     ]
    }
   },
@@ -820,6 +915,25 @@
     "ask_limit": [
      "พอแล้ว... ฉันให้เธอมากพอแล้ว",
      "ไม่มีอีกแล้ว... ไม่มีวันมีอีก"
+    ],
+    "ko": [
+     "โอ๊ย... โอ๊ย... โอ๊ย... เสียงก้องไปหมด",
+     "เธอตีฉัน... ตีฉัน... ตีฉัน...",
+     "มืดหมุนไปหมด... หมุน... หมุน..."
+    ],
+    "mutter": [
+     "...โอ๊ย...",
+     "...หัวมันอื้อไปหมด...",
+     "...ใจร้าย... ใจร้าย... ใจร้าย..."
+    ],
+    "wake": [
+     "ฉันตื่นแล้ว... ตื่นแล้ว... และฉันจำหน้าเธอได้",
+     "เจ็บนะ... เจ็บนะ... ทีนี้เธอต้องร้องไห้กับฉัน",
+     "กลับมาอีกแล้ว... อีกแล้ว... อีกแล้ว..."
+    ],
+    "freed": [
+     "หลุดไปแล้ว... หลุดไปแล้ว...",
+     "กลับมา... กลับมา... กลับมา..."
     ]
    },
    "2": {
@@ -959,6 +1073,25 @@
     "ask_limit": [
      "ทะเลสาบไม่ให้อะไรเธออีกแล้ว",
      "เธอเอาไปจากฉันมากพอแล้ว..."
+    ],
+    "ko": [
+     "ผ้าคลุมหน้าฉันหลุดหมดแล้ว...",
+     "...ฉันแค่อยากได้แหวนคืน",
+     "น้ำมันมืดลงเรื่อยๆ..."
+    ],
+    "mutter": [
+     "...หนาว...",
+     "...แหวนฉันไปไหน...",
+     "...ทำไมใครๆ ก็ทำร้ายฉัน..."
+    ],
+    "wake": [
+     "ชุดเจ้าสาวฉันเปื้อนหมดแล้ว...",
+     "ฉันกำลังฝันถึงทะเลสาบ... เธอปลุกฉัน",
+     "ฉันจะยกโทษให้... ในน้ำนะ"
+    ],
+    "freed": [
+     "อย่าทิ้งฉันไป... ขอร้อง...",
+     "ทุกคนทิ้งฉันไปหมด..."
     ]
    },
    "3": {
@@ -1098,6 +1231,25 @@
     "ask_limit": [
      "ไม่! ไม่มีอีกแล้ว! ไหม้ไปให้หมด!",
      "พอแล้ว! ต่อไปเธอต้องจ่ายเอง!"
+    ],
+    "ko": [
+     "โอ๊ย! โอ๊ย! ไฟลุกอีกแล้ว!",
+     "กล้าตีคนแก่เหรอ!",
+     "หลังฉัน! หลังฉัน!"
+    ],
+    "mutter": [
+     "...ยังไหม้อยู่เลย...",
+     "...ใครสั่งสอนมาเนี่ย...",
+     "...เถ้าเต็มปากไปหมด..."
+    ],
+    "wake": [
+     "ฉันลุกแล้ว! และฉันโกรธมาก!",
+     "ไม่มีใครขังฉันได้!",
+     "แกต้องชดใช้! ด้วยควัน!"
+    ],
+    "freed": [
+     "กลับมานี่!",
+     "เด็กลื่นไหล!"
     ]
    },
    "4": {
@@ -1236,6 +1388,25 @@
     "ask_limit": [
      "ครบสามแล้วนะ :) ทีนี้ถึงตาฉันเอาบ้าง",
      "ไม่มีให้แล้ว :) แต่ฉันยังอยากได้ของจากเธอ"
+    ],
+    "ko": [
+     "ไม่น่ารักเลยนะ :)",
+     "โอ๊ย :) โดนแล้ว :)",
+     "ขอนอนแป๊บนึงนะ :) อย่าไปไหนล่ะ"
+    ],
+    "mutter": [
+     "...ยังยิ้มอยู่นะ :)",
+     "...จากตรงนี้ก็ยังเห็นเธอ :)",
+     "...สิบ... เก้า... แปด... :)"
+    ],
+    "wake": [
+     "กลับมาแล้ว :) คิดถึงไหม",
+     "เมื่อกี้หยาบคายนะ :) ฉันยังอยู่ข้างหลังเธอ",
+     "อรุณสวัสดิ์ :) เมื่อกี้ถึงไหนแล้วนะ"
+    ],
+    "freed": [
+     "โอ้ ดิ้นเก่งจัง :)",
+     "หนีไปไม่ไกลหรอก :)"
     ]
    },
    "5": {
@@ -1370,6 +1541,25 @@
     "ask_limit": [
      "...หมดแล้ว.",
      "...ไม่ให้. ...กิน."
+    ],
+    "ko": [
+     "...อึก.",
+     "...โดนตี. ...หิว.",
+     "...ล้ม."
+    ],
+    "mutter": [
+     "...หิว.",
+     "...ได้กลิ่น.",
+     "...หนาว."
+    ],
+    "wake": [
+     "...ลุก. ...หิวกว่าเดิม.",
+     "...อีกครั้ง.",
+     "...จำได้."
+    ],
+    "freed": [
+     "...หลุด.",
+     "...ยังไม่จบ."
     ]
    }
   }

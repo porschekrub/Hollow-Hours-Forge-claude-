@@ -694,6 +694,7 @@ public final class ClientSmoke {
         });
 
         physicsAndFun(mc);
+        combat(mc);
 
         // jumpscares (no night vision: as dark as in the game)
         STEPS.add(t -> {
@@ -1510,6 +1511,241 @@ public final class ClientSmoke {
         });
     }
 
+    // ------------------------------------------------------------------ fighting back (2.11)
+    private static net.minecraft.world.item.ItemStack modItem(String id) {
+        var it = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation(HollowHours.MODID, id));
+        var s = new net.minecraft.world.item.ItemStack(it == null ? net.minecraft.world.item.Items.BARRIER : it);
+        if (s.getItem() instanceof com.hollowhours.combat.GunItem g) s.getOrCreateTag().putInt("ammo", g.spec.mag());
+        return s;
+    }
+
+    private static void hold(ServerPlayer sp, String id) {
+        sp.getInventory().selected = 0;
+        sp.getInventory().setItem(0, modItem(id));
+        sp.containerMenu.broadcastChanges();
+    }
+
+    @javax.annotation.Nullable
+    private static GhostEntity clientGhost(Minecraft mc) {
+        GhostEntity best = null;
+        for (var en : mc.level.entitiesForRendering())
+            if (en instanceof GhostEntity g && (best == null || g.distanceTo(mc.player) < best.distanceTo(mc.player))) best = g;
+        return best;
+    }
+
+    private static void combat(Minecraft mc) {
+        // every weapon in the hand: first person, shooting, aiming / guarding, third person
+        String[] weapons = {"pistol", "rifle", "shotgun", "sniper", "grenade", "combat_knife", "katana", "battle_axe", "stun_baton", "spear"};
+        for (String id : weapons) {
+            boolean gun = id.equals("pistol") || id.equals("rifle") || id.equals("shotgun") || id.equals("sniper");
+            boolean melee = !gun && !id.equals("grenade");
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    lookAt = origin.add(0, 1.6, 14);
+                    server(sp -> {
+                        clearAll(sp);
+                        pin(sp);
+                        hold(sp, id);
+                    });
+                }
+                if (t == 10) shot("hold_" + id + "_fp");
+                if (gun) {
+                    if (t == 11) server(sp -> {
+                        var s = sp.getMainHandItem();
+                        if (s.getItem() instanceof com.hollowhours.combat.GunItem g) g.fire(sp, s);
+                        else HollowHours.LOG.error("[client smoke] {} is not in the hand (com.hollowhours)", id);
+                    });
+                    if (t == 13) shot("hold_" + id + "_fire");
+                    if (t == 16) mc.options.keyShift.setDown(true);
+                    if (t == 26) shot("hold_" + id + "_aim");
+                    if (t == 27) mc.options.keyShift.setDown(false);
+                }
+                if (melee) {
+                    if (t == 11 && mc.gameMode != null) {
+                        mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
+                        mc.options.keyUse.setDown(true);
+                    }
+                    if (t == 20) {
+                        shot("hold_" + id + "_guard");
+                        if (!mc.player.isUsingItem()) HollowHours.LOG.error("[client smoke] {} does not guard on right-click (com.hollowhours)", id);
+                    }
+                    if (t == 21) mc.options.keyUse.setDown(false);
+                }
+                if (t == 28) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                if (t == 38) shot("hold_" + id + "_front");
+                if (id.equals("grenade")) {
+                    if (t == 40) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    if (t == 42) server(sp -> sp.getMainHandItem().use(sp.level(), sp, net.minecraft.world.InteractionHand.MAIN_HAND));
+                    if (t == 60) shot("grenade_flying");
+                    if (t == 93 || t == 96 || t == 104) shot("grenade_boom_t" + (t - 92));
+                    return t >= 110;
+                }
+                return t >= 40;
+            });
+        }
+        // the three armour sets
+        String[] sets = {"tactical", "heavy", "hunter"};
+        for (String set : sets) {
+            STEPS.add(t -> {
+                if (t == 0) {
+                    mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                    lookAt = origin.add(0, 1.6, 14);
+                    server(sp -> {
+                        pin(sp);
+                        sp.getInventory().setItem(0, net.minecraft.world.item.ItemStack.EMPTY);
+                        sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, modItem(set + "_helmet"));
+                        sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, modItem(set + "_chestplate"));
+                        sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, modItem(set + "_leggings"));
+                        sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, modItem(set + "_boots"));
+                    });
+                }
+                if (t == 12) shot("armor_" + set);
+                if (t == 13) server(sp -> {
+                    float cut = com.hollowhours.combat.MilitaryArmor.ghostCut(sp), str = com.hollowhours.combat.MilitaryArmor.struggle(sp);
+                    HollowHours.LOG.info("[client smoke] armour {}: armor {} toughness {} ghost cut {} struggle {}", set, sp.getArmorValue(),
+                            sp.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS), cut, str);
+                    if (sp.getArmorValue() < 15 || cut <= 0 || str <= 0) HollowHours.LOG.error("[client smoke] armour set {} gives nothing (com.hollowhours)", set);
+                });
+                if (t == 14) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                if (t == 16) {
+                    mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+                }
+                if (t == 26) shot("armor_" + set + "_inventory");
+                if (t == 27) mc.setScreen(null);
+                return t >= 29;
+            });
+        }
+        // shooting a ghost until it drops (a showcase ghost: it stands still)
+        STEPS.add(t -> {
+            if (t == 0) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                lookAt = origin.add(0, GhostKind.WAIL.height * 0.6, 9);
+                server(sp -> {
+                    clearAll(sp);
+                    pin(sp);
+                    for (var slot : new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                            net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET})
+                        sp.setItemSlot(slot, net.minecraft.world.item.ItemStack.EMPTY);
+                    hold(sp, "rifle");
+                    showGhost(sp, GhostKind.WAIL, origin.add(0, 0, 9), GhostAnim.IDLE);
+                });
+            }
+            if (t >= 8 && t <= 70 && t % 2 == 0) server(sp -> {
+                var s = sp.getMainHandItem();
+                var gs = sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(20));
+                if (gs.isEmpty() || !(s.getItem() instanceof com.hollowhours.combat.GunItem g) || com.hollowhours.combat.GhostCombat.knockedOut(gs.get(0).brain())) return;
+                float before = com.hollowhours.combat.GhostCombat.poise(gs.get(0).brain());
+                g.fire(sp, s);
+                if (com.hollowhours.combat.GhostCombat.poise(gs.get(0).brain()) < before || com.hollowhours.combat.GhostCombat.knockedOut(gs.get(0).brain())) gunHits++;
+                gunShots++;
+            });
+            if (t == 15) shot("gun_hits_ghost");
+            if (t == 74) server(sp -> {
+                var gs = sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(20));
+                boolean ko = !gs.isEmpty() && com.hollowhours.combat.GhostCombat.knockedOut(gs.get(0).brain());
+                HollowHours.LOG.info("[client smoke] rifle vs ghost: {} shots, {} hits, knocked out {}", gunShots, gunHits, ko);
+                if (gunHits == 0) HollowHours.LOG.error("[client smoke] gun shots never hit the ghost (com.hollowhours)");
+                else if (!ko) HollowHours.LOG.error("[client smoke] the ghost was shot {} times and never went down (com.hollowhours)", gunHits);
+            });
+            if (t == 76) lookAt = origin.add(0, 0.5, 9);
+            if (t == 92) {
+                GhostEntity cg = clientGhost(mc);
+                HollowHours.LOG.info("[client smoke] knocked-out ghost on the client: lying {}", cg == null ? "none" : String.format("%.2f", cg.koLerp));
+                if (cg == null || cg.koLerp < 0.9f) HollowHours.LOG.error("[client smoke] the knocked-out ghost is not lying down (com.hollowhours)");
+                shot("ghost_knocked_out");
+            }
+            if (t == 93) mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+            if (t == 93) lookAt = origin.add(0, 1.6, -14);
+            if (t == 104) shot("ghost_knocked_out_tp");
+            if (t == 105) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            return t >= 106;
+        });
+        // grabbed: mash to break free, then knock the ghost out for real (a living one this time)
+        final int[] strAt = {-1}, endAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) {
+                strAt[0] = endAt[0] = -1;
+                lookAt = origin.add(0, GhostKind.WAIL.height * 0.7, 2.6);
+                server(sp -> {
+                    clearAll(sp);
+                    pin(sp);
+                    sp.getInventory().setItem(0, net.minecraft.world.item.ItemStack.EMPTY);
+                    com.hollowhours.combat.Fitness.setStrength(sp, 0);
+                    GhostEntity g = Director.spawnGhost(sp.serverLevel(), GhostKind.WAIL, origin.add(0, 0, 2.6));
+                    if (g == null) return;
+                    KillSequence.forceKill = 0;
+                    if (!KillSequence.begin(g.brain(), sp)) HollowHours.LOG.error("[client smoke] the struggle grab did not start (com.hollowhours)");
+                });
+            }
+            if (t == 4) lookAt = null;
+            if (strAt[0] < 0 && CombatClient.struggling()) strAt[0] = t;
+            if (strAt[0] >= 0 && endAt[0] < 0) {
+                int d = t - strAt[0];
+                if (d == 4) shot("struggle_start");
+                if (d >= 10 && d % 2 == 0) net.minecraft.client.KeyMapping.click(mc.options.keyJump.getKey());
+                if (d == 30) shot("struggle_mashing");
+                if (!CombatClient.struggling()) {
+                    endAt[0] = t;
+                    HollowHours.LOG.info("[client smoke] struggle over after {} ticks, {} presses, result {}", d, CombatClient.mashes, CombatClient.result);
+                    if (CombatClient.result != 1) HollowHours.LOG.error("[client smoke] mashing did not break free (com.hollowhours)");
+                }
+            }
+            if (endAt[0] >= 0) {
+                int d = t - endAt[0];
+                if (d == 3) shot("struggle_won");
+                if (d == 6) server(sp -> {
+                    HollowHours.LOG.info("[client smoke] after breaking free: victim {} riding {} alive {} strength {}", KillSequence.isVictim(sp),
+                            sp.getVehicle() != null, sp.isAlive(), com.hollowhours.combat.Fitness.strength(sp));
+                    if (KillSequence.isVictim(sp) || sp.getVehicle() != null || !sp.isAlive()) HollowHours.LOG.error("[client smoke] still held after breaking free (com.hollowhours)");
+                    hold(sp, "shotgun");
+                });
+                GhostEntity cg = clientGhost(mc);
+                if (d >= 6 && d < 40 && cg != null) lookAt = cg.position().add(0, cg.getBbHeight() * 0.55, 0);
+                if (d >= 10 && d <= 34 && d % 4 == 2) server(sp -> {
+                    var s = sp.getMainHandItem();
+                    var gs = sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(20));
+                    if (gs.isEmpty() || !(s.getItem() instanceof com.hollowhours.combat.GunItem g) || com.hollowhours.combat.GhostCombat.knockedOut(gs.get(0).brain())) return;
+                    s.getOrCreateTag().putInt("ammo", 6);
+                    g.fire(sp, s);
+                });
+                if (d == 12) shot("shotgun_vs_ghost");
+                if (d == 40) server(sp -> {
+                    var gs = sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(20));
+                    if (gs.isEmpty()) {
+                        HollowHours.LOG.error("[client smoke] the ghost vanished after the struggle (com.hollowhours)");
+                        return;
+                    }
+                    var b = gs.get(0).brain();
+                    if (!com.hollowhours.combat.GhostCombat.knockedOut(b)) {
+                        HollowHours.LOG.warn("[client smoke] shotgun did not knock the living ghost out (poise {}), forcing it", com.hollowhours.combat.GhostCombat.poise(b));
+                        for (int i = 0; i < 30 && !com.hollowhours.combat.GhostCombat.knockedOut(b); i++) com.hollowhours.combat.GhostCombat.poiseHit(gs.get(0), sp, 10, false);
+                    }
+                    boolean grabbed = KillSequence.begin(b, sp);
+                    HollowHours.LOG.info("[client smoke] living ghost knocked out {} mode {} grab refused {}", com.hollowhours.combat.GhostCombat.knockedOut(b), b.mode, !grabbed);
+                    if (!com.hollowhours.combat.GhostCombat.knockedOut(b) || grabbed) HollowHours.LOG.error("[client smoke] a knocked-out ghost is not out (com.hollowhours)");
+                });
+                if (d == 44 && clientGhost(mc) != null) lookAt = clientGhost(mc).position().add(0, 0.4, 0);
+                if (d == 60) shot("living_ghost_knocked_out");
+                if (d == 61) server(sp -> {
+                    clearAll(sp);
+                    pin(sp);
+                    com.hollowhours.combat.Fitness.setStrength(sp, 0);
+                    sp.getInventory().setItem(0, net.minecraft.world.item.ItemStack.EMPTY);
+                });
+                return d >= 64;
+            }
+            if (t > 500) {
+                HollowHours.LOG.error("[client smoke] the struggle never showed up or never ended (com.hollowhours)");
+                server(sp -> clearAll(sp));
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private static int gunShots, gunHits;
+
     private static String animName(GhostEntity g) {
         try {
             var c = g.getAnimatableInstanceCache().getManagerForId(g.getId()).getAnimationControllers().get("main");
@@ -1532,6 +1768,7 @@ public final class ClientSmoke {
                     GhostEntity g = Director.spawnGhost(sp.serverLevel(), k, origin.add(0, 0, 2.6));
                     if (g == null) return;
                     KillSequence.forceKill = kill;
+                    KillSequence.noStruggleOnce = !(k.n == 1 && kill == 0); // one kill shows the struggle being lost
                     if (!KillSequence.begin(g.brain(), sp)) HollowHours.LOG.error("[client smoke] kill {}/{} did not start (com.hollowhours)", k.n, kill);
                 });
             }

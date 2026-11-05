@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "MXM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:iron_ingot"
+    },
+    "X": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "result": {
+    "item": "hollowhours:heavy_leggings",
+    "count": 1
+  }
+}

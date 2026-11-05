@@ -43,7 +43,7 @@ import java.util.UUID;
  * 4. KILL   - one of this ghost's own kill animations (3+ per ghost, random), beaten until dead.
  */
 public final class KillSequence {
-    enum Phase { GRAB, SCREAM, HOLD, KILL, DONE }
+    enum Phase { GRAB, STRUGGLE, SCREAM, HOLD, KILL, DONE }
 
     static final class Session {
         final GhostBrain b;
@@ -58,6 +58,10 @@ public final class KillSequence {
         boolean released;
         boolean prone;
         long lastTick;
+        // struggling free
+        float prog;
+        long strEnd, lastPress;
+        boolean struggled;
 
         Session(GhostBrain b, UUID victim) {
             this.b = b;
@@ -68,6 +72,8 @@ public final class KillSequence {
     private static final Map<UUID, Session> BY_VICTIM = new HashMap<>();
     /** CI screenshots: the next kill uses this kill track (index into killsFor), -1 = random */
     public static int forceKill = -1;
+    /** CI screenshots: the next grab skips the struggle (straight to the kill) */
+    public static boolean noStruggleOnce;
 
     private KillSequence() {}
 
@@ -83,7 +89,7 @@ public final class KillSequence {
 
     // ------------------------------------------------------------------ start
     public static boolean begin(GhostBrain b, ServerPlayer p) {
-        if (isVictim(p) || sessionOf(b) != null || !p.isAlive() || b.isLeaving()) return false;
+        if (isVictim(p) || sessionOf(b) != null || !p.isAlive() || b.isLeaving() || com.hollowhours.combat.GhostCombat.knockedOut(b)) return false;
         GhostEntity g = b.g;
         KillTracks.Track grab = KillTracks.phase("grab", b.kind.n);
         List<KillTracks.Track> kills = KillTracks.killsFor(b.kind.n);
@@ -97,6 +103,8 @@ public final class KillSequence {
         Session s = new Session(b, p.getUUID());
         s.killTrack = kills.get(forceKill >= 0 ? forceKill % kills.size() : R.randInt(0, kills.size() - 1));
         forceKill = -1;
+        s.struggled = noStruggleOnce;
+        noStruggleOnce = false;
         BY_VICTIM.put(p.getUUID(), s);
         b.mode = GhostBrain.Mode.KILL;
         b.search = null;
@@ -128,13 +136,13 @@ public final class KillSequence {
         g.setAnim(switch (ph) {
             case GRAB -> GhostAnim.GRAB;
             case SCREAM -> GhostAnim.SCREAM;
-            case HOLD -> GhostAnim.HOLD;
+            case HOLD, STRUGGLE -> GhostAnim.HOLD;
             default -> GhostAnim.KILL;
         });
         int code = switch (ph) {
             case GRAB -> S2CKill.GRAB;
             case SCREAM -> S2CKill.SCREAM;
-            case HOLD -> S2CKill.HOLD;
+            case HOLD, STRUGGLE -> S2CKill.HOLD;
             default -> S2CKill.KILL;
         };
         HHNet.toPlayer(p, new S2CKill(g.getId(), s.b.kind.n, code, tr.index, tr.ticks()));
@@ -169,13 +177,16 @@ public final class KillSequence {
         fireEvents(s, p, t);
         switch (s.phase) {
             case GRAB -> {
-                if (t >= s.track.length) {
+                if (t >= s.track.length && !s.struggled && HHConfig.STRUGGLE.get()) {
+                    startStruggle(s, p);
+                } else if (t >= s.track.length) {
                     KillTracks.Track scream = KillTracks.phase("scream", b.kind.n);
                     if (scream != null) {
                         setPhase(s, Phase.SCREAM, scream, p); // the scream itself is an event in the track
                     } else startKill(s, p);
                 }
             }
+            case STRUGGLE -> tickStruggle(s, p, now);
             case SCREAM -> {
                 if (t >= s.track.length) {
                     if (!tryBetrayal(s, p)) startKill(s, p);
@@ -222,6 +233,87 @@ public final class KillSequence {
         Vec3 c = p.position().add(0, 1.2, 0);
         ((ServerLevel) g.level()).sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK,
                 net.minecraft.world.level.block.Blocks.REDSTONE_BLOCK.defaultBlockState()), c.x, c.y, c.z, (int) (10 + 14 * strength), 0.25, 0.35, 0.25, 0.2);
+    }
+
+    // ------------------------------------------------------------------ struggling free
+    static final float[] PULL = {0, 1.0f, 0.9f, 1.3f, 1.1f, 1.2f};
+
+    private static void startStruggle(Session s, ServerPlayer p) {
+        s.struggled = true;
+        KillTracks.Track hold = KillTracks.phase("hold", s.b.kind.n);
+        if (hold == null) hold = s.track;
+        setPhase(s, Phase.STRUGGLE, hold, p);
+        s.prog = 0.22f;
+        long now = s.b.g.level().getGameTime();
+        s.strEnd = now + Math.round(HHConfig.STRUGGLE_SECONDS.get() * 20);
+        HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, s.prog, s.strEnd - now, 0));
+        Fx.sound(s.b.g.level(), "ghost.growl", s.b.g.eye(), 2f, 0.7f, 32);
+    }
+
+    /** One press of the struggle key (from the client). */
+    public static void struggle(ServerPlayer p) {
+        Session s = BY_VICTIM.get(p.getUUID());
+        if (s == null || s.phase != Phase.STRUGGLE) return;
+        long now = p.level().getGameTime();
+        if (now == s.lastPress) return;
+        s.lastPress = now;
+        float inc = 0.055f * (1 + 0.9f * com.hollowhours.combat.Fitness.strength(p) / 100f + com.hollowhours.combat.MilitaryArmor.struggle(p)
+                + 0.03f * com.hollowhours.combat.Fitness.meleeLevel(p));
+        s.prog = Math.min(1f, s.prog + inc);
+    }
+
+    private static void tickStruggle(Session s, ServerPlayer p, long now) {
+        GhostBrain b = s.b;
+        float pull = 0.0068f * PULL[b.kind.n] * (Atmosphere.bloodMoonFor(b.g.level()) ? 1.3f : 1f)
+                * (float) Math.min(2.0, Math.sqrt(com.hollowhours.rescue.Rescue.harshness(p, Atmosphere.bloodMoonFor(b.g.level()))));
+        s.prog -= pull;
+        if (now % 2 == 0) HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, s.prog, s.strEnd - now, 0));
+        if (s.prog >= 1f) {
+            HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, -1, 0, 1));
+            com.hollowhours.combat.Fitness.addStrength(p, 0.6f);
+            for (ServerPlayer o : b.level().players())
+                if (o.position().distanceTo(b.g.position()) < 32) GhostTalk.say(o, b.g, "freed", 1);
+            breakFree(s, p, 50);
+            return;
+        }
+        if (s.prog <= 0 || now >= s.strEnd) {
+            HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, -1, 0, 2));
+            KillTracks.Track scream = KillTracks.phase("scream", b.kind.n);
+            if (scream != null) setPhase(s, Phase.SCREAM, scream, p);
+            else startKill(s, p);
+        }
+    }
+
+    /** The victim gets away: thrown clear, a moment of safety, the ghost reeling. */
+    private static void breakFree(Session s, ServerPlayer p, int stagger) {
+        GhostEntity g = s.b.g;
+        finish(s, p, false);
+        p.stopRiding();
+        Vec3 away = p.position().subtract(g.position()).multiply(1, 0, 1);
+        if (away.lengthSqr() < 1e-3) away = g.getLookAngle().multiply(1, 0, 1);
+        away = away.normalize();
+        Vec3 spot = g.position().add(away.scale(1.6));
+        p.teleportTo(spot.x, Math.max(p.getY(), g.getY()), spot.z);
+        p.setDeltaMovement(away.x * 0.9, 0.42, away.z * 0.9);
+        p.hurtMarked = true;
+        p.invulnerableTime = 40;
+        s.b.timers.put("stagger", s.b.now() + stagger);
+        com.hollowhours.combat.Combat.grantDodge(p, 40);
+        Fx.sound(g.level(), "ghost.growl", g.eye(), 2f, 0.8f, 32);
+    }
+
+    /** Somebody knocked out the ghost that holds a victim: they drop free. */
+    public static void rescueFrom(GhostBrain b) {
+        Session s = sessionOf(b);
+        if (s == null || s.phase == Phase.DONE) return;
+        ServerPlayer p = victim(b.g.getServer(), s);
+        if (p == null) {
+            finish(s, null, false);
+            return;
+        }
+        HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, -1, 0, 1));
+        HHNet.toPlayer(p, S2CBetrayal.close());
+        breakFree(s, p, 0);
     }
 
     // ------------------------------------------------------------------ betrayal

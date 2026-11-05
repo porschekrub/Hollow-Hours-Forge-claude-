@@ -54,6 +54,7 @@ public class HollowHours {
         modBus.addListener(com.hollowhours.config.HHClientConfig::onLoad);
 
         GhostEvents.register(MinecraftForge.EVENT_BUS);
+        com.hollowhours.combat.Combat.register(MinecraftForge.EVENT_BUS);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 

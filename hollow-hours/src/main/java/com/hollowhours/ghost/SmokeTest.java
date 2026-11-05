@@ -60,6 +60,7 @@ final class SmokeTest {
                 for (int i = 0; i < 40; i++) g.tick();
                 g.discard();
             }
+            combat(level, at);
             for (StalkerKind k : StalkerKind.values()) {
                 StalkerEntity s = HHEntities.stalker(k).create(level);
                 check(s != null, "stalker " + k);
@@ -91,6 +92,47 @@ final class SmokeTest {
             HollowHours.LOG.error("SMOKE TEST FAILED", t);
         }
         server.halt(false);
+    }
+
+    /** Weapons knock ghosts out (and they get up again), armour and strength numbers, a gun reloads from ammo. */
+    static void combat(ServerLevel level, Vec3 at) {
+        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        fp.moveTo(at.x, at.y, at.z);
+        GhostEntity g = Director.spawnGhost(level, GhostKind.values()[2], at.add(4, 0, 0));
+        check(g != null, "combat ghost");
+        GhostBrain b = g.brain();
+        for (int i = 0; i < 40; i++) g.tick();
+        float max = com.hollowhours.combat.GhostCombat.maxPoise(b);
+        int hits = 0;
+        while (b.mode != GhostBrain.Mode.KO && hits < 200) {
+            com.hollowhours.combat.GhostCombat.poiseHit(g, fp, 9, true);
+            hits++;
+        }
+        check(b.mode == GhostBrain.Mode.KO && g.isKnockedOut(), "ghost knocked out (" + hits + " pistol hits, poise " + max + ")");
+        check(!KillSequence.begin(b, fp), "a knocked-out ghost can't grab");
+        b.timers.put("koUntil", b.now());
+        g.tick();
+        check(b.mode != GhostBrain.Mode.KO && !g.isKnockedOut(), "ghost wakes up");
+        HollowHours.LOG.info("[smoke] combat: {} pistol hits knock ghost {} out (poise {})", hits, g.kind.n, max);
+        g.discard();
+        // armour set bonus, strength
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> it : HHItems.ARMOR)
+            if (it.get() instanceof com.hollowhours.combat.MilitaryArmor.Piece pc && pc.mat == com.hollowhours.combat.MilitaryArmor.Mat.HUNTER)
+                fp.setItemSlot(pc.getEquipmentSlot(), new ItemStack(pc));
+        check(Math.abs(com.hollowhours.combat.MilitaryArmor.ghostCut(fp) - 0.30f) < 0.01f && fp.getArmorValue() >= 20, "hunter armour set (" + fp.getArmorValue() + ")");
+        com.hollowhours.combat.Fitness.setStrength(fp, 50);
+        check(Math.abs(com.hollowhours.combat.Fitness.strength(fp) - 50) < 0.01f
+                && fp.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getValue() >= 23.9, "strength gives health");
+        // a pistol reloads from the inventory
+        ItemStack gun = new ItemStack(HHItems.PISTOL.get());
+        fp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
+        fp.getInventory().add(new ItemStack(HHItems.PISTOL_AMMO.get(), 20));
+        check(((com.hollowhours.combat.GunItem) gun.getItem()).startReload(fp, gun), "reload starts");
+        gun.getTag().putLong("reloadAt", level.getGameTime());
+        gun.inventoryTick(level, fp, fp.getInventory().selected, true);
+        check(com.hollowhours.combat.GunItem.ammo(gun) == 12 && com.hollowhours.combat.GunItem.ammoIn(fp, HHItems.PISTOL_AMMO.get()) == 8, "reload takes ammo");
+        for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) fp.setItemSlot(s, ItemStack.EMPTY);
+        fp.getInventory().clearContent();
     }
 
     /**

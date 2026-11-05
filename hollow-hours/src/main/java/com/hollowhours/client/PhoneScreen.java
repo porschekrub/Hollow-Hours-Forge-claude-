@@ -342,6 +342,11 @@ public class PhoneScreen extends Screen {
             bar(g, sx + 6, y + 11, sw - 12, th / 20f, 0xFF3A8FE0);
             y += 26;
         }
+        g.drawString(f, Component.translatable("hollowhours.phone.strength", Math.round(CombatClient.strength)), sx + 6, y, 0xFFFFFFFF, false);
+        bar(g, sx + 6, y + 11, sw - 12, CombatClient.strength / 100f, 0xFFE8A040);
+        y += 24;
+        g.drawString(f, Component.translatable("hollowhours.phone.skills", CombatClient.meleeLvl, CombatClient.gunLvl), sx + 6, y, 0xFFC0C0C0, false);
+        y += 14;
         g.drawString(f, Component.translatable("hollowhours.phone.batteryhealth", PhoneItem.health(phone())), sx + 6, y, 0xFFC0C0C0, false);
         y += 14;
         g.drawString(f, Component.translatable("hollowhours.phone.day", day()), sx + 6, y, 0xFFC0C0C0, false);

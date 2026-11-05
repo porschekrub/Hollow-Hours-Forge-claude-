@@ -33,6 +33,8 @@ public final class HHTabs {
                 HHBlocks.ALL.forEach(b -> out.accept(b.get()));
                 out.accept(HHItems.BASKETBALL.get());
                 out.accept(HHItems.SOCCER_BALL.get());
+                HHItems.COMBAT.forEach(e -> out.accept(e.get()));
+                HHItems.ARMOR.forEach(e -> out.accept(e.get()));
                 HHItems.EGGS.forEach(e -> out.accept(e.get()));
             })
             .build());

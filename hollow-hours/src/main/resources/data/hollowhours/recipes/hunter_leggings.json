@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "MXM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "X": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "hollowhours:hunter_leggings",
+    "count": 1
+  }
+}

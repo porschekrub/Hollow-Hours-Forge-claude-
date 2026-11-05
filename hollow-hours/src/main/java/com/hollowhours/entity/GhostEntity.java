@@ -50,6 +50,10 @@ public class GhostEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> TRACK = SynchedEntityData.defineId(GhostEntity.class, EntityDataSerializers.INT);
     /** bumps every time an animation must restart from the beginning */
     private static final EntityDataAccessor<Integer> SEQ = SynchedEntityData.defineId(GhostEntity.class, EntityDataSerializers.INT);
+    /** knocked out: lying on the ground until it gets up again */
+    private static final EntityDataAccessor<Boolean> KO = SynchedEntityData.defineId(GhostEntity.class, EntityDataSerializers.BOOLEAN);
+    /** client: 0 standing .. 1 lying (eases in and out) */
+    public float koLerp, koLerpO;
 
     public final GhostKind kind;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -91,6 +95,7 @@ public class GhostEntity extends Monster implements GeoEntity {
         this.entityData.define(CRAWL, false);
         this.entityData.define(TRACK, -1);
         this.entityData.define(SEQ, 0);
+        this.entityData.define(KO, false);
     }
 
     @Override
@@ -124,6 +129,14 @@ public class GhostEntity extends Monster implements GeoEntity {
 
     public int seq() {
         return entityData.get(SEQ);
+    }
+
+    public boolean isKnockedOut() {
+        return entityData.get(KO);
+    }
+
+    public void setKnockedOut(boolean v) {
+        entityData.set(KO, v);
     }
 
     public boolean isRaged() {
@@ -211,6 +224,10 @@ public class GhostEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (level().isClientSide) {
+            koLerpO = koLerp;
+            koLerp = isKnockedOut() ? Math.min(1f, koLerp + 0.14f) : Math.max(0f, koLerp - 0.07f);
+        }
         if (!level().isClientSide && isVehicle()) {
             // the victim is held: keep the body still and facing them
             setDeltaMovement(getDeltaMovement().multiply(0, 1, 0));
@@ -236,7 +253,7 @@ public class GhostEntity extends Monster implements GeoEntity {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return super.hurt(source, amount);
-        if (!level().isClientSide && source.getEntity() instanceof net.minecraft.server.level.ServerPlayer p) brain().onHitBy(p);
+        if (!level().isClientSide && source.getEntity() instanceof net.minecraft.server.level.ServerPlayer) return com.hollowhours.combat.GhostCombat.hurt(this, source, amount);
         return false;
     }
 

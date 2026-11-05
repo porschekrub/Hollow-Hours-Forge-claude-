@@ -50,6 +50,8 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
             return;
         }
         if (p.isSleeping() || p.isFallFlying() || p.isVisuallySwimming() || swimAmount > 0 || p.isPassenger() || p.isSpectator()) return;
+        // weapons keep the game's own arm poses (aiming a gun, guarding with a blade)
+        if (p.getMainHandItem().getItem() instanceof com.hollowhours.combat.GunItem || com.hollowhours.combat.MeleeWeapon.guarding(p)) return;
         if (!com.hollowhours.client.Atmos.haunted) {
             happy(p, swing, amount, t);
             eatDrink(p, t);

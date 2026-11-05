@@ -64,6 +64,8 @@ public final class HHSounds {
             "phone.voice.en.0", "phone.voice.en.1", "phone.voice.en.2", "phone.voice.en.3", "phone.voice.en.4", "phone.voice.en.5",
             // the rescue
             "rescue.rotor",
+            // fighting back
+            "gun.pistol", "gun.rifle", "gun.shotgun", "gun.sniper", "gun.grenade", "gun.reload", "gun.cock", "gun.empty",
     };
 
     static {

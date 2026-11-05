@@ -49,6 +49,17 @@ public class GhostRenderer extends GeoEntityRenderer<GhostEntity> {
         super.preRender(poseStack, g, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
+    /** Knocked out: tips over backwards and lies on the ground. */
+    @Override
+    protected void applyRotations(GhostEntity g, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick) {
+        super.applyRotations(g, poseStack, ageInTicks, rotationYaw, partialTick);
+        float k = net.minecraft.util.Mth.lerp(partialTick, g.koLerpO, g.koLerp);
+        if (k <= 0) return;
+        float e = k * k * (3 - 2 * k);
+        poseStack.translate(0, 0.35f * e, 0);
+        poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-88f * e));
+    }
+
     private float clipMargin = 0.3f;
 
     /**

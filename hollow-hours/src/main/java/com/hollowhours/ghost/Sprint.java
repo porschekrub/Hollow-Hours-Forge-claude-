@@ -41,6 +41,14 @@ public final class Sprint {
         return s != null && s.turbo;
     }
 
+    /** Takes stamina for a move (a dodge); false when there isn't enough. */
+    public static boolean spend(ServerPlayer p, double amount) {
+        S s = st(p);
+        if (s.outOfBreath || s.sta < amount) return false;
+        s.sta -= amount;
+        return true;
+    }
+
     /** Value for the HUD bar: -1 hides it. */
     public static float staminaHudValue(ServerPlayer p) {
         S s = STATES.get(p.getUUID());

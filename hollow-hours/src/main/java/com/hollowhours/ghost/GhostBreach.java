@@ -83,7 +83,7 @@ public final class GhostBreach {
         return sub == Sub.SQUEEZE || sub == Sub.STUCK;
     }
 
-    void reset() {
+    public void reset() {
         sub = Sub.NONE;
         cand = null;
         alt.clear();

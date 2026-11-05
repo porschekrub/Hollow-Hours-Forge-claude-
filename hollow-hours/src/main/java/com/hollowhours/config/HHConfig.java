@@ -35,6 +35,9 @@ public final class HHConfig {
     public static final ForgeConfigSpec.IntValue VEIN_MINING, GRAVE_MINUTES, GRAVE_HITS;
     public static final ForgeConfigSpec.DoubleValue THIRST_RATE, PHONE_DRAIN;
     public static final ForgeConfigSpec.BooleanValue GRAVES, RESCUE;
+    public static final ForgeConfigSpec.BooleanValue KNOCKOUT, STRUGGLE, FITNESS;
+    public static final ForgeConfigSpec.IntValue KO_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue STRUGGLE_SECONDS, GHOST_TOUGHNESS;
     public static final ForgeConfigSpec.IntValue RESCUE_DAY, RESCUE_MIN_DAYS, RESCUE_MAX_DAYS, RESCUE_PICKUP_MINUTES, INVASION_MIN_DAYS, INVASION_MAX_DAYS;
     public static final ForgeConfigSpec.DoubleValue MISSED_GHOST_MULT, MISSED_BLOOD_MULT, RETURN_GHOST_MULT, RETURN_BLOOD_MULT;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
@@ -154,6 +157,15 @@ public final class HHConfig {
         AI_MODEL = b.comment("Leave empty for the provider default").define("model", "");
         AI_URL = b.comment("Only for provider=custom or ollama: base url, e.g. http://localhost:11434").define("url", "");
         AI_TIMEOUT = b.defineInRange("timeoutSeconds", 20, 3, 120);
+        b.pop();
+
+        b.comment("Fighting back: weapons and armour, knocking ghosts out, wriggling free of their grip, getting stronger").push("combat");
+        KNOCKOUT = b.comment("Ghosts can be knocked out by hitting them (weapons, guns, grenades); they wake up again later").define("knockOut", true);
+        KO_SECONDS = b.comment("How long a knocked-out ghost stays down").defineInRange("knockOutSeconds", 70, 5, 3600);
+        GHOST_TOUGHNESS = b.comment("How much hitting it takes to knock a ghost out (1 = normal)").defineInRange("ghostToughness", 1.0, 0.1, 20);
+        STRUGGLE = b.comment("When a ghost grabs you: mash a key to break free (easier when you are stronger / better armoured)").define("struggle", true);
+        STRUGGLE_SECONDS = b.comment("Time you get to break free").defineInRange("struggleSeconds", 5.0, 1, 20);
+        FITNESS = b.comment("Strength: playing sports on the playground makes you stronger (more health, harder hits, easier struggles)").define("fitness", true);
         b.pop();
 
         SPEC = b.build();

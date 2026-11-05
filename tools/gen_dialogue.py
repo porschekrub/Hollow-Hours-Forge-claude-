@@ -272,6 +272,55 @@ INTENT_KW = {
 }
 
 
+# Java edition 2.11: ghosts can be knocked out, and you can wriggle free of their grip
+COMBAT = {
+    "en": {
+        1: {"ko": ["ow... ow... ow... that echoed", "you hit me... hit me... hit me...", "the dark is spinning... spinning..."],
+            "mutter": ["...ow...", "...my head hums...", "...so rude... rude... rude..."],
+            "wake": ["i'm awake... awake... and i remember your face", "that hurt... hurt... now you will cry with me", "back again... again... again..."],
+            "freed": ["you slipped... slipped away...", "come back... back... back..."]},
+        2: {"ko": ["you knocked my veil off...", "...i only wanted the ring back", "the water's going dark..."],
+            "mutter": ["...cold...", "...where did my ring go...", "...why does everyone hurt me..."],
+            "wake": ["you ruined my dress...", "i was dreaming of the lake... you woke me", "i'll forgive you... in the water"],
+            "freed": ["don't let go of me... please...", "everyone always leaves..."]},
+        3: {"ko": ["OW! OW! THAT'S IT, I'M ON FIRE AGAIN!", "YOU HIT AN OLD WOMAN?!", "MY BACK! MY BACK!"],
+            "mutter": ["...STILL BURNING...", "...WHO RAISED YOU...", "...ASH IN MY MOUTH..."],
+            "wake": ["I'M UP! AND I'M ANGRY!", "NOBODY LOCKS ME DOWN!", "YOU'LL PAY FOR THAT! WITH SMOKE!"],
+            "freed": ["COME BACK HERE!", "SLIPPERY BRAT!"]},
+        4: {"ko": ["that wasn't very nice :)", "ow :) you got me :)", "lying down for a bit :) don't go anywhere"],
+            "mutter": ["...still smiling :)", "...i can see you from down here :)", "...ten... nine... eight... :)"],
+            "wake": ["i'm back :) did you miss me", "that was rude :) i'm still behind you", "good morning :) where were we"],
+            "freed": ["ooh, wriggly :)", "you can't get far :)"]},
+        5: {"ko": ["...ugh.", "...hit. ...hungry.", "...down."],
+            "mutter": ["...hungry.", "...smell you.", "...cold."],
+            "wake": ["...up. ...hungrier.", "...again.", "...remember."],
+            "freed": ["...slipped.", "...not done."]},
+    },
+    "th": {
+        1: {"ko": ["โอ๊ย... โอ๊ย... โอ๊ย... เสียงก้องไปหมด", "เธอตีฉัน... ตีฉัน... ตีฉัน...", "มืดหมุนไปหมด... หมุน... หมุน..."],
+            "mutter": ["...โอ๊ย...", "...หัวมันอื้อไปหมด...", "...ใจร้าย... ใจร้าย... ใจร้าย..."],
+            "wake": ["ฉันตื่นแล้ว... ตื่นแล้ว... และฉันจำหน้าเธอได้", "เจ็บนะ... เจ็บนะ... ทีนี้เธอต้องร้องไห้กับฉัน", "กลับมาอีกแล้ว... อีกแล้ว... อีกแล้ว..."],
+            "freed": ["หลุดไปแล้ว... หลุดไปแล้ว...", "กลับมา... กลับมา... กลับมา..."]},
+        2: {"ko": ["ผ้าคลุมหน้าฉันหลุดหมดแล้ว...", "...ฉันแค่อยากได้แหวนคืน", "น้ำมันมืดลงเรื่อยๆ..."],
+            "mutter": ["...หนาว...", "...แหวนฉันไปไหน...", "...ทำไมใครๆ ก็ทำร้ายฉัน..."],
+            "wake": ["ชุดเจ้าสาวฉันเปื้อนหมดแล้ว...", "ฉันกำลังฝันถึงทะเลสาบ... เธอปลุกฉัน", "ฉันจะยกโทษให้... ในน้ำนะ"],
+            "freed": ["อย่าทิ้งฉันไป... ขอร้อง...", "ทุกคนทิ้งฉันไปหมด..."]},
+        3: {"ko": ["โอ๊ย! โอ๊ย! ไฟลุกอีกแล้ว!", "กล้าตีคนแก่เหรอ!", "หลังฉัน! หลังฉัน!"],
+            "mutter": ["...ยังไหม้อยู่เลย...", "...ใครสั่งสอนมาเนี่ย...", "...เถ้าเต็มปากไปหมด..."],
+            "wake": ["ฉันลุกแล้ว! และฉันโกรธมาก!", "ไม่มีใครขังฉันได้!", "แกต้องชดใช้! ด้วยควัน!"],
+            "freed": ["กลับมานี่!", "เด็กลื่นไหล!"]},
+        4: {"ko": ["ไม่น่ารักเลยนะ :)", "โอ๊ย :) โดนแล้ว :)", "ขอนอนแป๊บนึงนะ :) อย่าไปไหนล่ะ"],
+            "mutter": ["...ยังยิ้มอยู่นะ :)", "...จากตรงนี้ก็ยังเห็นเธอ :)", "...สิบ... เก้า... แปด... :)"],
+            "wake": ["กลับมาแล้ว :) คิดถึงไหม", "เมื่อกี้หยาบคายนะ :) ฉันยังอยู่ข้างหลังเธอ", "อรุณสวัสดิ์ :) เมื่อกี้ถึงไหนแล้วนะ"],
+            "freed": ["โอ้ ดิ้นเก่งจัง :)", "หนีไปไม่ไกลหรอก :)"]},
+        5: {"ko": ["...อึก.", "...โดนตี. ...หิว.", "...ล้ม."],
+            "mutter": ["...หิว.", "...ได้กลิ่น.", "...หนาว."],
+            "wake": ["...ลุก. ...หิวกว่าเดิม.", "...อีกครั้ง.", "...จำได้."],
+            "freed": ["...หลุด.", "...ยังไม่จบ."]},
+    },
+}
+
+
 def merged_lines():
     out = {}
     for lang in ("en", "th"):
@@ -283,6 +332,8 @@ def merged_lines():
                 for line in v:
                     if line not in cur[k]:
                         cur[k].append(line)
+            for k, v in COMBAT[lang][g].items():
+                cur[k] = list(v)
             out[lang][str(g)] = cur
     return out
 
@@ -292,7 +343,7 @@ def main():
     # sanity: every intent the code can ask for exists in both languages
     need = ["greet", "question", "plead", "bargain", "taunt", "other", "success", "rage", "who", "bye", "kind", "fear", "threat", "repeat",
             "plead_many", "taunt_many", "hurt", "cave", "water", "night", "nothave", "refuse", "why", "want",
-            "ask_give", "ask_refuse", "ask_unknown", "ask_limit"]
+            "ask_give", "ask_refuse", "ask_unknown", "ask_limit", "ko", "mutter", "wake", "freed"]
     for lang in lines:
         for g in lines[lang]:
             for k in need:

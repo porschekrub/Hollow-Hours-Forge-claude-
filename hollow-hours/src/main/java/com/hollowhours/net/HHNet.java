@@ -8,7 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class HHNet {
-    private static final String VERSION = "8";
+    private static final String VERSION = "9";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(HollowHours.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
     private static boolean registered;
 
@@ -50,6 +50,10 @@ public final class HHNet {
                 .encoder(S2CChat::encode).decoder(S2CChat::decode).consumerMainThread(S2CChat::handle).add();
         CHANNEL.messageBuilder(S2CPhoneInfo.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(S2CPhoneInfo::encode).decoder(S2CPhoneInfo::decode).consumerMainThread(S2CPhoneInfo::handle).add();
+        CHANNEL.messageBuilder(S2CCombat.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(S2CCombat::encode).decoder(S2CCombat::decode).consumerMainThread(S2CCombat::handle).add();
+        CHANNEL.messageBuilder(C2SCombat.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SCombat::encode).decoder(C2SCombat::decode).consumerMainThread(C2SCombat::handle).add();
         CHANNEL.messageBuilder(C2SPhone.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SPhone::encode).decoder(C2SPhone::decode).consumerMainThread(C2SPhone::handle).add();
         CHANNEL.messageBuilder(C2SBetrayChoice.class, id++, NetworkDirection.PLAY_TO_SERVER)
@@ -63,7 +67,7 @@ public final class HHNet {
     }
 
     public static void toPlayer(ServerPlayer p, Object msg) {
-        if (p == null || p.connection == null) return;
+        if (p == null || p.connection == null || p instanceof net.minecraftforge.common.util.FakePlayer) return;
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), msg);
     }
 

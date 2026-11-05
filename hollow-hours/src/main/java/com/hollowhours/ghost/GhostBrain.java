@@ -45,7 +45,7 @@ import java.util.UUID;
  * KILL   : (KillSequence) grab, scream, maybe the betrayal offer, then the kill animation.
  */
 public final class GhostBrain {
-    public enum Mode { SPAWNING, STALK, SNAP, CHASE, LOST, SEARCH, BREACH, KNOCK, WATCH, KILL, LEAVE, GLIMPSE }
+    public enum Mode { SPAWNING, STALK, SNAP, CHASE, LOST, SEARCH, BREACH, KNOCK, WATCH, KILL, LEAVE, GLIMPSE, KO }
 
     // ------------------------------------------------------------------ tuning (from main.js CFG)
     static final int AMBUSH_DIST = 12, CHASE_RANGE = 36, LOSE_RANGE = 48, FAR_REMOVE = 80, LOSE_TICKS = 60;
@@ -187,6 +187,15 @@ public final class GhostBrain {
         long now = now();
         if (mode == Mode.KILL) {
             KillSequence.tickGhost(this);
+            return;
+        }
+        if (mode == Mode.KO) {
+            com.hollowhours.combat.GhostCombat.tickKnockedOut(this, now);
+            return;
+        }
+        if (com.hollowhours.combat.GhostCombat.staggered(this, now)) {
+            g.getNavigation().stop();
+            g.setDeltaMovement(0, Math.min(0, g.getDeltaMovement().y), 0);
             return;
         }
         if (leaving) {
@@ -511,6 +520,8 @@ public final class GhostBrain {
         dmg *= (float) Soul.damageMult(p);
         dmg *= (float) com.hollowhours.rescue.Rescue.harshness(p, Atmosphere.bloodMoonFor(g.level()));
         g.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+        dmg = com.hollowhours.combat.GhostCombat.defend(p, g, dmg);
+        if (dmg <= 0) return false; // dodged or parried
         boolean onCatch = HHConfig.KILL_MODE.get() == HHConfig.KillMode.ON_CATCH;
         float after = CombatRules.getDamageAfterAbsorb(dmg, (float) p.getArmorValue(), (float) p.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
         boolean lethal = after >= p.getHealth() + p.getAbsorptionAmount();
