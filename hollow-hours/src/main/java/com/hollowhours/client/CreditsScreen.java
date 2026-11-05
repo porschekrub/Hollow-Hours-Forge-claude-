@@ -24,7 +24,7 @@ public class CreditsScreen extends Screen {
     final List<String> names;
     final List<Line> lines = new ArrayList<>();
     float scroll, white = 1f;
-    int ticks, total, endHold;
+    int ticks, total, endHold;  // (package access: the CI tour scrolls it)
     boolean fast;
     final long seed = new Random().nextLong();
 

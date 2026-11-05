@@ -113,6 +113,7 @@ public final class Director {
     static double harsh = 1;
 
     public static void spawnTick(MinecraftServer server, long now) {
+        if (com.hollowhours.endgame.Endgame.hunting(server)) return; // the final hunt brings all five itself
         harsh = com.hollowhours.rescue.Rescue.harshest(server);
         if (!started) {
             started = true;

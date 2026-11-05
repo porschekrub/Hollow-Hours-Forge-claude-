@@ -41,7 +41,9 @@ import java.util.Random;
 public final class Arena {
     private Arena() {}
 
-    static final int R_MOUNT = 40, H_MOUNT = 30, RX = 22, RY = 14, DEPTH = 19, MOUTH = 44, TRENCH = 56;
+    public static final int R_MOUNT = 40, H_MOUNT = 30, RX = 22, RY = 14, DEPTH = 19, MOUTH = 44, TRENCH = 56;
+    static int ledgeY;
+    static final List<long[]> forced = new ArrayList<>();
 
     record Op(BlockPos pos, BlockState state) {}
 
@@ -54,6 +56,16 @@ public final class Arena {
         return !QUEUE.isEmpty();
     }
 
+    public static int queued() {
+        return queued;
+    }
+
+    /** CI / commands: plan the mountain now (its chunks must be loaded). */
+    public static void planNow(ServerLevel level) {
+        Endgame.Data d = Endgame.data(level.getServer());
+        if (d.site != null) plan(level, d);
+    }
+
     // ------------------------------------------------------------------ ticking
     /** Every 20 ticks (from Endgame.tick) while the map or the rift stage is on. */
     static void tick(MinecraftServer server, Endgame.Data d, long now) {
@@ -63,8 +75,17 @@ public final class Arena {
             boolean near = false;
             for (ServerPlayer p : level.players())
                 if (Math.hypot(p.getX() - d.site.getX(), p.getZ() - d.site.getZ()) < 150) near = true;
-            int r = TRENCH + 12;
-            if (near && level.hasChunksAt(d.site.getX() - r, d.site.getZ() - r, d.site.getX() + r, d.site.getZ() + r)) plan(level, d);
+            if (near) {
+                // load (and keep loaded) everything the mountain touches while it is built
+                int r = TRENCH + 12;
+                for (int cx = (d.site.getX() - r) >> 4; cx <= (d.site.getX() + r) >> 4; cx++)
+                    for (int cz = (d.site.getZ() - r) >> 4; cz <= (d.site.getZ() + r) >> 4; cz++) {
+                        level.setChunkForced(cx, cz, true);
+                        level.getChunk(cx, cz);
+                        forced.add(new long[]{cx, cz});
+                    }
+                plan(level, d);
+            }
             return;
         }
         if (d.built != 2 || d.center == null) return;
@@ -123,6 +144,15 @@ public final class Arena {
         boss.startRising();
         level.addFreshEntity(boss);
         HollowHours.LOG.info("[Hollow Hours] the thing under the mountain wakes at {}", c);
+    }
+
+    public static Vec3 mouthDir(MinecraftServer server) {
+        return mouthDir(Endgame.data(server));
+    }
+
+    /** the floor height of the tunnel where it meets the cavern */
+    public static int ledge(MinecraftServer server) {
+        return ledgeY;
     }
 
     static Vec3 mouthDir(Endgame.Data d) {
@@ -243,7 +273,7 @@ public final class Arena {
         Vec3 side = new Vec3(-dir.z, 0, dir.x);
         Direction up = Direction.getNearest(dir.x, 0, dir.z); // walking out = uphill
         int entryY = surface(level, cx + (int) Math.round(dir.x * TRENCH), cz + (int) Math.round(dir.z * TRENCH));
-        int ledgeY = shallow ? floorY : floorY + 4;
+        ledgeY = shallow ? floorY : floorY + 4;
         int lastFloor = entryY;
         for (double t = TRENCH; t >= RX - 1; t -= 0.5) {
             int fy = Math.max(ledgeY, entryY - (int) Math.floor((TRENCH - t) / 2.0));
@@ -357,6 +387,8 @@ public final class Arena {
         }
         d.built = 2;
         d.setDirty();
+        for (long[] c : forced) level.setChunkForced((int) c[0], (int) c[1], false);
+        forced.clear();
         HollowHours.LOG.info("[Hollow Hours] the mountain is built ({} blocks)", queued);
     }
 

@@ -62,12 +62,12 @@ public final class Endgame {
     static final String MAP_GIVEN = "hollowhours_endgame_map", CREDITS = "hollowhours_endgame_credits", WARNED = "hollowhours_endgame_warned";
 
     public static final class Data extends SavedData {
-        int stage;
+        public int stage;
         long fromDay;
-        int down;
+        public int down;
         @Nullable
         BlockPos site;
-        int built;            // 0 no, 1 building, 2 done
+        public int built;     // 0 no, 1 building, 2 done
         @Nullable
         BlockPos center;      // the cavern floor, where it sits
         long riftUntil;
@@ -185,7 +185,7 @@ public final class Endgame {
             }
             case HUNT -> tickHunt(server, now);
             case MAP -> {
-                for (ServerPlayer p : server.getPlayerList().getPlayers()) if (!persisted(p).getBoolean(MAP_GIVEN)) giveMap(p);
+                if (now >= mapAt) for (ServerPlayer p : server.getPlayerList().getPlayers()) if (!persisted(p).getBoolean(MAP_GIVEN)) giveMap(p);
                 Arena.tick(server, d, now);
             }
             case RIFT -> Arena.tick(server, d, now);
@@ -242,6 +242,7 @@ public final class Endgame {
     }
 
     private static final long[] missingSince = new long[6];
+    static long mapAt;
 
     static void tickHunt(MinecraftServer server, long now) {
         Data d = data(server);
@@ -309,10 +310,11 @@ public final class Endgame {
                 g.discard();
             });
         }
+        mapAt = server.overworld().getGameTime() + 40 + i * 50 + 80;
+        for (ServerPlayer p : server.getPlayerList().getPlayers()) persisted(p).remove(MAP_GIVEN);
         Later.run(40 + i * 50 + 80, () -> {
             for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-                persisted(p).remove(MAP_GIVEN);
-                giveMap(p);
+                if (!persisted(p).getBoolean(MAP_GIVEN)) giveMap(p);
                 Fx.title(p, Component.translatable("hollowhours.endgame.map.title").withStyle(ChatFormatting.GOLD),
                         Component.translatable("hollowhours.endgame.map.sub").withStyle(ChatFormatting.GRAY), 10, 100, 30);
                 PhoneItem.addMessage(p, "hollowhours.endgame.msg.map");
@@ -442,7 +444,7 @@ public final class Endgame {
         MinecraftServer server = p.server;
         Data d = data(server);
         if (d.stage < RIFT) return;
-        if (persisted(p).getLong(CREDITS) > server.overworld().getGameTime() - 200) return;
+        if (persisted(p).contains(CREDITS) && persisted(p).getLong(CREDITS) > server.overworld().getGameTime() - 200) return;
         persisted(p).putLong(CREDITS, server.overworld().getGameTime());
         boolean first = d.stage != DONE;
         if (first) makePeace(server);

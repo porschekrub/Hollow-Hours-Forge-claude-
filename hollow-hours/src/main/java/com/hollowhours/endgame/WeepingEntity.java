@@ -89,7 +89,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
     @Nullable
     UUID target, victim;
     float prog, holdDamage, recentDamage;
-    int holdEnd, recentAt;
+    int holdEnd, recentAt, pressTick, pressesNow;
     final List<double[]> tears = new ArrayList<>();
     final List<UUID> sweptHit = new ArrayList<>();
 
@@ -198,7 +198,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
         Entity by = src.getEntity();
         boolean ok = by instanceof Player || src.is(DamageTypeTags.IS_EXPLOSION) || src.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         if (!ok) return false;
-        amount = Math.min(amount, 30f);
+        if (!src.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) amount = Math.min(amount, 30f); // (/kill still works)
         if (tickCount < stunUntil) amount *= 1.5f;
         boolean hit = super.hurt(src, amount);
         if (!hit) return false;
@@ -662,6 +662,11 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
     public static boolean struggle(ServerPlayer p) {
         WeepingEntity w = HOLDING.get(p.getUUID());
         if (w == null || w.isRemoved()) return false;
+        if (w.tickCount != w.pressTick) {
+            w.pressTick = w.tickCount;
+            w.pressesNow = 0;
+        }
+        if (++w.pressesNow > 2) return true;
         float inc = 0.05f * (1 + 0.9f * Fitness.strength(p) / 100f + MilitaryArmor.struggle(p) + 0.03f * Fitness.meleeLevel(p));
         w.prog = Math.min(1f, w.prog + inc);
         return true;
