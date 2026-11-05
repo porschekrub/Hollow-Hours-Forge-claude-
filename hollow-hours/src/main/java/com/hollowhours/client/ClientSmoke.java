@@ -510,6 +510,8 @@ public final class ClientSmoke {
             return t >= 272;
         });
 
+        cover(mc);
+
         // the phone: home, messages, the games, health; the emergency alert with subtitles
         STEPS.add(t -> {
             if (t == 0) server(sp -> {
@@ -753,6 +755,13 @@ public final class ClientSmoke {
 
         rescue(mc);
         endgame(mc);
+        // the main menu (its panorama is the haunted clearing above)
+        STEPS.add(t -> {
+            if (t == 0) mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+            if (t == 40 || t == 140) shot("title_screen_t" + t);
+            if (t == 142) mc.setScreen(null);
+            return t >= 145;
+        });
     }
 
     // ------------------------------------------------------------------ the rescue: helicopter, haven, invasion, home
@@ -2045,6 +2054,190 @@ public final class ClientSmoke {
     }
 
     private static int gunShots, gunHits;
+
+    // ------------------------------------------------------------------ the main menu's panorama: a haunted clearing, the five standing round you
+    static Vec3 coverAt = Vec3.ZERO;
+
+    private static void coverScene(ServerPlayer sp, Vec3 c) {
+        ServerLevel l = sp.serverLevel();
+        java.util.Random r = new java.util.Random(13);
+        net.minecraft.core.BlockPos o = net.minecraft.core.BlockPos.containing(c);
+        java.util.function.BiConsumer<net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState> put = (b, st) -> l.setBlock(b, st, 2 | 16);
+        var B = new Object() {
+            net.minecraft.world.level.block.state.BlockState s(net.minecraft.world.level.block.Block b) {
+                return b.defaultBlockState();
+            }
+        };
+        // dead ground, nothing else standing
+        for (int dx = -36; dx <= 36; dx++)
+            for (int dz = -36; dz <= 36; dz++) {
+                double d = Math.sqrt(dx * dx + dz * dz);
+                if (d > 36) continue;
+                for (int y = 0; y < 14; y++) put.accept(o.offset(dx, y, dz), B.s(net.minecraft.world.level.block.Blocks.AIR));
+                int k = r.nextInt(100);
+                var g = k < 30 ? net.minecraft.world.level.block.Blocks.PODZOL : k < 52 ? net.minecraft.world.level.block.Blocks.COARSE_DIRT
+                        : k < 58 ? net.minecraft.world.level.block.Blocks.MUD : net.minecraft.world.level.block.Blocks.GRASS_BLOCK;
+                put.accept(o.offset(dx, -1, dz), B.s(g));
+                if (d > 3 && r.nextInt(100) < 7) put.accept(o.offset(dx, 0, dz), B.s(r.nextBoolean() ? net.minecraft.world.level.block.Blocks.DEAD_BUSH : net.minecraft.world.level.block.Blocks.GRASS));
+            }
+        // dead trees all round
+        double[] ghostAng = {15, 85, 160, 235, 305};
+        for (int i = 0; i < 22; i++) {
+            double a = r.nextDouble() * Math.PI * 2, rad = 10 + r.nextDouble() * 22;
+            boolean clash = false;
+            for (double ga : ghostAng) if (Math.abs(Math.toDegrees(Math.atan2(Math.sin(a - Math.toRadians(ga)), Math.cos(a - Math.toRadians(ga))))) < 14 && rad < 16) clash = true;
+            if (clash) continue;
+            net.minecraft.core.BlockPos b = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
+            int h = 6 + r.nextInt(6);
+            for (int y = 0; y < h; y++) put.accept(b.above(y), B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_LOG));
+            for (int br = 0; br < 3; br++) {
+                int sx = r.nextInt(3) - 1, sz = r.nextInt(3) - 1;
+                if (sx == 0 && sz == 0) sx = 1;
+                int y0 = h - 1 - r.nextInt(3), len = 2 + r.nextInt(3);
+                for (int k = 1; k <= len; k++)
+                    put.accept(b.offset(sx * k, y0 + k / 2, sz * k), net.minecraft.world.level.block.Blocks.DARK_OAK_LOG.defaultBlockState()
+                            .setValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS, sx != 0 ? net.minecraft.core.Direction.Axis.X : net.minecraft.core.Direction.Axis.Z));
+                if (r.nextInt(3) == 0) put.accept(b.offset(sx * (len + 1), y0 + len / 2, sz * (len + 1)), B.s(net.minecraft.world.level.block.Blocks.COBWEB));
+            }
+        }
+        // the abandoned house behind one of them
+        {
+            double a = Math.toRadians(200);
+            net.minecraft.core.BlockPos h = o.offset((int) Math.round(Math.cos(a) * 17), 0, (int) Math.round(Math.sin(a) * 17));
+            for (int dx = -3; dx <= 3; dx++)
+                for (int dz = -3; dz <= 3; dz++)
+                    for (int y = 0; y <= 4; y++) {
+                        boolean wall = Math.abs(dx) == 3 || Math.abs(dz) == 3;
+                        net.minecraft.core.BlockPos b = h.offset(dx, y, dz);
+                        if (y == 0) put.accept(b, B.s(net.minecraft.world.level.block.Blocks.COBBLESTONE));
+                        else if (y == 4) put.accept(b, B.s(r.nextInt(6) == 0 ? net.minecraft.world.level.block.Blocks.AIR : net.minecraft.world.level.block.Blocks.DARK_OAK_PLANKS));
+                        else if (wall) {
+                            boolean window = y == 2 && (Math.abs(dx) == 1 || Math.abs(dz) == 1) && !(Math.abs(dx) == 3 && Math.abs(dz) == 3);
+                            put.accept(b, B.s(window ? (r.nextBoolean() ? net.minecraft.world.level.block.Blocks.AIR : net.minecraft.world.level.block.Blocks.GLASS_PANE)
+                                    : r.nextInt(9) == 0 ? net.minecraft.world.level.block.Blocks.MOSSY_COBBLESTONE : net.minecraft.world.level.block.Blocks.DARK_OAK_PLANKS));
+                        }
+                    }
+            put.accept(h.offset(0, 3, 0), net.minecraft.world.level.block.Blocks.LANTERN.defaultBlockState().setValue(net.minecraft.world.level.block.LanternBlock.HANGING, true));
+            for (int dx = -4; dx <= 4; dx++)
+                for (int dz = -4; dz <= 4; dz++)
+                    if (Math.abs(dx) == 4 || Math.abs(dz) == 4)
+                        if (r.nextInt(3) > 0) put.accept(h.offset(dx, 5, dz), B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_SLAB));
+        }
+        // the graves
+        for (int i = 0; i < 7; i++) {
+            double a = Math.toRadians(40 + (i - 3) * 9), rad = 13 + (i % 2) * 2.5;
+            net.minecraft.core.BlockPos g = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
+            put.accept(g, B.s(net.minecraft.world.level.block.Blocks.COBBLESTONE_WALL));
+            put.accept(g.above(), B.s(i % 3 == 0 ? net.minecraft.world.level.block.Blocks.SKELETON_SKULL : net.minecraft.world.level.block.Blocks.ANDESITE_WALL));
+            put.accept(g.offset(1, 0, 0), net.minecraft.world.level.block.Blocks.CANDLE.defaultBlockState().setValue(net.minecraft.world.level.block.CandleBlock.LIT, true)
+                    .setValue(net.minecraft.world.level.block.CandleBlock.CANDLES, 1 + i % 3));
+        }
+        // the five, each by a cold lantern, all looking at you
+        GhostAnim[] anims = {GhostAnim.STALK, GhostAnim.IDLE, GhostAnim.CHASE, GhostAnim.LAUGH, GhostAnim.STALK};
+        double[] rads = {6.0, 7.0, 6.5, 7.5, 6.2};
+        for (int i = 0; i < 5; i++) {
+            double a = Math.toRadians(ghostAng[i]);
+            Vec3 at = c.add(Math.cos(a) * rads[i], 0, Math.sin(a) * rads[i]);
+            GhostEntity g = showGhost(sp, GhostKind.byN(i + 1), at, anims[i]);
+            if (g != null) {
+                float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
+                g.moveTo(at.x, at.y, at.z, yaw, 0);
+                g.setYHeadRot(yaw);
+                g.setYBodyRot(yaw);
+            }
+            Vec3 side = new Vec3(-Math.sin(a), 0, Math.cos(a)).scale(1.7);
+            net.minecraft.core.BlockPos post = net.minecraft.core.BlockPos.containing(at.add(side).add(Math.cos(a) * 0.8, 0, Math.sin(a) * 0.8));
+            put.accept(post, B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_FENCE));
+            put.accept(post.above(), B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_FENCE));
+            put.accept(post.above(2), B.s(net.minecraft.world.level.block.Blocks.SOUL_LANTERN));
+        }
+        // and further off, between the trees, the others watching
+        double[] st = {50, 192, 268};
+        for (int i = 0; i < 3; i++) {
+            double a = Math.toRadians(st[i]);
+            Vec3 at = c.add(Math.cos(a) * 21, 0, Math.sin(a) * 21);
+            StalkerEntity s = HHEntities.stalker(StalkerKind.values()[i]).create(l);
+            if (s == null) continue;
+            float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
+            s.owned = true;
+            s.moveTo(at.x, at.y, at.z, yaw, 0);
+            s.setYHeadRot(yaw);
+            s.setYBodyRot(yaw);
+            s.setStalkPose(i % 3);
+            l.addFreshEntity(s);
+        }
+    }
+
+    private static void panorama(Minecraft mc, String name) {
+        try {
+            mc.grabPanoramixScreenshot(mc.gameDirectory, 1024, 1024);
+            java.nio.file.Path dir = mc.gameDirectory.toPath().resolve("screenshots");
+            for (int i = 0; i < 6; i++) {
+                java.nio.file.Path f = dir.resolve("panorama_" + i + ".png");
+                if (java.nio.file.Files.exists(f))
+                    java.nio.file.Files.move(f, dir.resolve("cover_" + name + "_panorama_" + i + ".png"), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+            HollowHours.LOG.info("[client smoke] menu panorama '{}' captured", name);
+        } catch (Throwable e) {
+            HollowHours.LOG.error("[client smoke] panorama {} failed (com.hollowhours)", name, e);
+        }
+    }
+
+    private static void cover(Minecraft mc) {
+        STEPS.add(t -> {
+            if (t == 0) {
+                coverAt = origin.add(-240, 0, 160);
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                server(sp -> {
+                    clearAll(sp);
+                    sp.teleportTo(coverAt.x, coverAt.y, coverAt.z);
+                    sp.serverLevel().setDayTime(12650);
+                    sp.removeEffect(MobEffects.NIGHT_VISION);
+                    sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 60 * 5, 4, false, false));
+                });
+            }
+            if (t == 60) server(sp -> {
+                sp.teleportTo(coverAt.x, coverAt.y, coverAt.z);
+                coverScene(sp, coverAt);
+            });
+            if (t == 62) lookAt = coverAt.add(Math.cos(Math.toRadians(15)) * 6, 1.6, Math.sin(Math.toRadians(15)) * 6);
+            if (t == 100) {
+                shot("covershot_dusk");
+                panorama(mc, "dusk");
+            }
+            if (t == 102) server(sp -> {
+                sp.serverLevel().setDayTime(18000);
+                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
+            });
+            if (t == 140) {
+                shot("covershot_night");
+                panorama(mc, "night");
+            }
+            if (t == 142) server(sp -> com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 120, 0.7f));
+            if (t == 190) {
+                shot("covershot_fog");
+                panorama(mc, "fog");
+            }
+            if (t == 192) server(sp -> {
+                com.hollowhours.ghost.Atmosphere.stopFog(sp.server);
+                sp.serverLevel().setDayTime(15000);
+                com.hollowhours.ghost.Atmosphere.forceBlood = 1;
+            });
+            if (t == 240) Atmos.snap();
+            if (t == 400) {
+                shot("covershot_blood");
+                panorama(mc, "blood");
+            }
+            if (t == 402) server(sp -> {
+                com.hollowhours.ghost.Atmosphere.forceBlood = 0;
+                sp.serverLevel().setDayTime(18000);
+                clearAll(sp);
+                pin(sp);
+            });
+            if (t == 430) Atmos.snap();
+            return t >= 432;
+        });
+    }
 
     private static String animName(GhostEntity g) {
         try {

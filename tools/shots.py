@@ -17,6 +17,10 @@ for name in sorted(os.listdir(src)) if os.path.isdir(src) else []:
         os.system(f"cp '{p}' '{dst}/'")
         continue
     im = Image.open(p).convert("RGB")
+    if name.startswith("cover_"):
+        # the main menu's panorama faces: kept full size
+        im.save(os.path.join(dst, name[:-4] + ".jpg"), quality=94)
+        continue
     w = 640
     im = im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
     im.save(os.path.join(dst, name[:-4] + ".jpg"), quality=78)
