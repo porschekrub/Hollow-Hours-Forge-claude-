@@ -1,0 +1,113 @@
+[32m[15:40:10.509] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserver, --fml.forgeVersion, 47.1.106, --fml.fmlVersion, 47.2.2, --fml.mcVersion, 1.20.1, --fml.mcpVersion, 20230612.114412, nogui] 
+[m[32m[15:40:10.515] [main/INFO] [Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.21 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1017-azure 
+[m[32m[15:40:10.657] [main/INFO] [loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserver 
+[m[32m[15:40:10.726] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar%2368!/ Service=ModLauncher Env=SERVER 
+[m[32m[15:40:10.841] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "helperbuddy-forge-1.20.1-2.12.2.jar" of type MOD with provider {mods folder locator at /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/mods} 
+[m[33m[15:40:11.056] [main/WARN] [loading.moddiscovery.ModFileParser/LOADING]: Mod file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/neoforged/fancymodloader/core/47.2.2/core-47.2.2.jar is missing mods.toml file 
+[m[33m[15:40:11.058] [main/WARN] [loading.moddiscovery.ModFileParser/LOADING]: Mod file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/neoforged/fancymodloader/language-java/47.2.2/language-java-47.2.2.jar is missing mods.toml file 
+[m[33m[15:40:11.060] [main/WARN] [loading.moddiscovery.ModFileParser/LOADING]: Mod file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/neoforged/fancymodloader/language-lowcode/47.2.2/language-lowcode-47.2.2.jar is missing mods.toml file 
+[m[33m[15:40:11.061] [main/WARN] [loading.moddiscovery.ModFileParser/LOADING]: Mod file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/neoforged/fancymodloader/language-minecraft/47.2.2/language-minecraft-47.2.2.jar is missing mods.toml file 
+[m[32m[15:40:11.072] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "core-47.2.2.jar" of type LIBRARY with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.072] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "language-java-47.2.2.jar" of type LANGPROVIDER with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.072] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "language-lowcode-47.2.2.jar" of type LANGPROVIDER with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.072] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "language-minecraft-47.2.2.jar" of type LANGPROVIDER with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.073] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "server-1.20.1-20230612.114412-srg.jar" of type MOD with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.073] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "forge-1.20.1-47.1.106-universal.jar" of type MOD with provider net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator@47874b25 
+[m[32m[15:40:11.079] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "events-47.2.2.jar" of type GAMELIBRARY with provider net.minecraftforge.fml.loading.moddiscovery.BuiltinGameLibraryLocator@5471388b 
+[m[32m[15:40:11.212] [main/INFO] [loading.moddiscovery.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection 
+[m[32m[15:40:11.212] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "mclib-20.jar" of type GAMELIBRARY with provider net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator@2f2bf0e2 
+[m[32m[15:40:11.213] [main/INFO] [loading.moddiscovery.ModDiscoverer/SCAN]: Found mod file "geckolib-forge-1.20.1-4.8.4.jar" of type MOD with provider net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator@2f2bf0e2 
+[m[32m[15:40:13.301] [main/INFO] [mixin/]: Compatibility level set to JAVA_17 
+[m[32m[15:40:13.305] [main/INFO] [LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserver' with arguments [nogui] 
+[m2026-11-05 15:40:13,580 main WARN Advanced terminal features are not available in this environment
+[15:40:21] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: NeoForge mod loading, version 47.1.106, for MC 1.20.1 with MCP 20230612.114412
+[15:40:21] [modloading-worker-0/INFO] [ne.mi.co.MinecraftForge/FORGE]: NeoForge v47.1.106 Initialized
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/config/helperbuddy-common.toml is not correct. Correcting
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper was corrected from null to its default, SimpleCommentedConfig:{}. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.searchRadius was corrected from null to its default, 100. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.maxHelpersPerPlayer was corrected from null to its default, 8. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.workSpeed was corrected from null to its default, 1.25. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.damageMultiplier was corrected from null to its default, 1.0. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.buildSpeed was corrected from null to its default, 1. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.freeBuild was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.contractOnFirstJoin was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.fightBackPlayers was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.teleportToOwner was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.keepCommandBookOnDeath was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai was corrected from null to its default, SimpleCommentedConfig:{}. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.enabled was corrected from null to its default, false. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.provider was corrected from null to its default, gemini. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.apiKey was corrected from null to its default, . 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.model was corrected from null to its default, . 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.url was corrected from null to its default, . 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.timeoutSeconds was corrected from null to its default, 25. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForCommands was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForChat was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForBuilding was corrected from null to its default, true. 
+[15:40:22] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.maxBuildSize was corrected from null to its default, 32. 
+[15:40:24] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[15:40:24] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23105!/assets/.mcassetsroot' uses unexpected schema
+[15:40:24] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/srv/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23105!/data/.mcassetsroot' uses unexpected schema
+[15:40:25] [main/ERROR] [minecraft/DedicatedServerProperties]: No key layers in MapLike[{}]
+[15:40:27] [main/INFO] [minecraft/RecipeManager]: Loaded 7 recipes
+[15:40:27] [main/INFO] [minecraft/AdvancementList]: Loaded 1271 advancements
+[15:40:28] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.20.1
+[15:40:28] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[15:40:28] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[15:40:28] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[15:40:28] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[15:40:28] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using epoll channel type
+[15:40:28] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[15:40:28] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[15:40:28] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[15:40:28] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file ./world/serverconfig/forge-server.toml is not correct. Correcting
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server was corrected from null to its default, SimpleCommentedConfig:{}. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringBlockEntities was corrected from null to its default, false. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringEntities was corrected from null to its default, false. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.fullBoundingBoxLadders was corrected from null to its default, false. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.zombieBaseSummonChance was corrected from null to its default, 0.1. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.zombieBabyChance was corrected from null to its default, 0.05. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.permissionHandler was corrected from null to its default, forge:default_handler. 
+[15:40:28] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.advertiseDedicatedServerToLan was corrected from null to its default, true. 
+[15:40:29] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[15:40:30] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:32] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:33] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:33] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:34] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:34] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[15:40:35] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 23%
+[15:40:35] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 89%
+[15:40:36] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 5927 ms
+[15:40:36] [Server thread/INFO] [minecraft/DedicatedServer]: Done (7.277s)! For help, type "help"
+[15:40:36] [Server thread/INFO] [ne.mi.se.pe.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[15:40:38] [Server thread/INFO] [HelperBuddy/]: [smoke] 684 plans, 925428 blocks checked
+[15:40:38] [Server thread/INFO] [HelperBuddy/]: [smoke] build site: ok=true 
+[15:40:40] [Server thread/INFO] [HelperBuddy/]: [smoke] t=50 mode BUILD status '1%' tasks false bag 9/36
+[15:40:45] [Server thread/INFO] [HelperBuddy/]: [smoke] t=150 mode BUILD status '51%' tasks false bag 9/36
+[15:40:50] [Server thread/INFO] [HelperBuddy/]: [smoke] t=250 mode BUILD status '92%' tasks false bag 9/36
+[15:40:53] [Server thread/INFO] [HelperBuddy/]: [smoke] build progress 0% (placed blocks)
+[15:40:55] [Server thread/INFO] [HelperBuddy/]: [smoke] t=350 mode MINE status '250/250' tasks false bag 9/36
+[15:41:00] [Server thread/INFO] [HelperBuddy/]: [smoke] t=450 mode GATHER status '250/250' tasks false bag 10/36
+[15:41:05] [Server thread/INFO] [HelperBuddy/]: [smoke] t=550 mode FARM status '' tasks false bag 10/36
+[15:41:10] [Server thread/INFO] [HelperBuddy/]: [smoke] t=650 mode DIG status '70%' tasks false bag 10/36
+[15:41:15] [Server thread/INFO] [HelperBuddy/]: [smoke] t=750 mode FOLLOW status '' tasks false bag 11/36
+[15:41:18] [Server thread/INFO] [HelperBuddy/]: [smoke] bag: 1 iron_pickaxe, 1 iron_axe, 1 iron_hoe, 61 torch, 16 bread, 15 coal, 16 wheat_seeds, 15 oak_log, 10 dirt, 1 crafting_table, 4 iron_ingot, 
+[15:41:18] [Server thread/INFO] [HelperBuddy/]: [smoke] mode TASK status 'smelting 3' bag 11/36
+[15:41:18] [Server thread/INFO] [HelperBuddy/]: SMOKE TEST OK
+[15:41:18] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[15:41:18] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[15:41:18] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[15:41:19] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[15:41:20] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
