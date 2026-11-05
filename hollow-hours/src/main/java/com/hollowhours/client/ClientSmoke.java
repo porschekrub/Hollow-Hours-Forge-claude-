@@ -645,7 +645,8 @@ public final class ClientSmoke {
             if (t == 624) {
                 var info = ClientPhone.info;
                 if (info != null) for (var tg : info.targets())
-                    if (tg.kind().equals("home")) ClientPhone.navigate(new ClientPhone.Nav("home", "Home", tg.x() + 40, tg.y(), tg.z() + 25, tg.dim()));
+                    // a pin 47 blocks from home (a "home" target would be moved back onto home by the next phone update)
+                    if (tg.kind().equals("home")) ClientPhone.navigate(new ClientPhone.Nav("pin", "Home", tg.x() + 40, tg.y(), tg.z() + 25, tg.dim()));
                 mc.setScreen(null);
                 lookAt = origin.add(0, 1.6, 30);
             }
