@@ -1,8 +1,24 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.10.6.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.10.6.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.11.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.11.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.11.0 — fighting back**
+- Hollow Hours: **weapons**. Guns: pistol, assault rifle (hold right-click), shotgun, sniper rifle; ammo for each, and hand grenades. Melee: combat knife, warrior's blade, battle axe, stun baton (slows what it hits), spear (longer reach). All craftable - press **K** for the recipes.
+  Hollow Hours: **อาวุธ** ปืน: ปืนพก ไรเฟิลจู่โจม (คลิกขวาค้าง) ลูกซอง สไนเปอร์ มีกระสุนแต่ละแบบ และระเบิดมือ อาวุธระยะประชิด: มีดทหาร ดาบนักรบ ขวานรบ กระบองช็อตไฟฟ้า (ตีแล้วช้าลง) หอก (ตีได้ไกลกว่า) คราฟได้ทั้งหมด กด **K** ดูสูตร
+- Controls: right-click = shoot, **R** = reload, sneak = aim (zoom). Melee: hold right-click = guard (right as a ghost swings = **parry**, it staggers), sprint + a full swing = heavy blow. **V** = dodge roll (a moment where nothing hits you).
+  ปุ่ม: คลิกขวา = ยิง, **R** = รีโหลด, ย่อ = เล็ง (ซูม) อาวุธประชิด: คลิกขวาค้าง = ตั้งการ์ด (กดตอนผีจะตีพอดี = **ปัดป้อง** ผีเซ) วิ่ง + ฟันเต็มแรง = ฟันหนัก **V** = กลิ้งหลบ (ช่วงสั้นๆ ที่ไม่โดนอะไรเลย)
+- **Military armour**: Tactical, Heavy Soldier and Ghost Hunter sets. A full set makes ghost hits weaker and breaking free easier.
+  **ชุดเกราะทหาร** 3 ชุด: ยุทธวิธี / ทหารหนัก / นักล่าผี ใส่ครบชุด ผีตีเบาลง และดิ้นหลุดง่ายขึ้น
+- **Knock ghosts out** (they can't die): hitting a ghost wears it down until it collapses for about 70 s, grumbling, then gets up angry. A knocked-out ghost drops whoever it was holding.
+  **ทำผีสลบได้** (ผีไม่ตาย) ตีจนมันล้มสลบประมาณ 70 วินาที นอนบ่นไปเรื่อย แล้วลุกขึ้นมาแบบโกรธ ถ้าผีกำลังจับเพื่อนอยู่แล้วโดนตีจนสลบ เพื่อนจะหลุดทันที
+- **Break free**: when a ghost grabs you, mash **Space** / left click to fill the bar before the time runs out. Stronger and better armoured = easier.
+  **ดิ้นให้หลุด**: ตอนผีจับ กด **Space** / คลิกซ้ายรัวๆ ให้หลอดเต็มก่อนหมดเวลา ยิ่งแข็งแรง ยิ่งใส่เกราะ ยิ่งหลุดง่าย
+- **Getting stronger**: playing sports on the playground (basketball hoop, football goal, kicking the ball...) raises **Strength** (0-100): more health, harder hits, easier struggles. Melee and gun **skill levels** go up as you use them. All shown on the phone's health page.
+  **ออกกำลังกาย**: เล่นกีฬาที่สนามเด็กเล่น (ชู้ตบาส ยิงประตู เตะบอล...) เพิ่ม **ความแข็งแรง** (0-100): เลือดเยอะขึ้น ตีแรงขึ้น ดิ้นหลุดง่ายขึ้น และมี **เลเวลทักษะ** ของอาวุธประชิดกับปืน เพิ่มเมื่อใช้ ดูได้ในหน้าสุขภาพของโทรศัพท์
+- Settings in `[combat]` of `hollowhours-common.toml` (knock-out time, ghost toughness, struggle on/off and time, fitness on/off).
+  ตั้งค่าได้ใน `[combat]` ของ `hollowhours-common.toml` (เวลาสลบ, ความอึดของผี, เปิด/ปิดมินิเกมดิ้น และเวลา, เปิด/ปิดระบบความแข็งแรง)
 
 **2.10.6**
 - Hollow Hours: **recipe book** (like JEI). Press **K**: every item of the game - other mods too - on the right (search by name, `@mod` for one mod), click an item to see how it's made (crafting table, furnace, blast furnace, smoker, campfire, stonecutter, smithing table and other mods' own recipe types), right click to see what it's used for. In any inventory hover an item and press **R** (recipe) or **U** (uses). Click items inside a recipe to follow them, Backspace goes back, hold Shift to stop the cycling. (With JEI installed, R/U stay JEI's; K still opens this book.)

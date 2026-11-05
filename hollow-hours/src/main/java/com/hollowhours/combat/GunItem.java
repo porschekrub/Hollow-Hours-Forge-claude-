@@ -115,7 +115,7 @@ public class GunItem extends Item {
         Vec3 eye = p.getEyePosition();
         Vec3 look = p.getViewVector(1f);
         Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
-        Vec3 muzzle = eye.add(look.scale(0.9)).add(right.scale(0.25)).add(0, -0.12, 0);
+        Vec3 muzzle = eye.add(look.scale(1.5)).add(right.scale(0.3)).add(0, -0.18, 0);
         boolean hitGhost = false;
         for (int i = 0; i < spec.pellets; i++) {
             Vec3 dir = jitter(p, look, spread);
@@ -150,8 +150,10 @@ public class GunItem extends Item {
                 level.sendParticles(ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
             }
         }
-        level.sendParticles(ParticleTypes.FLAME, muzzle.x, muzzle.y, muzzle.z, 2, 0.02, 0.02, 0.02, 0.01);
-        level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 3, 0.03, 0.03, 0.03, 0.01);
+        // a quick small flash at the muzzle (big flames right in front of the eye looked like a bonfire)
+        level.sendParticles(ParticleTypes.SMALL_FLAME, muzzle.x, muzzle.y, muzzle.z, 2, 0.01, 0.01, 0.01, 0.0);
+        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, muzzle.x, muzzle.y, muzzle.z, 3, 0.02, 0.02, 0.02, 0.05);
+        level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 2, 0.02, 0.02, 0.02, 0.005);
         level.playSound(null, p.getX(), p.getY(), p.getZ(), HHSounds.get("gun." + spec.id), SoundSource.PLAYERS, 2.5f, 0.92f + p.getRandom().nextFloat() * 0.16f);
         HHNet.toPlayer(p, new S2CCombat(S2CCombat.RECOIL, spec.recoil * (aim ? 0.7f : 1f), (p.getRandom().nextFloat() - 0.5f) * spec.recoil * 0.4f, 0));
         Perception.impulse(p, p.position(), 48);
