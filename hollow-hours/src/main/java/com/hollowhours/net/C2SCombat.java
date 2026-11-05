@@ -3,9 +3,6 @@ package com.hollowhours.net;
 import com.hollowhours.combat.Combat;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /** Fighting input: STRUGGLE (a key mashed while held by a ghost), DODGE (a forward, b strafe input), RELOAD. */
 public record C2SCombat(int type, float a, float b) {
@@ -21,8 +18,7 @@ public record C2SCombat(int type, float a, float b) {
         return new C2SCombat(buf.readVarInt(), buf.readFloat(), buf.readFloat());
     }
 
-    public static void handle(C2SCombat m, Supplier<NetworkEvent.Context> ctx) {
-        ServerPlayer p = ctx.get().getSender();
+    public static void handle(C2SCombat m, ServerPlayer p) {
         if (p != null) Combat.input(p, m);
     }
 }

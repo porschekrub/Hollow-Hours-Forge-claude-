@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.CombatClient;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /**
  * Fighting state for the client.
@@ -27,7 +22,7 @@ public record S2CCombat(int type, float a, float b, float c) {
         return new S2CCombat(buf.readVarInt(), buf.readFloat(), buf.readFloat(), buf.readFloat());
     }
 
-    public static void handle(S2CCombat m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> CombatClient.packet(m));
+    public static void handle(S2CCombat m) {
+        CombatClient.packet(m);
     }
 }

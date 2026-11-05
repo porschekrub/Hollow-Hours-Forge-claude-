@@ -4,10 +4,9 @@ import com.helperbuddy.Helpers;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.talk.Talk;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /** Text typed in the talk screen; entity -1 = let the helpers decide who is meant. */
 public record C2STalk(int entity, UUID uuid, String text) {
@@ -21,8 +20,7 @@ public record C2STalk(int entity, UUID uuid, String text) {
         return new C2STalk(buf.readVarInt(), buf.readUUID(), buf.readUtf(512));
     }
 
-    public static void handle(C2STalk m, Supplier<NetworkEvent.Context> ctx) {
-        var p = ctx.get().getSender();
+    public static void handle(C2STalk m, ServerPlayer p) {
         if (p == null) return;
         String t = m.text.length() > 400 ? m.text.substring(0, 400) : m.text;
         if (m.entity < 0) {

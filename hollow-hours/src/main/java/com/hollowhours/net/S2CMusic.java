@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /** Horror music state: "" = stop, or ambient1 / ambient2 / spawn / chase. */
 public record S2CMusic(String key) {
@@ -18,7 +13,7 @@ public record S2CMusic(String key) {
         return new S2CMusic(buf.readUtf(32));
     }
 
-    public static void handle(S2CMusic m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.music(m));
+    public static void handle(S2CMusic m) {
+        ClientPackets.music(m);
     }
 }

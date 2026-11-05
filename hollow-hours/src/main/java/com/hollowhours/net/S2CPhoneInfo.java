@@ -2,13 +2,9 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * What the phone's rescue and map apps show: when the helicopter comes (world day time, -1 none planned), how long the
@@ -53,7 +49,7 @@ public record S2CPhoneInfo(long arriveAt, int pickupLeft, int phase, int missed,
         return new S2CPhoneInfo(at, left, phase, missed, inv, g, b, t, dead);
     }
 
-    public static void handle(S2CPhoneInfo m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.phoneInfo(m));
+    public static void handle(S2CPhoneInfo m) {
+        ClientPackets.phoneInfo(m);
     }
 }

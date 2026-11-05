@@ -2,10 +2,9 @@ package com.helperbuddy.net;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /** A button pressed in a helper screen. */
 public record C2SAction(int entity, UUID uuid, String action, CompoundTag args) {
@@ -20,8 +19,7 @@ public record C2SAction(int entity, UUID uuid, String action, CompoundTag args) 
         return new C2SAction(buf.readVarInt(), buf.readUUID(), buf.readUtf(64), buf.readNbt());
     }
 
-    public static void handle(C2SAction m, Supplier<NetworkEvent.Context> ctx) {
-        var p = ctx.get().getSender();
+    public static void handle(C2SAction m, ServerPlayer p) {
         if (p == null) return;
         Actions.run(p, m.entity, m.uuid, m.action, m.args == null ? new CompoundTag() : m.args);
     }

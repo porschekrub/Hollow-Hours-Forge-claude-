@@ -1,18 +1,20 @@
 package com.helperbuddy.net;
 
 import com.helperbuddy.HelperBuddy;
-import com.helperbuddy.Helpers;
-import com.helperbuddy.entity.HelperEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+/** Forge 1.20.1 networking (the other loaders have their own copy of this class). The packets are listed in {@link Packets}. */
 public final class HBNet {
-    private static final String VERSION = "1";
+    private static final String VERSION = Packets.VERSION;
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(HelperBuddy.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
     private static boolean registered;
 
@@ -21,10 +23,21 @@ public final class HBNet {
     public static void register() {
         if (registered) return;
         registered = true;
-        int id = 0;
-        CHANNEL.messageBuilder(S2COpen.class, id++, NetworkDirection.PLAY_TO_CLIENT).encoder(S2COpen::encode).decoder(S2COpen::decode).consumerMainThread(S2COpen::handle).add();
-        CHANNEL.messageBuilder(C2SAction.class, id++, NetworkDirection.PLAY_TO_SERVER).encoder(C2SAction::encode).decoder(C2SAction::decode).consumerMainThread(C2SAction::handle).add();
-        CHANNEL.messageBuilder(C2STalk.class, id++, NetworkDirection.PLAY_TO_SERVER).encoder(C2STalk::encode).decoder(C2STalk::decode).consumerMainThread(C2STalk::handle).add();
+        Packets.register(new Packets.Registrar() {
+            int id;
+
+            @Override
+            public <T> void s2c(Class<T> type, BiConsumer<T, FriendlyByteBuf> encode, Function<FriendlyByteBuf, T> decode, Consumer<T> handle) {
+                CHANNEL.messageBuilder(type, id++, NetworkDirection.PLAY_TO_CLIENT).encoder(encode).decoder(decode)
+                        .consumerMainThread((m, ctx) -> handle.accept(m)).add();
+            }
+
+            @Override
+            public <T> void c2s(Class<T> type, BiConsumer<T, FriendlyByteBuf> encode, Function<FriendlyByteBuf, T> decode, BiConsumer<T, ServerPlayer> handle) {
+                CHANNEL.messageBuilder(type, id++, NetworkDirection.PLAY_TO_SERVER).encoder(encode).decoder(decode)
+                        .consumerMainThread((m, ctx) -> handle.accept(m, ctx.get().getSender())).add();
+            }
+        });
     }
 
     public static void toPlayer(ServerPlayer p, Object msg) {
@@ -34,24 +47,5 @@ public final class HBNet {
 
     public static void toServer(Object msg) {
         CHANNEL.sendToServer(msg);
-    }
-
-    /** Opens (or refreshes) the helper's menu on the player's screen. */
-    public static void openMenu(ServerPlayer p, HelperEntity h) {
-        toPlayer(p, new S2COpen("menu", Snapshot.of(h, p)));
-    }
-
-    public static void refresh(ServerPlayer p, HelperEntity h) {
-        toPlayer(p, new S2COpen("refresh", Snapshot.of(h, p)));
-    }
-
-    /** The command book: every helper the player owns. */
-    public static void openBook(ServerPlayer p) {
-        CompoundTag t = new CompoundTag();
-        ListTag l = new ListTag();
-        for (HelperEntity h : Helpers.owned(p)) l.add(Snapshot.of(h, p));
-        t.put("helpers", l);
-        t.putBoolean("thai", com.helperbuddy.talk.Say.thai(p));
-        toPlayer(p, new S2COpen("book", t));
     }
 }

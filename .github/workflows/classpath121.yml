@@ -37,7 +37,7 @@ jobs:
           fi
           echo "$T $V geckolib $GV" | tee versions.txt
           cd mdk && chmod +x gradlew
-          mkdir -p ../out/mdk && cp -r build.gradle settings.gradle gradle.properties gradle src/main/resources src/main/templates ../out/mdk/ 2>/dev/null; cp -r src/main/java ../out/mdk/java 2>/dev/null
+          mkdir -p ../out/mdk && cp -r build.gradle settings.gradle gradle.properties gradle src/main/resources src/main/templates ../out/mdk/ 2>/dev/null || true; cp -r src/main/java ../out/mdk/java 2>/dev/null || true
           cp ../versions.txt ../out/
           cat >> build.gradle <<GRADLE
 

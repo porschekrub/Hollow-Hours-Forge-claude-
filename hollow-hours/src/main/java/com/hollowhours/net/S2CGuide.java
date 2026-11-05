@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /**
  * Opens the ghost guide with live status. awake[i] = distance to ghost i+1 (-1 asleep, -2 other dimension).
@@ -39,7 +34,7 @@ public record S2CGuide(int page, float soul, float[] awake, int flashTicks, int 
                 buf.readVarInt(), buf.readVarInt(), buf.readVarInt());
     }
 
-    public static void handle(S2CGuide m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.guide(m));
+    public static void handle(S2CGuide m) {
+        ClientPackets.guide(m);
     }
 }

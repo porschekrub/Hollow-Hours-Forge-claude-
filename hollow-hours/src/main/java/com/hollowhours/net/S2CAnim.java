@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /**
  * An animation to play: RELOAD = a battery slides into the flashlight (first person, for that player);
@@ -24,7 +19,7 @@ public record S2CAnim(int kind, int entity) {
         return new S2CAnim(buf.readVarInt(), buf.readVarInt());
     }
 
-    public static void handle(S2CAnim m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.anim(m));
+    public static void handle(S2CAnim m) {
+        ClientPackets.anim(m);
     }
 }

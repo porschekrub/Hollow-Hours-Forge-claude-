@@ -45,7 +45,7 @@ public final class Actions {
             case "resume" -> say(p, h, "resume");
             case "status" -> say(p, h, "status");
             case "open" -> {
-                HBNet.openMenu(p, h);
+                Menus.openMenu(p, h);
                 return;
             }
             case "torch" -> say(p, h, "place torches");
@@ -104,7 +104,7 @@ public final class Actions {
             default -> {
             }
         }
-        HBNet.refresh(p, h);
+        Menus.refresh(p, h);
     }
 
     static void giveHeld(ServerPlayer p, HelperEntity h) {

@@ -1,5 +1,6 @@
 package com.helperbuddy.item;
 
+import com.helperbuddy.net.Menus;
 import com.helperbuddy.net.HBNet;
 import com.helperbuddy.registry.HBRegistry;
 import net.minecraft.ChatFormatting;
@@ -24,7 +25,7 @@ public class CommandBookItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player p, InteractionHand hand) {
-        if (!level.isClientSide && p instanceof ServerPlayer sp) HBNet.openBook(sp);
+        if (!level.isClientSide && p instanceof ServerPlayer sp) Menus.openBook(sp);
         return InteractionResultHolder.sidedSuccess(p.getItemInHand(hand), level.isClientSide);
     }
 

@@ -2,13 +2,9 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /** One chat of the phone, whole (see PhoneChat for the line format); name is the player's name for player contacts. */
 public record S2CChat(String contact, String name, List<String> lines) {
@@ -27,7 +23,7 @@ public record S2CChat(String contact, String name, List<String> lines) {
         return new S2CChat(c, n, l);
     }
 
-    public static void handle(S2CChat m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.chat(m));
+    public static void handle(S2CChat m) {
+        ClientPackets.chat(m);
     }
 }

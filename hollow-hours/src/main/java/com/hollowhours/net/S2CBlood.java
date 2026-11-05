@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /** Blood particles at a spot: a burst away from (dx, dz), or drips. rgb = the creature's blood colour. */
 public record S2CBlood(double x, double y, double z, float dx, float dz, int count, int rgb, int kind, float width) {
@@ -29,7 +24,7 @@ public record S2CBlood(double x, double y, double z, float dx, float dz, int cou
                 buf.readFloat());
     }
 
-    public static void handle(S2CBlood m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.blood(m));
+    public static void handle(S2CBlood m) {
+        ClientPackets.blood(m);
     }
 }

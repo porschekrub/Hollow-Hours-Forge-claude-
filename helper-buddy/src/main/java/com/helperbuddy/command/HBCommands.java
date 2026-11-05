@@ -1,5 +1,6 @@
 package com.helperbuddy.command;
 
+import com.helperbuddy.net.Menus;
 import com.helperbuddy.Helpers;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.item.CommandBookItem;
@@ -31,7 +32,7 @@ public final class HBCommands {
                     .then(Commands.literal("book").executes(c -> {
                         ServerPlayer p = c.getSource().getPlayerOrException();
                         CommandBookItem.give(p);
-                        HBNet.openBook(p);
+                        Menus.openBook(p);
                         return 1;
                     }))
                     .then(Commands.argument("text", StringArgumentType.greedyString()).executes(c -> {

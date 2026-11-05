@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /**
  * Small HUD state pushed by the server.
@@ -29,7 +24,7 @@ public record S2CHud(int hide, float breath, float ghostDist, float baseYaw, flo
         return new S2CHud(buf.readVarInt(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readBoolean(), buf.readBoolean(), buf.readFloat());
     }
 
-    public static void handle(S2CHud m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.hud(m));
+    public static void handle(S2CHud m) {
+        ClientPackets.hud(m);
     }
 }

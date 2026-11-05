@@ -2,9 +2,7 @@ package com.hollowhours.net;
 
 import com.hollowhours.phone.PhoneChat;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraft.server.level.ServerPlayer;
 
 /** From the phone: a message, or your location (kind 1), to a contact. */
 public record C2SChat(String contact, int kind, String text) {
@@ -18,8 +16,7 @@ public record C2SChat(String contact, int kind, String text) {
         return new C2SChat(buf.readUtf(64), buf.readVarInt(), buf.readUtf(256));
     }
 
-    public static void handle(C2SChat m, Supplier<NetworkEvent.Context> ctx) {
-        var p = ctx.get().getSender();
+    public static void handle(C2SChat m, ServerPlayer p) {
         if (p != null) PhoneChat.send(p, m.contact, m.kind, m.text);
     }
 }

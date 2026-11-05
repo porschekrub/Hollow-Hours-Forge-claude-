@@ -2,10 +2,9 @@ package com.hollowhours.net;
 
 import com.hollowhours.ghost.KillSequence;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /** The victim's answer: a friend to sell, or nobody (null) = refuse. */
 public record C2SBetrayChoice(UUID friend) {
@@ -18,8 +17,7 @@ public record C2SBetrayChoice(UUID friend) {
         return new C2SBetrayChoice(buf.readBoolean() ? buf.readUUID() : null);
     }
 
-    public static void handle(C2SBetrayChoice m, Supplier<NetworkEvent.Context> ctx) {
-        var p = ctx.get().getSender();
+    public static void handle(C2SBetrayChoice m, ServerPlayer p) {
         if (p != null) KillSequence.onBetrayChoice(p, m.friend);
     }
 }

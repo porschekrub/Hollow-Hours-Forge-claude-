@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /** Generic screen effect: camera shake, colour fade, blood vignette pulse, static, blink. */
 public record S2CScreenFx(int type, float a, int b, int c, int d, int e) {
@@ -47,7 +42,7 @@ public record S2CScreenFx(int type, float a, int b, int c, int d, int e) {
         return new S2CScreenFx(buf.readVarInt(), buf.readFloat(), buf.readInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt());
     }
 
-    public static void handle(S2CScreenFx m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.screenFx(m));
+    public static void handle(S2CScreenFx m) {
+        ClientPackets.screenFx(m);
     }
 }

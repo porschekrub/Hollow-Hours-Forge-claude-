@@ -1,5 +1,6 @@
 package com.helperbuddy.client;
 
+import com.helperbuddy.net.Menus;
 import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.brain.Bag;
 import com.helperbuddy.client.screen.HelperScreen;
@@ -229,7 +230,7 @@ public final class ClientSmoke {
             });
             if (t == 10) server(sp -> {
                 HelperEntity h = first(sp);
-                if (h != null) HBNet.openMenu(sp, h);
+                if (h != null) Menus.openMenu(sp, h);
             });
             if (t == 30) shot("menu_main");
             return t >= 32;
@@ -244,7 +245,7 @@ public final class ClientSmoke {
         STEPS.add(t -> {
             if (t == 0) {
                 mc.setScreen(null);
-                server(HBNet::openBook);
+                server(Menus::openBook);
             }
             if (t == 20) shot("command_book");
             if (t == 22) mc.setScreen(null);

@@ -2,14 +2,10 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /** "Tell me where your friend is... and I might spare you." Opens (or closes when open=false) the choice screen. */
 public record S2CBetrayal(boolean open, int kind, int seconds, List<UUID> ids, List<String> names) {
@@ -40,7 +36,7 @@ public record S2CBetrayal(boolean open, int kind, int seconds, List<UUID> ids, L
         return new S2CBetrayal(open, kind, sec, ids, names);
     }
 
-    public static void handle(S2CBetrayal m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.betrayal(m));
+    public static void handle(S2CBetrayal m) {
+        ClientPackets.betrayal(m);
     }
 }

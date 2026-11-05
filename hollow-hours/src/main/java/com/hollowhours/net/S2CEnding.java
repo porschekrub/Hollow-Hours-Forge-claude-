@@ -2,13 +2,9 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.EndingClient;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /** The end: BOOM = the flash and the boom of the rift, then the credits (with the names of everyone who was there). */
 public record S2CEnding(int type, List<String> names) {
@@ -28,7 +24,7 @@ public record S2CEnding(int type, List<String> names) {
         return new S2CEnding(type, names);
     }
 
-    public static void handle(S2CEnding m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EndingClient.packet(m));
+    public static void handle(S2CEnding m) {
+        EndingClient.packet(m);
     }
 }

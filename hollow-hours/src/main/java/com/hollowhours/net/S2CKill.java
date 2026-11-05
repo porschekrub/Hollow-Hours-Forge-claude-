@@ -2,11 +2,6 @@ package com.hollowhours.net;
 
 import com.hollowhours.client.ClientPackets;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 /**
  * Kill cinematic control for the victim: phase 0 = start (grab), 1 = scream close-up, 2 = interrogation (betrayal),
@@ -27,7 +22,7 @@ public record S2CKill(int ghostId, int kind, int phase, int anim, int ticks) {
         return new S2CKill(buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readVarInt());
     }
 
-    public static void handle(S2CKill m, Supplier<NetworkEvent.Context> ctx) {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPackets.kill(m));
+    public static void handle(S2CKill m) {
+        ClientPackets.kill(m);
     }
 }

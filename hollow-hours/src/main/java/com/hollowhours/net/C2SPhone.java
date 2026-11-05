@@ -3,9 +3,7 @@ package com.hollowhours.net;
 import com.hollowhours.ghost.PhoneUse;
 import com.hollowhours.ghost.Thirst;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraft.server.level.ServerPlayer;
 
 /** Phone screen open / closed / heartbeat / playing a game (PhoneUse), or 10 = sip water (sneak + right-click). */
 public record C2SPhone(int action) {
@@ -19,8 +17,7 @@ public record C2SPhone(int action) {
         return new C2SPhone(buf.readVarInt());
     }
 
-    public static void handle(C2SPhone m, Supplier<NetworkEvent.Context> ctx) {
-        var p = ctx.get().getSender();
+    public static void handle(C2SPhone m, ServerPlayer p) {
         if (p == null) return;
         if (m.action == SIP) Thirst.sip(p);
         else PhoneUse.action(p, m.action);

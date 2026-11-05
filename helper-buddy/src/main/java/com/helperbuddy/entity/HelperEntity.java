@@ -1,5 +1,6 @@
 package com.helperbuddy.entity;
 
+import com.helperbuddy.net.Menus;
 import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.brain.Bag;
 import com.helperbuddy.brain.Brain;
@@ -497,7 +498,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
             openBag(sp);
             return InteractionResult.CONSUME;
         }
-        HBNet.openMenu(sp, this);
+        Menus.openMenu(sp, this);
         return InteractionResult.CONSUME;
     }
 
