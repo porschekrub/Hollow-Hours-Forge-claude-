@@ -1,0 +1,67 @@
+name: Export 1.21.1 classpaths
+# push the branch "export-classpath-121": sets up the official NeoForge / Forge 1.21.1 MDKs with GeckoLib and publishes
+# every jar they compile against (plus the MDK build files) on "ci-classpath-<loader>-121".
+on:
+  push:
+    branches: [export-classpath-121]
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [neoforge, forge]
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: MDK
+        run: |
+          T=${{ matrix.target }}
+          GV=$(curl -s https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/software/bernie/geckolib/geckolib-$T-1.21.1/maven-metadata.xml | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g' | sort -V | tail -1)
+          if [ $T = neoforge ]; then
+            V=$(curl -s https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml | grep -o '<version>21\.1\.[0-9]*</version>' | sed 's/<[^>]*>//g' | sort -V | tail -1)
+            git clone -q --depth 1 https://github.com/NeoForgeMDKs/MDK-1.21.1-ModDevGradle mdk
+            sed -i "s/^neo_version=.*/neo_version=$V/" mdk/gradle.properties
+            DEP="implementation \"software.bernie.geckolib:geckolib-neoforge-1.21.1:$GV\""
+          else
+            V=$(curl -s https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml | grep -o '<version>1\.21\.1-[^<]*</version>' | sed 's/<[^>]*>//g' | sort -V | tail -1)
+            curl -sL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/$V/forge-$V-mdk.zip"
+            mkdir mdk && cd mdk && unzip -q ../mdk.zip && cd ..
+            DEP="implementation fg.deobf(\"software.bernie.geckolib:geckolib-forge-1.21.1:$GV\")"
+          fi
+          echo "$T $V geckolib $GV" | tee versions.txt
+          cd mdk && chmod +x gradlew
+          mkdir -p ../out/mdk && cp -r build.gradle settings.gradle gradle.properties gradle src/main/resources ../out/mdk/ 2>/dev/null
+          cp ../versions.txt ../out/
+          cat >> build.gradle <<GRADLE
+
+          repositories {
+              maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+          }
+          dependencies {
+              $DEP
+          }
+          tasks.register('exportClasspath') {
+              doLast {
+                  def out = file("\${rootDir}/../out/cp")
+                  out.mkdirs()
+                  sourceSets.main.compileClasspath.files.findAll { it.isFile() && it.name.endsWith('.jar') }.each { f -> copy { from f; into out } }
+              }
+          }
+          GRADLE
+          tail -20 build.gradle
+          ./gradlew exportClasspath --no-daemon 2>&1 | tail -40
+          ls -la ../out/cp | head -150; du -sh ../out/cp
+      - name: Publish
+        if: always()
+        run: |
+          cd out
+          git init -q && git checkout -q -b ci-classpath-${{ matrix.target }}-121 && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "classpath"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-classpath-${{ matrix.target }}-121
