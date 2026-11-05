@@ -124,16 +124,16 @@ public final class ClientEvents {
     static void trySip(InputEvent.InteractionKeyMappingTriggered e) {
         Minecraft mc = Minecraft.getInstance();
         if (!e.isUseItem() || mc.player == null || mc.level == null || !mc.player.isShiftKeyDown() || !mc.player.getMainHandItem().isEmpty()) return;
-        if (SurvivalHud.thirst < 0 || mc.level.getGameTime() - lastSip < 12) return;
-        var eye = mc.player.getEyePosition();
-        var to = eye.add(mc.player.getViewVector(1f).scale(4.5));
-        var hit = mc.level.clip(new net.minecraft.world.level.ClipContext(eye, to, net.minecraft.world.level.ClipContext.Block.OUTLINE,
-                net.minecraft.world.level.ClipContext.Fluid.SOURCE_ONLY, mc.player));
-        if (hit.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) return;
-        if (!mc.level.getFluidState(hit.getBlockPos()).is(net.minecraft.tags.FluidTags.WATER)) return;
+        if (SurvivalHud.thirst < 0) return;
+        var water = com.hollowhours.ghost.Thirst.waterLookedAt(mc.player, 5.0);
+        if (water == null) return;
+        // looking at water: never fall through to placing / using anything, even during the short cooldown
+        e.setSwingHand(false);
+        e.setCanceled(true);
+        if (mc.level.getGameTime() - lastSip < 10) return;
         lastSip = mc.level.getGameTime();
         FirstPersonAnim.startSip();
-        com.hollowhours.net.HHNet.toServer(new com.hollowhours.net.C2SPhone(com.hollowhours.net.C2SPhone.SIP));
+        com.hollowhours.net.HHNet.toServer(new com.hollowhours.net.C2SSip(water));
         e.setSwingHand(true);
         e.setCanceled(true);
     }

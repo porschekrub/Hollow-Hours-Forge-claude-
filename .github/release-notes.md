@@ -1,8 +1,12 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.12.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.12.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.12.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.12.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.12.2**
+- Hollow Hours: **drinking water** (sneak + right-click water with an empty hand) works everywhere now: flowing water (rivers, streams, shores, waterfalls), water under lily pads (swamps), past grass, flowers and reeds, waterlogged blocks, water cauldrons (clean: no nausea), and the water you stand or swim in. It no longer fails now and then when the server saw your aim a little differently.
+  Hollow Hours: **กินน้ำ** (ย่อ + คลิกขวาที่น้ำ มือเปล่า) ใช้ได้ทุกที่แล้ว: น้ำไหล (แม่น้ำ ลำธาร ริมฝั่ง น้ำตก) น้ำใต้ใบบัว (หนองน้ำ) มองผ่านหญ้า ดอกไม้ ต้นอ้อได้ บล็อกที่มีน้ำขัง หม้อน้ำ (สะอาด ไม่เวียนหัว) และน้ำที่ยืน/ว่ายอยู่ แก้บั๊กกดกินน้ำแล้วบางทีไม่ได้กิน
 
 **2.12.1 — a haunted main menu**
 - Hollow Hours: the **main menu** is haunted now. Behind the buttons a dead forest under a blood moon slowly turns, and the five ghosts stand round you in the dark by their cold lanterns (one reaching for you, one crawling up to you, one grinning behind you...). "HOLLOW HOURS" flickers in red under the Minecraft logo, and the yellow splash lines are spooky ones (English and Thai).

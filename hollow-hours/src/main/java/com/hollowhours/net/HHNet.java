@@ -8,7 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class HHNet {
-    private static final String VERSION = "10";
+    private static final String VERSION = "11";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(HollowHours.id("main"), () -> VERSION, VERSION::equals, VERSION::equals);
     private static boolean registered;
 
@@ -58,6 +58,8 @@ public final class HHNet {
                 .encoder(C2SCombat::encode).decoder(C2SCombat::decode).consumerMainThread(C2SCombat::handle).add();
         CHANNEL.messageBuilder(C2SPhone.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SPhone::encode).decoder(C2SPhone::decode).consumerMainThread(C2SPhone::handle).add();
+        CHANNEL.messageBuilder(C2SSip.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(C2SSip::encode).decoder(C2SSip::decode).consumerMainThread(C2SSip::handle).add();
         CHANNEL.messageBuilder(C2SBetrayChoice.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(C2SBetrayChoice::encode).decoder(C2SBetrayChoice::decode).consumerMainThread(C2SBetrayChoice::handle).add();
         CHANNEL.messageBuilder(C2STalk.class, id++, NetworkDirection.PLAY_TO_SERVER)

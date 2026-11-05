@@ -61,6 +61,7 @@ final class SmokeTest {
                 g.discard();
             }
             combat(level, at);
+            sips(level, at);
             endgame(server, level, at);
             for (StalkerKind k : StalkerKind.values()) {
                 StalkerEntity s = HHEntities.stalker(k).create(level);
@@ -161,6 +162,50 @@ final class SmokeTest {
         fp.setInvulnerable(false);
         HollowHours.LOG.info("[smoke] endgame OK: mountain {} blocks, boss beaten in {} hits, {} ms", ops, hits, System.currentTimeMillis() - t0);
         com.hollowhours.endgame.Endgame.reset(server);
+    }
+
+    /** Drinking from water: still, flowing, under a lily pad, past tall grass, a cauldron; not through stone. */
+    static void sips(ServerLevel level, Vec3 at) {
+        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        BlockPos o = BlockPos.containing(at).offset(-30, 0, -30);
+        String[] cases = {"still", "flowing", "lily", "grass", "cauldron", "stone"};
+        for (int i = 0; i < cases.length; i++) {
+            BlockPos b = o.offset(i * 4, 0, 0);
+            for (BlockPos q : BlockPos.betweenClosed(b.offset(-1, -2, -1), b.offset(1, 3, 3))) level.setBlock(q, Blocks.AIR.defaultBlockState(), 2 | 16);
+            for (BlockPos q : BlockPos.betweenClosed(b.offset(-1, -2, -1), b.offset(1, -2, 3))) level.setBlock(q, Blocks.STONE.defaultBlockState(), 2 | 16);
+            level.setBlock(b.below(), Blocks.STONE.defaultBlockState(), 2 | 16); // stand here, look at the block 2 ahead and 1 down
+            BlockPos w = b.offset(0, -1, 2);
+            switch (cases[i]) {
+                case "still" -> level.setBlock(w, Blocks.WATER.defaultBlockState(), 2 | 16);
+                case "flowing" -> level.setBlock(w, net.minecraft.world.level.material.Fluids.FLOWING_WATER.defaultFluidState().createLegacyBlock()
+                        .setValue(net.minecraft.world.level.block.LiquidBlock.LEVEL, 4), 2 | 16);
+                case "lily" -> {
+                    level.setBlock(w, Blocks.WATER.defaultBlockState(), 2 | 16);
+                    level.setBlock(w.above(), Blocks.LILY_PAD.defaultBlockState(), 2 | 16);
+                }
+                case "grass" -> {
+                    level.setBlock(w, Blocks.WATER.defaultBlockState(), 2 | 16);
+                    level.setBlock(b.offset(0, 0, 1), Blocks.GRASS.defaultBlockState(), 2 | 16);
+                    level.setBlock(b.offset(0, -1, 1), Blocks.DIRT.defaultBlockState(), 2 | 16);
+                }
+                case "cauldron" -> level.setBlock(w, Blocks.WATER_CAULDRON.defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.LayeredCauldronBlock.LEVEL, 3), 2 | 16);
+                default -> {
+                    level.setBlock(w, Blocks.WATER.defaultBlockState(), 2 | 16);
+                    level.setBlock(b.offset(0, 0, 1), Blocks.STONE.defaultBlockState(), 2 | 16);
+                    level.setBlock(b.offset(0, 1, 1), Blocks.STONE.defaultBlockState(), 2 | 16);
+                }
+            }
+            Vec3 eye = new Vec3(b.getX() + 0.5, b.getY() + 1.62, b.getZ() + 0.5);
+            Vec3 tgt = Vec3.atCenterOf(w).add(0, 0.3, 0);
+            double dx = tgt.x - eye.x, dy = tgt.y - eye.y, dz = tgt.z - eye.z;
+            float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz)), pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+            fp.moveTo(b.getX() + 0.5, b.getY(), b.getZ() + 0.5, yaw, pitch);
+            BlockPos found = Thirst.waterLookedAt(fp, 5.0);
+            boolean ok = cases[i].equals("stone") ? found == null : found != null;
+            check(ok, "sip water (" + cases[i] + "): " + found);
+        }
+        HollowHours.LOG.info("[smoke] drinking water OK (still, flowing, lily pad, past grass, cauldron; not through stone)");
     }
 
     /** Weapons knock ghosts out (and they get up again), armour and strength numbers, a gun reloads from ammo. */

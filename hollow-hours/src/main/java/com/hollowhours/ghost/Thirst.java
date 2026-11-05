@@ -123,26 +123,64 @@ public final class Thirst {
         if (q > 0) drink(p, q);
     }
 
-    /** Sneak + right-click water with an empty hand (sent by the client, checked here). */
-    public static void sip(ServerPlayer p) {
+    /**
+     * The water a player is looking at, or null: still or flowing water, anything waterlogged, a water cauldron, or the
+     * water they are standing / swimming in. Grass, flowers, reeds and lily pads don't get in the way (the old check
+     * stopped at any plant and only took still water, so swamps, rivers and shores often didn't work); solid blocks do.
+     */
+    @javax.annotation.Nullable
+    public static BlockPos waterLookedAt(Player p, double reach) {
+        Level l = p.level();
+        Vec3 eye = p.getEyePosition();
+        Vec3 dir = p.getViewVector(1f);
+        BlockPos last = null;
+        for (double d = 0; d <= reach; d += 0.05) {
+            Vec3 q = eye.add(dir.scale(d));
+            BlockPos b = BlockPos.containing(q);
+            net.minecraft.world.level.block.state.BlockState st = l.getBlockState(b);
+            if (isWater(l, b)) return b;
+            if (b.equals(last)) {
+                // inside the same block: only a solid part of it stops the look
+            }
+            last = b;
+            if (st.is(net.minecraft.world.level.block.Blocks.LILY_PAD) || st.is(net.minecraft.tags.BlockTags.REPLACEABLE)) continue;
+            var shape = st.getCollisionShape(l, b);
+            if (shape.isEmpty()) continue;
+            Vec3 local = q.subtract(b.getX(), b.getY(), b.getZ());
+            for (var box : shape.toAabbs()) if (box.inflate(0.01).contains(local)) return null;
+        }
+        return null;
+    }
+
+    static boolean isWater(Level l, BlockPos b) {
+        return l.getFluidState(b).is(FluidTags.WATER) || l.getBlockState(b).is(net.minecraft.world.level.block.Blocks.WATER_CAULDRON);
+    }
+
+    /** A sip at the water the client saw (checked here: it must be water and within reach). */
+    public static void sip(ServerPlayer p, BlockPos pos) {
         if (!HHConfig.THIRST.get() || !p.getMainHandItem().isEmpty()) return;
         long now = p.serverLevel().getGameTime();
         CompoundTag d = Story.persisted(p);
-        if (now - d.getLong("hollowhours_sip") < 12) return;
-        Vec3 eye = p.getEyePosition();
-        Vec3 to = eye.add(p.getViewVector(1f).scale(4.5));
-        BlockHitResult hit = p.level().clip(new ClipContext(eye, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY, p));
-        if (hit.getType() != HitResult.Type.BLOCK) return;
-        BlockPos pos = hit.getBlockPos();
-        if (!p.level().getFluidState(pos).is(FluidTags.WATER)) return;
+        if (now - d.getLong("hollowhours_sip") < 10) return;
+        BlockPos at = pos;
+        if (at == null || !isWater(p.level(), at) || Vec3.atCenterOf(at).distanceTo(p.getEyePosition()) > 6.5) at = waterLookedAt(p, 5.5);
+        if (at == null) return;
         d.putLong("hollowhours_sip", now);
         drink(p, 2);
+        Vec3 c = Vec3.atCenterOf(at);
+        double top = p.level().getFluidState(at).isEmpty() ? at.getY() + 0.9 : at.getY() + p.level().getFluidState(at).getHeight(p.level(), at);
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.GENERIC_DRINK, net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.1f);
-        p.serverLevel().sendParticles(ParticleTypes.SPLASH, hit.getLocation().x, hit.getLocation().y + 0.1, hit.getLocation().z, 6, 0.15, 0.05, 0.15, 0.1);
+        p.serverLevel().sendParticles(ParticleTypes.SPLASH, c.x, top + 0.05, c.z, 6, 0.15, 0.05, 0.15, 0.1);
         // everyone around sees the scoop with both hands (the drinker's own client has already started it)
         com.hollowhours.net.HHNet.CHANNEL.send(net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY.with(() -> p),
                 new com.hollowhours.net.S2CAnim(com.hollowhours.net.S2CAnim.SIP, p.getId()));
-        // untreated river water
-        if (R.chance(0.15)) p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
+        // untreated water from rivers and lakes (a cauldron is clean)
+        if (!p.level().getBlockState(at).is(net.minecraft.world.level.block.Blocks.WATER_CAULDRON) && R.chance(0.15))
+            p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 120, 0));
+    }
+
+    /** (older clients / the phone packet) */
+    public static void sip(ServerPlayer p) {
+        sip(p, null);
     }
 }
