@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
 import com.helperbuddy.entity.Settings;
@@ -84,7 +85,7 @@ public final class WorkJob {
     public void setGather(String[] ids) {
         gather.clear();
         if (ids != null) for (String id : ids) {
-            Block bl = BuiltInRegistries.BLOCK.get(new ResourceLocation(id.contains(":") ? id : "minecraft:" + id));
+            Block bl = BuiltInRegistries.BLOCK.get(HelperBuddy.rl(id.contains(":") ? id : "minecraft:" + id));
             if (bl != Blocks.AIR) gather.add(bl);
             if (bl == Blocks.STONE) gather.add(Blocks.COBBLESTONE);
         }
@@ -558,7 +559,7 @@ public final class WorkJob {
         CompoundTag w = jobs.getCompound("work");
         gather.clear();
         for (Tag t : w.getList("gather", Tag.TAG_STRING)) {
-            Block bl = BuiltInRegistries.BLOCK.get(new ResourceLocation(t.getAsString()));
+            Block bl = BuiltInRegistries.BLOCK.get(HelperBuddy.rl(t.getAsString()));
             if (bl != Blocks.AIR) gather.add(bl);
         }
         oreOnly.clear();

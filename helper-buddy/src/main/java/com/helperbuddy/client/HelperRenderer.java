@@ -1,5 +1,6 @@
 package com.helperbuddy.client;
 
+import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.entity.HelperEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -36,7 +37,7 @@ public class HelperRenderer extends GeoEntityRenderer<HelperEntity> {
                 if (h.isKO()) return;
                 ResourceLocation base = getTextureLocation(h);
                 String p = base.getPath();
-                ResourceLocation glow = new ResourceLocation(base.getNamespace(), p.substring(0, p.length() - 4) + "_glow.png");
+                ResourceLocation glow = HelperBuddy.rl(base.getNamespace(), p.substring(0, p.length() - 4) + "_glow.png");
                 RenderType eyes = RenderType.eyes(glow);
                 getRenderer().reRender(model, poseStack, buffers, h, eyes, buffers.getBuffer(eyes), partialTick, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
             }

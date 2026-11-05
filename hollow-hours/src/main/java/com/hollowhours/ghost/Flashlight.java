@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.item.FlashlightItem;
 import com.hollowhours.registry.HHItems;
 import com.hollowhours.util.Fx;
@@ -44,19 +45,20 @@ public final class Flashlight {
 
     // ------------------------------------------------------------------ item data
     public static int charge(ItemStack it) {
-        CompoundTag t = it.getTag();
+        CompoundTag t = ItemData.tag(it);
         return t == null || !t.contains("charge") ? FULL : t.getInt("charge");
     }
 
     public static boolean on(ItemStack it) {
-        CompoundTag t = it.getTag();
+        CompoundTag t = ItemData.tag(it);
         return t != null && t.getBoolean("on");
     }
 
     public static void stamp(ItemStack it, int charge, boolean on) {
-        CompoundTag t = it.getOrCreateTag();
-        t.putInt("charge", Math.max(0, charge));
-        t.putBoolean("on", on);
+        ItemData.edit(it, t -> {
+            t.putInt("charge", Math.max(0, charge));
+            t.putBoolean("on", on);
+        });
         int dmg = (int) Math.round(FlashlightItem.DUR_SPAN * (1 - Math.max(0, charge) / (double) FULL));
         it.setDamageValue(Math.min(FlashlightItem.DUR_SPAN - 1, Math.max(0, dmg)));
     }
@@ -151,7 +153,7 @@ public final class Flashlight {
         }
         int c = charge(it) - 1;
         if (now % 100 == 0 || c <= 0) stamp(it, c, c > 0);
-        else it.getOrCreateTag().putInt("charge", c);
+        else ItemData.edit(it, nbt -> nbt.putInt("charge", c));
         if (c <= 0) {
             Fx.sound(p.level(), "ghost.flashlight.dead", p.position(), 0.8f, 1f, 10);
             Fx.actionbar(p, Component.translatable("hollowhours.flash.dead"));

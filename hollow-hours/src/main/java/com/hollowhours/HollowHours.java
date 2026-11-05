@@ -75,6 +75,23 @@ public class HollowHours {
     }
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MODID, path);
+        return rl(MODID, path);
+    }
+
+    /** "namespace:path" (no namespace: minecraft). */
+    public static ResourceLocation rl(String id) {
+        //#if MC>=12100
+        //$$ return ResourceLocation.parse(id);
+        //#else
+        return new ResourceLocation(id);
+        //#endif
+    }
+
+    public static ResourceLocation rl(String namespace, String path) {
+        //#if MC>=12100
+        //$$ return ResourceLocation.fromNamespaceAndPath(namespace, path);
+        //#else
+        return new ResourceLocation(namespace, path);
+        //#endif
     }
 }

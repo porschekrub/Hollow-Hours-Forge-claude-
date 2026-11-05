@@ -1,5 +1,6 @@
 package com.hollowhours.client.recipes;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.HollowHours;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
@@ -180,10 +181,10 @@ public final class RecipeIndex {
     public static synchronized List<Shown> forItem(ItemStack focus, boolean uses) {
         if (all == null || focus.isEmpty()) return List.of();
         List<Shown> l = (uses ? byIn : byOut).getOrDefault(focus.getItem(), List.of());
-        if (uses || !focus.hasTag()) return l;
+        if (uses || !ItemData.has(focus)) return l;
         // a special variant (a named potion...): prefer recipes making exactly that one
         List<Shown> exact = new ArrayList<>();
-        for (Shown s : l) if (!s.out.hasTag() || ItemStack.isSameItemSameTags(s.out, focus)) exact.add(s);
+        for (Shown s : l) if (!ItemData.has(s.out) || ItemData.sameItemSameData(s.out, focus)) exact.add(s);
         return exact.isEmpty() ? l : exact;
     }
 

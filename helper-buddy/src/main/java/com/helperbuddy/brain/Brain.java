@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
@@ -236,7 +237,7 @@ public final class Brain {
             return;
         }
         BlockPos pos = BlockPos.of(g.getLong("pos"));
-        ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(g.getString("dim")));
+        ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION, HelperBuddy.rl(g.getString("dim")));
         if (!h.level().dimension().equals(dim)) {
             ServerLevel dl = h.getServer() == null ? null : h.getServer().getLevel(dim);
             if (dl != null && cooldown("gototp", 40)) {

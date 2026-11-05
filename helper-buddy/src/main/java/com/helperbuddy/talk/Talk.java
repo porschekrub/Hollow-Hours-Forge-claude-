@@ -1,5 +1,6 @@
 package com.helperbuddy.talk;
 
+import com.helperbuddy.HelperBuddy;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -226,7 +227,7 @@ public final class Talk {
             }
             case "craft" -> {
                 int n = it.n == null ? 1 : it.n;
-                Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(it.item));
+                Item item = BuiltInRegistries.ITEM.get(HelperBuddy.rl(it.item));
                 String name = new ItemStack(item).getHoverName().getString();
                 say(p, h, "ได้ครับ จะคราฟต์ §e" + name + "§r " + n + " ชิ้นให้", "Sure, crafting §e" + n + " " + name);
                 h.brain().tasks().start(Tasks.craft(it.item, n));
@@ -441,7 +442,7 @@ public final class Talk {
             say(p, h, n > 0 ? "ส่งของคืนให้แล้ว " + n + " ชิ้น" : "กระเป๋าผมว่างอยู่ ไม่มีของจะให้เลย", n > 0 ? "Gave you " + n + " items" : "My bag is empty");
             return;
         }
-        Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(it.item));
+        Item item = BuiltInRegistries.ITEM.get(HelperBuddy.rl(it.item));
         int want = it.n == null ? 1 : it.n;
         String name = new ItemStack(item).getHoverName().getString();
         int have = Bag.count(h, item);
@@ -705,7 +706,7 @@ public final class Talk {
 
     static String itemName(String id) {
         if (id == null) return "?";
-        return new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(id))).getHoverName().getString();
+        return new ItemStack(BuiltInRegistries.ITEM.get(HelperBuddy.rl(id))).getHoverName().getString();
     }
 
     // ------------------------------------------------------------------ texts

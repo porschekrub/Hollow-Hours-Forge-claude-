@@ -3,9 +3,9 @@ package com.hollowhours.registry;
 import com.hollowhours.HollowHours;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.registries.Registries;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import java.util.function.Supplier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +16,8 @@ import java.util.Map;
  * ("mob.ghast.scream", "random.door_open" ...) and maps them to Java sounds.
  */
 public final class HHSounds {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, HollowHours.MODID);
-    private static final Map<String, RegistryObject<SoundEvent>> BY_NAME = new HashMap<>();
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, HollowHours.MODID);
+    private static final Map<String, Supplier<SoundEvent>> BY_NAME = new HashMap<>();
 
     public static final String[] NAMES = {
             // music + ghost presence
@@ -79,8 +79,8 @@ public final class HHSounds {
 
     /** Mod sound by name, or a vanilla sound for Bedrock-style names; never null. */
     public static SoundEvent get(String name) {
-        RegistryObject<SoundEvent> ro = BY_NAME.get(name);
-        if (ro != null && ro.isPresent()) return ro.get();
+        Supplier<SoundEvent> ro = BY_NAME.get(name);
+        if (ro != null) return ro.get();
         SoundEvent v = vanilla(name);
         return v != null ? v : SoundEvents.AMBIENT_CAVE.value();
     }

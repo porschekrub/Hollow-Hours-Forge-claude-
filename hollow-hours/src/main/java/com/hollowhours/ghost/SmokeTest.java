@@ -1,5 +1,6 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.HollowHours;
 import com.hollowhours.entity.BoardsEntity;
 import com.hollowhours.entity.ClosetEntity;
@@ -230,7 +231,7 @@ final class SmokeTest {
         HollowHours.LOG.info("[smoke] combat: {} pistol hits knock ghost {} out (poise {})", hits, g.kind.n, max);
         g.discard();
         // armour set bonus, strength
-        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> it : HHItems.ARMOR)
+        for (java.util.function.Supplier<net.minecraft.world.item.Item> it : HHItems.ARMOR)
             if (it.get() instanceof com.hollowhours.combat.MilitaryArmor.Piece pc && pc.mat == com.hollowhours.combat.MilitaryArmor.Mat.HUNTER)
                 fp.setItemSlot(pc.getEquipmentSlot(), new ItemStack(pc));
         int defense = 0; // (attributes from worn armour only update when the player ticks)
@@ -244,7 +245,7 @@ final class SmokeTest {
         fp.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, gun);
         fp.getInventory().add(new ItemStack(HHItems.PISTOL_AMMO.get(), 20));
         check(((com.hollowhours.combat.GunItem) gun.getItem()).startReload(fp, gun), "reload starts");
-        gun.getTag().putLong("reloadAt", level.getGameTime());
+        ItemData.edit(gun, nbt -> nbt.putLong("reloadAt", level.getGameTime()));
         gun.inventoryTick(level, fp, fp.getInventory().selected, true);
         check(com.hollowhours.combat.GunItem.ammo(gun) == 12 && com.hollowhours.combat.GunItem.ammoIn(fp, HHItems.PISTOL_AMMO.get()) == 8, "reload takes ammo");
         for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values()) fp.setItemSlot(s, ItemStack.EMPTY);
@@ -392,7 +393,11 @@ final class SmokeTest {
         for (String r : new String[] {"swing", "slide", "trampoline", "basketball_hoop", "soccer_goal", "arcade", "tv", "basketball", "soccer_ball"})
             check(server.getRecipeManager().byKey(HollowHours.id(r)).isPresent(), "recipe " + r);
         for (var b : com.hollowhours.registry.HHBlocks.ALL)
-            check(server.getLootData().getLootTable(b.get().getLootTable()) != net.minecraft.world.level.storage.loot.LootTable.EMPTY, "loot table " + b.getId());
+            //#if MC>=12100
+            //$$ check(server.reloadableRegistries().getLootTable(b.get().getLootTable()) != net.minecraft.world.level.storage.loot.LootTable.EMPTY, "loot table " + b.get().getLootTable().location());
+            //#else
+            check(server.getLootData().getLootTable(b.get().getLootTable()) != net.minecraft.world.level.storage.loot.LootTable.EMPTY, "loot table " + b.get().getLootTable());
+            //#endif
         check(com.hollowhours.physics.Physics.oreKind(net.minecraft.world.level.block.Blocks.DEEPSLATE_IRON_ORE.defaultBlockState())
                 .equals(com.hollowhours.physics.Physics.oreKind(net.minecraft.world.level.block.Blocks.IRON_ORE.defaultBlockState())), "deepslate ore is the same vein");
 

@@ -1,5 +1,6 @@
 package com.hollowhours.item;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.registry.HHItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -39,43 +40,45 @@ public class PhoneItem extends Item {
 
     public static ItemStack fresh(RandomSource r) {
         ItemStack s = new ItemStack(HHItems.PHONE.get());
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = new CompoundTag();
         t.putFloat(BAT, 15 + r.nextInt(71));
         t.putFloat(WEAR, r.nextInt(40));
         ListTag msgs = new ListTag();
         msgs.add(StringTag.valueOf("hollowhours.phone.msg.mom"));
         msgs.add(StringTag.valueOf("hollowhours.phone.msg.friend"));
         t.put(MSGS, msgs);
+        ItemData.set(s, t);
         return s;
     }
 
     public static float battery(ItemStack s) {
-        CompoundTag t = s.getTag();
+        CompoundTag t = ItemData.tag(s);
         return t != null && t.contains(BAT) ? t.getFloat(BAT) : 50;
     }
 
     public static void setBattery(ItemStack s, float v) {
-        s.getOrCreateTag().putFloat(BAT, Mth.clamp(v, 0, 100));
+        ItemData.edit(s, nbt -> nbt.putFloat(BAT, Mth.clamp(v, 0, 100)));
     }
 
     /** plugged into a power bank right now (shows the charging screen) */
     public static boolean charging(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean("Charging");
+        return ItemData.get(s).getBoolean("Charging");
     }
 
     public static void setCharging(ItemStack s, boolean on) {
-        if (on) s.getOrCreateTag().putBoolean("Charging", true);
-        else if (s.hasTag()) s.getTag().remove("Charging");
+        if (on) ItemData.edit(s, nbt -> nbt.putBoolean("Charging", true));
+        else ItemData.remove(s, "Charging");
     }
 
     /** Minutes of screen time so far. */
     public static float wear(ItemStack s) {
-        CompoundTag t = s.getTag();
+        CompoundTag t = ItemData.tag(s);
         return t != null ? t.getFloat(WEAR) : 0;
     }
 
     public static void addWear(ItemStack s, float minutes) {
-        s.getOrCreateTag().putFloat(WEAR, wear(s) + minutes);
+        float w = wear(s) + minutes;
+        ItemData.edit(s, nbt -> nbt.putFloat(WEAR, w));
     }
 
     /** minutes of use after which the battery drains twice as fast */
@@ -93,7 +96,7 @@ public class PhoneItem extends Item {
 
     public static List<String> messages(ItemStack s) {
         List<String> out = new ArrayList<>();
-        CompoundTag t = s.getTag();
+        CompoundTag t = ItemData.tag(s);
         if (t == null || !t.contains(MSGS)) return out;
         for (Tag e : t.getList(MSGS, Tag.TAG_STRING)) out.add(e.getAsString());
         return out;
@@ -102,21 +105,21 @@ public class PhoneItem extends Item {
     /** Adds a message (translation key) to every phone the player carries. */
     public static void addMessage(ServerPlayer p, String key) {
         for (ItemStack s : allPhones(p)) {
-            ListTag l = s.getOrCreateTag().getList(MSGS, Tag.TAG_STRING);
+            ListTag l = ItemData.get(s).getList(MSGS, Tag.TAG_STRING);
             boolean has = false;
             for (Tag e : l) if (e.getAsString().equals(key)) has = true;
             if (!has) l.add(StringTag.valueOf(key));
-            s.getOrCreateTag().put(MSGS, l);
+            ItemData.edit(s, nbt -> nbt.put(MSGS, l));
         }
     }
 
     /** Adds a message with arguments ("key|arg|arg"), replacing an older one with the same key. */
     public static void setMessage(ServerPlayer p, String key, String full) {
         for (ItemStack s : allPhones(p)) {
-            ListTag l = s.getOrCreateTag().getList(MSGS, Tag.TAG_STRING);
+            ListTag l = ItemData.get(s).getList(MSGS, Tag.TAG_STRING);
             l.removeIf(e -> e.getAsString().equals(key) || e.getAsString().startsWith(key + "|"));
             l.add(StringTag.valueOf(full));
-            s.getOrCreateTag().put(MSGS, l);
+            ItemData.edit(s, nbt -> nbt.put(MSGS, l));
         }
     }
 
@@ -150,10 +153,9 @@ public class PhoneItem extends Item {
         if (level.isClientSide || !(e instanceof Player p)) return;
         // a charging mark left behind (the power bank was let go some other way)
         if (charging(s) && !(p.isUsingItem() && p.getUseItem().is(HHItems.CHARGER.get()))) setCharging(s, false);
-        CompoundTag t = s.getOrCreateTag();
-        if (!t.contains(BAT)) {
+        if (!ItemData.get(s).contains(BAT)) {
             ItemStack f = fresh(p.getRandom());
-            s.setTag(f.getTag());
+            ItemData.set(s, ItemData.tag(f));
             return;
         }
         // standby: about 7 hours of real time from full when nobody touches it

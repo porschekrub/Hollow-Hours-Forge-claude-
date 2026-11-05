@@ -1,5 +1,6 @@
 package com.hollowhours.combat;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.entity.GhostEntity;
 import com.hollowhours.ghost.Perception;
 import com.hollowhours.net.HHNet;
@@ -55,15 +56,15 @@ public class GunItem extends Item {
     }
 
     public static int ammo(ItemStack s) {
-        return s.getOrCreateTag().getInt("ammo");
+        return ItemData.get(s).getInt("ammo");
     }
 
     static void setAmmo(ItemStack s, int n) {
-        s.getOrCreateTag().putInt("ammo", n);
+        ItemData.edit(s, nbt -> nbt.putInt("ammo", n));
     }
 
     public static boolean reloading(ItemStack s) {
-        return s.hasTag() && s.getTag().getLong("reloadAt") > 0;
+        return ItemData.get(s).getLong("reloadAt") > 0;
     }
 
     @Override
@@ -189,22 +190,23 @@ public class GunItem extends Item {
             return false;
         }
         int ticks = Math.max(10, Math.round(spec.reload * (1 - 0.05f * Fitness.gunLevel(p))));
-        s.getOrCreateTag().putLong("reloadAt", p.level().getGameTime() + ticks);
+        long reloadAt = p.level().getGameTime() + ticks;
+        ItemData.edit(s, nbt -> nbt.putLong("reloadAt", reloadAt));
         p.level().playSound(null, p.getX(), p.getY(), p.getZ(), HHSounds.get("gun.reload"), SoundSource.PLAYERS, 1.0f, 1.0f);
         return true;
     }
 
     @Override
     public void inventoryTick(ItemStack s, Level level, Entity e, int slot, boolean selected) {
-        if (level.isClientSide || !(e instanceof ServerPlayer p) || !s.hasTag()) return;
-        long at = s.getTag().getLong("reloadAt");
+        if (level.isClientSide || !(e instanceof ServerPlayer p) || !ItemData.has(s)) return;
+        long at = ItemData.get(s).getLong("reloadAt");
         if (at <= 0) return;
         if (!selected) {
-            s.getTag().remove("reloadAt"); // switched away: the reload is lost
+            ItemData.remove(s, "reloadAt"); // switched away: the reload is lost
             return;
         }
         if (level.getGameTime() < at) return;
-        s.getTag().remove("reloadAt");
+        ItemData.remove(s, "reloadAt");
         int need = spec.mag - ammo(s);
         int got = 0;
         if (p.getAbilities().instabuild) got = need;
@@ -262,11 +264,11 @@ public class GunItem extends Item {
     /** last-shot time kept on the stack (so it works across use ticks and clicks) */
     record CompoundTagAccess(ItemStack s) {
         long lastShot() {
-            return s.getOrCreateTag().getLong("shotAt");
+            return ItemData.get(s).getLong("shotAt");
         }
 
         void setLastShot(long t) {
-            s.getOrCreateTag().putLong("shotAt", t);
+            ItemData.edit(s, nbt -> nbt.putLong("shotAt", t));
         }
     }
 }

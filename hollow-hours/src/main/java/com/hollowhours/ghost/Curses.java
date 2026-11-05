@@ -1,5 +1,7 @@
 package com.hollowhours.ghost;
 
+import com.hollowhours.HollowHours;
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.entity.GhostEntity;
 import com.hollowhours.entity.GhostKind;
@@ -111,11 +113,11 @@ public final class Curses {
 
     // ------------------------------------------------------------------ cursed item data
     public static boolean isCursed(ItemStack it) {
-        return !it.isEmpty() && it.getTag() != null && it.getTag().contains(TAG);
+        return !it.isEmpty() && ItemData.get(it).contains(TAG);
     }
 
     static CompoundTag cdata(ItemStack it) {
-        return it.getOrCreateTag().getCompound(TAG);
+        return ItemData.get(it).getCompound(TAG);
     }
 
     static String key(Item item) {
@@ -227,8 +229,8 @@ public final class Curses {
         c.putInt("n", uses);
         c.putInt("N", uses);
         c.putInt("mark", ghostN);
-        it.getOrCreateTag().put(TAG, c);
-        it.setHoverName(Component.literal(gib(12, s.hashCode())).withStyle(ChatFormatting.RED, ChatFormatting.OBFUSCATED));
+        ItemData.edit(it, nbt -> nbt.put(TAG, c));
+        ItemData.setName(it, Component.literal(gib(12, s.hashCode())).withStyle(ChatFormatting.RED, ChatFormatting.OBFUSCATED));
         writeLore(it);
     }
 
@@ -242,10 +244,7 @@ public final class Curses {
         if (g >= 1 && g <= 5) lines.add(Component.translatable("hollowhours.curse.ghostmark", Component.translatable("hollowhours.mark." + g),
                 Component.translatable(GhostKind.byN(g).nameKey())).withStyle(ChatFormatting.DARK_GRAY));
         lines.add(Component.literal(gib(16, key(it.getItem()).hashCode() + 7)).withStyle(ChatFormatting.DARK_RED, ChatFormatting.OBFUSCATED));
-        CompoundTag display = it.getOrCreateTagElement("display");
-        ListTag lore = new ListTag();
-        for (Component l : lines) lore.add(StringTag.valueOf(Component.Serializer.toJson(l)));
-        display.put("Lore", lore);
+        ItemData.setLore(it, lines);
     }
 
     public static int countCursed(Player p) {
@@ -949,7 +948,7 @@ public final class Curses {
         b.asks.put(p.getUUID(), used + 1);
         addBuff(p.serverLevel(), id);
         int left = limit - used - 1;
-        Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(id));
+        Item item = BuiltInRegistries.ITEM.get(HollowHours.rl(id));
         if (R.chance(HHConfig.ASK_GIVE_CHANCE.get())) {
             int max = item.getMaxStackSize();
             int n = Math.max(1, Math.min(qty, max > 1 ? max : 8));

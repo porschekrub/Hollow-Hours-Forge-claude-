@@ -1,5 +1,6 @@
 package com.hollowhours.endgame;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.HollowHours;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.entity.GhostEntity;
@@ -369,12 +370,12 @@ public final class Endgame {
         MapItem.renderBiomePreviewMap(over, map);
         MapItemSavedData.addTargetDecoration(map, site, "+", MapDecoration.Type.RED_X);
         map.setHoverName(Component.translatable("item.hollowhours.mountain_map").withStyle(ChatFormatting.GOLD));
-        map.getOrCreateTag().putBoolean("hollowhours_mountain", true);
+        ItemData.edit(map, nbt -> nbt.putBoolean("hollowhours_mountain", true));
         return map;
     }
 
     public static boolean isMountainMap(ItemStack s) {
-        return s.is(Items.FILLED_MAP) && s.hasTag() && s.getTag().getBoolean("hollowhours_mountain");
+        return s.is(Items.FILLED_MAP) && ItemData.get(s).getBoolean("hollowhours_mountain");
     }
 
     static void giveMap(ServerPlayer p) {

@@ -1,5 +1,6 @@
 package com.hollowhours.item;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.registry.HHItems;
 import com.hollowhours.util.Fx;
 import net.minecraft.ChatFormatting;
@@ -69,7 +70,7 @@ public class ChargerItem extends Item {
                 return;
             }
             // plugged in: this is one of the power bank's three charges
-            s.getOrCreateTag().putBoolean(PLUGGED, true);
+            ItemData.edit(s, nbt -> nbt.putBoolean(PLUGGED, true));
             PhoneItem.setCharging(phone, true);
             Fx.playSelf(p, "phone.charge", 0.8f, 1f);
         }
@@ -87,8 +88,8 @@ public class ChargerItem extends Item {
 
     /** Unplugged (full, or you let go): the charge is used up; tell the player. */
     static void done(ServerPlayer p, ItemStack s, boolean full) {
-        if (s.hasTag() && s.getTag().getBoolean(PLUGGED)) {
-            s.getTag().remove(PLUGGED);
+        if (ItemData.get(s).getBoolean(PLUGGED)) {
+            ItemData.remove(s, PLUGGED);
             int left = s.getMaxDamage() - s.getDamageValue() - 1;
             if (full) Fx.playSelf(p, "phone.notify", 0.6f, 1.3f);
             ItemStack phone = null;

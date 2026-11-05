@@ -1,0 +1,2 @@
+# files of the shared code this target does not use
+resources/META-INF/mods.toml

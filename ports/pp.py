@@ -42,6 +42,19 @@ NEO_RENAMES = [
     ('net.minecraftforge.', 'net.neoforged.neoforge.'),
 ]
 
+# GeckoLib 4.5+ (Minecraft 1.20.5+) moved its "core" packages
+RENAMES_121 = [
+    ('software.bernie.geckolib.core.animatable.model.CoreGeoBone', 'software.bernie.geckolib.cache.object.GeoBone'),
+    ('CoreGeoBone', 'GeoBone'),
+    ('software.bernie.geckolib.core.animatable.', 'software.bernie.geckolib.animatable.'),
+    ('software.bernie.geckolib.core.animation.', 'software.bernie.geckolib.animation.'),
+    ('software.bernie.geckolib.core.object.Color', 'software.bernie.geckolib.util.Color'),
+    ('software.bernie.geckolib.core.object.PlayState', 'software.bernie.geckolib.animation.PlayState'),
+    ('software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue(', 'software.bernie.geckolib.loading.math.MathParser.setVariable('),
+    ('software.bernie.geckolib.util.RenderUtils', 'software.bernie.geckolib.util.RenderUtil'),
+    ('RenderUtils.', 'RenderUtil.'),
+]
+
 DATA_DIRS_121 = {
     'recipes': 'recipe', 'loot_tables': 'loot_table', 'advancements': 'advancement', 'structures': 'structure',
     'functions': 'function', 'predicates': 'predicate', 'item_modifiers': 'item_modifier',
@@ -240,6 +253,9 @@ def main():
             data = open(full, 'rb').read()
             if kind == 'java' and rel.endswith('.java'):
                 text = process_java(data.decode('utf-8'), flags, rel)
+                if flags.get('MC', 0) >= 12100:
+                    for x, y in RENAMES_121:
+                        text = text.replace(x, y)
                 if neo:
                     text = rename_neo(text)
                 write_if_changed(os.path.join(a.out, kind, rel), text, produced)

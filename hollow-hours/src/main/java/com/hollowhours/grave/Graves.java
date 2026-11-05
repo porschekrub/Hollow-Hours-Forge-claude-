@@ -1,5 +1,6 @@
 package com.hollowhours.grave;
 
+import com.hollowhours.HollowHours;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.registry.HHEntities;
 import com.hollowhours.registry.HHItems;
@@ -80,7 +81,7 @@ public final class Graves extends SavedData {
             g.owner = t.getUUID("Owner");
             if (t.hasUUID("Entity")) g.entity = t.getUUID("Entity");
             g.ownerName = t.getString("Name");
-            g.dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(t.getString("Dim")));
+            g.dim = ResourceKey.create(Registries.DIMENSION, HollowHours.rl(t.getString("Dim")));
             g.pos = BlockPos.of(t.getLong("Pos"));
             g.created = t.getLong("Created");
             g.xp = t.getInt("Xp");

@@ -1,5 +1,6 @@
 package com.hollowhours.client;
 
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.HollowHours;
 import com.hollowhours.entity.ClosetEntity;
 import com.hollowhours.entity.GhostAnim;
@@ -1840,9 +1841,9 @@ public final class ClientSmoke {
 
     // ------------------------------------------------------------------ fighting back (2.11)
     private static net.minecraft.world.item.ItemStack modItem(String id) {
-        var it = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation(HollowHours.MODID, id));
+        var it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(HollowHours.id(id));
         var s = new net.minecraft.world.item.ItemStack(it == null ? net.minecraft.world.item.Items.BARRIER : it);
-        if (s.getItem() instanceof com.hollowhours.combat.GunItem g) s.getOrCreateTag().putInt("ammo", g.spec.mag());
+        if (s.getItem() instanceof com.hollowhours.combat.GunItem g) ItemData.edit(s, nbt -> nbt.putInt("ammo", g.spec.mag()));
         return s;
     }
 
@@ -2033,7 +2034,7 @@ public final class ClientSmoke {
                     var s = sp.getMainHandItem();
                     var gs = sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(20));
                     if (gs.isEmpty() || !(s.getItem() instanceof com.hollowhours.combat.GunItem g) || com.hollowhours.combat.GhostCombat.knockedOut(gs.get(0).brain())) return;
-                    s.getOrCreateTag().putInt("ammo", 6);
+                    ItemData.edit(s, nbt -> nbt.putInt("ammo", 6));
                     g.fire(sp, s);
                 });
                 if (d == 12) shot("shotgun_vs_ghost");
@@ -2327,7 +2328,7 @@ public final class ClientSmoke {
     private static void fireAt(ServerPlayer sp) {
         var s = sp.getMainHandItem();
         if (s.getItem() instanceof com.hollowhours.combat.GunItem g) {
-            s.getOrCreateTag().putInt("ammo", g.spec.mag());
+            ItemData.edit(s, nbt -> nbt.putInt("ammo", g.spec.mag()));
             g.fire(sp, s);
         }
     }

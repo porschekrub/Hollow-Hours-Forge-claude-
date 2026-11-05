@@ -1,5 +1,7 @@
 package com.hollowhours.item;
 
+import com.hollowhours.compat.ItemData;
+import net.minecraft.nbt.CompoundTag;
 import com.hollowhours.ghost.Thirst;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -37,11 +39,12 @@ public class CanteenItem extends Item {
 
     /** sips left (a new canteen is full) */
     public static int sips(ItemStack s) {
-        return s.hasTag() && s.getTag().contains("Sips") ? s.getTag().getInt("Sips") : SIPS;
+        CompoundTag t = ItemData.get(s);
+        return t.contains("Sips") ? t.getInt("Sips") : SIPS;
     }
 
     static void setSips(ItemStack s, int n) {
-        s.getOrCreateTag().putInt("Sips", Math.max(0, Math.min(SIPS, n)));
+        ItemData.edit(s, nbt -> nbt.putInt("Sips", Math.max(0, Math.min(SIPS, n))));
     }
 
     /** the water source block the player is looking at, if any */

@@ -371,7 +371,7 @@ public final class Plan {
                 instant = true;
             }
             case "goto" -> {
-                ResourceKey<net.minecraft.world.level.Level> dk = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(s.dim.isEmpty() ? h.level().dimension().location().toString() : s.dim));
+                ResourceKey<net.minecraft.world.level.Level> dk = ResourceKey.create(Registries.DIMENSION, com.helperbuddy.HelperBuddy.rl(s.dim.isEmpty() ? h.level().dimension().location().toString() : s.dim));
                 b.setGoto(s.pos, dk);
             }
             case "wait" -> h.setMode(Mode.STAY);

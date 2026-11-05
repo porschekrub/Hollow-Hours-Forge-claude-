@@ -1,5 +1,6 @@
 package com.hollowhours.client.render;
 
+import com.hollowhours.HollowHours;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
@@ -29,7 +30,7 @@ public class EmissiveLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
     /** "textures/entity/ghost_1.png" -> "textures/entity/ghost_1_glow.png" */
     public static ResourceLocation glowOf(ResourceLocation base) {
         String p = base.getPath();
-        return new ResourceLocation(base.getNamespace(), p.substring(0, p.length() - 4) + "_glow.png");
+        return HollowHours.rl(base.getNamespace(), p.substring(0, p.length() - 4) + "_glow.png");
     }
 
     @Override

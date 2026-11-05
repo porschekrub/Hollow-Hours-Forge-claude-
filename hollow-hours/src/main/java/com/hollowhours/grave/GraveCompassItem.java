@@ -1,5 +1,7 @@
 package com.hollowhours.grave;
 
+import com.hollowhours.HollowHours;
+import com.hollowhours.compat.ItemData;
 import com.hollowhours.registry.HHItems;
 import com.hollowhours.util.Fx;
 import net.minecraft.ChatFormatting;
@@ -39,26 +41,27 @@ public class GraveCompassItem extends Item {
 
     static ItemStack forGrave(Graves.Grave g) {
         ItemStack s = new ItemStack(HHItems.GRAVE_COMPASS.get());
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = new CompoundTag();
         t.putUUID("Grave", g.id);
         t.putLong("Pos", g.pos.asLong());
         t.putString("Dim", g.dim.location().toString());
         t.putString("Owner", g.ownerName);
+        ItemData.set(s, t);
         return s;
     }
 
     @Nullable
     public static UUID graveId(ItemStack s) {
-        CompoundTag t = s.getTag();
+        CompoundTag t = ItemData.tag(s);
         return t != null && t.hasUUID("Grave") ? t.getUUID("Grave") : null;
     }
 
     /** where the needle points */
     @Nullable
     public static GlobalPos target(ItemStack s) {
-        CompoundTag t = s.getTag();
+        CompoundTag t = ItemData.tag(s);
         if (t == null || !t.contains("Pos")) return null;
-        return GlobalPos.of(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(t.getString("Dim"))), BlockPos.of(t.getLong("Pos")));
+        return GlobalPos.of(ResourceKey.create(Registries.DIMENSION, HollowHours.rl(t.getString("Dim"))), BlockPos.of(t.getLong("Pos")));
     }
 
     @Override
@@ -102,14 +105,14 @@ public class GraveCompassItem extends Item {
             return;
         }
         p.stopUsingItem();
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = ItemData.get(s);
         long now = level.getGameTime();
         if (t.getLong("FirstHold") > 0 && now - t.getLong("FirstHold") <= AGAIN_WITHIN) {
             level.playSound(null, p.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1f, 0.8f);
             Fx.actionbar(p, Component.translatable("item.hollowhours.grave_compass.destroyed"));
             s.shrink(1);
         } else {
-            t.putLong("FirstHold", now);
+            ItemData.edit(s, nbt -> nbt.putLong("FirstHold", now));
             level.playSound(null, p.blockPosition(), SoundEvents.CHAIN_BREAK, SoundSource.PLAYERS, 0.8f, 1.4f);
             Fx.actionbar(p, Component.translatable("item.hollowhours.grave_compass.again"));
         }

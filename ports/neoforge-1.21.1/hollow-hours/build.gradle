@@ -1,0 +1,122 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+// mod_id, mod_name, mod_version, ... are the shared project's (one version number for every loader)
+def sharedProps = new Properties()
+file("../../../${shared_dir}/gradle.properties").withInputStream { sharedProps.load(it) }
+['mod_id', 'mod_name', 'mod_license', 'mod_version', 'mod_group_id', 'mod_authors', 'mod_description'].each { k ->
+    project.ext.set(k, sharedProps.getProperty(k))
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-neoforge-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+// The mod's code is shared with the other loaders (../../../<shared_dir>). ../../pp.py makes this target's copy of it
+// (conditional blocks, NeoForge package names, 1.21 data folders), with this project's own src/main laid over it.
+def sharedMain = file("../../../${shared_dir}/src/main")
+def ppOut = layout.buildDirectory.dir('pp').get().asFile
+def ppScript = file('../../pp.py')
+def preprocess = tasks.register('preprocess', Exec) {
+    inputs.dir(sharedMain)
+    inputs.dir(file('src/main'))
+    inputs.file(ppScript)
+    outputs.dir(ppOut)
+    commandLine 'python3', ppScript.absolutePath, '--src', sharedMain.absolutePath, '--overlay', file('src/main').absolutePath,
+            '--out', ppOut.absolutePath, '--flags', pp_flags
+}
+sourceSets.main.java.srcDirs = [files("${ppOut}/java").builtBy(preprocess)]
+sourceSets.main.resources.srcDirs = [files("${ppOut}/resources").builtBy(preprocess)]
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        configureEach {
+            gameDirectory = project.file('run')
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'forge.logging.console.level', 'info'
+            logLevel = org.slf4j.event.Level.INFO
+        }
+        client {
+            client()
+            // CI client smoke test: opens the world "smoke" and takes screenshots
+            systemProperty 'hollowhours.clientsmoke', System.getenv('HOLLOW_CLIENTSMOKE') ?: 'false'
+            systemProperty 'hollowhours.promo', System.getenv('HOLLOW_PROMO') ?: 'false'
+            if (System.getenv('HOLLOW_CLIENTSMOKE')) {
+                programArguments.addAll('--quickPlaySingleplayer', 'smoke', '--width', System.getenv('MC_WIDTH') ?: '960', '--height', System.getenv('MC_HEIGHT') ?: '540')
+            }
+        }
+        server {
+            server()
+            programArgument '--nogui'
+            // CI smoke test: the mod stops the server as soon as it has fully started
+            systemProperty 'hollowhours.smoketest', System.getenv('HOLLOW_SMOKETEST') ?: 'false'
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup('software.bernie.geckolib')
+        }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    // GeckoLib is bundled inside our jar (jar-in-jar), so players only need to install this mod.
+    jarJar(implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}")) {
+        version {
+            strictly "[${geckolib_version},)"
+            prefer geckolib_version
+        }
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            neo_version: neo_version, neo_version_range: neo_version_range, loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description, geckolib_version: geckolib_version
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.version,
+                'Implementation-Vendor'   : mod_authors
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+}

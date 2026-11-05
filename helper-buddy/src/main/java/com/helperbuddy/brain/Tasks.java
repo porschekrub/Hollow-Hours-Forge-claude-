@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
 import com.helperbuddy.talk.ItemWords;
@@ -179,7 +180,7 @@ public final class Tasks {
 
     // ------------------------------------------------------------------ craft
     void tickCraft() {
-        Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(spec.getString("item")));
+        Item item = BuiltInRegistries.ITEM.get(HelperBuddy.rl(spec.getString("item")));
         int n = spec.getInt("n");
         boolean th = Say.thai(h.owner());
         String name = new ItemStack(item).getHoverName().getString();
@@ -287,7 +288,7 @@ public final class Tasks {
     void tickFetch() {
         String text = spec.getString("text");
         String id = ItemWords.resolve(text);
-        Item item = id == null ? null : BuiltInRegistries.ITEM.get(new ResourceLocation(id));
+        Item item = id == null ? null : BuiltInRegistries.ITEM.get(HelperBuddy.rl(id));
         if (item == null || item == Items.AIR) {
             Say.owner(h, "ไม่แน่ใจว่าจะให้หยิบอะไร ลองบอกชื่อของให้ชัดๆ อีกทีนะ", "I'm not sure what to fetch. Tell me the item name again");
             done(false);
