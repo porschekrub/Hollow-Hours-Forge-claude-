@@ -46,8 +46,14 @@ public class BoardsRenderer extends GeoEntityRenderer<BoardsEntity> {
             }
 
             @Override
+            //#if MC>=12100
+            //$$ public void applyMolangQueries(software.bernie.geckolib.animation.AnimationState<BoardsEntity> state, double animTime) {
+            //$$     super.applyMolangQueries(state, animTime);
+            //$$     BoardsEntity e = state.getAnimatable();
+            //#else
             public void applyMolangQueries(BoardsEntity e, double animTime) {
                 super.applyMolangQueries(e, animTime);
+            //#endif
                 double kind = e.kind(), n = e.count(), side = e.side();
                 software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bkind", () -> kind);
                 software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue("variable.bn", () -> n);

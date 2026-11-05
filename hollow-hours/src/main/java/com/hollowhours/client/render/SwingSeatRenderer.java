@@ -20,7 +20,11 @@ import org.joml.Quaternionf;
 
 /** The swinging seat and its ropes, rotating around the top beam. */
 public class SwingSeatRenderer extends EntityRenderer<SwingSeatEntity> {
+    //#if MC>=12100
+    //$$ public static final net.minecraft.client.resources.model.ModelResourceLocation MODEL = com.hollowhours.compat.ClientCompat.model("block/swing_seat");
+    //#else
     public static final ResourceLocation MODEL = HollowHours.id("block/swing_seat");
+    //#endif
 
     public SwingSeatRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);

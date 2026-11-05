@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 /**
  * Thirst: a row of water drops above the food bar. Sanity: an eye and a bar above the armour, shown once the story
@@ -19,11 +18,12 @@ public final class SurvivalHud {
     /** from the server; negative = that system is off */
     public static float thirst = -1, sanity = -1;
 
-    public static void thirst(ForgeGui gui, GuiGraphics g, float partial, int w, int h) {
+    public static void thirst(GuiGraphics g, float partial) {
+        int w = g.guiWidth(), h = g.guiHeight();
         Minecraft mc = Minecraft.getInstance();
-        if (thirst < 0 || mc.options.hideGui || !gui.shouldDrawSurvivalElements() || KillCam.active()) return;
-        int right = w / 2 + 91, top = h - gui.rightHeight;
-        gui.rightHeight += 10;
+        if (thirst < 0 || mc.options.hideGui || !Hud.survival() || KillCam.active()) return;
+        int right = w / 2 + 91, top = h - Hud.rightHeight();
+        Hud.addRight(10);
         int v = Math.round(thirst);
         RenderSystem.enableBlend();
         for (int i = 0; i < 10; i++) {
@@ -36,12 +36,13 @@ public final class SurvivalHud {
         RenderSystem.disableBlend();
     }
 
-    public static void sanity(ForgeGui gui, GuiGraphics g, float partial, int w, int h) {
+    public static void sanity(GuiGraphics g, float partial) {
+        int w = g.guiWidth(), h = g.guiHeight();
         Minecraft mc = Minecraft.getInstance();
-        if (sanity < 0 || mc.options.hideGui || !gui.shouldDrawSurvivalElements() || KillCam.active()) return;
+        if (sanity < 0 || mc.options.hideGui || !Hud.survival() || KillCam.active()) return;
         if (!Atmos.haunted && sanity >= 99.5f) return;
-        int left = w / 2 - 91, top = h - gui.leftHeight;
-        gui.leftHeight += 10;
+        int left = w / 2 - 91, top = h - Hud.leftHeight();
+        Hud.addLeft(10);
         float k = Mth.clamp(sanity / 100f, 0, 1);
         int jx = 0, jy = 0;
         if (k < 0.35f && mc.level != null) {

@@ -8,7 +8,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -40,7 +39,8 @@ public final class PhoneNotice {
         if (++t >= SHOW) now = null;
     }
 
-    public static void render(ForgeGui gui, GuiGraphics g, float partial, int w, int h) {
+    public static void render(GuiGraphics g, float partial) {
+        int w = g.guiWidth(), h = g.guiHeight();
         if (now == null) return;
         Font font = Minecraft.getInstance().font;
         float time = t + partial;

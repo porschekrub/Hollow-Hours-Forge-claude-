@@ -68,7 +68,11 @@ public class GhostEntity extends Monster implements GeoEntity {
         super(type, level);
         this.kind = HHEntities.kindOf(type);
         this.xpReward = 0;
+        //#if MC>=12100
+        //$$ java.util.Objects.requireNonNull(getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT)).setBaseValue(1.1);
+        //#else
         this.setMaxUpStep(1.1f);
+        //#endif
         this.setPersistenceRequired();
         if (getNavigation() instanceof GroundPathNavigation nav) {
             nav.setCanOpenDoors(false);
@@ -191,8 +195,13 @@ public class GhostEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected EntityDimensions getDefaultDimensions(Pose pose) {
+    //$$     if (kind == null) return super.getDefaultDimensions(pose);
+    //#else
     public EntityDimensions getDimensions(Pose pose) {
         if (kind == null) return super.getDimensions(pose);
+    //#endif
         return isCrawling() ? EntityDimensions.scalable(GhostKind.CRAWL_W, GhostKind.CRAWL_H) : EntityDimensions.scalable(kind.width, kind.height);
     }
 
@@ -290,10 +299,17 @@ public class GhostEntity extends Monster implements GeoEntity {
         return false;
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public boolean canDrownInFluidType(net.minecraftforge.fluids.FluidType type) {
+    //$$     return false;
+    //$$ }
+    //#else
     @Override
     public boolean canBreatheUnderwater() {
         return true;
     }
+    //#endif
 
     @Override
     public boolean causeFallDamage(float dist, float mult, DamageSource src) {

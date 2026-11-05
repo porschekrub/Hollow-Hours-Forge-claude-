@@ -145,9 +145,15 @@ public final class Jumpscare {
         Matrix4f proj = new Matrix4f().setPerspective((float) Math.toRadians(70), aspect, 0.05f, 100f);
         RenderSystem.backupProjectionMatrix();
         RenderSystem.setProjectionMatrix(proj, VertexSorting.DISTANCE_TO_ORIGIN);
+        //#if MC>=12100
+        //$$ org.joml.Matrix4fStack mv = RenderSystem.getModelViewStack();
+        //$$ mv.pushMatrix();
+        //$$ mv.identity();
+        //#else
         PoseStack mv = RenderSystem.getModelViewStack();
         mv.pushPose();
         mv.setIdentity();
+        //#endif
         RenderSystem.applyModelViewMatrix();
         RenderSystem.clear(GL11.GL_DEPTH_BUFFER_BIT, Minecraft.ON_OSX);
         RenderSystem.enableDepthTest();
@@ -160,11 +166,20 @@ public final class Jumpscare {
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
         FaceRenderer r = renderer(rig.who);
         r.bright = bright;
+        //#if MC>=12100
+        //$$ r.render(ps, rig, buffers, null, null, LightTexture.FULL_BRIGHT, partial);
+        //#else
         r.render(ps, rig, buffers, null, null, LightTexture.FULL_BRIGHT);
+        //#endif
         buffers.endBatch();
         RenderSystem.disableDepthTest();
+        //#if MC>=12100
+        //$$ mv.popMatrix();
+        //$$ RenderSystem.applyModelViewMatrix();
+        //#else
         mv.popPose();
         RenderSystem.applyModelViewMatrix();
+        //#endif
         RenderSystem.restoreProjectionMatrix();
         com.mojang.blaze3d.platform.Lighting.setupFor3DItems();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

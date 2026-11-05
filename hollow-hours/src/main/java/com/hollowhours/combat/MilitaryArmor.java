@@ -26,7 +26,11 @@ import java.util.function.Supplier;
 public final class MilitaryArmor {
     private MilitaryArmor() {}
 
-    public enum Mat implements ArmorMaterial {
+    public enum Mat
+    //#if MC<12100
+            implements ArmorMaterial
+    //#endif
+    {
         TACTICAL("tactical", 22, new int[]{2, 6, 5, 2}, 12, 1.0f, 0.0f, 0.15f, 0.10f, () -> Ingredient.of(Items.IRON_INGOT)),
         HEAVY("heavy", 33, new int[]{3, 8, 6, 3}, 10, 2.5f, 0.10f, 0.25f, 0.20f, () -> Ingredient.of(Items.IRON_INGOT)),
         HUNTER("hunter", 38, new int[]{3, 8, 6, 3}, 15, 3.5f, 0.15f, 0.40f, 0.30f, () -> Ingredient.of(Items.AMETHYST_SHARD));
@@ -54,12 +58,29 @@ public final class MilitaryArmor {
         static int idx(ArmorItem.Type t) {
             return switch (t) {
                 case HELMET -> 0;
-                case CHESTPLATE -> 1;
                 case LEGGINGS -> 2;
                 case BOOTS -> 3;
+                default -> 1;
             };
         }
 
+        //#if MC>=12100
+        //$$ private net.minecraft.core.Holder<ArmorMaterial> holder;
+        //$$
+        //$$ /** The armour material (Minecraft 1.21 keeps materials apart from the items). */
+        //$$ public net.minecraft.core.Holder<ArmorMaterial> holder() {
+        //$$     if (holder == null) {
+        //$$         java.util.EnumMap<ArmorItem.Type, Integer> d = new java.util.EnumMap<>(ArmorItem.Type.class);
+        //$$         for (ArmorItem.Type t : new ArmorItem.Type[]{ArmorItem.Type.HELMET, ArmorItem.Type.CHESTPLATE, ArmorItem.Type.LEGGINGS, ArmorItem.Type.BOOTS})
+        //$$             d.put(t, def[idx(t)]);
+        //$$         d.put(ArmorItem.Type.BODY, def[1]);
+        //$$         holder = net.minecraft.core.Holder.direct(new ArmorMaterial(d, ench,
+        //$$                 this == TACTICAL ? SoundEvents.ARMOR_EQUIP_LEATHER : SoundEvents.ARMOR_EQUIP_IRON, repair,
+        //$$                 List.of(new ArmorMaterial.Layer(HollowHours.id(name))), tough, kb));
+        //$$     }
+        //$$     return holder;
+        //$$ }
+        //#else
         @Override
         public int getDurabilityForType(ArmorItem.Type t) {
             return new int[]{11, 16, 15, 13}[idx(t)] * dur;
@@ -99,13 +120,18 @@ public final class MilitaryArmor {
         public float getKnockbackResistance() {
             return kb;
         }
+        //#endif
     }
 
     public static class Piece extends ArmorItem {
         public final Mat mat;
 
         public Piece(Mat mat, Type type, Properties p) {
+            //#if MC>=12100
+            //$$ super(mat.holder(), type, p.durability(type.getDurability(mat.dur)));
+            //#else
             super(mat, type, p);
+            //#endif
             this.mat = mat;
         }
 

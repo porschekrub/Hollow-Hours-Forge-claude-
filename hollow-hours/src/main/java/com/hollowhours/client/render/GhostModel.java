@@ -48,21 +48,27 @@ public class GhostModel extends GeoModel<GhostEntity> {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public void applyMolangQueries(software.bernie.geckolib.animation.AnimationState<GhostEntity> state, double animTime) {
+    //$$     super.applyMolangQueries(state, animTime);
+    //$$     GhostEntity g = state.getAnimatable();
+    //#else
     public void applyMolangQueries(GhostEntity g, double animTime) {
         super.applyMolangQueries(g, animTime);
         MolangParser p = MolangParser.INSTANCE;
+    //#endif
         for (Map.Entry<String, Double> e : kind.molang.entrySet()) {
             double v = e.getValue();
-            p.setValue("variable." + e.getKey(), () -> v);
+            molang("variable." + e.getKey(), () -> v);
         }
-        p.setValue("variable.rage", () -> g.isRaged() ? 1 : 0);
-        p.setValue("variable.seed", () -> g.seed);
+        molang("variable.rage", () -> g.isRaged() ? 1 : 0);
+        molang("variable.seed", () -> g.seed);
         // Bedrock's query.modified_distance_moved (metres walked) and the entity's pre_animation script
-        float partial = net.minecraft.client.Minecraft.getInstance().getFrameTime();
+        float partial = com.hollowhours.compat.ClientCompat.partialTick();
         double dist = g.walkAnimation.position(partial) / 4.0;
         double life = (g.tickCount + partial) / 20.0;
-        p.setValue("variable.dist_moved", () -> dist);
-        p.setValue("variable.cph", () -> dist * 45.0 + life * 90.0);
+        molang("variable.dist_moved", () -> dist);
+        molang("variable.cph", () -> dist * 45.0 + life * 90.0);
     }
 
     @Override
@@ -165,5 +171,13 @@ public class GhostModel extends GeoModel<GhostEntity> {
         x *= 0x27d4eb2d;
         x ^= x >>> 15;
         return (x & 0xFFFF) / 65535f;
+    }
+
+    static void molang(String name, java.util.function.DoubleSupplier value) {
+        //#if MC>=12100
+        //$$ software.bernie.geckolib.loading.math.MathParser.setVariable(name, value);
+        //#else
+        MolangParser.INSTANCE.setValue(name, value);
+        //#endif
     }
 }

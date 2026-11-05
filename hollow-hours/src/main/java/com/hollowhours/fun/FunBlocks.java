@@ -1,5 +1,6 @@
 package com.hollowhours.fun;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.ghost.Sanity;
 import com.hollowhours.registry.HHEntities;
 import com.hollowhours.util.Fx;
@@ -75,7 +76,12 @@ public final class FunBlocks {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ protected InteractionResult useWithoutItem(BlockState s, Level level, BlockPos pos, Player p, BlockHitResult hit) {
+        //$$     InteractionHand hand = InteractionHand.MAIN_HAND;
+        //#else
         public InteractionResult use(BlockState s, Level level, BlockPos pos, Player p, InteractionHand hand, BlockHitResult hit) {
+        //#endif
             if (level.isClientSide) return InteractionResult.SUCCESS;
             if (p.isPassenger()) return InteractionResult.PASS;
             for (Entity e : level.getEntitiesOfClass(SwingSeatEntity.class, new net.minecraft.world.phys.AABB(pos).inflate(0.5, 2, 0.5))) if (e.isVehicle()) return InteractionResult.CONSUME;
@@ -96,7 +102,12 @@ public final class FunBlocks {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ protected InteractionResult useWithoutItem(BlockState s, Level level, BlockPos pos, Player p, BlockHitResult hit) {
+        //$$     InteractionHand hand = InteractionHand.MAIN_HAND;
+        //#else
         public InteractionResult use(BlockState s, Level level, BlockPos pos, Player p, InteractionHand hand, BlockHitResult hit) {
+        //#endif
             Direction f = s.getValue(FACING);
             // climb on at the back, slide down the front
             p.teleportTo(pos.getX() + 0.5 - f.getStepX() * 0.3, pos.getY() + 1.0, pos.getZ() + 0.5 - f.getStepZ() * 0.3);
@@ -173,8 +184,13 @@ public final class FunBlocks {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ protected InteractionResult useWithoutItem(BlockState s, Level level, BlockPos pos, Player p, BlockHitResult hit) {
+        //$$     InteractionHand hand = InteractionHand.MAIN_HAND;
+        //#else
         public InteractionResult use(BlockState s, Level level, BlockPos pos, Player p, InteractionHand hand, BlockHitResult hit) {
-            if (level.isClientSide) DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.hollowhours.client.PhoneScreen.openArcade(pos));
+        //#endif
+            if (level.isClientSide) Compat.client(() -> () -> com.hollowhours.client.PhoneScreen.openArcade(pos));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
     }
@@ -195,7 +211,12 @@ public final class FunBlocks {
         }
 
         @Override
+        //#if MC>=12100
+        //$$ protected InteractionResult useWithoutItem(BlockState s, Level level, BlockPos pos, Player p, BlockHitResult hit) {
+        //$$     InteractionHand hand = InteractionHand.MAIN_HAND;
+        //#else
         public InteractionResult use(BlockState s, Level level, BlockPos pos, Player p, InteractionHand hand, BlockHitResult hit) {
+        //#endif
             if (!level.isClientSide) {
                 boolean on = !s.getValue(LIT);
                 level.setBlock(pos, s.setValue(LIT, on), 3);

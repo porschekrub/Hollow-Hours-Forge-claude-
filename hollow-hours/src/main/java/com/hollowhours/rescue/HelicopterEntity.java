@@ -373,7 +373,7 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
         tail += 72;
         if (!soundStarted) {
             soundStarted = true;
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.hollowhours.client.HelicopterSound.start(this));
+            Compat.client(() -> () -> com.hollowhours.client.HelicopterSound.start(this));
         }
         // the downwash whips up dust under it
         double ground = level().getHeight(Heightmap.Types.MOTION_BLOCKING, Mth.floor(getX()), Mth.floor(getZ()));
@@ -390,7 +390,11 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
 
     @Override
     @OnlyIn(Dist.CLIENT)
+    //#if MC>=12100
+    //$$ public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps) {
+    //#else
     public void lerpTo(double x, double y, double z, float yRot, float xRot, int steps, boolean teleport) {
+    //#endif
         lerpX = x;
         lerpY = y;
         lerpZ = z;
@@ -414,12 +418,20 @@ public class HelicopterEntity extends Entity implements IEntityAdditionalSpawnDa
     //#endif
 
     @Override
+    //#if NEOFORGE
+    //$$ public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void writeSpawnData(FriendlyByteBuf buf) {
+    //#endif
         buf.writeVarInt(stateTicks);
     }
 
     @Override
+    //#if NEOFORGE
+    //$$ public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void readSpawnData(FriendlyByteBuf buf) {
+    //#endif
         stateTicks = buf.readVarInt();
     }
 }

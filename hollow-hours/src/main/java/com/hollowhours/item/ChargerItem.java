@@ -1,5 +1,6 @@
 package com.hollowhours.item;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.compat.ItemData;
 import com.hollowhours.registry.HHItems;
 import com.hollowhours.util.Fx;
@@ -104,7 +105,7 @@ public class ChargerItem extends Item {
             p.displayClientMessage(msg.withStyle(ChatFormatting.GREEN), true);
             InteractionHand hand = p.getUsedItemHand();
             if (p.isUsingItem()) p.stopUsingItem();
-            s.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(hand));
+            Compat.hurtItem(s, 1, p, hand);
         } else if (p.isUsingItem()) p.stopUsingItem();
         for (ItemStack it : p.getInventory().items) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);
         for (ItemStack it : p.getInventory().offhand) if (it.is(HHItems.PHONE.get())) PhoneItem.setCharging(it, false);

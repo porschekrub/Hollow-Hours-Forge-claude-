@@ -376,7 +376,11 @@ final class SmokeTest {
                 && com.hollowhours.item.PhoneItem.drainMult(phone) >= 2, "battery wear doubles the drain");
         check(new net.minecraft.world.item.ItemStack(HHItems.CHARGER.get()).getMaxDamage() == 3, "charger has 3 charges");
 
+        //#if MC>=12100
+        //$$ check(Thirst.quench(net.minecraft.world.item.alchemy.PotionContents.createItemStack(Items.POTION, net.minecraft.world.item.alchemy.Potions.WATER)) == 7,
+        //#else
         check(Thirst.quench(net.minecraft.world.item.alchemy.PotionUtils.setPotion(new ItemStack(Items.POTION), net.minecraft.world.item.alchemy.Potions.WATER)) == 7,
+        //#endif
                 "water bottle quenches 7");
         check(Thirst.quench(new ItemStack(Items.MILK_BUCKET)) > 0 && Thirst.quench(new ItemStack(Items.BREAD)) == 0, "drinks");
 

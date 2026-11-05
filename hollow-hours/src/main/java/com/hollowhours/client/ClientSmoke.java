@@ -53,9 +53,19 @@ public final class ClientSmoke {
     static int promoHud = 0;
 
     @SubscribeEvent
+    //#if NEOFORGE
+    //$$ public static void promoOverlays(net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre e) {
+    //$$     if (!ON || !PROMO) return;
+    //$$     String id = e.getName().toString();
+    //#elif MC>=12100
+    //$$ public static void promoOverlays(net.minecraftforge.client.event.RenderGuiEvent.Pre e) {
+    //$$     if (!ON || !PROMO) return;
+    //$$     String id = "";
+    //#else
     public static void promoOverlays(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre e) {
         if (!ON || !PROMO) return;
         String id = e.getOverlay().id().toString();
+    //#endif
         boolean keep = promoHud == 1 && (id.equals("hollowhours:combat") || id.equals("minecraft:boss_event_progress") || id.equals("minecraft:title_text")
                 || id.equals("hollowhours:horror_fx") || id.equals("hollowhours:ending") || id.equals("hollowhours:jumpscare"))
                 || id.equals("hollowhours:ending");
@@ -94,7 +104,11 @@ public final class ClientSmoke {
                 if (waitTicks % 200 == 0) shot("waiting_" + waitTicks);
                 if (waitTicks == 900) {
                     HollowHours.LOG.warn("[client smoke] quick play did not open the world, trying to load it directly");
+                    //#if MC>=12100
+                    //$$ mc.createWorldOpenFlows().openWorld("smoke", () -> {});
+                    //#else
                     mc.createWorldOpenFlows().loadLevel(mc.screen, "smoke");
+                    //#endif
                 }
                 if (waitTicks > 2400) fail("never got into the world");
                 return;
@@ -1616,7 +1630,11 @@ public final class ClientSmoke {
                 net.minecraft.core.BlockPos sw = at(0, 0, 4);
                 var st = com.hollowhours.registry.HHBlocks.SWING.get().defaultBlockState().setValue(com.hollowhours.fun.FunBlock.FACING, north);
                 l.setBlock(sw, st, 3);
+                //#if MC>=12100
+                //$$ st.useWithoutItem(l, sp, new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(sw), north, sw, false));
+                //#else
                 st.use(l, sp, net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.phys.BlockHitResult(Vec3.atCenterOf(sw), north, sw, false));
+                //#endif
                 Sanity_set(sp, 50);
             });
             if (t == 5) {

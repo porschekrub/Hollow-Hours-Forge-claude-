@@ -1,5 +1,6 @@
 package com.hollowhours.combat;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.entity.GhostEntity;
 import com.hollowhours.ghost.KillSequence;
 import com.hollowhours.net.C2SCombat;
@@ -100,7 +101,7 @@ public final class Combat {
             if (to.dot(p.getViewVector(1f).multiply(1, 0, 1).normalize()) > 0.2) {
                 e.setAmount(e.getAmount() * 0.4f);
                 p.level().playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.8f, 1f);
-                p.getUseItem().hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(p.getUsedItemHand()));
+                Compat.hurtItem(p.getUseItem(), 1, p, p.getUsedItemHand());
             }
         }
         if (e.getSource().getDirectEntity() instanceof ServerPlayer p && p.getMainHandItem().getItem() instanceof MeleeWeapon) {

@@ -1,5 +1,6 @@
 package com.hollowhours.item;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.compat.ItemData;
 import com.hollowhours.registry.HHItems;
 import net.minecraft.ChatFormatting;
@@ -144,7 +145,7 @@ public class PhoneItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player p, InteractionHand hand) {
         ItemStack it = p.getItemInHand(hand);
-        if (level.isClientSide) DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.hollowhours.client.PhoneScreen.open(hand));
+        if (level.isClientSide) Compat.client(() -> () -> com.hollowhours.client.PhoneScreen.open(hand));
         return InteractionResultHolder.sidedSuccess(it, level.isClientSide);
     }
 

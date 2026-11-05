@@ -109,7 +109,14 @@ public final class Thirst {
 
     /** How much a finished item quenches (0 = not a drink). */
     public static float quench(ItemStack s) {
+        //#if MC>=12100
+        //$$ if (s.is(Items.POTION)) {
+        //$$     var pc = s.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+        //$$     return pc != null && pc.is(Potions.WATER) ? 7 : 4;
+        //$$ }
+        //#else
         if (s.is(Items.POTION)) return PotionUtils.getPotion(s) == Potions.WATER ? 7 : 4;
+        //#endif
         if (s.is(Items.MILK_BUCKET)) return 5;
         if (s.is(Items.HONEY_BOTTLE)) return 3;
         if (s.is(Items.MUSHROOM_STEW) || s.is(Items.BEETROOT_SOUP) || s.is(Items.RABBIT_STEW) || s.is(Items.SUSPICIOUS_STEW)) return 3;

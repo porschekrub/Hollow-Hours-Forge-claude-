@@ -110,6 +110,16 @@ public final class Fitness {
         if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());
     }
 
+    //#if MC>=12100
+    //$$ static void set(ServerPlayer p, net.minecraft.core.Holder<Attribute> a, UUID uuid, double v, AttributeModifier.Operation op) {
+    //$$     AttributeInstance in = p.getAttribute(a);
+    //$$     if (in == null) return;
+    //$$     var id = com.hollowhours.HollowHours.id("fitness_" + uuid.toString().substring(0, 8));
+    //$$     AttributeModifier old = in.getModifier(id);
+    //$$     if (old != null && Math.abs(old.amount() - v) < 1e-4) return;
+    //$$     if (old != null) in.removeModifier(id);
+    //$$     if (v > 0) in.addPermanentModifier(new AttributeModifier(id, v, op));
+    //#else
     static void set(ServerPlayer p, Attribute a, UUID id, double v, AttributeModifier.Operation op) {
         AttributeInstance in = p.getAttribute(a);
         if (in == null) return;
@@ -117,6 +127,7 @@ public final class Fitness {
         if (old != null && Math.abs(old.getAmount() - v) < 1e-4) return;
         if (old != null) in.removeModifier(id);
         if (v > 0) in.addPermanentModifier(new AttributeModifier(id, "hollowhours fitness", v, op));
+    //#endif
     }
 
     public static void sync(ServerPlayer p) {

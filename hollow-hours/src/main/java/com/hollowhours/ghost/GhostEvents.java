@@ -253,12 +253,23 @@ public final class GhostEvents {
                 && !e.getSource().is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) e.setCanceled(true);
     }
 
+    //#if NEOFORGE
+    //$$ static void onDamage(net.minecraftforge.event.entity.living.LivingDamageEvent.Post e) {
+    //$$     BloodFx.hurt(e.getEntity(), e.getSource(), e.getNewDamage());
+    //$$ }
+    //#else
     static void onDamage(net.minecraftforge.event.entity.living.LivingDamageEvent e) {
         BloodFx.hurt(e.getEntity(), e.getSource(), e.getAmount());
     }
+    //#endif
 
+    //#if NEOFORGE
+    //$$ static void onLivingTick(net.minecraftforge.event.tick.EntityTickEvent.Post e) {
+    //$$     if (!(e.getEntity() instanceof net.minecraft.world.entity.LivingEntity le)) return;
+    //#else
     static void onLivingTick(net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent e) {
         var le = e.getEntity();
+    //#endif
         if (!le.level().isClientSide && le.tickCount % 15 == 0) BloodFx.drip(le);
     }
 

@@ -1,5 +1,6 @@
 package com.hollowhours.physics;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.registry.HHEntities;
 import com.hollowhours.util.Later;
@@ -110,7 +111,7 @@ public final class Physics {
         level.addFreshEntity(tree);
         // chopping a whole tree wears the axe a little
         ItemStack axe = p.getMainHandItem();
-        if (axe.isDamageableItem()) axe.hurtAndBreak(Math.max(0, logs.size() / 4), p, pl -> pl.broadcastBreakEvent(net.minecraft.world.InteractionHand.MAIN_HAND));
+        if (axe.isDamageableItem()) Compat.hurtItem(axe, Math.max(0, logs.size() / 4), p, net.minecraft.world.InteractionHand.MAIN_HAND);
         p.causeFoodExhaustion(0.005f * logs.size());
         level.playSound(null, stump, net.minecraft.sounds.SoundEvents.WOOD_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, 1.4f, 0.5f);
     }
@@ -144,8 +145,14 @@ public final class Physics {
         if (vein.isEmpty()) return;
         vein.sort(Comparator.comparingDouble(b -> b.distSqr(start)));
         Vec3 center = Vec3.atCenterOf(start);
+        //#if MC>=12100
+        //$$ var enchants = level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT);
+        //$$ int fortune = EnchantmentHelper.getItemEnchantmentLevel(enchants.getOrThrow(Enchantments.FORTUNE), p.getMainHandItem());
+        //$$ int silk = EnchantmentHelper.getItemEnchantmentLevel(enchants.getOrThrow(Enchantments.SILK_TOUCH), p.getMainHandItem());
+        //#else
         int fortune = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, p.getMainHandItem());
         int silk = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p.getMainHandItem());
+        //#endif
         BUSY.addAll(vein);
         for (int i = 0; i < vein.size(); i++) {
             BlockPos b = vein.get(i);
@@ -167,9 +174,13 @@ public final class Physics {
                     ie.setDefaultPickUpDelay();
                     level.addFreshEntity(ie);
                 }
+                //#if NEOFORGE
+                //$$ int xp = bs.getExpDrop(level, b, null, p, tool);
+                //#else
                 int xp = bs.getExpDrop(level, level.random, b, fortune, silk);
+                //#endif
                 if (xp > 0) ExperienceOrb.award(level, at, xp);
-                tool.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(net.minecraft.world.InteractionHand.MAIN_HAND));
+                Compat.hurtItem(tool, 1, p, net.minecraft.world.InteractionHand.MAIN_HAND);
                 p.causeFoodExhaustion(0.005f);
             });
         }
@@ -179,7 +190,11 @@ public final class Physics {
     public static void onExplosion(ExplosionEvent.Detonate e) {
         if (!HHConfig.EXPLOSION_DEBRIS.get() || !(e.getLevel() instanceof ServerLevel level)) return;
         Explosion ex = e.getExplosion();
+        //#if MC>=12100
+        //$$ Vec3 c = ex.center();
+        //#else
         Vec3 c = ex.getPosition();
+        //#endif
         List<BlockPos> list = e.getAffectedBlocks();
         int thrown = 0;
         List<BlockPos> fly = new ArrayList<>();

@@ -40,7 +40,11 @@ public final class FirstPersonBody {
                 // hiding under a bed or in a closet: the camera is squeezed in, a body would fill the view
                 || p.getVehicle() instanceof com.hollowhours.entity.HideSeatEntity || p.getVehicle() instanceof com.hollowhours.entity.ClosetEntity
                 || p.getVehicle() instanceof com.hollowhours.entity.GhostEntity) return;
+        //#if NEOFORGE
+        //$$ float partial = e.getPartialTick().getGameTimeDeltaPartialTick(false);
+        //#else
         float partial = e.getPartialTick();
+        //#endif
         Vec3 cam = e.getCamera().getPosition();
         double x = Mth.lerp(partial, p.xo, p.getX()), y = Mth.lerp(partial, p.yo, p.getY()), z = Mth.lerp(partial, p.zo, p.getZ());
         float bodyYaw = Mth.rotLerp(partial, p.yBodyRotO, p.yBodyRot) * Mth.DEG_TO_RAD;

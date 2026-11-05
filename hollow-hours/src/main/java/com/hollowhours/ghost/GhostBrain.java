@@ -523,7 +523,11 @@ public final class GhostBrain {
         dmg = com.hollowhours.combat.GhostCombat.defend(p, g, dmg);
         if (dmg <= 0) return false; // dodged or parried
         boolean onCatch = HHConfig.KILL_MODE.get() == HHConfig.KillMode.ON_CATCH;
+        //#if MC>=12100
+        //$$ float after = CombatRules.getDamageAfterAbsorb(p, dmg, GhostDamage.hit(g), (float) p.getArmorValue(), (float) p.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+        //#else
         float after = CombatRules.getDamageAfterAbsorb(dmg, (float) p.getArmorValue(), (float) p.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+        //#endif
         boolean lethal = after >= p.getHealth() + p.getAbsorptionAmount();
         if ((onCatch || lethal) && KillSequence.begin(this, p)) return true;
         DamageSource src = GhostDamage.hit(g);

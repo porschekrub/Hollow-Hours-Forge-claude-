@@ -155,7 +155,11 @@ public final class Atmos {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
         if (level == null || level.dimension() != Level.OVERWORLD) return;
+        //#if NEOFORGE
+        //$$ float partial = e.getPartialTick().getGameTimeDeltaPartialTick(false);
+        //#else
         float partial = e.getPartialTick();
+        //#endif
         float b = blood(partial);
         if (b < 0.01f) return;
         float alpha = b * (1 - level.getRainLevel(partial));
@@ -183,6 +187,14 @@ public final class Atmos {
     }
 
     static void quad(Matrix4f m, float k) {
+        //#if MC>=12100
+        //$$ BufferBuilder bb = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        //$$ bb.addVertex(m, -k, -100f, k).setUv(1, 1);
+        //$$ bb.addVertex(m, k, -100f, k).setUv(0, 1);
+        //$$ bb.addVertex(m, k, -100f, -k).setUv(0, 0);
+        //$$ bb.addVertex(m, -k, -100f, -k).setUv(1, 0);
+        //$$ BufferUploader.drawWithShader(bb.buildOrThrow());
+        //#else
         BufferBuilder bb = Tesselator.getInstance().getBuilder();
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bb.vertex(m, -k, -100f, k).uv(1, 1).endVertex();
@@ -190,5 +202,6 @@ public final class Atmos {
         bb.vertex(m, k, -100f, -k).uv(0, 0).endVertex();
         bb.vertex(m, -k, -100f, -k).uv(1, 0).endVertex();
         BufferUploader.drawWithShader(bb.end());
+        //#endif
     }
 }

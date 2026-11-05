@@ -55,6 +55,7 @@ NEO_RENAMES = [
     ('onAddedToWorld()', 'onAddedToLevel()'),
     ('onRemovedFromWorld()', 'onRemovedFromLevel()'),
     ('IEntityAdditionalSpawnData', 'IEntityWithComplexSpawn'),
+    ('ForgeSpawnEggItem', 'DeferredSpawnEggItem'),
     ('net.minecraftforge.', 'net.neoforged.neoforge.'),
 ]
 
@@ -69,6 +70,17 @@ RENAMES_121 = [
     ('software.bernie.geckolib.core.molang.MolangParser.INSTANCE.setValue(', 'software.bernie.geckolib.loading.math.MathParser.setVariable('),
     ('software.bernie.geckolib.util.RenderUtils', 'software.bernie.geckolib.util.RenderUtil'),
     ('RenderUtils.', 'RenderUtil.'),
+    # renamed blocks and tags
+    ('Tags.Blocks.GLASS)', 'Tags.Blocks.GLASS_BLOCKS)'),
+]
+RENAMES_121_RE = [
+    # GeckoLib 4.5+: one packed ARGB colour instead of four floats
+    (r'float red, float green, float blue, float alpha\)', 'int colour)'),
+    (r', red, green, blue, alpha\)', ', colour)'),
+    (r'\bBlocks\.GRASS\b', 'Blocks.SHORT_GRASS'),
+    (r'\bAttributeModifier\.Operation\.ADDITION\b', 'AttributeModifier.Operation.ADD_VALUE'),
+    (r'\bAttributeModifier\.Operation\.MULTIPLY_BASE\b', 'AttributeModifier.Operation.ADD_MULTIPLIED_BASE'),
+    (r'\bAttributeModifier\.Operation\.MULTIPLY_TOTAL\b', 'AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL'),
 ]
 
 DATA_DIRS_121 = {
@@ -171,6 +183,16 @@ def check_java(text, path):
 
 
 IMPORT = re.compile(r'^import\s+([\w.]+)\.(\w+)\s*;\s*$')
+
+
+def vertex_chain_121(line):
+    """1.21 vertex builders: addVertex().setColor()... and no endVertex() (only whole chains on one line)."""
+    if '.endVertex()' not in line:
+        return line
+    for a, b in (('.vertex(', '.addVertex('), ('.color(', '.setColor('), ('.uv2(', '.setLight('), ('.uv(', '.setUv('),
+                 ('.overlayCoords(', '.setOverlay('), ('.normal(pose.normal(), ', '.setNormal(pose, '), ('.endVertex()', '')):
+        line = line.replace(a, b)
+    return line
 
 
 def drop_unused_imports(text):
@@ -287,6 +309,9 @@ def main():
                 if flags.get('MC', 0) >= 12100:
                     for x, y in RENAMES_121:
                         text = text.replace(x, y)
+                    for x, y in RENAMES_121_RE:
+                        text = re.sub(x, y, text)
+                    text = '\n'.join(vertex_chain_121(l) for l in text.split('\n'))
                 if neo:
                     text = rename_neo(text)
                 text = drop_unused_imports(text)

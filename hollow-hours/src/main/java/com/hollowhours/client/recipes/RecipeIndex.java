@@ -146,9 +146,16 @@ public final class RecipeIndex {
 
         List<Shown> shown = new ArrayList<>();
         int failed = 0;
+        //#if MC>=12100
+        //$$ for (var holder : mc.level.getRecipeManager().getRecipes()) {
+        //$$     Recipe<?> r = holder.value();
+        //$$     ResourceLocation rid = holder.id();
+        //#else
         for (Recipe<?> r : mc.level.getRecipeManager().getRecipes()) {
+            ResourceLocation rid = r.getId();
+        //#endif
             try {
-                Shown s = shown(r, ra, plain);
+                Shown s = shown(r, rid, ra, plain);
                 if (s != null) shown.add(s);
             } catch (Throwable ex) {
                 failed++;
@@ -204,19 +211,24 @@ public final class RecipeIndex {
         return in;
     }
 
-    static Shown shown(Recipe<?> r, RegistryAccess ra, List<ItemStack> plain) {
+    static Shown shown(Recipe<?> r, ResourceLocation rid, RegistryAccess ra, List<ItemStack> plain) {
         ItemStack out = r.getResultItem(ra);
         if (out == null || out.isEmpty()) return null;
         out = out.copy();
         RecipeType<?> type = r.getType();
         ResourceLocation tk = BuiltInRegistries.RECIPE_TYPE.getKey(type);
         String typeId = tk == null ? "?" : tk.toString();
-        String id = r.getId() == null ? "" : r.getId().toString();
+        String id = rid == null ? "" : rid.toString();
         if (type == RecipeType.CRAFTING) {
             NonNullList<Ingredient> ing = r.getIngredients();
             if (ing.isEmpty()) return null;
+            //#if MC>=12100
+            //$$ if (r instanceof net.minecraft.world.item.crafting.ShapedRecipe sh) {
+            //$$     int w = sh.getWidth(), h = sh.getHeight();
+            //#else
             if (r instanceof IShapedRecipe<?> sh) {
                 int w = sh.getRecipeWidth(), h = sh.getRecipeHeight();
+            //#endif
                 int gw = Math.max(3, w), gh = Math.max(3, h);
                 List<List<ItemStack>> in = new ArrayList<>();
                 for (int i = 0; i < gw * gh; i++) in.add(List.of());

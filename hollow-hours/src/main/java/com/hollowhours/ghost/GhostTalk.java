@@ -507,7 +507,7 @@ public final class GhostTalk {
             default -> null;
         };
         if (k != null) return offer(k);
-        Item it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(id));
+        Item it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(com.hollowhours.HollowHours.rl(id));
         if (it == Items.AIR) return null;
         double bonus = path.contains("netherite") ? 0.25 : path.contains("diamond") ? 0.15 : path.contains("gold") || path.contains("emerald") ? 0.08
                 : Compat.isFood(it) ? 0.05 : 0.03;
@@ -600,7 +600,7 @@ public final class GhostTalk {
 
     static String offerName(String key, String lang) {
         boolean en = lang.equals("en");
-        if (key.contains(":")) return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(key)).getDescription().getString();
+        if (key.contains(":")) return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(com.hollowhours.HollowHours.rl(key)).getDescription().getString();
         return switch (key) {
             case "diamond" -> en ? "diamond" : "เพชร";
             case "gold" -> en ? "gold ingot" : "ทองคำแท่ง";

@@ -124,7 +124,11 @@ public final class HHSounds {
             case "random.click" -> SoundEvents.UI_BUTTON_CLICK.value();
             case "random.break" -> SoundEvents.ITEM_BREAK;
             case "random.glass" -> SoundEvents.GLASS_BREAK;
+            //#if MC>=12100
+            //$$ case "random.explode" -> SoundEvents.GENERIC_EXPLODE.value();
+            //#else
             case "random.explode" -> SoundEvents.GENERIC_EXPLODE;
+            //#endif
             case "random.anvil_land" -> SoundEvents.ANVIL_LAND;
             case "dig.gravel" -> SoundEvents.GRAVEL_BREAK;
             case "dig.cloth" -> SoundEvents.WOOL_PLACE;

@@ -56,8 +56,13 @@ public class RiftRenderer extends EntityRenderer<RiftEntity> {
     }
 
     static void v(VertexConsumer vc, Matrix4f m, Matrix3f n, float x, float y, float u, float vv, int a) {
+        //#if MC>=12100
+        //$$ vc.addVertex(m, x, y, 0).setColor(255, 255, 255, a).setUv(u, vv).setOverlay(OverlayTexture.NO_OVERLAY).setLight(LightTexture.FULL_BRIGHT)
+        //$$         .setNormal(0, 0, 1);
+        //#else
         vc.vertex(m, x, y, 0).color(255, 255, 255, a).uv(u, vv).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT)
                 .normal(n, 0, 0, 1).endVertex();
+        //#endif
     }
 
     @Override

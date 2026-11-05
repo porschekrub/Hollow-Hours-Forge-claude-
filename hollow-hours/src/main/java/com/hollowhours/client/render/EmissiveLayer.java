@@ -40,6 +40,10 @@ public class EmissiveLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
         if (tex == null) return;
         RenderType eyes = RenderType.eyes(tex);
         getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, eyes, bufferSource.getBuffer(eyes), partialTick,
+                //#if MC>=12100
+                //$$ LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+                //#else
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                //#endif
     }
 }

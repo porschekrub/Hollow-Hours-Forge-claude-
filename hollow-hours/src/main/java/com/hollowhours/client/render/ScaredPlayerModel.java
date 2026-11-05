@@ -44,7 +44,7 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
     }
 
     void scare(AbstractClientPlayer p, float swing, float amount, float t) {
-        float f = Fear.of(p, Minecraft.getInstance().getFrameTime());
+        float f = Fear.of(p, com.hollowhours.compat.ClientCompat.partialTick());
         if (p.getVehicle() instanceof GhostEntity) {
             struggle(t);
             return;
@@ -69,7 +69,7 @@ public class ScaredPlayerModel extends PlayerModel<AbstractClientPlayer> {
     /** Eating: the hand at the mouth, chewing. Drinking: the cap first, then the hand higher, head tipped back.
      *  Also: scooping water with both hands, and charging the phone from the power bank. */
     void eatDrink(AbstractClientPlayer p, float t) {
-        float partial = Minecraft.getInstance().getFrameTime();
+        float partial = com.hollowhours.compat.ClientCompat.partialTick();
         float sip = com.hollowhours.client.PlayerAnims.sipProgress(p.getId(), p == Minecraft.getInstance().player, partial);
         if (sip >= 0) {
             // bend down, both hands into the water, then up to the mouth

@@ -18,7 +18,11 @@ import net.minecraftforge.client.model.data.ModelData;
 
 /** A headstone on a mound of earth, with the owner's name and the time left above it. */
 public class GraveRenderer extends EntityRenderer<GraveEntity> {
+    //#if MC>=12100
+    //$$ public static final net.minecraft.client.resources.model.ModelResourceLocation MODEL = com.hollowhours.compat.ClientCompat.model("block/grave");
+    //#else
     public static final ResourceLocation MODEL = HollowHours.id("block/grave");
+    //#endif
 
     public GraveRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
@@ -37,7 +41,11 @@ public class GraveRenderer extends EntityRenderer<GraveEntity> {
         if (entityRenderDispatcher.distanceToSqr(e) < 24 * 24) {
             int s = e.secondsLeft();
             Component label = Component.translatable("hollowhours.grave.label", e.ownerName(), String.format("%d:%02d", s / 60, s % 60));
+            //#if MC>=12100
+            //$$ renderNameTag(e, label, ps, buffers, light, partial);
+            //#else
             renderNameTag(e, label, ps, buffers, light);
+            //#endif
         }
     }
 

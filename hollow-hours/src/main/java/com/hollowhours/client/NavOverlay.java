@@ -6,13 +6,13 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 /** Navigating with the phone's map: an arrow and the distance at the top of the screen; it stops when you get there. */
 public final class NavOverlay {
     private NavOverlay() {}
 
-    public static void render(ForgeGui gui, GuiGraphics g, float partial, int w, int h) {
+    public static void render(GuiGraphics g, float partial) {
+        int w = g.guiWidth(), h = g.guiHeight();
         ClientPhone.Nav nav = ClientPhone.nav;
         Minecraft mc = Minecraft.getInstance();
         if (nav == null || mc.player == null || mc.level == null || mc.options.hideGui) return;

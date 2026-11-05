@@ -27,6 +27,13 @@ public class FunBlock extends HorizontalDirectionalBlock {
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ protected com.mojang.serialization.MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    //$$     return com.mojang.serialization.MapCodec.unit(this);
+    //$$ }
+    //$$
+    //#endif
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
         b.add(FACING);

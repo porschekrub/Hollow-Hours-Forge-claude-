@@ -11,7 +11,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -88,7 +87,8 @@ public final class PhoneAlert {
     }
 
     /** Subtitle + the phone in the corner (drawn above everything). */
-    public static void render(ForgeGui gui, GuiGraphics g, float partial, int w, int h) {
+    public static void render(GuiGraphics g, float partial) {
+        int w = g.guiWidth(), h = g.guiHeight();
         if (!active) return;
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;

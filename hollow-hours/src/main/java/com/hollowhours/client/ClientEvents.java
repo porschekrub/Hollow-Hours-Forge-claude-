@@ -163,15 +163,19 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
+    //#if NEOFORGE
+    //$$ public static void hud(net.neoforged.neoforge.client.event.RenderGuiLayerEvent.Pre e) {
+    //$$     if (KillCam.active() && Hud.hiddenInKill(e.getName())) e.setCanceled(true);
+    //$$ }
+    //#elif MC>=12100
+    //$$ public static void hud(net.minecraftforge.client.event.RenderGuiEvent.Pre e) {
+    //$$     // Forge 1.21 has no per-layer event: the vanilla HUD stays during the kill cinematic
+    //$$ }
+    //#else
     public static void hud(RenderGuiOverlayEvent.Pre e) {
-        if (!KillCam.active()) return;
-        var id = e.getOverlay().id();
-        if (id.equals(VanillaGuiOverlay.HOTBAR.id()) || id.equals(VanillaGuiOverlay.CROSSHAIR.id()) || id.equals(VanillaGuiOverlay.PLAYER_HEALTH.id())
-                || id.equals(VanillaGuiOverlay.FOOD_LEVEL.id()) || id.equals(VanillaGuiOverlay.ARMOR_LEVEL.id()) || id.equals(VanillaGuiOverlay.EXPERIENCE_BAR.id())
-                || id.equals(VanillaGuiOverlay.AIR_LEVEL.id()) || id.equals(VanillaGuiOverlay.MOUNT_HEALTH.id()) || id.equals(VanillaGuiOverlay.JUMP_BAR.id())
-                || id.equals(VanillaGuiOverlay.ITEM_NAME.id()) || id.equals(VanillaGuiOverlay.RECORD_OVERLAY.id()))
-            e.setCanceled(true);
+        if (KillCam.active() && Hud.hiddenInKill(e.getOverlay().id())) e.setCanceled(true);
     }
+    //#endif
 
     /** The death screen after a ghost kill: static, blood, and its face flickering in the noise. */
     @SubscribeEvent

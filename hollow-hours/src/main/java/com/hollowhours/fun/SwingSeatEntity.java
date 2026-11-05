@@ -165,13 +165,21 @@ public class SwingSeatEntity extends Entity implements IEntityAdditionalSpawnDat
     //#endif
 
     @Override
+    //#if NEOFORGE
+    //$$ public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void writeSpawnData(FriendlyByteBuf buf) {
+    //#endif
         buf.writeBlockPos(swing);
         buf.writeByte(facing.get2DDataValue());
     }
 
     @Override
+    //#if NEOFORGE
+    //$$ public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void readSpawnData(FriendlyByteBuf buf) {
+    //#endif
         swing = buf.readBlockPos();
         facing = Direction.from2DDataValue(buf.readByte());
     }

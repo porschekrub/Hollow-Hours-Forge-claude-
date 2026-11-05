@@ -41,14 +41,23 @@ public final class HorrorShader {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || failed || !HHClientConfig.SHADER.get() || shaderPackLoader()) return;
         // the world looks normal until the story starts, then the horror look fades in
+        //#if NEOFORGE
+        //$$ float strength = (float) (double) HHClientConfig.SHADER_STRENGTH.get() * Atmos.haunt(e.getPartialTick().getGameTimeDeltaPartialTick(false));
+        //#else
         float strength = (float) (double) HHClientConfig.SHADER_STRENGTH.get() * Atmos.haunt(e.getPartialTick());
+        //#endif
         if (strength <= 0.001f) return;
         RenderTarget main = mc.getMainRenderTarget();
         try {
             if (chain == null) {
                 chain = new PostChain(mc.getTextureManager(), mc.getResourceManager(), main, CHAIN);
+                //#if MC>=12100
+                //$$ pass = chain.addPass(HollowHours.MODID + ":haunt", main, chain.getTempTarget("swap"), false);
+                //$$ chain.addPass("blit", chain.getTempTarget("swap"), main, false);
+                //#else
                 pass = chain.addPass(HollowHours.MODID + ":haunt", main, chain.getTempTarget("swap"));
                 chain.addPass("blit", chain.getTempTarget("swap"), main);
+                //#endif
                 w = h = -1;
                 HollowHours.LOG.info("[Hollow Hours] horror shader on");
             }
@@ -57,7 +66,11 @@ public final class HorrorShader {
                 h = main.height;
                 chain.resize(w, h);
             }
+            //#if NEOFORGE
+            //$$ float partial = e.getPartialTick().getGameTimeDeltaPartialTick(false);
+            //#else
             float partial = e.getPartialTick();
+            //#endif
             if (t0 < 0) t0 = System.nanoTime();
             float clock = ((System.nanoTime() - t0) / 1.0e9f) % 600f;
             var fx = pass.getEffect();

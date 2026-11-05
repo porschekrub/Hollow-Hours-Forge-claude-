@@ -46,4 +46,19 @@ public final class Compat {
         return Compat.loadStack(t);
         //#endif
     }
+
+    /** Wears an item held in a hand (it breaks with the usual sound at 0). */
+    public static void hurtItem(ItemStack s, int amount, net.minecraft.world.entity.LivingEntity who, net.minecraft.world.InteractionHand hand) {
+        if (amount <= 0) return;
+        //#if MC>=12100
+        //$$ s.hurtAndBreak(amount, who, net.minecraft.world.entity.LivingEntity.getSlotForHand(hand));
+        //#else
+        s.hurtAndBreak(amount, who, e -> e.broadcastBreakEvent(hand));
+        //#endif
+    }
+
+    /** Runs client-only code on the physical client (the double lambda keeps the client class unloaded on servers). */
+    public static void client(Supplier<Runnable> code) {
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()) code.get().run();
+    }
 }

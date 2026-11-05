@@ -46,10 +46,17 @@ public final class ClientSetup {
     /** Players get the scared body animations (the model inside both player renderers is swapped). */
     @SubscribeEvent
     public static void playerModels(EntityRenderersEvent.AddLayers e) {
+        //#if NEOFORGE
+        //$$ for (net.minecraft.client.resources.PlayerSkin.Model skin : e.getSkins()) {
+        //$$     net.minecraft.client.renderer.entity.EntityRenderer<? extends net.minecraft.world.entity.player.Player> r = e.getSkin(skin);
+        //$$     if (r == null) continue;
+        //$$     boolean slim = skin == net.minecraft.client.resources.PlayerSkin.Model.SLIM;
+        //#else
         for (String skin : e.getSkins()) {
             net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?> r = e.getSkin(skin);
             if (r == null) continue;
             boolean slim = skin.equals("slim");
+        //#endif
             try {
                 var part = e.getEntityModels().bakeLayer(slim ? net.minecraft.client.model.geom.ModelLayers.PLAYER_SLIM : net.minecraft.client.model.geom.ModelLayers.PLAYER);
                 for (java.lang.reflect.Field f : net.minecraft.client.renderer.entity.LivingEntityRenderer.class.getDeclaredFields()) {
@@ -80,19 +87,38 @@ public final class ClientSetup {
         e.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) rm -> HorrorShader.reload());
     }
 
+    //#if NEOFORGE
+    //$$ @SubscribeEvent
+    //$$ public static void overlays(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent e) {
+    //$$     for (Hud.Layer l : Hud.LAYERS) {
+    //$$         net.minecraft.client.gui.LayeredDraw.Layer draw = (g, dt) -> l.draw().render(g, dt.getGameTimeDeltaPartialTick(true));
+    //$$         var above = Hud.vanilla(l.anchor());
+    //$$         if (above == null) e.registerAboveAll(HollowHours.id(l.name()), draw);
+    //$$         else e.registerAbove(above, HollowHours.id(l.name()), draw);
+    //$$     }
+    //$$ }
+    //#elif MC>=12100
+    //$$ @SubscribeEvent
+    //$$ public static void overlays(net.minecraftforge.client.event.AddGuiOverlayLayersEvent e) {
+    //$$     var root = e.getLayeredDraw();
+    //$$     for (Hud.Layer l : Hud.LAYERS) {
+    //$$         net.minecraft.client.gui.LayeredDraw.Layer draw = (g, dt) -> l.draw().render(g, dt.getGameTimeDeltaPartialTick(true));
+    //$$         var above = Hud.vanilla(l.anchor());
+    //$$         if (above == null) root.add(HollowHours.id(l.name()), draw);
+    //$$         else root.addAbove(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.VANILLA_ROOT, HollowHours.id(l.name()), above, draw);
+    //$$     }
+    //$$ }
+    //#else
     @SubscribeEvent
     public static void overlays(RegisterGuiOverlaysEvent e) {
-        e.registerAbove(VanillaGuiOverlay.CHAT_PANEL.id(), "horror_fx", (gui, g, partial, w, h) -> ClientFx.render(g, partial));
-        e.registerAboveAll("jumpscare", (gui, g, partial, w, h) -> Jumpscare.render(g, partial));
-        e.registerAbove(VanillaGuiOverlay.FOOD_LEVEL.id(), "thirst", SurvivalHud::thirst);
-        e.registerAbove(VanillaGuiOverlay.ARMOR_LEVEL.id(), "sanity", SurvivalHud::sanity);
-        e.registerAboveAll("phone_alert", PhoneAlert::render);
-        e.registerAboveAll("phone_notice", PhoneNotice::render);
-        e.registerAboveAll("rescue_fade", RescueFade::render);
-        e.registerAboveAll("ending", (gui, g, partial, w, h) -> EndingClient.render(g, partial, w, h));
-        e.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "combat", (gui, g, partial, w, h) -> CombatClient.renderHud(g, partial, w, h));
-        e.registerAbove(VanillaGuiOverlay.BOSS_EVENT_PROGRESS.id(), "phone_nav", NavOverlay::render);
+        for (Hud.Layer l : Hud.LAYERS) {
+            net.minecraftforge.client.gui.overlay.IGuiOverlay draw = (gui, g, partial, w, h) -> l.draw().render(g, partial);
+            var above = Hud.vanilla(l.anchor());
+            if (above == null) e.registerAboveAll(l.name(), draw);
+            else e.registerAbove(above, l.name(), draw);
+        }
     }
+    //#endif
 
     @SubscribeEvent
     public static void particles(net.minecraftforge.client.event.RegisterParticleProvidersEvent e) {
@@ -109,7 +135,7 @@ public final class ClientSetup {
             ItemProperties.register(HHItems.CANTEEN.get(), HollowHours.id("empty"),
                     (stack, level, entity, seed) -> com.hollowhours.item.CanteenItem.sips(stack) <= 0 ? 1f : 0f);
             // the grave compass needle works like a lodestone compass, pointing at the grave
-            ItemProperties.register(HHItems.GRAVE_COMPASS.get(), new net.minecraft.resources.ResourceLocation("angle"),
+            ItemProperties.register(HHItems.GRAVE_COMPASS.get(), net.minecraft.resources.ResourceLocation.tryParse("angle"),
                     new net.minecraft.client.renderer.item.CompassItemPropertyFunction((level, stack, entity) -> com.hollowhours.grave.GraveCompassItem.target(stack)));
         });
     }

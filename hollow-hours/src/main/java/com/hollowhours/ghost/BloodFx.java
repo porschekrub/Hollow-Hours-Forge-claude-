@@ -41,8 +41,13 @@ public final class BloodFx {
         String id = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath();
         Integer c = COLORS.get(id);
         if (c != null) return c;
+        //#if MC>=12100
+        //$$ if (e.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD)) return 0x5A1A0C;
+        //$$ if (e.getType().is(net.minecraft.tags.EntityTypeTags.ARTHROPOD)) return 0x5E7A1E;
+        //#else
         if (e.getMobType() == MobType.UNDEAD) return 0x5A1A0C;
         if (e.getMobType() == MobType.ARTHROPOD) return 0x5E7A1E;
+        //#endif
         return 0x8A0606;
     }
 

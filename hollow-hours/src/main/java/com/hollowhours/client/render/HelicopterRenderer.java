@@ -21,8 +21,13 @@ import net.minecraftforge.client.model.data.ModelData;
  * the rotors spinning, the nose dipping as it speeds up.
  */
 public class HelicopterRenderer extends EntityRenderer<HelicopterEntity> {
+    //#if MC>=12100
+    //$$ public static final net.minecraft.client.resources.model.ModelResourceLocation BODY = com.hollowhours.compat.ClientCompat.model("block/helicopter"),
+    //$$         ROTOR = com.hollowhours.compat.ClientCompat.model("block/helicopter_rotor"), TAIL = com.hollowhours.compat.ClientCompat.model("block/helicopter_tail_rotor");
+    //#else
     public static final ResourceLocation BODY = HollowHours.id("block/helicopter"), ROTOR = HollowHours.id("block/helicopter_rotor"),
             TAIL = HollowHours.id("block/helicopter_tail_rotor");
+    //#endif
 
     public HelicopterRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
@@ -58,7 +63,11 @@ public class HelicopterRenderer extends EntityRenderer<HelicopterEntity> {
         super.render(e, yaw, partial, ps, buffers, light);
     }
 
+    //#if MC>=12100
+    //$$ static void draw(net.minecraft.client.resources.model.ModelResourceLocation model, PoseStack ps, MultiBufferSource buffers, int light) {
+    //#else
     static void draw(ResourceLocation model, PoseStack ps, MultiBufferSource buffers, int light) {
+    //#endif
         Minecraft mc = Minecraft.getInstance();
         mc.getBlockRenderer().getModelRenderer().renderModel(ps.last(), buffers.getBuffer(Sheets.cutoutBlockSheet()), null, mc.getModelManager().getModel(model),
                 1f, 1f, 1f, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());

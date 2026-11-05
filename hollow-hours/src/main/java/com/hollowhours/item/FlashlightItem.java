@@ -63,7 +63,9 @@ public class FlashlightItem extends Item {
         return false;
     }
 
+    //#if MC<12100
     @Override
+    //#endif
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return false;
     }

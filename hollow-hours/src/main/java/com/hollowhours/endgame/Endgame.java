@@ -373,8 +373,13 @@ public final class Endgame {
     public static ItemStack makeMap(ServerLevel over, BlockPos site) {
         ItemStack map = MapItem.create(over, site.getX(), site.getZ(), (byte) 3, true, true);
         MapItem.renderBiomePreviewMap(over, map);
+        //#if MC>=12100
+        //$$ MapItemSavedData.addTargetDecoration(map, site, "+", net.minecraft.world.level.saveddata.maps.MapDecorationTypes.RED_X);
+        //$$ ItemData.setName(map, Component.translatable("item.hollowhours.mountain_map").withStyle(ChatFormatting.GOLD));
+        //#else
         MapItemSavedData.addTargetDecoration(map, site, "+", MapDecoration.Type.RED_X);
         map.setHoverName(Component.translatable("item.hollowhours.mountain_map").withStyle(ChatFormatting.GOLD));
+        //#endif
         ItemData.edit(map, nbt -> nbt.putBoolean("hollowhours_mountain", true));
         return map;
     }
@@ -496,8 +501,13 @@ public final class Endgame {
         ServerLevel over = p.server.overworld();
         Vec3 to = null;
         if (p.getRespawnPosition() != null && p.getRespawnDimension() == Level.OVERWORLD) {
+            //#if MC>=12100
+            //$$ var tr = p.findRespawnPositionAndUseSpawnBlock(false, net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING);
+            //$$ if (!tr.missingRespawnBlock() && tr.newLevel() == over) to = tr.pos();
+            //#else
             Optional<Vec3> v = Player.findRespawnPositionAndUseSpawnBlock(over, p.getRespawnPosition(), p.getRespawnAngle(), p.isRespawnForced(), false);
             if (v.isPresent()) to = v.get();
+            //#endif
         }
         if (to == null) {
             BlockPos s = over.getSharedSpawnPos();

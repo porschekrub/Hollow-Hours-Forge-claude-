@@ -1,5 +1,6 @@
 package com.hollowhours.combat;
 
+import com.hollowhours.compat.Compat;
 import com.hollowhours.config.HHConfig;
 import com.hollowhours.entity.GhostAnim;
 import com.hollowhours.entity.GhostEntity;
@@ -99,7 +100,7 @@ public final class GhostCombat {
         boolean ok = poiseHit(g, p, amount * factor, false);
         if (ok && src.getDirectEntity() == p) {
             Fitness.addSkill(p, false, 1);
-            if (held.isDamageableItem()) held.hurtAndBreak(1, p, pl -> pl.broadcastBreakEvent(net.minecraft.world.InteractionHand.MAIN_HAND));
+            if (held.isDamageableItem()) Compat.hurtItem(held, 1, p, net.minecraft.world.InteractionHand.MAIN_HAND);
         }
         return ok;
     }
@@ -217,7 +218,7 @@ public final class GhostCombat {
             Vec3 look = p.getViewVector(1f).multiply(1, 0, 1).normalize();
             if (to.dot(look) > 0.2) {
                 ItemStack w = p.getUseItem();
-                w.hurtAndBreak(2, p, pl -> pl.broadcastBreakEvent(p.getUsedItemHand()));
+                Compat.hurtItem(w, 2, p, p.getUsedItemHand());
                 if (p.getTicksUsingItem() <= 7) {
                     parry(p, g);
                     return -1;

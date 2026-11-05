@@ -147,7 +147,9 @@ public class GraveEntity extends Entity {
         return true;
     }
 
+    //#if MC<12100
     @Override
+    //#endif
     public boolean ignoreExplosion() {
         return true;
     }

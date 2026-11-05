@@ -267,7 +267,11 @@ public class BoardsEntity extends Entity implements GeoEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
+        //#if MC>=12100
+        //$$ entityData.set(TARGET, NbtUtils.readBlockPos(tag, "target").orElse(BlockPos.ZERO));
+        //#else
         entityData.set(TARGET, NbtUtils.readBlockPos(tag.getCompound("target")));
+        //#endif
         entityData.set(KIND, tag.getInt("kind"));
         entityData.set(AXIS, tag.getInt("axis"));
         entityData.set(SIDE, tag.getInt("side"));

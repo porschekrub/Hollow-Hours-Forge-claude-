@@ -1,5 +1,6 @@
 package com.hollowhours.grave;
 
+import com.hollowhours.compat.Compat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,7 +29,7 @@ public class RestorerItem extends Item {
             sp.displayClientMessage(Component.translatable("item.hollowhours.restorer.none"), true);
             return InteractionResultHolder.fail(s);
         }
-        if (!sp.getAbilities().instabuild) s.hurtAndBreak(1, sp, pl -> pl.broadcastBreakEvent(hand));
+        if (!sp.getAbilities().instabuild) Compat.hurtItem(s, 1, sp, hand);
         sp.getCooldowns().addCooldown(this, 20);
         return InteractionResultHolder.consume(s);
     }

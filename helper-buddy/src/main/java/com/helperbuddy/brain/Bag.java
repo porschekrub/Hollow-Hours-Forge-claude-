@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.entity.HelperEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -267,12 +268,8 @@ public final class Bag {
     public static boolean damageTool(HelperEntity h) {
         ItemStack t = h.tool();
         if (t.isEmpty() || !t.isDamageableItem()) return false;
-        boolean[] broke = {false};
-        t.hurtAndBreak(1, h, e -> {
-            broke[0] = true;
-            e.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.MAINHAND);
-        });
-        return broke[0];
+        Compat.hurtItem(t, 1, h, net.minecraft.world.InteractionHand.MAIN_HAND);
+        return t.isEmpty();
     }
 
     /** Mending: XP repairs the tool first; returns the XP left. */

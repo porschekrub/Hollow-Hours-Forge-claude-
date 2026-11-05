@@ -152,7 +152,11 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
     //#endif
 
     @Override
+    //#if NEOFORGE
+    //$$ public void writeSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void writeSpawnData(FriendlyByteBuf buf) {
+    //#endif
         buf.writeFloat(dirX);
         buf.writeFloat(dirZ);
         buf.writeVarInt(states.size());
@@ -163,7 +167,11 @@ public class FallingTreeEntity extends Entity implements IEntityAdditionalSpawnD
     }
 
     @Override
+    //#if NEOFORGE
+    //$$ public void readSpawnData(net.minecraft.network.RegistryFriendlyByteBuf buf) {
+    //#else
     public void readSpawnData(FriendlyByteBuf buf) {
+    //#endif
         dirX = buf.readFloat();
         dirZ = buf.readFloat();
         int n = buf.readVarInt();

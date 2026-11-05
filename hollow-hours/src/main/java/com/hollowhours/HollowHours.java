@@ -69,7 +69,11 @@ public class HollowHours {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        //#if MC>=12100
+        //$$ event.enqueueWork(() -> HHNet.register());
+        //#else
         event.enqueueWork(HHNet::register);
+        //#endif
     }
 
     private void attributes(EntityAttributeCreationEvent event) {

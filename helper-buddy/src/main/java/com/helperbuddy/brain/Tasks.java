@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
@@ -385,7 +386,7 @@ public final class Tasks {
         }
         if (h.distanceTo(s) > 2.6) return;
         s.shear(SoundSource.NEUTRAL);
-        h.tool().hurtAndBreak(1, h, e -> {});
+        Compat.hurtItem(h.tool(), 1, h, net.minecraft.world.InteractionHand.MAIN_HAND);
         h.swing(InteractionHand.MAIN_HAND);
         count++;
         animal = null;

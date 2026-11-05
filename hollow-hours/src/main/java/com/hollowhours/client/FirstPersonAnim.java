@@ -163,7 +163,11 @@ public final class FirstPersonAnim {
         if (eating) {
             // the game's eating motion: up to the mouth, bobbing
             float f = p.getUseItemRemainingTicks() - partial + 1;
+            //#if MC>=12100
+            //$$ float f1 = f / stack.getUseDuration(p);
+            //#else
             float f1 = f / stack.getUseDuration();
+            //#endif
             if (f1 < 0.8f) ps.translate(0, Mth.abs(Mth.cos(f / 4f * Mth.PI) * 0.1f), 0);
             float f3 = 1 - (float) Math.pow(f1, 27);
             ps.translate(f3 * 0.6f * i, f3 * -0.5f, 0);

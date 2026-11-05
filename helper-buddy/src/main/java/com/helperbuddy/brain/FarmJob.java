@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.talk.Say;
 import net.minecraft.core.BlockPos;
@@ -110,7 +111,7 @@ public final class FarmJob {
                 if (!(s.is(Blocks.GRASS_BLOCK) || s.is(Blocks.DIRT) || s.is(Blocks.DIRT_PATH)) || !l.getBlockState(p.above()).isAir()) return;
                 if (!Bag.equip(h, Bag.Kind.HOE)) return;
                 l.setBlock(p, Blocks.FARMLAND.defaultBlockState(), 3);
-                h.tool().hurtAndBreak(1, h, e -> {});
+                Compat.hurtItem(h.tool(), 1, h, net.minecraft.world.InteractionHand.MAIN_HAND);
                 l.playSound(null, p, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1f, 1f);
                 h.swing(InteractionHand.MAIN_HAND);
                 tilled++;

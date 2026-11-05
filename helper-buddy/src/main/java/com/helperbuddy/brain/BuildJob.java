@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.blocks.BlockMap;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
@@ -783,7 +784,7 @@ public final class BuildJob {
                 if (item == Items.FLINT_AND_STEEL) {
                     for (int i = 0; i < h.bag.getContainerSize(); i++)
                         if (h.bag.getItem(i).is(Items.FLINT_AND_STEEL)) {
-                            h.bag.getItem(i).hurtAndBreak(1, h, e -> {});
+                            Compat.hurtItem(h.bag.getItem(i), 1, h, net.minecraft.world.InteractionHand.MAIN_HAND);
                             break;
                         }
                 } else Bag.take(h, item, 1);

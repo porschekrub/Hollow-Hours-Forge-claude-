@@ -36,7 +36,11 @@ public class MeleeWeapon extends SwordItem {
     private Multimap<Attribute, AttributeModifier> extra;
 
     public MeleeWeapon(int durability, int damage, float speed, float poise, float reach, boolean stuns, Properties p) {
+        //#if MC>=12100
+        //$$ super(tier(durability), p.attributes(attributes(tier(durability), damage, speed, reach)));
+        //#else
         super(tier(durability), damage, speed, p);
+        //#endif
         this.poise = poise;
         this.reach = reach;
         this.stuns = stuns;
@@ -59,10 +63,17 @@ public class MeleeWeapon extends SwordItem {
                 return 0;
             }
 
+            //#if MC>=12100
+            //$$ @Override
+            //$$ public net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> getIncorrectBlocksForDrops() {
+            //$$     return net.minecraft.tags.BlockTags.INCORRECT_FOR_IRON_TOOL;
+            //$$ }
+            //#else
             @Override
             public int getLevel() {
                 return 2;
             }
+            //#endif
 
             @Override
             public int getEnchantmentValue() {
@@ -76,6 +87,16 @@ public class MeleeWeapon extends SwordItem {
         };
     }
 
+    //#if MC>=12100
+    //$$ /** Sword damage and speed, plus the longer reach of a spear or an axe. */
+    //$$ static net.minecraft.world.item.component.ItemAttributeModifiers attributes(Tier tier, int damage, float speed, float reach) {
+    //$$     var m = SwordItem.createAttributes(tier, damage, speed);
+    //$$     if (reach > 0) m = m.withModifierAdded(net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE,
+    //$$             new AttributeModifier(com.hollowhours.HollowHours.id("weapon_reach"), reach, AttributeModifier.Operation.ADD_VALUE),
+    //$$             net.minecraft.world.entity.EquipmentSlotGroup.MAINHAND);
+    //$$     return m;
+    //$$ }
+    //#else
     @SuppressWarnings("deprecation")
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
@@ -89,6 +110,7 @@ public class MeleeWeapon extends SwordItem {
         }
         return extra;
     }
+    //#endif
 
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {

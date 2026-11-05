@@ -439,8 +439,13 @@ public final class Rescue {
             if (p.getRespawnDimension() == HAVEN) p.setRespawnPosition(Level.OVERWORLD, null, 0, false, false);
             Vec3 to = null;
             if (p.getRespawnPosition() != null && p.getRespawnDimension() == Level.OVERWORLD) {
+                //#if MC>=12100
+                //$$ var tr = p.findRespawnPositionAndUseSpawnBlock(false, net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING);
+                //$$ if (!tr.missingRespawnBlock() && tr.newLevel() == over) to = tr.pos();
+                //#else
                 Optional<Vec3> v = Player.findRespawnPositionAndUseSpawnBlock(over, p.getRespawnPosition(), p.getRespawnAngle(), p.isRespawnForced(), false);
                 if (v.isPresent()) to = v.get();
+                //#endif
             }
             if (to == null) {
                 BlockPos s = top(over, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, over.getSharedSpawnPos());

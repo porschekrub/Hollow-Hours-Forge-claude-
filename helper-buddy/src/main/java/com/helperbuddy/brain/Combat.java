@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.talk.Say;
@@ -328,7 +329,7 @@ public final class Combat {
         else arrowStack.shrink(1);
         h.level().addFreshEntity(arrow);
         h.level().playSound(null, h.blockPosition(), SoundEvents.ARROW_SHOOT, SoundSource.NEUTRAL, 1f, 1f / (h.getRandom().nextFloat() * 0.4f + 0.8f));
-        bow.hurtAndBreak(1, h, e -> {});
+        Compat.hurtItem(bow, 1, h, net.minecraft.world.InteractionHand.MAIN_HAND);
         h.act("shoot");
         bowCd = 22;
     }
