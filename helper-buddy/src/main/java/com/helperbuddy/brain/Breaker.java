@@ -135,6 +135,8 @@ public final class Breaker {
         int silk = Compat.enchant(tool, Enchantments.SILK_TOUCH);
         //#if NEOFORGE
         //$$ int xp = Bag.canHarvest(tool, s) ? s.getExpDrop(sl, p, be, h, tool) : 0;
+        //#elif FABRIC
+        //$$ int xp = Bag.canHarvest(tool, s) ? net.minecraftforge.internal.BlockXp.get(s, sl, p, tool) : 0;
         //#else
         int xp = Bag.canHarvest(tool, s) ? s.getExpDrop(sl, sl.random, p, fortune, silk) : 0;
         //#endif

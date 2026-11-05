@@ -1,0 +1,2 @@
+# Fabric: Forge's mod descriptor (fabric.mod.json comes from ports/fabric-common/<mod>)
+resources/META-INF/mods.toml

@@ -321,6 +321,9 @@ public final class Bag {
             //#if NEOFORGE
             //$$ IItemHandler cap = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, p, Direction.UP);
             //$$ if (cap != null) java.util.Optional.of(cap).ifPresent(hd -> {
+            //#elif FABRIC
+            //$$ IItemHandler cap = net.minecraftforge.items.wrapper.InvWrapper.at(level, p);
+            //$$ if (cap != null) java.util.Optional.of(cap).ifPresent(hd -> {
             //#else
             be.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP).ifPresent(hd -> {
             //#endif

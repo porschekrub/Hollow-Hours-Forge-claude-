@@ -225,7 +225,22 @@ def drop_unused_imports(text):
 FABRIC_KEEP = ('net.minecraftforge.common.ForgeConfigSpec', 'net.minecraftforge.fml.config.ModConfig')
 
 
+# Fabric: Forge-only calls with a plain equivalent
+FABRIC_RENAMES_RE = [
+    (r'\bCreativeModeTab\.builder\(\)', 'net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup.builder()'),
+    # ToolAction (shim): a test on the stack
+    (r'\b([\w.]+)\.canPerformAction\(([\w.]+)\)', r'\2.test(\1)'),
+    # Forge's block sound with a position: the state's own
+    (r'\.getSoundType\((?:[^(),]|\([^()]*\))+,(?:[^(),]|\([^()]*\))+,(?:[^(),]|\([^()]*\))+\)', '.getSoundType()'),
+    (r'\bItemStack (\w+) = (\w+)\.getCraftingRemainingItem\(\)', r'ItemStack \1 = \2.getRecipeRemainder()'),
+    (r'\b(\w+)\.getLanguage\(\)', r'net.minecraftforge.internal.Lang.of(\1)'),
+]
+
+
 def rename_fabric(text, shim):
+    # the shim's own members added to Minecraft classes (mixins) are named after the mod, so two mods with a shim
+    # do not clash: "shim$x" -> "helperbuddy$x"
+    text = text.replace('shim$', shim.split('.')[1] + '$')
     keep = {}
     for i, k in enumerate(FABRIC_KEEP):
         token = '\x00KEEP%d\x00' % i
@@ -235,6 +250,87 @@ def rename_fabric(text, shim):
     for token, k in keep.items():
         text = text.replace(token, k)
     return text
+
+
+# --- Fabric: the shim's event bus is told each listener's event class (Forge works it out from the lambda at runtime)
+LISTENER_REF = re.compile(r'addListener\((\s*(?:[\w.]*EventPriority\.\w+)\s*,\s*)?([\w.]+)::(\w+)\)')
+LISTENER_LAMBDA = re.compile(r'addListener\((\s*(?:[\w.]*EventPriority\.\w+)\s*,\s*)?\(([\w.]+) (\w+)\) ->')
+IMPORT_ANY = re.compile(r'^import\s+([\w.]+)\s*;', re.M)
+PACKAGE = re.compile(r'^package\s+([\w.]+)\s*;', re.M)
+
+
+class SourceIndex:
+    """Class name -> (path, text) over every processed .java file, to look up listener methods."""
+
+    def __init__(self):
+        self.by_fqn = {}
+
+    def add(self, rel, text):
+        pk = PACKAGE.search(text)
+        name = os.path.basename(rel)[:-5]
+        self.by_fqn[(pk.group(1) + '.' if pk else '') + name] = text
+
+    def resolve(self, simple_or_fqn, from_text):
+        if simple_or_fqn in self.by_fqn:
+            return simple_or_fqn
+        for imp in IMPORT_ANY.findall(from_text):
+            if imp.split('.')[-1] == simple_or_fqn.split('.')[0]:
+                cand = imp + simple_or_fqn[len(simple_or_fqn.split('.')[0]):]
+                return cand
+        pk = PACKAGE.search(from_text)
+        return (pk.group(1) + '.' if pk else '') + simple_or_fqn
+
+
+def qualify_type(type_text, file_text):
+    """A type written in a file (maybe "TickEvent.ServerTickEvent") as a fully qualified name."""
+    if '.' in type_text and type_text[0].islower():
+        return type_text
+    head = type_text.split('.')[0]
+    for imp in IMPORT_ANY.findall(file_text):
+        if imp.split('.')[-1] == head:
+            return imp + type_text[len(head):]
+    pk = PACKAGE.search(file_text)
+    return (pk.group(1) + '.' if pk else '') + type_text
+
+
+def fabric_listeners(text, index, path):
+    def ref(m):
+        prio, owner, method = m.group(1) or '', m.group(2), m.group(3)
+        if owner == 'this':
+            cls_text = text
+        else:
+            fqn = index.resolve(owner, text)
+            cls_text = index.by_fqn.get(fqn)
+        if cls_text is None:
+            raise SystemExit(f'{path}: listener {owner}::{method}: class not found')
+        mm = re.search(r'\b' + re.escape(method) + r'\s*\(\s*(?:final\s+)?([\w.]+)\s+\w+\s*\)', cls_text)
+        if not mm:
+            raise SystemExit(f'{path}: listener {owner}::{method}: method not found')
+        t = qualify_type(mm.group(1), cls_text)
+        return f'addListener({prio}{t}.class, {owner}::{method})'
+
+    def lam(m):
+        prio, t, var = m.group(1) or '', m.group(2), m.group(3)
+        return f'addListener({prio}{t}.class, ({t} {var}) ->'
+
+    text = LISTENER_REF.sub(ref, text)
+    return LISTENER_LAMBDA.sub(lam, text)
+
+
+SUBSCRIBER = re.compile(r'@Mod\.EventBusSubscriber\(([^)]*)\)')
+
+
+def subscribers_java(entries):
+    """The classes annotated @Mod.EventBusSubscriber (Fabric has no annotation scan): "BUS:SIDE:class"."""
+    body = ',\n            '.join('"%s"' % e for e in sorted(entries))
+    return ('package net.minecraftforge.internal;\n\n'
+            '/** Made by ports/pp.py: every @Mod.EventBusSubscriber class, as "bus:side:class". */\n'
+            'public final class Subscribers {\n'
+            '    private Subscribers() {}\n\n'
+            '    public static final String[] ALL = {\n            ' + body + '\n    };\n}\n')
+
+
+PERSISTENT = re.compile(r'\b(\w+)\.getPersistentData\(\)')
 
 
 def rename_neo(text):
@@ -317,6 +413,7 @@ def main():
     ap.add_argument('--flags', default='')
     ap.add_argument('--check')
     ap.add_argument('--shim', default='')
+    ap.add_argument('--extra', action='append', default=[])
     a = ap.parse_args()
 
     if a.check:
@@ -337,13 +434,17 @@ def main():
     neo = flags.get('NEOFORGE', False)
 
     removed = set()
-    rm = os.path.join(a.overlay, 'pp-remove.txt') if a.overlay else None
-    if rm and os.path.exists(rm):
-        removed = {l.strip() for l in open(rm) if l.strip() and not l.startswith('#')}
+    for d in [a.overlay] + a.extra if a.overlay else a.extra:
+        rm = os.path.join(d, 'pp-remove.txt')
+        if os.path.exists(rm):
+            removed |= {l.strip() for l in open(rm) if l.strip() and not l.startswith('#')}
 
     produced = set()
+    fabric = bool(flags.get('FABRIC'))
+    index = SourceIndex()
+    subscribers = set()
     for kind in ('java', 'resources'):
-        sources = [os.path.join(a.src, kind)]
+        sources = [os.path.join(a.src, kind)] + [os.path.join(e, kind) for e in a.extra]
         if a.overlay:
             sources.append(os.path.join(a.overlay, kind))
         files = {}
@@ -352,6 +453,7 @@ def main():
                 continue
             for rel, full in walk(base):
                 files[rel] = full  # the overlay comes last and wins
+        texts = {}
         for rel, full in sorted(files.items()):
             if f'{kind}/{rel}' in removed:
                 continue
@@ -364,15 +466,41 @@ def main():
                     for x, y in RENAMES_121_RE:
                         text = re.sub(x, y, text)
                     text = '\n'.join(vertex_chain_121(l) for l in text.split('\n'))
-                if neo:
-                    text = rename_neo(text)
-                if flags.get('FABRIC') and a.shim:
-                    text = rename_fabric(text, a.shim)
-                text = drop_unused_imports(text)
-                write_if_changed(os.path.join(a.out, kind, rel), text, produced)
+                texts[rel] = text
+                index.add(rel, text)
             else:
                 out_rel = map_resource(rel, flags) if kind == 'resources' else rel
-                write_if_changed(os.path.join(a.out, kind, out_rel), transform_resource(out_rel, data, flags), produced)
+                if fabric and a.shim:
+                    out_rel = out_rel.replace('SHIM', a.shim)
+                data = transform_resource(out_rel, data, flags)
+                if fabric and a.shim and out_rel.endswith('.json'):
+                    data = rename_fabric(data.decode('utf-8'), a.shim).encode('utf-8')
+                write_if_changed(os.path.join(a.out, kind, out_rel), data, produced)
+        if fabric and kind == 'java':
+            for rel, text in texts.items():
+                m = SUBSCRIBER.search(text)
+                if m:
+                    args = m.group(1)
+                    bus = 'MOD' if 'Bus.MOD' in args else 'FORGE'
+                    side = 'CLIENT' if 'Dist.CLIENT' in args else 'BOTH'
+                    pk = PACKAGE.search(text)
+                    subscribers.add(f'{bus}:{side}:{pk.group(1)}.{os.path.basename(rel)[:-5]}')
+            texts['net/minecraftforge/internal/Subscribers.java'] = subscribers_java(subscribers)
+        for rel, text in texts.items():
+            if fabric:
+                text = fabric_listeners(text, index, rel)
+                for x, y in FABRIC_RENAMES_RE:
+                    text = re.sub(x, y, text)
+                text = PERSISTENT.sub(r'net.minecraftforge.internal.Persist.of(\1)', text)
+            if neo:
+                text = rename_neo(text)
+            if fabric and a.shim:
+                text = rename_fabric(text, a.shim)
+            text = drop_unused_imports(text)
+            out_rel = rel
+            if fabric and a.shim and rel.startswith('net/minecraftforge/'):
+                out_rel = a.shim.replace('.', '/') + '/' + rel[len('net/minecraftforge/'):]
+            write_if_changed(os.path.join(a.out, kind, out_rel), text, produced)
     # stale files from an older run
     for kind in ('java', 'resources'):
         base = os.path.join(a.out, kind)

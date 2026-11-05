@@ -79,6 +79,9 @@ public final class Compat {
         //#if MC>=12100
         //$$ return e.changeDimension(new net.minecraft.world.level.portal.DimensionTransition(to, at, net.minecraft.world.phys.Vec3.ZERO, e.getYRot(), e.getXRot(),
         //$$         net.minecraft.world.level.portal.DimensionTransition.DO_NOTHING));
+        //#elif FABRIC
+        //$$ return net.fabricmc.fabric.api.dimension.v1.FabricDimensions.teleport(e, to,
+        //$$         new net.minecraft.world.level.portal.PortalInfo(at, net.minecraft.world.phys.Vec3.ZERO, e.getYRot(), e.getXRot()));
         //#else
         return e.changeDimension(to, new net.minecraftforge.common.util.ITeleporter() {
             @Override
@@ -111,6 +114,9 @@ public final class Compat {
         //#if MC>=12100
         //$$ var f = s.get(net.minecraft.core.component.DataComponents.FOOD);
         //$$ return f == null ? 0 : f.nutrition();
+        //#elif FABRIC
+        //$$ var f = s.getItem().getFoodProperties();
+        //$$ return f == null ? 0 : f.getNutrition();
         //#else
         var f = s.getFoodProperties(null);
         return f == null ? 0 : f.getNutrition();
@@ -137,6 +143,9 @@ public final class Compat {
     public static int burnTime(ItemStack s) {
         //#if NEOFORGE
         //$$ return s.getBurnTime(net.minecraft.world.item.crafting.RecipeType.SMELTING);
+        //#elif FABRIC
+        //$$ Integer t = net.fabricmc.fabric.api.registry.FuelRegistry.INSTANCE.get(s.getItem());
+        //$$ return t == null ? 0 : t;
         //#else
         return net.minecraftforge.common.ForgeHooks.getBurnTime(s, net.minecraft.world.item.crafting.RecipeType.SMELTING);
         //#endif

@@ -405,11 +405,13 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         return true;
     }
 
-    //#if MC>=12100
+    //#if MC>=12100 && !FABRIC
     //$$ @Override
     //$$ public boolean canDrownInFluidType(net.minecraftforge.fluids.FluidType type) {
     //$$     return false;
     //$$ }
+    //#elif MC>=12100
+    //$$ // Fabric 1.21: the entity type is in the tag minecraft:can_breathe_under_water (ports/fabric-common)
     //#else
     @Override
     public boolean canBreatheUnderwater() {

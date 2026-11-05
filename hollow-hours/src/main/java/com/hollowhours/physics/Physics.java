@@ -176,6 +176,8 @@ public final class Physics {
                 }
                 //#if NEOFORGE
                 //$$ int xp = bs.getExpDrop(level, b, null, p, tool);
+                //#elif FABRIC
+                //$$ int xp = net.minecraftforge.internal.BlockXp.get(bs, level, b, tool);
                 //#else
                 int xp = bs.getExpDrop(level, level.random, b, fortune, silk);
                 //#endif

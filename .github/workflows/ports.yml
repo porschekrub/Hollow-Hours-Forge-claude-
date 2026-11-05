@@ -21,8 +21,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ neoforge-1.21.1, forge-1.21.1 ]
-        project: [ hollow-hours, helper-buddy ]
+        include:
+          - { target: neoforge-1.21.1, project: hollow-hours }
+          - { target: neoforge-1.21.1, project: helper-buddy }
+          - { target: forge-1.21.1, project: hollow-hours }
+          - { target: forge-1.21.1, project: helper-buddy }
+          - { target: fabric-1.20.1, project: helper-buddy }
+          - { target: fabric-1.21.1, project: helper-buddy }
     defaults:
       run:
         working-directory: ports/${{ matrix.target }}/${{ matrix.project }}
@@ -31,7 +36,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          # 17 for the 1.20.1 Fabric toolchain, 21 (the default) for everything else
+          java-version: |
+            17
+            21
       - uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: |
@@ -64,12 +72,18 @@ jobs:
           printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:6\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nguiScale:2\n" > run/options.txt
           mkdir -p run/config && printf "earlyWindowControl = false\n" > run/config/fml.toml
           export HOLLOW_CLIENTSMOKE=true HELPER_CLIENTSMOKE=true LIBGL_ALWAYS_SOFTWARE=1
-          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" ./gradlew runClient --no-daemon > client.log 2>&1 || true
+          for try in 1 2; do
+            rm -f run/logs/latest.log
+            timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" ./gradlew runClient --no-daemon > client.log 2>&1 || true
+            # a download of the game's assets that timed out: once more
+            grep -q "HttpTimeoutException\|SocketTimeoutException\|Connection reset" client.log && [ ! -f run/logs/latest.log ] || break
+            echo "download failed, trying again"
+          done
           cp run/logs/latest.log client-latest.log || true
           tail -n 60 client-latest.log || tail -n 80 client.log
           python3 ../../../tools/check_log.py client-latest.log "CLIENT SMOKE OK"
       - name: Client smoke test on a real install of the loader (portablemc, the built jar)
-        if: always() && matrix.target == 'forge-1.21.1'
+        if: always() && matrix.target != 'neoforge-1.21.1'
         run: |
           curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest > pmc-release.json
           U=$(python3 -c "
@@ -79,14 +93,24 @@ jobs:
           mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
           PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
           M=$PWD/mc; rm -rf $M; mkdir -p $M/mods $M/saves $M/config
-          cp build/libs/*.jar $M/mods/ && rm -f $M/mods/*-sources.jar && ls $M/mods
+          cp build/libs/*.jar $M/mods/ && rm -f $M/mods/*-sources.jar
+          case "${{ matrix.target }}" in
+            # Forge 1.21 loses its loot modifiers with quick play: the test opens the world from the title screen
+            forge-1.21.1) VER=forge:1.21.1; JOIN=""; MENU=",-Dhollowhours.menuload=true,-Dhelperbuddy.menuload=true";;
+            fabric-*)
+              MC=${{ matrix.target }}; MC=${MC#fabric-}
+              FAPI=$(grep '^fabric_api_version=' gradle.properties | cut -d= -f2)
+              curl -sfL -o $M/mods/fabric-api-$FAPI.jar "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/$FAPI/fabric-api-$FAPI.jar"
+              VER=fabric:$MC; JOIN="--join-world smoke"; MENU="";;
+          esac
+          ls $M/mods
           cp -r run/world $M/saves/smoke && rm -f $M/saves/smoke/session.lock
           cp run/options.txt $M/options.txt
           printf "earlyWindowControl = false\n" > $M/config/fml.toml
           export LIBGL_ALWAYS_SOFTWARE=1
-          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M forge:1.21.1 -u Dev --resolution 960x540 \
-              --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true,-Dhollowhours.menuload=true,-Dhelperbuddy.menuload=true,-Xmx3G > prod-client.log 2>&1 || true
-          grep -a "forge" prod-client.log | head -5
+          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M $VER -u Dev $JOIN --resolution 960x540 \
+              --jvm-arg=-Dhollowhours.clientsmoke=true,-Dhelperbuddy.clientsmoke=true$MENU,-Xmx3G > prod-client.log 2>&1 || true
+          grep -a "Loading version\|forge\|fabric" prod-client.log | head -5
           cp $M/logs/latest.log prod-client-latest.log || true
           mkdir -p run/screenshots-prod && cp -r $M/screenshots/* run/screenshots-prod/ 2>/dev/null || true
           tail -n 40 prod-client-latest.log || tail -n 60 prod-client.log

@@ -1,0 +1,110 @@
+// Shared by every Fabric target (ports/fabric-<mc>/<mod>/build.gradle applies it after the Loom plugin).
+
+// mod_id, mod_name, mod_version, ... are the shared project's (one version number for every loader)
+def sharedProps = new Properties()
+file("../../../${shared_dir}/gradle.properties").withInputStream { sharedProps.load(it) }
+['mod_id', 'mod_name', 'mod_license', 'mod_version', 'mod_group_id', 'mod_authors', 'mod_description'].each { k ->
+    project.ext.set(k, sharedProps.getProperty(k))
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+def javaVersion = minecraft_version.startsWith('1.20') ? 17 : 21
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    targetCompatibility = JavaVersion.toVersion(javaVersion)
+}
+
+// The mod's code is shared with the other loaders (../../../<shared_dir>). ../../pp.py makes this target's copy of
+// it: conditional blocks, the Forge API renamed to the mod's own shim (../../fabric-shim, fired from Fabric hooks),
+// Fabric's own pieces (../../fabric-common/<mod>: networking, entry points, fabric.mod.json), 1.21 data folders.
+def sharedMain = file("../../../${shared_dir}/src/main")
+def shimDir = file('../../fabric-shim')
+def commonDir = file("../../fabric-common/${shared_dir}")
+def ppOut = layout.buildDirectory.dir('pp').get().asFile
+def ppScript = file('../../pp.py')
+def overlay = file('src/main')
+def preprocess = tasks.register('preprocess', Exec) {
+    inputs.dir(sharedMain)
+    inputs.dir(shimDir)
+    inputs.dir(commonDir)
+    inputs.file(ppScript)
+    outputs.dir(ppOut)
+    commandLine 'python3', ppScript.absolutePath, '--src', sharedMain.absolutePath, '--overlay', overlay.absolutePath,
+            '--out', ppOut.absolutePath, '--flags', pp_flags, '--shim', pp_shim,
+            '--extra', shimDir.absolutePath, '--extra', commonDir.absolutePath
+}
+sourceSets.main.java.srcDirs = [files("${ppOut}/java").builtBy(preprocess)]
+sourceSets.main.resources.srcDirs = [files("${ppOut}/resources").builtBy(preprocess)]
+
+repositories {
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content { includeGroup('software.bernie.geckolib') }
+    }
+    maven {
+        name = 'Fuzs'
+        url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/'
+        content { includeGroup('fuzs.forgeconfigapiport') }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    // bundled inside our jar (jar-in-jar): players only need Fabric API next to this mod
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    include "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${fcap_version}"
+    include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${fcap_version}"
+}
+
+loom {
+    runs {
+        client {
+            client()
+            runDir 'run'
+            // CI client smoke test: opens the world "smoke" and takes screenshots
+            property "${mod_id}.clientsmoke", System.getenv('HELPER_CLIENTSMOKE') ?: System.getenv('HOLLOW_CLIENTSMOKE') ?: 'false'
+            property "${mod_id}.promo", System.getenv('HOLLOW_PROMO') ?: 'false'
+            if (System.getenv('HELPER_CLIENTSMOKE') || System.getenv('HOLLOW_CLIENTSMOKE')) {
+                programArgs '--quickPlaySingleplayer', 'smoke', '--width', System.getenv('MC_WIDTH') ?: '960', '--height', System.getenv('MC_HEIGHT') ?: '540'
+            }
+        }
+        server {
+            server()
+            runDir 'run'
+            programArgs '--nogui'
+            // CI smoke test: the mod stops the server as soon as it has fully started
+            property "${mod_id}.smoketest", System.getenv('HELPER_SMOKETEST') ?: System.getenv('HOLLOW_SMOKETEST') ?: 'false'
+        }
+    }
+}
+
+processResources {
+    def props = [
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description, minecraft_version: minecraft_version,
+            pp_shim: pp_shim, java_version: javaVersion
+    ]
+    inputs.properties props
+    filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
+        expand props
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = javaVersion
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+}
+
