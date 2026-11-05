@@ -102,6 +102,13 @@ public final class ClientSmoke {
             mc.options.pauseOnLostFocus = false;
             if (mc.player == null || mc.level == null) {
                 waitTicks++;
+                // "this world uses experimental settings, back it up?": go on without a backup
+                if (mc.screen instanceof net.minecraft.client.gui.screens.BackupConfirmScreen bc && waitTicks % 20 == 0) {
+                    HollowHours.LOG.warn("[client smoke] the game asks about a backup: {}", bc.getTitle().getString());
+                    for (var c : bc.children())
+                        if (c instanceof net.minecraft.client.gui.components.Button b && b.getMessage().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents tc
+                                && tc.getKey().equals("selectWorld.backupJoinSkipButton")) b.onPress();
+                }
                 if (waitTicks % 200 == 0) shot("waiting_" + waitTicks);
                 if (waitTicks == 900) {
                     HollowHours.LOG.warn("[client smoke] quick play did not open the world, trying to load it directly");
