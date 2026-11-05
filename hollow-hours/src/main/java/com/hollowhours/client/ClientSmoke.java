@@ -2081,7 +2081,7 @@ public final class ClientSmoke {
                 if (d > 3 && r.nextInt(100) < 7) put.accept(o.offset(dx, 0, dz), B.s(r.nextBoolean() ? net.minecraft.world.level.block.Blocks.DEAD_BUSH : net.minecraft.world.level.block.Blocks.GRASS));
             }
         // dead trees all round
-        double[] ghostAng = {15, 85, 160, 235, 305};
+        double[] ghostAng = {0, 72, 144, 216, 288};
         // low mounds further out, so the land isn't flat to the horizon
         for (int dx = -36; dx <= 36; dx++)
             for (int dz = -36; dz <= 36; dz++) {
@@ -2145,30 +2145,49 @@ public final class ClientSmoke {
             put.accept(g.offset(1, 0, 0), net.minecraft.world.level.block.Blocks.CANDLE.defaultBlockState().setValue(net.minecraft.world.level.block.CandleBlock.LIT, true)
                     .setValue(net.minecraft.world.level.block.CandleBlock.CANDLES, 1 + i % 3));
         }
-        // the five, each by a cold lantern, all looking at you
-        GhostAnim[] anims = {GhostAnim.STALK, GhostAnim.IDLE, GhostAnim.CHASE, GhostAnim.LAUGH, GhostAnim.STALK};
-        double[] rads = {4.4, 5.0, 4.6, 5.4, 4.5};
+        // the mound you stand on (the menu's view looks a little down, so the faces stay in sight)
+        for (int dx = -3; dx <= 3; dx++)
+            for (int dz = -3; dz <= 3; dz++) {
+                double d = Math.sqrt(dx * dx + dz * dz);
+                int hgt = d < 1.6 ? 2 : d < 3.2 ? 1 : 0;
+                for (int y = 0; y < hgt; y++)
+                    put.accept(o.offset(dx, y, dz), B.s(r.nextInt(3) == 0 ? net.minecraft.world.level.block.Blocks.MOSSY_COBBLESTONE
+                            : r.nextBoolean() ? net.minecraft.world.level.block.Blocks.COBBLESTONE : net.minecraft.world.level.block.Blocks.STONE));
+            }
+        put.accept(o.offset(1, 2, 1), net.minecraft.world.level.block.Blocks.CANDLE.defaultBlockState().setValue(net.minecraft.world.level.block.CandleBlock.LIT, true)
+                .setValue(net.minecraft.world.level.block.CandleBlock.CANDLES, 3));
+        put.accept(o.offset(-1, 2, -1), B.s(net.minecraft.world.level.block.Blocks.SKELETON_SKULL));
+        // blood on the ground round the mound, bones
+        for (int i = 0; i < 70; i++) {
+            double a = r.nextDouble() * Math.PI * 2, rad = 3.3 + r.nextDouble() * 6;
+            net.minecraft.core.BlockPos b = o.offset((int) Math.round(Math.cos(a) * rad), 0, (int) Math.round(Math.sin(a) * rad));
+            if (l.getBlockState(b).isAir() && !l.getBlockState(b.below()).isAir())
+                put.accept(b, i % 9 == 0 ? B.s(net.minecraft.world.level.block.Blocks.BONE_BLOCK) : B.s(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE));
+        }
+        // the five, close, each by a cold lantern, all looking at you
+        GhostAnim[] anims = {GhostAnim.GRAB, GhostAnim.CHASE, GhostAnim.LAUGH, GhostAnim.STALK, GhostAnim.CRAWL_CHASE};
+        int[] kinds = {1, 3, 4, 5, 2};
+        double[] rads = {4.2, 4.6, 6.4, 4.8, 3.9};
         for (int i = 0; i < 5; i++) {
             double a = Math.toRadians(ghostAng[i]);
             Vec3 at = c.add(Math.cos(a) * rads[i], 0, Math.sin(a) * rads[i]);
-            GhostEntity g = showGhost(sp, GhostKind.byN(i + 1), at, anims[i]);
+            GhostEntity g = showGhost(sp, GhostKind.byN(kinds[i]), at, anims[i]);
             if (g != null) {
                 float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
                 g.moveTo(at.x, at.y, at.z, yaw, 0);
                 g.setYHeadRot(yaw);
                 g.setYBodyRot(yaw);
             }
-            Vec3 side = new Vec3(-Math.sin(a), 0, Math.cos(a)).scale(1.7);
-            net.minecraft.core.BlockPos post = net.minecraft.core.BlockPos.containing(at.add(side).add(Math.cos(a) * 0.8, 0, Math.sin(a) * 0.8));
+            Vec3 side = new Vec3(-Math.sin(a), 0, Math.cos(a)).scale(1.9);
+            net.minecraft.core.BlockPos post = net.minecraft.core.BlockPos.containing(at.add(side).add(Math.cos(a) * 0.6, 0, Math.sin(a) * 0.6));
             put.accept(post, B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_FENCE));
-            put.accept(post.above(), B.s(net.minecraft.world.level.block.Blocks.DARK_OAK_FENCE));
-            put.accept(post.above(2), B.s(net.minecraft.world.level.block.Blocks.SOUL_LANTERN));
+            put.accept(post.above(), B.s(net.minecraft.world.level.block.Blocks.SOUL_LANTERN));
         }
         // and further off, between the trees, the others watching
-        double[] st = {50, 192, 268};
+        double[] st = {36, 180, 252};
         for (int i = 0; i < 3; i++) {
             double a = Math.toRadians(st[i]);
-            Vec3 at = c.add(Math.cos(a) * 15, 0, Math.sin(a) * 15);
+            Vec3 at = c.add(Math.cos(a) * 12, 0, Math.sin(a) * 12);
             StalkerEntity s = HHEntities.stalker(StalkerKind.values()[i]).create(l);
             if (s == null) continue;
             float yaw = (float) Math.toDegrees(Math.atan2(-(c.x - at.x), c.z - at.z));
@@ -2198,48 +2217,73 @@ public final class ClientSmoke {
 
     private static void cover(Minecraft mc) {
         Vec3[] look = {Vec3.ZERO};
+        double[] gamma = {1};
         STEPS.add(t -> {
             if (t == 0) {
                 coverAt = origin.add(-240, 0, 160);
-                look[0] = coverAt.add(Math.cos(Math.toRadians(15)) * 5, 1.62, Math.sin(Math.toRadians(15)) * 5);
+                look[0] = coverAt.add(4.2, 3.0, 0);
+                gamma[0] = mc.options.gamma().get();
                 mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                 server(sp -> {
                     clearAll(sp);
-                    sp.teleportTo(coverAt.x, coverAt.y, coverAt.z);
-                    sp.serverLevel().setDayTime(12650);
+                    sp.teleportTo(coverAt.x, coverAt.y + 3, coverAt.z);
+                    sp.serverLevel().setDayTime(15000);
                     sp.removeEffect(MobEffects.NIGHT_VISION);
                     sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 60 * 5, 4, false, false));
+                    com.hollowhours.ghost.Atmosphere.forceBlood = 1;
                 });
             }
             if (t == 60) server(sp -> {
-                sp.teleportTo(coverAt.x, coverAt.y, coverAt.z);
                 coverScene(sp, coverAt);
+                sp.teleportTo(coverAt.x + 0.5, coverAt.y + 2, coverAt.z + 0.5);
             });
             if (t == 62) lookAt = look[0];
-            if (t == 100) {
-                shot("covershot_dusk");
+            if (t == 64) mc.options.gamma().set(1.0);
+            if (t == 100) Atmos.snap();
+            // 1: the blood moon in the dark, only the lanterns and their eyes
+            if (t == 220) {
                 face(mc, look[0]);
-                panorama(mc, "dusk");
+                shot("covershot_blood_dark");
+                panorama(mc, "blood_dark");
             }
-            if (t == 102) server(sp -> {
-                sp.serverLevel().setDayTime(15000);
+            if (t == 222) server(sp -> com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 60, 0.45f));
+            if (t == 270) {
+                face(mc, look[0]);
+                shot("covershot_blood_fog");
+                panorama(mc, "blood_fog");
+            }
+            // 2: a little brighter (night vision)
+            if (t == 272) server(sp -> {
+                com.hollowhours.ghost.Atmosphere.stopFog(sp.server);
                 sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
-                com.hollowhours.ghost.Atmosphere.forceBlood = 1;
             });
-            if (t == 150) Atmos.snap();
             if (t == 300) {
-                shot("covershot_blood");
                 face(mc, look[0]);
-                panorama(mc, "blood");
+                shot("covershot_blood_bright");
+                panorama(mc, "blood_bright");
             }
+            // 3: no blood moon, a plain dark night
             if (t == 302) server(sp -> {
-                com.hollowhours.ghost.Atmosphere.forceBlood = 0;
+                sp.removeEffect(MobEffects.NIGHT_VISION);
+                com.hollowhours.ghost.Atmosphere.forceBlood = -1;
                 sp.serverLevel().setDayTime(18000);
-                clearAll(sp);
-                pin(sp);
             });
             if (t == 330) Atmos.snap();
-            return t >= 332;
+            if (t == 400) {
+                face(mc, look[0]);
+                shot("covershot_night_dark");
+                panorama(mc, "night_dark");
+            }
+            if (t == 402) {
+                mc.options.gamma().set(gamma[0]);
+                server(sp -> {
+                    com.hollowhours.ghost.Atmosphere.forceBlood = 0;
+                    clearAll(sp);
+                    pin(sp);
+                });
+            }
+            if (t == 430) Atmos.snap();
+            return t >= 432;
         });
     }
 
