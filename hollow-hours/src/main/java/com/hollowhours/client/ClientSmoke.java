@@ -46,6 +46,20 @@ import java.util.function.Consumer;
 @Mod.EventBusSubscriber(modid = HollowHours.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public final class ClientSmoke {
     private static final boolean ON = Boolean.getBoolean("hollowhours.clientsmoke");
+    /** CI promo shoot: instead of the test tour, film the update (portrait frames for the promo clip) */
+    private static final boolean PROMO = Boolean.getBoolean("hollowhours.promo");
+    /** promo HUD: 0 = nothing but the hand, 1 = also ammo / struggle bar / boss bar / titles */
+    static int promoHud = 0;
+
+    @SubscribeEvent
+    public static void promoOverlays(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre e) {
+        if (!ON || !PROMO) return;
+        String id = e.getOverlay().id().toString();
+        boolean keep = promoHud == 1 && (id.equals("hollowhours:combat") || id.equals("minecraft:boss_event_progress") || id.equals("minecraft:title_text")
+                || id.equals("hollowhours:horror_fx") || id.equals("hollowhours:ending") || id.equals("hollowhours:jumpscare"))
+                || id.equals("hollowhours:ending");
+        if (!keep) e.setCanceled(true);
+    }
 
     private ClientSmoke() {}
 
@@ -210,6 +224,10 @@ public final class ClientSmoke {
         stepIndex = 0;
         origin = mc.player.position();
         HollowHours.LOG.info("[client smoke] in the world at {}", origin);
+        if (PROMO) {
+            promo(mc);
+            return;
+        }
         // setup: night, no weather, no natural ghosts, survival, night vision for the model shots
         STEPS.add(t -> {
             if (t == 0) server(sp -> {
@@ -2265,6 +2283,357 @@ public final class ClientSmoke {
             }
             if (t == 280) Atmos.snap();
             return t >= 282;
+        });
+    }
+
+    // ------------------------------------------------------------------ the promo shoot (portrait, frames every 2 ticks)
+    static int frameNo;
+
+    /** a frame of shot `name` (frames of one shot are numbered in order) */
+    private static void frame(String name) {
+        Minecraft mc = Minecraft.getInstance();
+        String file = String.format("promo_%s_%04d.png", name, ++frameNo);
+        Screenshot.grab(mc.gameDirectory, file, mc.getMainRenderTarget(), c -> {});
+    }
+
+    private static void turn(Minecraft mc, float yaw, float pitch) {
+        lookAt = null;
+        mc.player.setYRot(yaw);
+        mc.player.yRotO = yaw;
+        mc.player.setYHeadRot(yaw);
+        mc.player.yBodyRot = yaw;
+        mc.player.setXRot(pitch);
+        mc.player.xRotO = pitch;
+    }
+
+    @javax.annotation.Nullable
+    private static GhostEntity sceneGhost(ServerPlayer sp, int kind) {
+        for (GhostEntity g : sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(40)))
+            if (g.kind.n == kind) return g;
+        return null;
+    }
+
+    private static Vec3 around(Vec3 c, double deg, double r, double up) {
+        double a = Math.toRadians(deg);
+        return c.add(Math.cos(a) * r, up, Math.sin(a) * r);
+    }
+
+    private static void gun(ServerPlayer sp, String id) {
+        sp.getInventory().selected = 0;
+        sp.getInventory().setItem(0, modItem(id));
+        sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+    }
+
+    private static void fireAt(ServerPlayer sp) {
+        var s = sp.getMainHandItem();
+        if (s.getItem() instanceof com.hollowhours.combat.GunItem g) {
+            s.getOrCreateTag().putInt("ammo", g.spec.mag());
+            g.fire(sp, s);
+        }
+    }
+
+    private static void promo(Minecraft mc) {
+        coverAt = origin.add(-240, 0, 160);
+        Vec3 eye = coverAt.add(0.5, 2 + 1.62, 0.5);
+        // setup: the haunted clearing under a blood moon, brightness up, no HUD
+        STEPS.add(t -> {
+            if (t == 0) {
+                mc.options.gamma().set(1.0);
+                mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                server(sp -> {
+                    ServerLevel l = sp.serverLevel();
+                    l.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, sp.server);
+                    l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, sp.server);
+                    l.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, sp.server);
+                    l.setWeatherParameters(6000, 0, false, false);
+                    sp.setGameMode(GameType.SURVIVAL);
+                    sp.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 20 * 60 * 30, 4, false, false));
+                    sp.addEffect(new MobEffectInstance(MobEffects.SATURATION, 20 * 60 * 30, 0, false, false));
+                    l.setDayTime(15000);
+                    com.hollowhours.ghost.Atmosphere.forceBlood = 1;
+                    clearAll(sp);
+                    sp.getInventory().clearContent();
+                    sp.teleportTo(coverAt.x, coverAt.y + 3, coverAt.z);
+                });
+            }
+            if (t == 60) server(sp -> {
+                coverScene(sp, coverAt);
+                sp.teleportTo(coverAt.x + 0.5, coverAt.y + 2, coverAt.z + 0.5);
+            });
+            if (t == 100) Atmos.snap();
+            return t >= 240;
+        });
+        // 1. the haunted main menu
+        STEPS.add(t -> {
+            if (t == 0) mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+            if (t >= 20 && t < 80 && t % 2 == 0) frame("01_menu");
+            if (t == 80) mc.setScreen(null);
+            return t >= 84;
+        });
+        // 2. all five round you: one slow turn
+        STEPS.add(t -> {
+            turn(mc, -90 + t * 2.4f, 4);
+            if (t % 2 == 0 && t < 150) frame("02_five");
+            return t >= 150;
+        });
+        // 3. one charges at you
+        STEPS.add(t -> {
+            Vec3 from = around(coverAt.add(0.5, 0, 0.5), 36, 11, 0), to = around(coverAt.add(0.5, 0, 0.5), 36, 1.6, 0);
+            if (t == 0) server(sp -> {
+                GhostEntity g = showGhost(sp, GhostKind.byN(3), from, GhostAnim.CHASE);
+                if (g != null) g.addTag("promo_charge");
+            });
+            Vec3 now = from.add(to.subtract(from).scale(Math.min(1, t / 30.0)));
+            if (t >= 2) server(sp -> {
+                for (GhostEntity g : sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(30)))
+                    if (g.getTags().contains("promo_charge")) {
+                        float yaw = (float) Math.toDegrees(Math.atan2(-(eye.x - now.x), eye.z - now.z));
+                        g.moveTo(now.x, now.y + (Math.min(1, t / 30.0) > 0.5 ? 1 : 0), now.z, yaw, 0);
+                        g.setYHeadRot(yaw);
+                        g.setYBodyRot(yaw);
+                    }
+            });
+            lookAt = now.add(0, 2.2, 0);
+            if (t % 2 == 0 && t <= 34) frame("03_charge");
+            if (t == 36) server(sp -> {
+                for (GhostEntity g : sp.serverLevel().getEntitiesOfClass(GhostEntity.class, sp.getBoundingBox().inflate(30)))
+                    if (g.getTags().contains("promo_charge")) g.discard();
+            });
+            return t >= 38;
+        });
+        // 4. the rifle: shots into the miner until he drops
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> gun(sp, "rifle"));
+            lookAt = around(coverAt.add(0.5, 0, 0.5), 0, 4.2, 2.8);
+            if (t >= 10 && t <= 56 && t % 3 == 1) server(sp -> {
+                GhostEntity g = sceneGhost(sp, 1);
+                if (g != null && !com.hollowhours.combat.GhostCombat.knockedOut(g.brain())) fireAt(sp);
+            });
+            if (t >= 8 && t % 2 == 0 && t <= 80) frame("04_rifle");
+            return t >= 82;
+        });
+        // 5. the shotgun at the stag
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> gun(sp, "shotgun"));
+            lookAt = around(coverAt.add(0.5, 0, 0.5), 216, 4.8, 2.6);
+            if (t == 10 || t == 22) server(ClientSmoke::fireAt);
+            if (t >= 6 && t % 2 == 0 && t <= 34) frame("05_shotgun");
+            return t >= 36;
+        });
+        // 6. the sniper, scoped, at the tall one
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> gun(sp, "sniper"));
+            lookAt = around(coverAt.add(0.5, 0, 0.5), 144, 6.4, 5.2);
+            if (t == 4) mc.options.keyShift.setDown(true);
+            if (t == 18) server(ClientSmoke::fireAt);
+            if (t >= 8 && t % 2 == 0 && t <= 30) frame("06_sniper");
+            if (t == 32) mc.options.keyShift.setDown(false);
+            return t >= 34;
+        });
+        // 7. a grenade at the watchers in the trees
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> gun(sp, "grenade"));
+            lookAt = around(coverAt.add(0.5, 0, 0.5), 252, 9, 3.5);
+            if (t == 6) server(sp -> sp.getMainHandItem().use(sp.level(), sp, net.minecraft.world.InteractionHand.MAIN_HAND));
+            if (t >= 4 && t % 2 == 0 && t <= 76) frame("07_grenade");
+            return t >= 78;
+        });
+        // 8. the three armour sets (third person, rifle in hand)
+        String[] sets = {"tactical", "heavy", "hunter"};
+        for (String set : sets) STEPS.add(t -> {
+            if (t == 0) {
+                mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+                server(sp -> {
+                    gun(sp, "rifle");
+                    sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.HEAD, modItem(set + "_helmet"));
+                    sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.CHEST, modItem(set + "_chestplate"));
+                    sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.LEGS, modItem(set + "_leggings"));
+                    sp.setItemSlot(net.minecraft.world.entity.EquipmentSlot.FEET, modItem(set + "_boots"));
+                });
+            }
+            turn(mc, 200 + t * 1.5f, 8);
+            if (t >= 6 && t % 2 == 0 && t <= 22) frame("08_armor_" + set);
+            if (t == 24 && set.equals("hunter")) mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            return t >= 24;
+        });
+        // 9. grabbed: the struggle bar, mashing, free (a living ghost, right in front)
+        final int[] strAt = {-1}, endAt = {-1};
+        STEPS.add(t -> {
+            if (t == 0) {
+                promoHud = 1;
+                strAt[0] = endAt[0] = -1;
+                server(sp -> {
+                    for (var slot : net.minecraft.world.entity.EquipmentSlot.values()) sp.setItemSlot(slot, net.minecraft.world.item.ItemStack.EMPTY);
+                    Vec3 at = around(coverAt.add(0.5, 2, 0.5), 108, 2.4, 0);
+                    GhostEntity g = Director.spawnGhost(sp.serverLevel(), GhostKind.WAIL, at);
+                    if (g == null) return;
+                    KillSequence.forceKill = 0;
+                    KillSequence.begin(g.brain(), sp);
+                });
+            }
+            if (t == 4) lookAt = null;
+            if (strAt[0] < 0 && CombatClient.struggling()) strAt[0] = t;
+            if (t % 2 == 0 && t <= 160) frame("09_struggle");
+            if (strAt[0] >= 0 && endAt[0] < 0) {
+                if (t - strAt[0] >= 14 && t % 2 == 1) net.minecraft.client.KeyMapping.click(mc.options.keyJump.getKey());
+                if (!CombatClient.struggling()) endAt[0] = t;
+            }
+            if (endAt[0] >= 0 && t >= endAt[0] + 24 || t > 200) {
+                promoHud = 0;
+                server(sp -> {
+                    for (GhostEntity g : Director.allGhosts(sp.server)) if (!g.showcase) g.discard();
+                    sp.teleportTo(coverAt.x + 0.5, coverAt.y + 2, coverAt.z + 0.5);
+                });
+                return true;
+            }
+            return false;
+        });
+        // 10. the map to the mountain, in hand
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                net.minecraft.core.BlockPos site = net.minecraft.core.BlockPos.containing(coverAt).offset(170, 0, 30);
+                com.hollowhours.endgame.Endgame.setSite(sp.server, site);
+                com.hollowhours.endgame.Endgame.data(sp.server).stage = com.hollowhours.endgame.Endgame.MAP;
+                sp.getInventory().setItem(0, com.hollowhours.endgame.Endgame.makeMap(sp.serverLevel(), site));
+                sp.getInventory().selected = 0;
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+            });
+            turn(mc, 20, 30);
+            if (t >= 16 && t % 2 == 0 && t <= 30) frame("10_map");
+            return t >= 32;
+        });
+        // 11. the mountain: built, then a slow push in from the air
+        final int[] built = {-1};
+        STEPS.add(t -> {
+            net.minecraft.core.BlockPos site = net.minecraft.core.BlockPos.containing(coverAt).offset(170, 0, 30);
+            if (t == 0) server(sp -> {
+                Vec3 dir = com.hollowhours.endgame.Arena.mouthDir(sp.server);
+                egDir = dir;
+                Vec3 v = Vec3.atBottomCenterOf(site).add(dir.scale(110));
+                sp.getAbilities().flying = true;
+                sp.getAbilities().mayfly = true;
+                sp.onUpdateAbilities();
+                sp.teleportTo(v.x, coverAt.y + 30, v.z);
+            });
+            if (built[0] < 0 && t % 10 == 5) server(sp -> {
+                if (com.hollowhours.endgame.Endgame.data(sp.server).built == 2 && built[0] < 0) {
+                    built[0] = 0;
+                    egCenter = Vec3.atBottomCenterOf(com.hollowhours.endgame.Endgame.center(sp.server));
+                }
+            });
+            if (built[0] >= 0) {
+                int d = built[0]++;
+                Vec3 target = Vec3.atBottomCenterOf(site).add(0, 14, 0);
+                if (d >= 20) {
+                    Vec3 cam = Vec3.atBottomCenterOf(site).add(egDir.scale(110 - (d - 20) * 0.9)).add(0, 30 - (d - 20) * 0.35, 0);
+                    server(sp -> sp.teleportTo(cam.x, cam.y - 1.62, cam.z));
+                    lookAt = target;
+                    if (d % 2 == 0 && d <= 100) frame("11_mountain");
+                }
+                if (d == 102) server(sp -> {
+                    Vec3 at = egCenter.add(egDir.scale(com.hollowhours.endgame.Arena.TRENCH + 7));
+                    int y = sp.serverLevel().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(at.x), (int) Math.floor(at.z));
+                    sp.getAbilities().flying = false;
+                    sp.onUpdateAbilities();
+                    sp.teleportTo(at.x, y + 0.1, at.z);
+                });
+                if (d >= 106 && d <= 130) {
+                    Vec3 m = egCenter.add(egDir.scale(com.hollowhours.endgame.Arena.MOUTH));
+                    lookAt = new Vec3(m.x, mc.player.getEyeY() - 2.0, m.z);
+                    if (d % 2 == 0) frame("12_mouth");
+                }
+                return d >= 132;
+            }
+            return t > 900;
+        });
+        // 12. under the mountain: it rises; the attacks; it is beaten; the rift; the end
+        final int[] rise = {-1};
+        STEPS.add(t -> {
+            if (t == 0) {
+                promoHud = 1;
+                server(sp -> {
+                    Vec3 at = egCenter.add(egDir.scale(9));
+                    sp.teleportTo(at.x, egCenter.y, at.z);
+                    sp.serverLevel().setDayTime(18000);
+                });
+            }
+            lookAt = egCenter.add(0, 4.2, 0);
+            if (rise[0] < 0 && clientBoss(mc) != null) {
+                rise[0] = t;
+                server(sp -> {
+                    var b = serverBoss(sp);
+                    if (b != null) b.ciHold(100000);
+                });
+            }
+            if (rise[0] >= 0) {
+                int d = t - rise[0];
+                if (d % 2 == 0 && d <= 96) frame("13_rise");
+                if (d == 98) server(sp -> {
+                    var b = serverBoss(sp);
+                    if (b != null) egYaw = b.getYRot();
+                });
+                return d >= 100;
+            }
+            return t > 400;
+        });
+        String[][] atk = {{"slam_near", "5.4", "14_slam", "44"}, {"sweep", "4.6", "15_sweep", "44"}, {"scream", "7", "16_scream", "40"}, {"grab", "4.6", "17_grab", "0"}};
+        for (String[] a : atk) {
+            final int[] freed = {-1};
+            STEPS.add(t -> {
+                if (t == 0) {
+                    freed[0] = -1;
+                    server(sp -> standBefore(sp, Double.parseDouble(a[1]), 0));
+                }
+                lookAt = egCenter.add(0, a[0].equals("scream") ? 5 : 3.2, 0);
+                if (t == 6) server(sp -> {
+                    var b = serverBoss(sp);
+                    if (b != null) b.ciAttack(a[0], sp);
+                });
+                if (t >= 6 && t % 2 == 0 && t <= 120) frame(a[2]);
+                if (a[0].equals("grab")) {
+                    if (t > 30 && CombatClient.struggling() && t % 2 == 1 && t > 44) net.minecraft.client.KeyMapping.click(mc.options.keyJump.getKey());
+                    if (t > 40 && !CombatClient.struggling() && freed[0] < 0) freed[0] = t;
+                    return freed[0] >= 0 && t >= freed[0] + 20 || t > 200;
+                }
+                return t >= Integer.parseInt(a[3]) + 8;
+            });
+        }
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                standBefore(sp, 9, 0);
+                sp.removeEffect(MobEffects.DARKNESS);
+                var b = serverBoss(sp);
+                if (b != null) b.hurt(b.damageSources().genericKill(), 100000);
+            });
+            lookAt = egCenter.add(0, 4.5, 0);
+            if (t % 3 == 0 && t <= 150) frame("18_defeat");
+            boolean rift = false;
+            for (var en : mc.level.entitiesForRendering()) if (en instanceof com.hollowhours.endgame.RiftEntity) rift = true;
+            if (rift) {
+                lookAt = egCenter.add(0, 2.2, 0);
+                if (t % 2 == 0) frame("19_rift");
+            }
+            return rift && t >= 230 || t > 500;
+        });
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> sp.teleportTo(egCenter.x, egCenter.y + 0.5, egCenter.z));
+            if (t % 2 == 0 && t <= 50) frame("20_flash");
+            if (mc.screen instanceof CreditsScreen cs) {
+                if (cs.ticks == 30) cs.scroll = 40;
+                if (cs.ticks >= 30 && cs.ticks <= 60 && cs.ticks % 2 == 0) frame("21_credits");
+            }
+            if (t > 120) {
+                if (mc.screen != null) mc.screen.onClose();
+                return true;
+            }
+            return false;
+        });
+        STEPS.add(t -> {
+            promoHud = 0;
+            if (t == 2) turn(mc, mc.player.getYRot(), -5);
+            if (t >= 30 && t % 2 == 0 && t <= 50) frame("22_morning");
+            if (t == 52) mc.options.gamma().set(0.5);
+            return t >= 54;
         });
     }
 

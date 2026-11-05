@@ -3,7 +3,7 @@ name: Build mods
 # Builds both mods on every push. Push a tag like "v2.0.0" to also publish a GitHub Release with the jars.
 on:
   push:
-    branches: [ "**", "!export-classpath", "!gen-voice", "!voice-out" ]
+    branches: [ "**", "!export-classpath", "!gen-voice", "!voice-out", "!promo", "!promo-out" ]
     tags: [ "v*" ]
   pull_request:
   workflow_dispatch:
