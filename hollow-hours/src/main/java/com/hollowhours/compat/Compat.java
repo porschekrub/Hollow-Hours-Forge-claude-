@@ -108,9 +108,12 @@ public final class Compat {
     /** A stand-in player for tests (Forge 1.21 has no fake players: a plain server player without a connection). */
     public static net.minecraft.server.level.ServerPlayer fakePlayer(net.minecraft.server.level.ServerLevel level) {
         //#if MC>=12100 && FORGE
-        //$$ return new net.minecraft.server.level.ServerPlayer(level.getServer(), level,
-        //$$         new com.mojang.authlib.GameProfile(java.util.UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]"),
-        //$$         net.minecraft.server.level.ClientInformation.createDefault());
+        //$$ var profile = new com.mojang.authlib.GameProfile(java.util.UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
+        //$$ var sp = new net.minecraft.server.level.ServerPlayer(level.getServer(), level, profile, net.minecraft.server.level.ClientInformation.createDefault());
+        //$$ // a connection that goes nowhere (moving the player resets its position on the connection)
+        //$$ new net.minecraft.server.network.ServerGamePacketListenerImpl(level.getServer(), new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND),
+        //$$         sp, net.minecraft.server.network.CommonListenerCookie.createInitial(profile, false));
+        //$$ return sp;
         //#else
         return net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
         //#endif
