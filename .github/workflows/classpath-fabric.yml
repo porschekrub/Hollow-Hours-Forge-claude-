@@ -25,8 +25,9 @@ jobs:
         run: |
           MC=${{ matrix.mc }}
           meta() { curl -s "$1" | grep -o '<version>[^<]*</version>' | sed 's/<[^>]*>//g'; }
-          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v -- "-" | sort -V | tail -1)
-          GRADLE=$(curl -s https://services.gradle.org/versions/current | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])")
+          LOOM=$(meta https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/maven-metadata.xml | grep -v -- "-" | grep "^1\.11\." | sort -V | tail -1)
+          # Loom 1.11 still runs on Java 21 (newer ones want Java 25)
+          GRADLE=8.14.3
           echo "GRADLE=$GRADLE" >> $GITHUB_ENV
           LOADER=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-loader/maven-metadata.xml | grep -v "beta\|alpha\|rc\|pre" | sort -V | tail -1)
           FAPI=$(meta https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml | grep "+$MC\$" | sort -V | tail -1)
