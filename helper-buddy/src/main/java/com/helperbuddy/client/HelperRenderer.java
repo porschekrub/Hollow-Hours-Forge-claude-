@@ -39,7 +39,11 @@ public class HelperRenderer extends GeoEntityRenderer<HelperEntity> {
                 String p = base.getPath();
                 ResourceLocation glow = HelperBuddy.rl(base.getNamespace(), p.substring(0, p.length() - 4) + "_glow.png");
                 RenderType eyes = RenderType.eyes(glow);
+                //#if MC>=12100
+                //$$ getRenderer().reRender(model, poseStack, buffers, h, eyes, buffers.getBuffer(eyes), partialTick, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+                //#else
                 getRenderer().reRender(model, poseStack, buffers, h, eyes, buffers.getBuffer(eyes), partialTick, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+                //#endif
             }
         });
         addRenderLayer(new BlockAndItemGeoLayer<>(this) {
@@ -77,17 +81,29 @@ public class HelperRenderer extends GeoEntityRenderer<HelperEntity> {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void renderNameTag(HelperEntity h, Component name, PoseStack ps, MultiBufferSource buffers, int light, float partialTick) {
+    //#else
     protected void renderNameTag(HelperEntity h, Component name, PoseStack ps, MultiBufferSource buffers, int light) {
+    //#endif
         boolean th = thai();
         int hp = (int) Math.ceil(h.shownHp());
         MutableComponent line = Component.literal(h.helperName()).withStyle(ChatFormatting.YELLOW)
                 .append(Component.literal("  ❤ " + hp + "/" + h.maxHp()).withStyle(hp < h.maxHp() * 0.35 ? ChatFormatting.RED : ChatFormatting.GREEN))
                 .append(Component.literal("  Lv" + h.helperLevel()).withStyle(ChatFormatting.AQUA));
+        //#if MC>=12100
+        //$$ super.renderNameTag(h, line, ps, buffers, light, partialTick);
+        //#else
         super.renderNameTag(h, line, ps, buffers, light);
+        //#endif
         String st = h.isKO() ? (th ? "สลบ! ป้อนอาหารเพื่อปลุก" : "Knocked out! Feed me") : h.mode().label(th) + (h.status().isEmpty() ? "" : " • " + h.status());
         ps.pushPose();
         ps.translate(0, 0.27, 0);
+        //#if MC>=12100
+        //$$ super.renderNameTag(h, Component.literal(st).withStyle(h.isKO() ? ChatFormatting.RED : ChatFormatting.GRAY), ps, buffers, light, partialTick);
+        //#else
         super.renderNameTag(h, Component.literal(st).withStyle(h.isKO() ? ChatFormatting.RED : ChatFormatting.GRAY), ps, buffers, light);
+        //#endif
         ps.popPose();
     }
 }

@@ -1,5 +1,6 @@
 package com.helperbuddy.entity;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.net.Menus;
 import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.brain.Bag;
@@ -100,7 +101,11 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         super(type, level);
         setPersistenceRequired();
         setCanPickUpLoot(false);
+        //#if MC>=12100
+        //$$ java.util.Objects.requireNonNull(getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT)).setBaseValue(1.0);
+        //#else
         setMaxUpStep(1.0f);
+        //#endif
         setPathfindingMalus(BlockPathTypes.WATER, 4f);
         setPathfindingMalus(BlockPathTypes.LAVA, -1f);
         setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 16f);
@@ -400,10 +405,17 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         return true;
     }
 
+    //#if MC>=12100
+    //$$ @Override
+    //$$ public boolean canDrownInFluidType(net.minecraftforge.fluids.FluidType type) {
+    //$$     return false;
+    //$$ }
+    //#else
     @Override
     public boolean canBreatheUnderwater() {
         return true;
     }
+    //#endif
 
     @Override
     public boolean removeWhenFarAway(double d) {
@@ -411,7 +423,11 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ public boolean canBeLeashed() {
+    //#else
     public boolean canBeLeashed(Player p) {
+    //#endif
         return false;
     }
 
@@ -489,7 +505,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
             Say.to(p, this, "ผมเป็นผู้ช่วยของ " + ownerName + " นะครับ", "I'm " + ownerName + "'s helper");
             return InteractionResult.CONSUME;
         }
-        if (held.is(Items.NAME_TAG) && held.hasCustomHoverName()) {
+        if (held.is(Items.NAME_TAG) && Compat.hasCustomName(held)) {
             setHelperName(held.getHoverName().getString());
             if (!p.getAbilities().instabuild) held.shrink(1);
             Say.to(p, this, "จากนี้ไปเรียกผมว่า §e" + helperName() + "§r นะครับ", "From now on call me §e" + helperName());
@@ -523,7 +539,11 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    //#if MC>=12100
+    //$$ protected void dropCustomDeathLoot(net.minecraft.server.level.ServerLevel level, DamageSource src, boolean hit) {
+    //#else
     protected void dropCustomDeathLoot(DamageSource src, int looting, boolean hit) {
+    //#endif
         Bag.dropAll(this);
     }
 
@@ -542,7 +562,11 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         t.putInt("Skin", skin());
         t.putBoolean("Sitting", isSitting());
         if (home != null) t.putLong("Home", home.asLong());
+        //#if MC>=12100
+        //$$ t.put("Bag", bag.createTag(registryAccess()));
+        //#else
         t.put("Bag", bag.createTag());
+        //#endif
         if (brain != null) brain.save(jobs);
         t.put("Jobs", jobs.copy());
     }
@@ -562,7 +586,11 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         entityData.set(SKIN, t.getInt("Skin"));
         entityData.set(SITTING, t.getBoolean("Sitting"));
         home = t.contains("Home") ? BlockPos.of(t.getLong("Home")) : null;
+        //#if MC>=12100
+        //$$ bag.fromTag(t.getList("Bag", 10), registryAccess());
+        //#else
         bag.fromTag(t.getList("Bag", 10));
+        //#endif
         jobs = t.getCompound("Jobs").copy();
         brain = null;
         applyLevelStats();

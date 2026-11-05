@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.talk.Say;
@@ -130,9 +131,13 @@ public final class Breaker {
         ItemStack tool = useTool ? h.tool() : ItemStack.EMPTY;
         BlockEntity be = sl.getBlockEntity(p);
         List<ItemStack> drops = Bag.canHarvest(tool, s) ? Block.getDrops(s, sl, p, be, h, tool) : List.of();
-        int fortune = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
-        int silk = tool.getEnchantmentLevel(Enchantments.SILK_TOUCH);
+        int fortune = Compat.enchant(tool, Enchantments.BLOCK_FORTUNE);
+        int silk = Compat.enchant(tool, Enchantments.SILK_TOUCH);
+        //#if NEOFORGE
+        //$$ int xp = Bag.canHarvest(tool, s) ? s.getExpDrop(sl, p, be, h, tool) : 0;
+        //#else
         int xp = Bag.canHarvest(tool, s) ? s.getExpDrop(sl, sl.random, p, fortune, silk) : 0;
+        //#endif
         if (!sl.destroyBlock(p, false, h)) return false;
         Vec3 c = Vec3.atCenterOf(p);
         boolean keepJunk = h.settings.get("keepJunk");

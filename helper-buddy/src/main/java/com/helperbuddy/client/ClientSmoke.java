@@ -59,7 +59,11 @@ public final class ClientSmoke {
             mc.options.pauseOnLostFocus = false;
             if (mc.player == null || mc.level == null) {
                 waitTicks++;
-                if (waitTicks == 900) mc.createWorldOpenFlows().loadLevel(mc.screen, "smoke");
+                //#if MC>=12100
+            //$$ if (waitTicks == 900) mc.createWorldOpenFlows().openWorld("smoke", () -> {});
+            //#else
+            if (waitTicks == 900) mc.createWorldOpenFlows().loadLevel(mc.screen, "smoke");
+            //#endif
                 if (waitTicks > 2400) fail("never got into the world");
                 return;
             }

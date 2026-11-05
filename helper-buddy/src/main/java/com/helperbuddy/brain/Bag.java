@@ -104,7 +104,7 @@ public final class Bag {
         ItemStack st = in.copy();
         for (int i = 0; i < h.bag.getContainerSize() && !st.isEmpty(); i++) {
             ItemStack s = h.bag.getItem(i);
-            if (!s.isEmpty() && ItemStack.isSameItemSameTags(s, st) && s.getCount() < s.getMaxStackSize()) {
+            if (!s.isEmpty() && Compat.sameItemSameData(s, st) && s.getCount() < s.getMaxStackSize()) {
                 int mv = Math.min(st.getCount(), s.getMaxStackSize() - s.getCount());
                 s.grow(mv);
                 st.shrink(mv);
@@ -174,7 +174,7 @@ public final class Bag {
     public static boolean hasRoomFor(HelperEntity h, ItemStack st) {
         for (int i = 0; i < h.bag.getContainerSize(); i++) {
             ItemStack s = h.bag.getItem(i);
-            if (s.isEmpty() || ItemStack.isSameItemSameTags(s, st) && s.getCount() < s.getMaxStackSize()) return true;
+            if (s.isEmpty() || Compat.sameItemSameData(s, st) && s.getCount() < s.getMaxStackSize()) return true;
         }
         return false;
     }
@@ -183,7 +183,7 @@ public final class Bag {
     static float speedOn(ItemStack st, BlockState state) {
         float sp = st.getDestroySpeed(state);
         if (sp > 1f) {
-            int eff = st.getEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY);
+            int eff = Compat.enchant(st, Enchantments.BLOCK_EFFICIENCY);
             if (eff > 0) sp += eff * eff + 1;
         }
         return sp;
@@ -260,7 +260,7 @@ public final class Bag {
     }
 
     public static double tierScore(ItemStack s) {
-        if (s.getItem() instanceof net.minecraft.world.item.TieredItem ti) return ti.getTier().getSpeed() + ti.getTier().getLevel() * 2;
+        if (s.getItem() instanceof net.minecraft.world.item.TieredItem ti) return ti.getTier().getSpeed() + Compat.tierLevel(ti.getTier()) * 2;
         return 1;
     }
 
@@ -275,7 +275,7 @@ public final class Bag {
     /** Mending: XP repairs the tool first; returns the XP left. */
     public static int mend(HelperEntity h, int xp) {
         ItemStack t = h.tool();
-        if (xp <= 0 || t.isEmpty() || !t.isDamaged() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MENDING, t) <= 0) return xp;
+        if (xp <= 0 || t.isEmpty() || !t.isDamaged() || Compat.enchant(t, Enchantments.MENDING) <= 0) return xp;
         int repair = Math.min(xp * 2, t.getDamageValue());
         t.setDamageValue(t.getDamageValue() - repair);
         return xp - repair / 2;
@@ -318,7 +318,12 @@ public final class Bag {
             BlockEntity be = level.getBlockEntity(p);
             if (be == null) continue;
             String id = be.getType().toString();
+            //#if NEOFORGE
+            //$$ IItemHandler cap = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, p, Direction.UP);
+            //$$ if (cap != null) java.util.Optional.of(cap).ifPresent(hd -> {
+            //#else
             be.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP).ifPresent(hd -> {
+            //#endif
                 if (hd.getSlots() >= 5 && !(be instanceof net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity)
                         && !(be instanceof net.minecraft.world.level.block.entity.BrewingStandBlockEntity)
                         && !(be instanceof net.minecraft.world.level.block.entity.HopperBlockEntity))

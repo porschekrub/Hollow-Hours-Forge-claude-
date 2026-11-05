@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.entity.Mode;
 import com.helperbuddy.talk.Say;
@@ -43,9 +44,9 @@ public final class Care {
         if (st.is(Items.ROTTEN_FLESH)) return -1;
         if (st.is(Items.ENCHANTED_GOLDEN_APPLE)) return 20;
         if (st.is(Items.GOLDEN_APPLE)) return 10;
-        FoodProperties f = st.getFoodProperties(null);
-        if (f == null) return 0;
-        return Math.max(1, f.getNutrition());
+        int n = Compat.nutrition(st);
+        if (n <= 0) return 0;
+        return Math.max(1, n);
     }
 
     /** Heal amount of one piece: each food point = 5% of max health (bread = 25%, steak = 40%). */
@@ -144,8 +145,8 @@ public final class Care {
     // ------------------------------------------------------------------ cooking (with fuel from the bag)
     public static boolean isRawFood(HelperEntity h, ItemStack s) {
         if (s.isEmpty() || foodValue(s) <= 0 && !s.is(Items.POTATO) && !s.is(Items.KELP)) return false;
-        Optional<SmeltingRecipe> r = h.level().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(s.copyWithCount(1)), h.level());
-        return r.isPresent() && r.get().getResultItem(h.level().registryAccess()).isEdible();
+        ItemStack out = Compat.smelt(h.level(), s);
+        return !out.isEmpty() && Compat.nutrition(out) > 0;
     }
 
     /** Uses up fuel for `n` items (one coal = 8). Returns false when there is no fuel. */
@@ -156,7 +157,7 @@ public final class Care {
             for (int i = 0; i < h.bag.getContainerSize(); i++) {
                 ItemStack s = h.bag.getItem(i);
                 if (s.isEmpty() || Bag.isTool(s)) continue;
-                int bt = ForgeHooks.getBurnTime(s, RecipeType.SMELTING);
+                int bt = Compat.burnTime(s);
                 if (bt <= 0 || s.is(Items.LAVA_BUCKET)) continue;
                 // prefer coal/charcoal, then other fuels (not planks/logs if the player may want them: they are used last)
                 int pref = s.is(Items.COAL) || s.is(Items.CHARCOAL) ? 3 : s.is(Items.COAL_BLOCK) || s.is(Items.BLAZE_ROD) ? 2 : 1;
@@ -167,7 +168,7 @@ public final class Care {
             }
             if (slot < 0) return false;
             ItemStack s = h.bag.getItem(slot);
-            fuelCredit += ForgeHooks.getBurnTime(s, RecipeType.SMELTING) / 200f;
+            fuelCredit += Compat.burnTime(s) / 200f;
             ItemStack rem = s.getCraftingRemainingItem();
             s.shrink(1);
             if (!rem.isEmpty()) Bag.add(h, rem);
@@ -182,8 +183,7 @@ public final class Care {
         for (int i = 0; i < h.bag.getContainerSize() && made < max; i++) {
             ItemStack s = h.bag.getItem(i);
             if (!isRawFood(h, s)) continue;
-            ItemStack out = h.level().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(s.copyWithCount(1)), h.level()).get()
-                    .getResultItem(h.level().registryAccess());
+            ItemStack out = Compat.smelt(h.level(), s);
             while (!s.isEmpty() && made < max && burn(1)) {
                 s.shrink(1);
                 Bag.addOrDrop(h, out.copy(), null);

@@ -32,7 +32,12 @@ public final class Crafter {
     static List<CraftingRecipe> recipesFor(Level l, Item target) {
         RegistryAccess ra = l.registryAccess();
         List<CraftingRecipe> out = new ArrayList<>();
+        //#if MC>=12100
+        //$$ for (var holder : l.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+        //$$     CraftingRecipe r = holder.value();
+        //#else
         for (CraftingRecipe r : l.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
+        //#endif
             if (r.isSpecial()) continue;
             ItemStack res = r.getResultItem(ra);
             if (!res.isEmpty() && res.is(target) && !r.getIngredients().isEmpty()) out.add(r);
@@ -156,7 +161,11 @@ public final class Crafter {
     public static SmeltingRecipe smeltRecipe(Level l, ItemStack in) {
         if (in.isEmpty()) return null;
         RecipeManager rm = l.getRecipeManager();
+        //#if MC>=12100
+        //$$ return rm.getRecipeFor(RecipeType.SMELTING, new net.minecraft.world.item.crafting.SingleRecipeInput(in.copyWithCount(1)), l).map(net.minecraft.world.item.crafting.RecipeHolder::value).orElse(null);
+        //#else
         return rm.getRecipeFor(RecipeType.SMELTING, new SimpleContainer(in.copyWithCount(1)), l).orElse(null);
+        //#endif
     }
 
     public static ItemStack smeltResult(Level l, ItemStack in) {

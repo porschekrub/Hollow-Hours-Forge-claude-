@@ -180,9 +180,13 @@ public final class Combat {
     static double meleeScore(ItemStack it) {
         if (it.isEmpty()) return 1;
         double base = 0;
-        var mods = it.getAttributeModifiers(EquipmentSlot.MAINHAND).get(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
-        for (var m : mods) base += m.getAmount();
+        base += Compat.mainHand(it, net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE);
+        //#if MC>=12100
+        //$$ int sharp = Compat.enchant(it, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS);
+        //$$ if (sharp > 0) base += 0.5 + 0.5 * sharp;
+        //#else
         base += EnchantmentHelper.getDamageBonus(it, net.minecraft.world.entity.MobType.UNDEFINED);
+        //#endif
         if (it.getItem() instanceof SwordItem) base += 0.5;
         if (it.isDamageableItem() && it.getMaxDamage() - it.getDamageValue() <= 1) base -= 50;
         return base;
@@ -210,7 +214,7 @@ public final class Combat {
         if (stashedTool == null) return;
         ItemStack want = stashedTool;
         stashedTool = null;
-        if (ItemStack.isSameItemSameTags(h.tool(), want)) return;
+        if (Compat.sameItemSameData(h.tool(), want)) return;
         for (int i = 0; i < h.bag.getContainerSize(); i++)
             if (ItemStack.isSameItem(h.bag.getItem(i), want)) {
                 Bag.swapIntoHand(h, i);
@@ -295,8 +299,7 @@ public final class Combat {
 
     double attackSpeed() {
         double sp = 4;
-        var mods = h.tool().getAttributeModifiers(EquipmentSlot.MAINHAND).get(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED);
-        for (var m : mods) sp += m.getAmount();
+        sp += Compat.mainHand(h.tool(), net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_SPEED);
         return Math.max(0.6, sp);
     }
 
@@ -316,15 +319,19 @@ public final class Combat {
         }
         if (arrowSlot < 0) return;
         ItemStack arrowStack = h.bag.getItem(arrowSlot);
+        //#if MC>=12100
+        //$$ AbstractArrow arrow = ProjectileUtil.getMobArrow(h, arrowStack.copyWithCount(1), 1f, bow);
+        //#else
         AbstractArrow arrow = ProjectileUtil.getMobArrow(h, arrowStack.copyWithCount(1), 1f);
-        int power = bow.getEnchantmentLevel(Enchantments.POWER_ARROWS);
+        //#endif
+        int power = Compat.enchant(bow, Enchantments.POWER_ARROWS);
         if (power > 0) arrow.setBaseDamage(arrow.getBaseDamage() + power * 0.5 + 0.5);
-        if (bow.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0) arrow.setSecondsOnFire(100);
+        if (Compat.enchant(bow, Enchantments.FLAMING_ARROWS) > 0) Compat.ignite(arrow, 100);
         double dx = t.getX() - h.getX(), dz = t.getZ() - h.getZ();
         double dy = t.getY(0.3333) - arrow.getY();
         double dist = Math.sqrt(dx * dx + dz * dz);
         arrow.shoot(dx, dy + dist * 0.2, dz, 1.6f, 6f);
-        boolean infinity = bow.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0 && arrowStack.is(Items.ARROW);
+        boolean infinity = Compat.enchant(bow, Enchantments.INFINITY_ARROWS) > 0 && arrowStack.is(Items.ARROW);
         if (infinity) arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         else arrowStack.shrink(1);
         h.level().addFreshEntity(arrow);

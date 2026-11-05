@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.entity.HelperEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -141,19 +142,7 @@ public final class Mover {
             ServerLevel dest = p.serverLevel();
             BlockPos spot = safeSpotNear(dest, p.blockPosition(), 2);
             Vec3 at = spot != null ? Vec3.atBottomCenterOf(spot) : p.position();
-            Entity moved = h.changeDimension(dest, new ITeleporter() {
-                @Override
-                public Entity placeEntity(Entity e, ServerLevel cur, ServerLevel to, float yaw, Function<Boolean, Entity> repos) {
-                    Entity n = repos.apply(false);
-                    n.moveTo(at.x, at.y, at.z, n.getYRot(), n.getXRot());
-                    return n;
-                }
-
-                @Override
-                public boolean playTeleportSound(ServerPlayer pl, ServerLevel s, ServerLevel d) {
-                    return false;
-                }
-            });
+            Entity moved = Compat.toDimension(h, dest, at);
             return moved != null;
         }
         return teleportNear(p.blockPosition());

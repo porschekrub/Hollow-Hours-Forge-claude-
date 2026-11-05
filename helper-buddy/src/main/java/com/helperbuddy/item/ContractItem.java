@@ -44,7 +44,11 @@ public class ContractItem extends Item {
         HelperEntity h = HBRegistry.HELPER.get().create(level);
         if (h == null) return InteractionResult.FAIL;
         h.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.getYRot() + 180, 0);
+        //#if MC>=12100
+        //$$ h.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(at), MobSpawnType.SPAWN_EGG, null);
+        //#else
         h.finalizeSpawn((ServerLevel) level, level.getCurrentDifficultyAt(at), MobSpawnType.SPAWN_EGG, null, null);
+        //#endif
         HelperEntity.initNew(h, p);
         level.addFreshEntity(h);
         ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER, h.getX(), h.getY() + 1, h.getZ(), 20, 0.4, 0.6, 0.4, 0);

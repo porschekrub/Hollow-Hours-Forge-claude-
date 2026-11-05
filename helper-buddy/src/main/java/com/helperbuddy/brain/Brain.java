@@ -1,5 +1,6 @@
 package com.helperbuddy.brain;
 
+import com.helperbuddy.compat.Compat;
 import com.helperbuddy.HelperBuddy;
 import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
@@ -243,15 +244,7 @@ public final class Brain {
             if (dl != null && cooldown("gototp", 40)) {
                 BlockPos spot = Mover.safeSpotNear(dl, pos, 4);
                 Vec3 at = Vec3.atBottomCenterOf(spot != null ? spot : pos);
-                h.changeDimension(dl, new net.minecraftforge.common.util.ITeleporter() {
-                    @Override
-                    public net.minecraft.world.entity.Entity placeEntity(net.minecraft.world.entity.Entity e, ServerLevel c, ServerLevel to, float yaw,
-                                                                          java.util.function.Function<Boolean, net.minecraft.world.entity.Entity> re) {
-                        net.minecraft.world.entity.Entity n = re.apply(false);
-                        n.moveTo(at.x, at.y, at.z);
-                        return n;
-                    }
-                });
+                Compat.toDimension(h, dl, at);
             }
             return;
         }
