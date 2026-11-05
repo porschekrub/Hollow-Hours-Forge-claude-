@@ -8,7 +8,7 @@ on:
 jobs:
   neoforge:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 150
     permissions:
       contents: write
     steps:
@@ -39,6 +39,7 @@ jobs:
           echo "-Dhollowhours.smoketest=true" > user_jvm_args.txt
           timeout 1200 ./run.sh nogui > ../neo-hh.log 2>&1 || true
           cp logs/latest.log ../neo-hh-latest.log || true
+          rm -rf ../smoke-world && cp -r world ../smoke-world || true
           grep -a "SMOKE TEST OK\|SMOKE TEST FAILED\|Exception\|ERROR" ../neo-hh-latest.log | head -30
       - name: Helper Buddy alone (its smoke test)
         run: |
@@ -47,6 +48,7 @@ jobs:
           echo "-Dhelperbuddy.smoketest=true" > user_jvm_args.txt
           timeout 1200 ./run.sh nogui > ../neo-hb.log 2>&1 || true
           cp logs/latest.log ../neo-hb-latest.log || true
+          rm -rf ../hb-world && cp -r world ../hb-world || true
           grep -a "SMOKE TEST OK\|SMOKE TEST FAILED\|Exception\|ERROR" ../neo-hb-latest.log | head -30
       - name: Both together (start, then stop)
         run: |
@@ -56,12 +58,54 @@ jobs:
           (sleep 240; echo stop) | timeout 600 ./run.sh nogui > ../neo-both.log 2>&1 || true
           cp logs/latest.log ../neo-both-latest.log || true
           grep -a "Done (\|Exception\|ERROR" ../neo-both-latest.log | head -30
+      - name: Install a NeoForge 1.20.1 client (portablemc)
+        continue-on-error: true
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          pip install --quiet --break-system-packages pillow || true
+          U=$(curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest | python3 -c "import sys,json; a=json.load(sys.stdin)['assets']; print([x['browser_download_url'] for x in a if 'x86_64-unknown-linux-gnu' in x['name'] and x['name'].endswith('.tar.gz')][0])")
+          echo "portablemc: $U"
+          mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
+          PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
+          echo "PMC=$PMC" >> $GITHUB_ENV
+          V=$(awk '{print $2}' neo-version.txt); echo "NEOV=$V" >> $GITHUB_ENV
+          $PMC --version
+          $PMC --main-dir $PWD/pmc-main start --dry --mc-dir $PWD/mc "neoforge::$V" > neo-client-install.log 2>&1; tail -25 neo-client-install.log
+      - name: Hollow Hours client on NeoForge (virtual display)
+        continue-on-error: true
+        run: |
+          M=$PWD/mc; rm -rf $M/mods $M/saves $M/logs $M/screenshots $M/crash-reports; mkdir -p $M/mods $M/saves $M/config
+          cp hollow-hours/build/libs/hollowhours-*.jar $M/mods/ && rm -f $M/mods/*-slim.jar $M/mods/*-sources.jar
+          cp -r smoke-world $M/saves/smoke && rm -f $M/saves/smoke/session.lock
+          printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:6\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nguiScale:2\n" > $M/options.txt
+          printf "earlyWindowControl = false\n" > $M/config/fml.toml
+          export LIBGL_ALWAYS_SOFTWARE=1
+          timeout 2700 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M "neoforge::$NEOV" -u Dev --join-world smoke --resolution 960x540 --jvm-arg=-Dhollowhours.clientsmoke=true,-Xmx3G > neo-hh-client.log 2>&1 || true
+          cp $M/logs/latest.log neo-hh-client-latest.log || true
+          cp -r $M/crash-reports neo-hh-crash 2>/dev/null || true
+          python3 tools/shots.py $M/screenshots neo-shots-hh || true
+          tail -n 30 neo-hh-client-latest.log || tail -n 60 neo-hh-client.log
+          python3 tools/check_log.py neo-hh-client-latest.log "CLIENT SMOKE OK"
+      - name: Helper Buddy client on NeoForge (virtual display)
+        continue-on-error: true
+        run: |
+          M=$PWD/mc; rm -rf $M/mods $M/saves $M/logs $M/screenshots $M/crash-reports; mkdir -p $M/mods $M/saves $M/config
+          cp helper-buddy/build/libs/helperbuddy-*.jar $M/mods/ && rm -f $M/mods/*-slim.jar $M/mods/*-sources.jar
+          cp -r hb-world $M/saves/smoke && rm -f $M/saves/smoke/session.lock
+          export LIBGL_ALWAYS_SOFTWARE=1
+          timeout 1800 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M "neoforge::$NEOV" -u Dev --join-world smoke --resolution 960x540 --jvm-arg=-Dhelperbuddy.clientsmoke=true,-Xmx3G > neo-hb-client.log 2>&1 || true
+          cp $M/logs/latest.log neo-hb-client-latest.log || true
+          cp -r $M/crash-reports neo-hb-crash 2>/dev/null || true
+          python3 tools/shots.py $M/screenshots neo-shots-hb || true
+          tail -n 30 neo-hb-client-latest.log || tail -n 60 neo-hb-client.log
+          python3 tools/check_log.py neo-hb-client-latest.log "CLIENT SMOKE OK"
       - name: Publish logs to "neoforge-out"
         if: always()
         run: |
           set +e
           D=/tmp/neo-out; mkdir -p $D
           cp neo-*.log neo-version.txt srv/install.log $D/ 2>/dev/null
+          cp -r neo-shots-hh neo-shots-hb neo-hh-crash neo-hb-crash $D/ 2>/dev/null
           cd $D && git init -q && git checkout -q -b neoforge-out && git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "neoforge logs"
           git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" neoforge-out
