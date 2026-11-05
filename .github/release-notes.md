@@ -1,8 +1,14 @@
 **Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
 **Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.12.0.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.12.0.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+- `hollowhours-forge-1.20.1-2.12.1.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
+- `helperbuddy-forge-1.20.1-2.12.1.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+
+**2.12.1 — a haunted main menu**
+- Hollow Hours: the **main menu** is haunted now. Behind the buttons a dead forest under a blood moon slowly turns, and the five ghosts stand round you in the dark by their cold lanterns (one reaching for you, one crawling up to you, one grinning behind you...). "HOLLOW HOURS" flickers in red under the Minecraft logo, and the yellow splash lines are spooky ones (English and Thai).
+  Hollow Hours: **หน้าเมนูหลัก**หลอนแล้ว ฉากหลังเป็นป่าไม้ตายใต้พระจันทร์สีเลือดที่หมุนช้าๆ ผีทั้ง 5 ยืนล้อมเราในความมืดข้างตะเกียงวิญญาณ (ตนหนึ่งยื่นมือมาคว้า ตนหนึ่งคลานขึ้นมาหา ตนหนึ่งยืนยิ้มอยู่ข้างหลัง...) ใต้โลโก้ Minecraft มีคำว่า "HOLLOW HOURS" สีแดงกะพริบ และข้อความสีเหลืองข้างโลโก้เป็นประโยคหลอนๆ (ไทย/อังกฤษ)
+- Guns: no muzzle flash in your own view while aiming through the scope.
+  ปืน: ตอนเล็ง/ส่องกล้อง จะไม่เห็นไฟปากกระบอกบังจอแล้ว
 
 **2.12.0 — the last chapter**
 - Hollow Hours now has an **ending**. 20 days after you come home from the haven (`daysAfterReturn`), the crying under the mountain starts... and on that night **all five ghosts come at once**.

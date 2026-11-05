@@ -2255,38 +2255,7 @@ public final class ClientSmoke {
                 panorama(mc, "blood_dark");
             }
             if (t == 240) keepPanorama(mc, "blood_dark");
-            if (t == 222) server(sp -> com.hollowhours.ghost.Atmosphere.startFog(sp.server, 20 * 60, 0.45f));
-            if (t == 270) {
-                face(mc, look[0]);
-                shot("covershot_blood_fog");
-                panorama(mc, "blood_fog");
-            }
-            if (t == 290) keepPanorama(mc, "blood_fog");
-            // 2: a little brighter (night vision)
-            if (t == 272) server(sp -> {
-                com.hollowhours.ghost.Atmosphere.stopFog(sp.server);
-                sp.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 20 * 60 * 30, 0, false, false));
-            });
-            if (t == 300) {
-                face(mc, look[0]);
-                shot("covershot_blood_bright");
-                panorama(mc, "blood_bright");
-            }
-            if (t == 320) keepPanorama(mc, "blood_bright");
-            // 3: no blood moon, a plain dark night
-            if (t == 302) server(sp -> {
-                sp.removeEffect(MobEffects.NIGHT_VISION);
-                com.hollowhours.ghost.Atmosphere.forceBlood = -1;
-                sp.serverLevel().setDayTime(18000);
-            });
-            if (t == 330) Atmos.snap();
-            if (t == 400) {
-                face(mc, look[0]);
-                shot("covershot_night_dark");
-                panorama(mc, "night_dark");
-            }
-            if (t == 420) keepPanorama(mc, "night_dark");
-            if (t == 402) {
+            if (t == 250) {
                 mc.options.gamma().set(gamma[0]);
                 server(sp -> {
                     com.hollowhours.ghost.Atmosphere.forceBlood = 0;
@@ -2294,8 +2263,8 @@ public final class ClientSmoke {
                     pin(sp);
                 });
             }
-            if (t == 430) Atmos.snap();
-            return t >= 432;
+            if (t == 280) Atmos.snap();
+            return t >= 282;
         });
     }
 
