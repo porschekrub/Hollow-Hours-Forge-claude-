@@ -2500,7 +2500,8 @@ public final class ClientSmoke {
             });
             turn(mc, 20, 30);
             if (t >= 16 && t % 2 == 0 && t <= 30) frame("10_map");
-            return t >= 32;
+            if (t == 32) server(sp -> sp.getInventory().setItem(0, net.minecraft.world.item.ItemStack.EMPTY));
+            return t >= 34;
         });
         // 11. the mountain: built, then a slow push in from the air
         final int[] built = {-1};
@@ -2552,8 +2553,9 @@ public final class ClientSmoke {
             if (t == 0) {
                 promoHud = 1;
                 server(sp -> {
-                    Vec3 at = egCenter.add(egDir.scale(9));
+                    Vec3 at = egCenter.add(egDir.scale(12));
                     sp.teleportTo(at.x, egCenter.y, at.z);
+                    sp.getInventory().clearContent();
                     sp.serverLevel().setDayTime(18000);
                 });
             }
