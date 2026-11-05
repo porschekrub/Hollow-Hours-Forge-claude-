@@ -74,7 +74,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
 
     // where the hands land (blocks, measured on the model): forward, side (+ = its right), for near / far slams
     static final double[] SLAM_NEAR = {4.16, 2.44}, SLAM_FAR = {6.53, 2.68};
-    static final double[] GRAB_AT = {4.88, -0.37, 1.66}, HOLD_AT = {3.47, -1.0, 4.1};
+    static final double[] GRAB_AT = {4.88, -0.37, 1.66}, HOLD_AT = {3.9, -1.0, 3.8};
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bar = new ServerBossEvent(Component.translatable("entity.hollowhours.weeping").withStyle(ChatFormatting.GOLD),
@@ -268,7 +268,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
                 scaleHealth();
                 Fx.sound(level(), "boss.rise", position(), 4f, 1f, 96);
                 for (ServerPlayer p : players(64)) {
-                    Fx.title(p, Component.translatable("entity.hollowhours.weeping").withStyle(ChatFormatting.GOLD),
+                    Fx.title(p, Component.translatable("hollowhours.endgame.boss.title").withStyle(ChatFormatting.GOLD),
                             Component.translatable("hollowhours.endgame.boss.sub").withStyle(ChatFormatting.GRAY), 10, 70, 20);
                     Director.music(p, "boss");
                 }
@@ -464,7 +464,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
 
     void tickSlam(ServerLevel sl) {
         int hit = 21;
-        if (actT < hit && actT % 3 == 0) ring(sl, aim, 3.0, new DustParticleOptions(new Vector3f(0.9f, 0.08f, 0.05f), 1.6f), 22);
+        if (actT < hit && actT % 4 == 0) ring(sl, aim, 3.0, new DustParticleOptions(new Vector3f(0.95f, 0.1f, 0.05f), 0.9f), 20);
         if (actT == hit) {
             float dmg = phase == 3 ? 13 : phase == 2 ? 11 : 9;
             for (ServerPlayer p : players(40)) {
@@ -505,12 +505,12 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
     }
 
     void tickSweep(ServerLevel sl) {
-        if (actT >= 4 && actT < 18 && actT % 3 == 0) {
-            for (int a = -80; a <= 80; a += 10) {
+        if (actT >= 4 && actT < 18 && actT % 4 == 0) {
+            for (int a = -80; a <= 80; a += 16) {
                 double rad = Math.toRadians(a);
-                for (double r = 2.5; r <= 6.5; r += 2) {
+                for (double r = 3; r <= 6.5; r += 3.5) {
                     Vec3 p = position().add(fwd(lockedYaw).scale(Math.cos(rad) * r)).add(right(lockedYaw).scale(Math.sin(rad) * r));
-                    sl.sendParticles(new DustParticleOptions(new Vector3f(0.9f, 0.5f, 0.05f), 1.2f), p.x, p.y + 0.15, p.z, 1, 0.1, 0, 0.1, 0);
+                    sl.sendParticles(new DustParticleOptions(new Vector3f(0.95f, 0.55f, 0.05f), 0.8f), p.x, p.y + 0.15, p.z, 1, 0.1, 0, 0.1, 0);
                 }
             }
         }
@@ -751,7 +751,7 @@ public class WeepingEntity extends PathfinderMob implements GeoEntity {
             double a = i / (double) n * Math.PI * 2;
             sl.sendParticles(o, c.x + Math.cos(a) * r, c.y + 0.12, c.z + Math.sin(a) * r, 1, 0, 0, 0, 0);
         }
-        sl.sendParticles(o, c.x, c.y + 0.12, c.z, 3, r * 0.4, 0, r * 0.4, 0);
+        sl.sendParticles(o, c.x, c.y + 0.12, c.z, 2, r * 0.3, 0, r * 0.3, 0);
     }
 
     @Override

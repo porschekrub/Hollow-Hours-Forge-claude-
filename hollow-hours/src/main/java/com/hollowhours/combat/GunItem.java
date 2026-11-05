@@ -151,9 +151,14 @@ public class GunItem extends Item {
             }
         }
         // a quick small flash at the muzzle (big flames right in front of the eye looked like a bonfire)
-        level.sendParticles(ParticleTypes.SMALL_FLAME, muzzle.x, muzzle.y, muzzle.z, 2, 0.01, 0.01, 0.01, 0.0);
-        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, muzzle.x, muzzle.y, muzzle.z, 3, 0.02, 0.02, 0.02, 0.05);
-        level.sendParticles(ParticleTypes.SMOKE, muzzle.x, muzzle.y, muzzle.z, 2, 0.02, 0.02, 0.02, 0.005);
+        // (not for the shooter while aiming: through a zoomed scope the flash filled the view)
+        for (ServerPlayer o : level.players()) {
+            if (o == p && aim) continue;
+            if (o.distanceToSqr(muzzle) > 64 * 64) continue;
+            level.sendParticles(o, ParticleTypes.SMALL_FLAME, false, muzzle.x, muzzle.y, muzzle.z, 2, 0.01, 0.01, 0.01, 0.0);
+            level.sendParticles(o, ParticleTypes.ELECTRIC_SPARK, false, muzzle.x, muzzle.y, muzzle.z, 3, 0.02, 0.02, 0.02, 0.05);
+            level.sendParticles(o, ParticleTypes.SMOKE, false, muzzle.x, muzzle.y, muzzle.z, 2, 0.02, 0.02, 0.02, 0.005);
+        }
         level.playSound(null, p.getX(), p.getY(), p.getZ(), HHSounds.get("gun." + spec.id), SoundSource.PLAYERS, 2.5f, 0.92f + p.getRandom().nextFloat() * 0.16f);
         HHNet.toPlayer(p, new S2CCombat(S2CCombat.RECOIL, spec.recoil * (aim ? 0.7f : 1f), (p.getRandom().nextFloat() - 0.5f) * spec.recoil * 0.4f, 0));
         Perception.impulse(p, p.position(), 48);

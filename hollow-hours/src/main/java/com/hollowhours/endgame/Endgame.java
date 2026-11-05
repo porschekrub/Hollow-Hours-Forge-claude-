@@ -178,7 +178,7 @@ public final class Endgame {
                     if (left <= 0 && warned < 2 && tod >= 6000) {
                         persisted(p).putInt(WARNED, 2);
                         PhoneItem.addMessage(p, "hollowhours.endgame.msg.tonight");
-                        Fx.title(p, Component.translatable("hollowhours.endgame.tonight").withStyle(ChatFormatting.DARK_RED), Component.empty(), 20, 80, 30);
+                        Fx.title(p, Component.translatable("hollowhours.endgame.tonight").withStyle(ChatFormatting.DARK_RED), Component.translatable("hollowhours.endgame.tonight.sub").withStyle(ChatFormatting.GRAY), 20, 80, 30);
                     }
                 }
                 if (left <= 0 && tod >= 13000 && tod < 23000 && !server.getPlayerList().getPlayers().isEmpty()) startHunt(server);
@@ -388,12 +388,13 @@ public final class Endgame {
 
     /** Holding the map: how far, and which way. */
     public static void playerTick(ServerPlayer p, long now) {
-        if (now % 10 != 0 || !on()) return;
+        if (now % 10 != 0 || !on() || stage(p.server) != MAP) return;
         boolean main = isMountainMap(p.getMainHandItem()), off = isMountainMap(p.getOffhandItem());
         if (!main && !off) return;
         Data d = data(p.server);
         if (d.site == null || p.level().dimension() != Level.OVERWORLD) return;
         BlockPos target = d.center != null ? d.center : d.site;
+        if (d.center != null && p.position().distanceTo(Vec3.atCenterOf(d.center)) < 26) return; // down there: no need
         double dx = target.getX() + 0.5 - p.getX(), dz = target.getZ() + 0.5 - p.getZ();
         int dist = (int) Math.round(Math.hypot(dx, dz));
         double ang = Math.toDegrees(Math.atan2(-dx, dz)) - p.getYRot();
@@ -465,6 +466,11 @@ public final class Endgame {
 
     static void makePeace(MinecraftServer server) {
         set(server, DONE);
+        // the next morning, and a clear sky
+        ServerLevel over = server.overworld();
+        long dt = over.getDayTime();
+        over.setDayTime(dt - dt % 24000L + 24000L + 200);
+        over.setWeatherParameters(24000 * 3, 0, false, false);
         for (GhostEntity g : Director.allGhosts(server)) {
             g.ejectPassengers();
             g.discard();

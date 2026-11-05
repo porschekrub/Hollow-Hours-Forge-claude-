@@ -601,6 +601,12 @@ def main():
     g.pack(1.0, width=512)
     d = g.to_dict()
     tex, glow = paint(g, material, seed=3)
+    # the glow layer is drawn additively ("eyes"): its colour must be black wherever nothing glows
+    ga = np.asarray(glow, np.float64)
+    a = ga[..., 3:4] / 255.0
+    ga[..., :3] *= a
+    ga[..., 3] = np.where(a[..., 0] > 0.02, 255, 0)
+    glow = Image.fromarray(np.clip(ga, 0, 255).astype(np.uint8), "RGBA")
     os.makedirs(os.path.join(RES, "geo", "entity"), exist_ok=True)
     g.save(os.path.join(RES, "geo", "entity", "weeping.geo.json"))
     tex.save(os.path.join(RES, "textures", "entity", "weeping.png"))

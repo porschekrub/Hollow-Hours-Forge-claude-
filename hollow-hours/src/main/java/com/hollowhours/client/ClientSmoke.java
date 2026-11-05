@@ -991,7 +991,10 @@ public final class ClientSmoke {
                 }
                 HollowHours.LOG.info("[client smoke] mountain map in slot {}, stage {}", slot, com.hollowhours.endgame.Endgame.status(sp.server));
                 if (slot < 0) HollowHours.LOG.error("[client smoke] no map to the mountain (com.hollowhours)");
-                else sp.getInventory().selected = slot;
+                else {
+                    sp.getInventory().selected = slot;
+                    sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(slot));
+                }
                 sp.containerMenu.broadcastChanges();
             });
             if (t == 2) lookAt = mc.player.position().add(0, 0.2, 6);
