@@ -61,6 +61,7 @@ public final class KillSequence {
         // struggling free
         float prog;
         long strEnd, lastPress;
+        int pressesNow, presses;
         boolean struggled;
 
         Session(GhostBrain b, UUID victim) {
@@ -255,8 +256,13 @@ public final class KillSequence {
         Session s = BY_VICTIM.get(p.getUUID());
         if (s == null || s.phase != Phase.STRUGGLE) return;
         long now = p.level().getGameTime();
-        if (now == s.lastPress) return;
-        s.lastPress = now;
+        // up to two presses count per tick (a lagging server gets several at once; more than that is an auto-clicker)
+        if (now != s.lastPress) {
+            s.lastPress = now;
+            s.pressesNow = 0;
+        }
+        if (++s.pressesNow > 2) return;
+        s.presses++;
         float inc = 0.055f * (1 + 0.9f * com.hollowhours.combat.Fitness.strength(p) / 100f + com.hollowhours.combat.MilitaryArmor.struggle(p)
                 + 0.03f * com.hollowhours.combat.Fitness.meleeLevel(p));
         s.prog = Math.min(1f, s.prog + inc);
@@ -268,6 +274,9 @@ public final class KillSequence {
                 * (float) Math.min(2.0, Math.sqrt(com.hollowhours.rescue.Rescue.harshness(p, Atmosphere.bloodMoonFor(b.g.level()))));
         s.prog -= pull;
         if (now % 2 == 0) HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, s.prog, s.strEnd - now, 0));
+        if (s.prog >= 1f || s.prog <= 0 || now >= s.strEnd)
+            com.hollowhours.HollowHours.LOG.info("[Hollow Hours] {} struggle {}: {} presses, pull {}/tick", p.getGameProfile().getName(),
+                    s.prog >= 1f ? "won" : "lost", s.presses, String.format("%.4f", pull));
         if (s.prog >= 1f) {
             HHNet.toPlayer(p, new com.hollowhours.net.S2CCombat(com.hollowhours.net.S2CCombat.STRUGGLE, -1, 0, 1));
             com.hollowhours.combat.Fitness.addStrength(p, 0.6f);
