@@ -135,8 +135,8 @@ public final class Endgame {
 
     static CompoundTag persisted(Player p) {
         CompoundTag root = p.getPersistentData();
-        if (!root.contains(Player.PERSISTED_NBT_TAG)) root.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
-        return root.getCompound(Player.PERSISTED_NBT_TAG);
+        if (!root.contains("PlayerPersisted")) root.put("PlayerPersisted", new CompoundTag());
+        return root.getCompound("PlayerPersisted");
     }
 
     // ------------------------------------------------------------------ countdown

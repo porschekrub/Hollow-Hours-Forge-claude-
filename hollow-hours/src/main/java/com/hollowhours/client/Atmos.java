@@ -163,7 +163,12 @@ public final class Atmos {
         float b = blood(partial);
         if (b < 0.01f) return;
         float alpha = b * (1 - level.getRainLevel(partial));
+        //#if MC>=12100 && FORGE
+        //$$ PoseStack ps = new PoseStack();
+        //$$ ps.mulPose(e.getPoseStack());
+        //#else
         PoseStack ps = e.getPoseStack();
+        //#endif
         ps.pushPose();
         ps.mulPose(Axis.YP.rotationDegrees(-90.0F));
         ps.mulPose(Axis.XP.rotationDegrees(level.getTimeOfDay(partial) * 360.0F));

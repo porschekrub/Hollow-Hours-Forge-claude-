@@ -51,6 +51,11 @@ public final class ClientSetup {
         //$$     net.minecraft.client.renderer.entity.EntityRenderer<? extends net.minecraft.world.entity.player.Player> r = e.getSkin(skin);
         //$$     if (r == null) continue;
         //$$     boolean slim = skin == net.minecraft.client.resources.PlayerSkin.Model.SLIM;
+        //#elif MC>=12100
+        //$$ for (net.minecraft.client.resources.PlayerSkin.Model skin : e.getSkins()) {
+        //$$     net.minecraft.client.renderer.entity.EntityRenderer<? extends net.minecraft.world.entity.player.Player> r = e.getPlayerSkin(skin);
+        //$$     if (r == null) continue;
+        //$$     boolean slim = skin == net.minecraft.client.resources.PlayerSkin.Model.SLIM;
         //#else
         for (String skin : e.getSkins()) {
             net.minecraft.client.renderer.entity.LivingEntityRenderer<?, ?> r = e.getSkin(skin);

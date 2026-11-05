@@ -30,8 +30,8 @@ public final class Soul {
 
     static CompoundTag data(Player p) {
         CompoundTag root = p.getPersistentData();
-        if (!root.contains(Player.PERSISTED_NBT_TAG)) root.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
-        return root.getCompound(Player.PERSISTED_NBT_TAG);
+        if (!root.contains("PlayerPersisted")) root.put("PlayerPersisted", new CompoundTag());
+        return root.getCompound("PlayerPersisted");
     }
 
     public static float get(Player p) {

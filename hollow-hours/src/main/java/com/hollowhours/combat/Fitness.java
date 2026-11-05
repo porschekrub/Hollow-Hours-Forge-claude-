@@ -34,11 +34,11 @@ public final class Fitness {
     public static final int MAX_LEVEL = 10;
 
     static CompoundTag keep(Player p) {
-        return p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        return p.getPersistentData().getCompound("PlayerPersisted");
     }
 
     static void save(Player p, CompoundTag k) {
-        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, k);
+        p.getPersistentData().put("PlayerPersisted", k);
     }
 
     public static float strength(Player p) {

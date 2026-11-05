@@ -41,7 +41,11 @@ public final class HHNet {
     }
 
     public static void toPlayer(ServerPlayer p, Object msg) {
+        //#if MC>=12100 && FORGE
+        //$$ if (p == null || p.connection == null) return;
+        //#else
         if (p == null || p.connection == null || p instanceof net.minecraftforge.common.util.FakePlayer) return;
+        //#endif
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> p), msg);
     }
 

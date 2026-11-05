@@ -249,7 +249,28 @@ def map_resource(rel, flags):
     return '/'.join(parts)
 
 
+PROVIDER_TYPES = {'minecraft:uniform', 'minecraft:biased_to_bottom', 'minecraft:clamped', 'minecraft:clamped_normal',
+                  'minecraft:trapezoid', 'minecraft:constant'}
+
+
+def flatten_providers(j):
+    """1.20.5+ int/float providers: {"type": "minecraft:uniform", "min_inclusive": .., ...} (no "value" wrapper)."""
+    if isinstance(j, dict):
+        if set(j.keys()) == {'type', 'value'} and j['type'] in PROVIDER_TYPES and isinstance(j['value'], dict):
+            j = dict({'type': j['type']}, **j['value'])
+        return {k: flatten_providers(v) for k, v in j.items()}
+    if isinstance(j, list):
+        return [flatten_providers(v) for v in j]
+    return j
+
+
 def transform_resource(rel, data, flags):
+    if flags.get('MC', 0) >= 12100 and rel.startswith('data/') and rel.endswith('.json') and ('/worldgen/' in rel or '/dimension_type/' in rel):
+        try:
+            j = json.loads(data.decode('utf-8'))
+        except ValueError:
+            return data
+        return json.dumps(flatten_providers(j), indent=1, ensure_ascii=False).encode('utf-8')
     if flags.get('MC', 0) >= 12100 and rel.startswith('data/') and rel.endswith('.json') and '/recipe' in rel:
         try:
             j = json.loads(data.decode('utf-8'))

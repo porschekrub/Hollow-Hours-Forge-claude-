@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ neoforge-1.21.1 ]
+        target: [ neoforge-1.21.1, forge-1.21.1 ]
         project: [ hollow-hours, helper-buddy ]
     defaults:
       run:

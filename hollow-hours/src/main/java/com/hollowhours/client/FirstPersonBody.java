@@ -61,7 +61,13 @@ public final class FirstPersonBody {
         drawing = true;
         try {
             var d = mc.getEntityRenderDispatcher();
+            //#if MC>=12100 && FORGE
+            //$$ com.mojang.blaze3d.vertex.PoseStack ps = new com.mojang.blaze3d.vertex.PoseStack();
+            //$$ ps.mulPose(e.getPoseStack());
+            //$$ d.render(p, x - cam.x, y - cam.y, z - cam.z, Mth.lerp(partial, p.yRotO, p.getYRot()), partial, ps, buf,
+            //#else
             d.render(p, x - cam.x, y - cam.y, z - cam.z, Mth.lerp(partial, p.yRotO, p.getYRot()), partial, e.getPoseStack(), buf,
+            //#endif
                     d.getPackedLightCoords(p, partial));
             buf.endBatch();
         } catch (Throwable ex) {

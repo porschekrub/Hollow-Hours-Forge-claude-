@@ -58,9 +58,10 @@ public final class ClientSmoke {
     //$$     if (!ON || !PROMO) return;
     //$$     String id = e.getName().toString();
     //#elif MC>=12100
-    //$$ public static void promoOverlays(net.minecraftforge.client.event.RenderGuiEvent.Pre e) {
+    //$$ public static void promoOverlays(net.minecraftforge.client.event.RenderLevelStageEvent e) {
     //$$     if (!ON || !PROMO) return;
     //$$     String id = "";
+    //$$     if (id.isEmpty()) return;
     //#else
     public static void promoOverlays(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre e) {
         if (!ON || !PROMO) return;
@@ -998,7 +999,7 @@ public final class ClientSmoke {
             if (t == 30) shot("endgame_hunt_title");
             // knock each one out as it comes, then line them up in front of the player
             if (t > 40 && t % 10 == 0 && t < 330) server(sp -> {
-                net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(sp.serverLevel());
+                net.minecraft.server.level.ServerPlayer fp = com.hollowhours.compat.Compat.fakePlayer(sp.serverLevel());
                 for (GhostEntity g : Director.allGhosts(sp.server)) {
                     if (com.hollowhours.combat.GhostCombat.knockedOut(g.brain())) continue;
                     for (int i = 0; i < 300 && !com.hollowhours.combat.GhostCombat.knockedOut(g.brain()); i++) com.hollowhours.combat.GhostCombat.poiseHit(g, sp, 25, false);

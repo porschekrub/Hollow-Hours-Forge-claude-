@@ -48,14 +48,14 @@ public final class PhoneChat {
 
     static CompoundTag chats(Player p) {
         CompoundTag root = p.getPersistentData();
-        if (!root.contains(Player.PERSISTED_NBT_TAG)) root.put(Player.PERSISTED_NBT_TAG, new CompoundTag());
-        CompoundTag d = root.getCompound(Player.PERSISTED_NBT_TAG);
+        if (!root.contains("PlayerPersisted")) root.put("PlayerPersisted", new CompoundTag());
+        CompoundTag d = root.getCompound("PlayerPersisted");
         if (!d.contains(TAG)) d.put(TAG, new CompoundTag());
         return d.getCompound(TAG);
     }
 
     static CompoundTag persisted(Player p) {
-        return p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        return p.getPersistentData().getCompound("PlayerPersisted");
     }
 
     public static List<String> log(Player p, String contact) {

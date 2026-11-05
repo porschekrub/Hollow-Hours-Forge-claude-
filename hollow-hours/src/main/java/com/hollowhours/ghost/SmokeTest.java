@@ -104,7 +104,7 @@ final class SmokeTest {
     static void endgame(MinecraftServer server, ServerLevel level, Vec3 at) {
         long t0 = System.currentTimeMillis();
         com.hollowhours.endgame.Endgame.reset(server);
-        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        net.minecraft.server.level.ServerPlayer fp = com.hollowhours.compat.Compat.fakePlayer(level);
         fp.moveTo(at.x, at.y, at.z);
         // the hunt: every one knocked out stays down; the last one brings the map
         com.hollowhours.endgame.Endgame.data(server).stage = com.hollowhours.endgame.Endgame.HUNT;
@@ -167,7 +167,7 @@ final class SmokeTest {
 
     /** Drinking from water: still, flowing, under a lily pad, past tall grass, a cauldron; not through stone. */
     static void sips(ServerLevel level, Vec3 at) {
-        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        net.minecraft.server.level.ServerPlayer fp = com.hollowhours.compat.Compat.fakePlayer(level);
         BlockPos o = BlockPos.containing(at).offset(-30, 0, -30);
         String[] cases = {"still", "flowing", "lily", "grass", "cauldron", "stone"};
         for (int i = 0; i < cases.length; i++) {
@@ -211,7 +211,7 @@ final class SmokeTest {
 
     /** Weapons knock ghosts out (and they get up again), armour and strength numbers, a gun reloads from ammo. */
     static void combat(ServerLevel level, Vec3 at) {
-        net.minecraftforge.common.util.FakePlayer fp = net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        net.minecraft.server.level.ServerPlayer fp = com.hollowhours.compat.Compat.fakePlayer(level);
         fp.moveTo(at.x, at.y, at.z);
         GhostEntity g = Director.spawnGhost(level, GhostKind.values()[2], at.add(4, 0, 0));
         check(g != null, "combat ghost");

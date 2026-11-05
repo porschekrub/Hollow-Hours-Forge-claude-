@@ -47,16 +47,16 @@ public final class HBEvents {
         });
         if (kept.isEmpty()) return;
         // the persisted part of a player's data is carried over to the respawned player
-        CompoundTag persisted = p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag persisted = p.getPersistentData().getCompound("PlayerPersisted");
         net.minecraft.nbt.ListTag old = persisted.getList(KEPT, net.minecraft.nbt.Tag.TAG_COMPOUND);
         old.addAll(kept);
         persisted.put(KEPT, old);
-        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+        p.getPersistentData().put("PlayerPersisted", persisted);
     }
 
     static void giveBookBack(PlayerEvent.PlayerRespawnEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p)) return;
-        CompoundTag persisted = p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag persisted = p.getPersistentData().getCompound("PlayerPersisted");
         if (!persisted.contains(KEPT)) return;
         net.minecraft.nbt.ListTag kept = persisted.getList(KEPT, net.minecraft.nbt.Tag.TAG_COMPOUND);
         for (int i = 0; i < kept.size(); i++) {
@@ -64,7 +64,7 @@ public final class HBEvents {
             if (!s.isEmpty() && !p.getInventory().add(s)) p.drop(s, false);
         }
         persisted.remove(KEPT);
-        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+        p.getPersistentData().put("PlayerPersisted", persisted);
     }
 
     /** "!ไปตัดไม้", "!chop wood", "Buddy, chop wood", "ทุกคน มานี่" */
@@ -111,10 +111,10 @@ public final class HBEvents {
     static void login(PlayerEvent.PlayerLoggedInEvent e) {
         if (!(e.getEntity() instanceof ServerPlayer p) || !HBConfig.GIVE_CONTRACT_ON_JOIN.get()) return;
         CompoundTag data = p.getPersistentData();
-        CompoundTag keep = data.getCompound(Player.PERSISTED_NBT_TAG);
+        CompoundTag keep = data.getCompound("PlayerPersisted");
         if (keep.getBoolean("helperbuddy_contract")) return;
         keep.putBoolean("helperbuddy_contract", true);
-        data.put(Player.PERSISTED_NBT_TAG, keep);
+        data.put("PlayerPersisted", keep);
         p.getInventory().add(new ItemStack(HBRegistry.CONTRACT.get()));
         p.sendSystemMessage(Component.literal(Say.t(p, "§6[Helper Buddy]§r คุณได้รับ §eสัญญาจ้างผู้ช่วย§r! คลิกขวาที่พื้นเพื่อเรียกผู้ช่วยมาทำงานให้",
                 "§6[Helper Buddy]§r You got a §eHelper Contract§r! Use it on the ground to call your helper")));

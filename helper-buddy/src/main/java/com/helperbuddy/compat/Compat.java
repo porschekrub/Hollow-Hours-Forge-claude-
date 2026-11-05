@@ -35,7 +35,7 @@ public final class Compat {
         //#if MC>=12100
         //$$ return s.isEmpty() ? new CompoundTag() : (CompoundTag) s.save(registries());
         //#else
-        return Compat.saveStack(s);
+        return s.save(new CompoundTag());
         //#endif
     }
 
@@ -43,7 +43,7 @@ public final class Compat {
         //#if MC>=12100
         //$$ return ItemStack.parseOptional(registries(), t);
         //#else
-        return Compat.loadStack(t);
+        return ItemStack.of(t);
         //#endif
     }
 

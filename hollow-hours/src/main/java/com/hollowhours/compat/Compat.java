@@ -35,7 +35,7 @@ public final class Compat {
         //#if MC>=12100
         //$$ return s.isEmpty() ? new CompoundTag() : (CompoundTag) s.save(registries());
         //#else
-        return Compat.saveStack(s);
+        return s.save(new CompoundTag());
         //#endif
     }
 
@@ -43,7 +43,7 @@ public final class Compat {
         //#if MC>=12100
         //$$ return ItemStack.parseOptional(registries(), t);
         //#else
-        return Compat.loadStack(t);
+        return ItemStack.of(t);
         //#endif
     }
 
@@ -103,5 +103,16 @@ public final class Compat {
     /** Runs client-only code on the physical client (the double lambda keeps the client class unloaded on servers). */
     public static void client(Supplier<Runnable> code) {
         if (net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()) code.get().run();
+    }
+
+    /** A stand-in player for tests (Forge 1.21 has no fake players: a plain server player without a connection). */
+    public static net.minecraft.server.level.ServerPlayer fakePlayer(net.minecraft.server.level.ServerLevel level) {
+        //#if MC>=12100 && FORGE
+        //$$ return new net.minecraft.server.level.ServerPlayer(level.getServer(), level,
+        //$$         new com.mojang.authlib.GameProfile(java.util.UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]"),
+        //$$         net.minecraft.server.level.ClientInformation.createDefault());
+        //#else
+        return net.minecraftforge.common.util.FakePlayerFactory.getMinecraft(level);
+        //#endif
     }
 }

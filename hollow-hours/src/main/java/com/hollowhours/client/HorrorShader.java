@@ -37,7 +37,12 @@ public final class HorrorShader {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
+    //#if MC>=12100 && FORGE
+    //$$ public static void beforeHud(net.minecraftforge.client.event.RenderLevelStageEvent e) {
+    //$$     if (e.getStage() != net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
+    //#else
     public static void beforeHud(RenderGuiEvent.Pre e) {
+    //#endif
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || failed || !HHClientConfig.SHADER.get() || shaderPackLoader()) return;
         // the world looks normal until the story starts, then the horror look fades in

@@ -66,7 +66,8 @@ public final class HHItems {
 
     static {
         for (com.hollowhours.combat.MilitaryArmor.Mat m : com.hollowhours.combat.MilitaryArmor.Mat.values())
-            for (net.minecraft.world.item.ArmorItem.Type t : net.minecraft.world.item.ArmorItem.Type.values())
+            for (net.minecraft.world.item.ArmorItem.Type t : new net.minecraft.world.item.ArmorItem.Type[]{net.minecraft.world.item.ArmorItem.Type.HELMET,
+                    net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, net.minecraft.world.item.ArmorItem.Type.LEGGINGS, net.minecraft.world.item.ArmorItem.Type.BOOTS})
                 ARMOR.add(ITEMS.register(m.name().toLowerCase(java.util.Locale.ROOT) + "_" + t.getName(),
                         () -> new com.hollowhours.combat.MilitaryArmor.Piece(m, t, new Item.Properties())));
     }
