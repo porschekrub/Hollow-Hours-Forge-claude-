@@ -1,0 +1,90 @@
+name: Other loaders and versions
+
+# Builds both mods for every target in ports/ (made from the shared code by ports/pp.py) and runs each mod's server
+# and client smoke tests there, like the Forge 1.20.1 build does. Logs go to "ports-logs-<target>-<mod>".
+on:
+  push:
+    branches: [ "main", "ports-test", "release/**" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ports-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  port:
+    name: ${{ matrix.target }} ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ neoforge-1.21.1 ]
+        project: [ hollow-hours, helper-buddy ]
+    defaults:
+      run:
+        working-directory: ports/${{ matrix.target }}/${{ matrix.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+          ls -la build/libs
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-${{ matrix.project }}-jar
+          path: ports/${{ matrix.target }}/${{ matrix.project }}/build/libs/*.jar
+          if-no-files-found: error
+      - name: Server smoke test
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          printf "online-mode=false\nlevel-type=minecraft\\:flat\nspawn-protection=0\n" > run/server.properties
+          export HOLLOW_SMOKETEST=true HELPER_SMOKETEST=true
+          timeout 1500 ./gradlew runServer --no-daemon > smoke.log 2>&1 || true
+          tail -n 80 run/logs/latest.log || tail -n 80 smoke.log
+          python3 ../../../tools/check_log.py run/logs/latest.log
+      - name: Client smoke test (virtual display)
+        if: always()
+        run: |
+          cp run/logs/latest.log server-latest.log || true
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          pip install --quiet --break-system-packages pillow || true
+          rm -rf run/saves/smoke && mkdir -p run/saves && cp -r run/world run/saves/smoke && rm -f run/saves/smoke/session.lock
+          printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:6\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nguiScale:2\n" > run/options.txt
+          mkdir -p run/config && printf "earlyWindowControl = false\n" > run/config/fml.toml
+          export HOLLOW_CLIENTSMOKE=true HELPER_CLIENTSMOKE=true LIBGL_ALWAYS_SOFTWARE=1
+          timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" ./gradlew runClient --no-daemon > client.log 2>&1 || true
+          cp run/logs/latest.log client-latest.log || true
+          tail -n 60 client-latest.log || tail -n 80 client.log
+          python3 ../../../tools/check_log.py client-latest.log "CLIENT SMOKE OK"
+      - name: Publish logs
+        if: always() && github.event_name != 'pull_request'
+        working-directory: .
+        run: |
+          set +e
+          P=ports/${{ matrix.target }}/${{ matrix.project }}
+          D=/tmp/ports-logs
+          mkdir -p $D
+          cp $P/build.log $P/smoke.log $P/client.log $P/client-latest.log $P/server-latest.log $D/ 2>/dev/null
+          cp $P/run/logs/latest.log $D/server.log 2>/dev/null
+          cp -r $P/run/crash-reports $D/ 2>/dev/null
+          python3 tools/shots.py $P/run/screenshots $D/screenshots
+          echo "${{ github.sha }} ${{ job.status }}" > $D/STATUS
+          cd $D && git init -q && git checkout -q -b ports-logs-${{ matrix.target }}-${{ matrix.project }} && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "logs for ${{ github.sha }}"
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ports-logs-${{ matrix.target }}-${{ matrix.project }} && break
+            sleep $((i * 10))
+          done
+          exit 0
