@@ -398,6 +398,7 @@ public final class Director {
 
     // ------------------------------------------------------------------ music (every 5 ticks)
     public static void musicTick(MinecraftServer server, long now) {
+        if (com.hollowhours.endgame.Endgame.peaceful(server)) return;
         List<GhostEntity> ghosts = allGhosts(server);
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             String want = null;
@@ -445,12 +446,19 @@ public final class Director {
         HHNet.toPlayer(p, new S2CMusic(key));
     }
 
+    /** Music for one player ("" = none): keeps track so the haunting's own music logic leaves it alone. */
+    public static void music(ServerPlayer p, String key) {
+        if (key.equals(musicSent.getOrDefault(p.getUUID(), ""))) return;
+        sendMusic(p, key, 0);
+    }
+
     public static void stopMusicFor(ServerPlayer p) {
         sendMusic(p, "", 0);
     }
 
     // ------------------------------------------------------------------ dread (every 10 ticks): heartbeat + whispers behind you
     public static void dreadTick(MinecraftServer server, long now) {
+        if (com.hollowhours.endgame.Endgame.peaceful(server)) return;
         List<GhostEntity> ghosts = allGhosts(server);
         for (ServerPlayer pl : server.getPlayerList().getPlayers()) {
             double dmin = 999;

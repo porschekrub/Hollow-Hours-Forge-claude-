@@ -32,6 +32,8 @@ public final class ClientSetup {
         e.registerEntityRenderer(HHEntities.CLOSET.get(), ClosetRenderer::new);
         e.registerEntityRenderer(HHEntities.GRENADE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
         e.registerEntityRenderer(HHEntities.BOARDS.get(), BoardsRenderer::new);
+        e.registerEntityRenderer(HHEntities.WEEPING.get(), com.hollowhours.client.render.WeepingRenderer::new);
+        e.registerEntityRenderer(HHEntities.RIFT.get(), com.hollowhours.client.render.RiftRenderer::new);
         e.registerEntityRenderer(HHEntities.HIDE_SEAT.get(), NoopRenderer::new);
         e.registerEntityRenderer(HHEntities.FALLING_TREE.get(), com.hollowhours.client.render.FallingTreeRenderer::new);
         e.registerEntityRenderer(net.minecraft.world.entity.EntityType.ITEM, com.hollowhours.client.render.ItemPhysicsRenderer::new);
@@ -87,6 +89,7 @@ public final class ClientSetup {
         e.registerAboveAll("phone_alert", PhoneAlert::render);
         e.registerAboveAll("phone_notice", PhoneNotice::render);
         e.registerAboveAll("rescue_fade", RescueFade::render);
+        e.registerAboveAll("ending", (gui, g, partial, w, h) -> EndingClient.render(g, partial, w, h));
         e.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "combat", (gui, g, partial, w, h) -> CombatClient.renderHud(g, partial, w, h));
         e.registerAbove(VanillaGuiOverlay.BOSS_EVENT_PROGRESS.id(), "phone_nav", NavOverlay::render);
     }

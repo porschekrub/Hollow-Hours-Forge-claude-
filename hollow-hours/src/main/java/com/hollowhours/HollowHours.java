@@ -67,6 +67,7 @@ public class HollowHours {
         HHEntities.GHOSTS.forEach(t -> event.put(t.get(), ghost));
         AttributeSupplier stalker = StalkerEntity.createAttributes().build();
         HHEntities.STALKERS.forEach(t -> event.put(t.get(), stalker));
+        event.put(HHEntities.WEEPING.get(), com.hollowhours.endgame.WeepingEntity.createAttributes().build());
     }
 
     private void commands(RegisterCommandsEvent event) {

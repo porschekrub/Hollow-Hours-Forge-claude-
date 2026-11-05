@@ -61,6 +61,7 @@ public final class Story {
     /** Is the haunting on? (cached each second by {@link #tick}, computed on first use) */
     public static boolean active(MinecraftServer server) {
         if (server == null) return active;
+        if (com.hollowhours.endgame.Endgame.peaceful(server)) return false; // the story is over
         Data d = data(server);
         if (d.forced != 0) return d.forced > 0;
         return calendar(server.overworld());

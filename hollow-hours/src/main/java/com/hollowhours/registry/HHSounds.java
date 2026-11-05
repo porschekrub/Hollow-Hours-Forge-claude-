@@ -66,6 +66,9 @@ public final class HHSounds {
             "rescue.rotor",
             // fighting back
             "gun.pistol", "gun.rifle", "gun.shotgun", "gun.sniper", "gun.grenade", "gun.reload", "gun.cock", "gun.empty",
+            // the last chapter
+            "ghost.music.boss", "ghost.music.credits", "boss.cry", "boss.slam", "boss.scream", "boss.rise", "boss.defeat", "boss.release", "boss.windup",
+            "boss.sweep", "boss.grab", "boss.tear", "boss.hurt", "rift.hum", "ending.boom",
     };
 
     static {
