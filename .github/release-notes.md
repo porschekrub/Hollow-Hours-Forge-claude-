@@ -1,8 +1,39 @@
-**Minecraft Java 1.20.1 + Forge 47.x** (not NeoForge). GeckoLib is bundled — just put the jars in your `mods` folder.
-**Minecraft Java 1.20.1 + Forge 47.x** (ไม่ใช่ NeoForge) GeckoLib อยู่ในไฟล์แล้ว แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
+**Minecraft Java 1.20.1 and 1.21.1 — Forge, NeoForge and Fabric.** Take the jar for your loader and Minecraft version. GeckoLib is inside every jar (and Forge Config API Port in the Fabric ones): just put the jars in your `mods` folder.
+**Minecraft Java 1.20.1 และ 1.21.1 — Forge, NeoForge และ Fabric** เลือกไฟล์ให้ตรงกับตัวโหลดมอดและเวอร์ชันเกม GeckoLib อยู่ในไฟล์แล้วทุกไฟล์ (Fabric มี Forge Config API Port ในไฟล์ด้วย) แค่ใส่ไฟล์ .jar ในโฟลเดอร์ `mods`
 
-- `hollowhours-forge-1.20.1-2.12.2.jar` — Hollow Hours (ghost horror / ผีสยองขวัญ)
-- `helperbuddy-forge-1.20.1-2.12.2.jar` — Helper Buddy (helper NPC / ผู้ช่วย)
+| File / ไฟล์ | For / ใช้กับ |
+|---|---|
+| `hollowhours-forge-1.20.1-2.13.0.jar` · `helperbuddy-forge-1.20.1-2.13.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.13.0.jar` · `helperbuddy-neoforge-1.21.1-2.13.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.13.0.jar` · `helperbuddy-forge-1.21.1-2.13.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.13.0.jar` · `helperbuddy-fabric-1.20.1-2.13.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.13.0.jar` · `helperbuddy-fabric-1.21.1-2.13.0.jar` | Fabric 1.21.1 + **Fabric API** |
+
+Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
+
+**2.13.0 — every loader, and a helper with a big mouth**
+- Both mods now run on **Forge 1.20.1, NeoForge 1.20.1, NeoForge 1.21.1, Forge 1.21.1, Fabric 1.20.1 and Fabric 1.21.1** (Fabric needs Fabric API). Same features everywhere.
+  มอดทั้งสองตัวเล่นได้บน **Forge 1.20.1, NeoForge 1.20.1, NeoForge 1.21.1, Forge 1.21.1, Fabric 1.20.1 และ Fabric 1.21.1** แล้ว (Fabric ต้องลง Fabric API) ฟีเจอร์เหมือนกันทุกเวอร์ชัน
+- Helper Buddy has a **personality**: *sassy* by default (teases you, calls you names), or *rude* (swears for real), or *polite*. Tell a helper "be polite" / "be rude" / "be sassy", or set `style` in `[personality]`. Call it stupid and it answers back.
+  Helper Buddy มี**นิสัย**แล้ว: เริ่มต้นเป็นแบบ*กวนตีน* (แซว แกล้ง ด่าเล่น) หรือ*หยาบ* (กู/มึง ด่าแรง) หรือ*สุภาพ* สั่งได้ว่า "พูดสุภาพหน่อย" / "ด่าได้เลย" / "กวนๆหน่อย" หรือตั้ง `style` ใน `[personality]` ด่ามันว่าโง่ มันด่ากลับ
+- **"Where's the village?"** The helper finds villages, temples, strongholds, ancient cities, nether fortresses, shipwrecks... biomes (desert, jungle, cherry grove, ocean...), other mods' structures and biomes by name, where you died, the world spawn, your bed and your friends, and tells you the direction (north, south-east...), distance and coordinates. **"Take me to the village"** / "ไปหมู่บ้านกัน" and it walks ahead of you all the way there, waiting when you fall behind, however far it is.
+  **"หมู่บ้านอยู่ไหน"** ผู้ช่วยหาได้ทั้งหมู่บ้าน วิหาร สตรองโฮลด์ เมืองโบราณ ป้อมเนเธอร์ ซากเรือ... ไบโอม (ทะเลทราย ป่าดิบ ป่าซากุระ ทะเล...) สิ่งก่อสร้างและไบโอมของมอดอื่น (บอกชื่อได้เลย) ที่ที่เราตาย จุดเกิด เตียง และเพื่อน แล้วบอกทิศ (เหนือ ตะวันออกเฉียงใต้...) ระยะทาง และพิกัด สั่ง **"พาไปหมู่บ้าน"** / "ไปหมู่บ้านกัน" มันจะเดินนำไปจนถึง รอเราถ้าตามไม่ทัน ไกลแค่ไหนก็ไป
+- **Understands amounts**: "get 64 meat" / "หาเนื้อมา 64 ชิ้น" brings 64 pieces of meat (it hunts as many animals as it takes), "หมู 20 ชิ้น", "2 แถว" (2 stacks); "kill 3 cows" still means 3 cows.
+  **เข้าใจจำนวน**: "หาเนื้อมา 64 ชิ้น" ได้เนื้อ 64 ชิ้นจริงๆ (ล่าสัตว์กี่ตัวก็ได้จนครบ) "หมู 20 ชิ้น" "2 แถว" (128) ส่วน "ฆ่าวัว 3 ตัว" ก็ยังเป็น 3 ตัว
+- **Knows things**: "what is this?" (what you hold or look at, which mod it's from, how to make it), "what's around?", "which mods are installed?". The AI (when on) knows all this too: where you are, the time, your inventory, nearby mobs, your mods.
+  **รู้เรื่อง**: "นี่คืออะไร" (ของในมือ/ที่มองอยู่ มาจากมอดไหน ทำยังไง) "แถวนี้มีอะไร" "มีมอดอะไรบ้าง" ถ้าเปิด AI มันก็รู้ทั้งหมดนี้ด้วย (อยู่ไหน กี่โมง ของในตัว มอนแถวนั้น มอดที่ลง)
+- **Remembers you in every world**: your deaths, the worlds you played, what it did for you and anything you tell it ("remember that the base is at 100 64 200" / "จำไว้ว่า..."). "What do you remember?" / "จำอะไรได้บ้าง", "forget ..." / "ลืม...". Kept in `config/helperbuddy-memory.json` on the computer that runs the world.
+  **ความจำข้ามโลก**: จำได้ว่าเราตายกี่ครั้ง เคยเล่นโลกไหน ช่วยทำอะไรไปบ้าง และเรื่องที่สั่งให้จำ ("จำไว้ว่าฐานอยู่ที่ 100 64 200") ถาม "จำอะไรได้บ้าง" สั่ง "ลืม..." ได้ เก็บไว้ที่ `config/helperbuddy-memory.json` ในเครื่องที่เปิดโลก
+- **Helpers talk to each other** when two or more are near you (and gossip about you).
+  **ผู้ช่วยคุยกันเอง** ถ้ามีตั้งแต่ 2 ตัวอยู่ใกล้ๆ (แล้วนินทาเราด้วย)
+- **Trolling** (with Hollow Hours): when a ghost comes, a cheeky helper may dig a hole and hide instead of helping, then climb out when it's gone ("I was helping... from a distance"). `trolling` / `trollChance` in `[personality]`.
+  **กวนตีน** (เล่นกับ Hollow Hours): ผีมาแทนที่จะช่วย มันอาจขุดหลุมลงไปหลบ แล้วค่อยโผล่ออกมาตอนผีไปแล้ว ("ข้าก็ช่วยอยู่ห่างๆ นะ") ปิด/ปรับได้ที่ `trolling` / `trollChance`
+- **A voice**: every helper babbles in a voice of its own when it talks (sassy ones fast and bouncy, rude ones low). With a Gemini AI key it can talk with a real AI voice. `[voice]`: `voice = auto | babble | ai | off`, `volume`.
+  **มีเสียงพูด**: ผู้ช่วยแต่ละตัวพูดเป็นเสียงของตัวเอง (แบบการ์ตูน ตัวกวนพูดเร็ว ตัวหยาบเสียงต่ำ) ถ้าใส่คีย์ Gemini จะพูดเป็นเสียง AI จริงได้ ตั้งค่าใน `[voice]`
+- **No distance limit**: the search radius goes up to 256 blocks, a helper with nothing left nearby walks on further to look (`exploreFurther`), and the area around a working helper stays loaded while you're online, so it keeps working far away from you (`keepChunksLoaded`).
+  **ไม่จำกัดระยะ**: ระยะหาของได้ถึง 256 บล็อก ถ้าแถวนั้นหมดแล้วมันจะเดินไปหาไกลขึ้นเอง (`exploreFurther`) และพื้นที่รอบผู้ช่วยที่กำลังทำงานจะไม่ถูกปิดโหลด ทำงานต่อได้แม้อยู่ไกลจากเรา (`keepChunksLoaded`)
+- The **Helper Contract** is harder to craft: gold ingot, emerald, gold ingot / diamond, book and quill, diamond / gold ingot, iron block, gold ingot. (You still get one free when you first join.)
+  **สัญญาจ้างผู้ช่วย**คราฟยากขึ้น: ทอง มรกต ทอง / เพชร หนังสือกับปากกาขนนก เพชร / ทอง บล็อกเหล็ก ทอง (เข้าเกมครั้งแรกยังได้ฟรี 1 ใบ)
 
 **2.12.2**
 - Hollow Hours: **drinking water** (sneak + right-click water with an empty hand) works everywhere now: flowing water (rivers, streams, shores, waterfalls), water under lily pads (swamps), past grass, flowers and reeds, waterlogged blocks, water cauldrons (clean: no nausea), and the water you stand or swim in. It no longer fails now and then when the server saw your aim a little differently.
