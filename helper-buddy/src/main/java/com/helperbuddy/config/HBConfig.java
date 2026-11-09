@@ -47,7 +47,7 @@ public final class HBConfig {
         b.comment("The helper's voice").push("voice");
         VOICE = b.comment("off = no voice, babble = its own cartoon voice, ai = a real voice from the AI (Gemini; uses the [ai] key, falls back to babble)",
                 "auto = ai when a Gemini key is set, otherwise babble").define("voice", "auto");
-        VOICE_MODEL = b.comment("Gemini speech model").define("speechModel", "gemini-2.5-flash-preview-tts");
+        VOICE_MODEL = b.comment("Gemini speech model (if it is gone, the newer ones are tried by themselves)").define("speechModel", "gemini-3.8-flash-lite-tts");
         VOICE_NAME = b.comment("Gemini voice (Puck, Kore, Charon, Fenrir, Leda, Orus, Zephyr, ...); empty = one per helper").define("speechVoice", "");
         VOICE_VOLUME = b.comment("Voice loudness (also follows the game's Voice/Speech volume slider)").defineInRange("volume", 1.0, 0.0, 2.0);
         b.pop();

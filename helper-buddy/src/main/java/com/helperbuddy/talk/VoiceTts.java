@@ -45,6 +45,19 @@ public final class VoiceTts {
     static final Map<String, Integer> RATE = new java.util.HashMap<>();
     static long pausedUntil;
     static int clipIds;
+    /** speech models to try when the configured one is gone (newest first) */
+    static final String[] FALLBACK = {"gemini-3.8-flash-lite-tts", "gemini-3.8-flash-tts", "gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"};
+    /** the model that works (found by trying) */
+    static String model;
+    static int modelTry;
+
+    static String model() {
+        if (model != null) return model;
+        String m = HBConfig.VOICE_MODEL.get().trim().replaceFirst("^models/", "");
+        if (modelTry == 0 && !m.isEmpty()) return m;
+        int i = Math.max(0, modelTry - (m.isEmpty() ? 0 : 1));
+        return i < FALLBACK.length ? FALLBACK[i] : null;
+    }
 
     static String voiceFor(HelperEntity h) {
         String v = HBConfig.VOICE_NAME.get().trim();
@@ -97,7 +110,11 @@ public final class VoiceTts {
             speech.add("voiceConfig", vc);
             gen.add("speechConfig", speech);
             body.add("generationConfig", gen);
-            String model = HBConfig.VOICE_MODEL.get().trim().replaceFirst("^models/", "");
+            String model = model();
+            if (model == null) {
+                BUSY.remove(hid);
+                return false;
+            }
             HttpRequest rq = HttpRequest.newBuilder(URI.create(AiBridge.geminiBase + model + ":generateContent"))
                     .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
                     .header("content-type", "application/json").header("x-goog-api-key", HBConfig.AI_KEY.get().trim())
@@ -107,10 +124,12 @@ public final class VoiceTts {
                 int rate = 24000;
                 if (err != null) HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
                 else if (r.statusCode() / 100 != 2) {
-                    HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}): {}", r.statusCode(), AiBridge.trim(r.body(), 300));
-                    // out of quota or not allowed: babble for a while
-                    if (r.statusCode() == 429 || r.statusCode() == 403 || r.statusCode() == 404) pausedUntil = System.currentTimeMillis() + 10 * 60_000L;
+                    HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}, {}): {}", r.statusCode(), model, AiBridge.trim(r.body(), 300));
+                    // that model is gone: the next one next time; out of quota or not allowed: babble for a while
+                    if ((r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) modelTry++;
+                    else if (r.statusCode() == 429 || r.statusCode() == 403) pausedUntil = System.currentTimeMillis() + 10 * 60_000L;
                 } else {
+                    VoiceTts.model = model;
                     try {
                         JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
                         for (JsonElement cand : o.getAsJsonArray("candidates")) {
@@ -120,7 +139,11 @@ public final class VoiceTts {
                                 JsonObject d = po.getAsJsonObject("inlineData");
                                 Matcher m = Pattern.compile("rate=(\\d+)").matcher(d.has("mimeType") ? d.get("mimeType").getAsString() : "");
                                 if (m.find()) rate = Integer.parseInt(m.group(1));
-                                ulaw = toUlaw(Base64.getDecoder().decode(d.get("data").getAsString()));
+                                byte[] raw = Base64.getDecoder().decode(d.get("data").getAsString());
+                                int[] wavRate = new int[1];
+                                raw = stripWav(raw, wavRate);
+                                if (wavRate[0] > 0) rate = wavRate[0];
+                                ulaw = toUlaw(raw);
                                 break;
                             }
                             if (ulaw != null) break;
@@ -163,6 +186,20 @@ public final class VoiceTts {
             int from = i * size, to = Math.min(ulaw.length, from + size);
             HBNet.toPlayer(p, new S2CVoice(h.getId(), clip, i, i == parts - 1, rate, java.util.Arrays.copyOfRange(ulaw, from, to)));
         }
+    }
+
+    /** A WAV file (RIFF) -> its PCM samples (rate in rate[0]); anything else is returned as it is. */
+    static byte[] stripWav(byte[] b, int[] rate) {
+        if (b.length < 44 || b[0] != 'R' || b[1] != 'I' || b[2] != 'F' || b[3] != 'F') return b;
+        rate[0] = (b[24] & 0xFF) | (b[25] & 0xFF) << 8 | (b[26] & 0xFF) << 16 | (b[27] & 0xFF) << 24;
+        int i = 12;
+        while (i + 8 <= b.length) {
+            int len = (b[i + 4] & 0xFF) | (b[i + 5] & 0xFF) << 8 | (b[i + 6] & 0xFF) << 16 | (b[i + 7] & 0xFF) << 24;
+            if (b[i] == 'd' && b[i + 1] == 'a' && b[i + 2] == 't' && b[i + 3] == 'a')
+                return java.util.Arrays.copyOfRange(b, i + 8, Math.min(b.length, i + 8 + Math.max(0, len)));
+            i += 8 + Math.max(0, len) + (len & 1);
+        }
+        return java.util.Arrays.copyOfRange(b, 44, b.length);
     }
 
     /** 16-bit little-endian PCM -> 8-bit mu-law (G.711). */
