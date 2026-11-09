@@ -294,6 +294,54 @@ public final class Talk {
             }
             case "whatis" -> Say.raw(p, h, Knowledge.whatIs(p, h, th));
             case "around" -> Say.raw(p, h, Knowledge.around(p, h, th));
+            case "fish" -> {
+                say(p, h, "ได้ครับ ไปตกปลาให้" + (it.n != null ? " " + it.n + " ตัว" : "") + " (หาน้ำใกล้ๆ เอง)", "Sure, going fishing" + (it.n != null ? " for " + it.n + " fish" : "") + " (I'll find water nearby)");
+                h.brain().tasks().start(Tasks.fish(it.n));
+            }
+            case "trade" -> {
+                String want = it.item == null ? "minecraft:emerald" : it.item;
+                String wn = itemName(want);
+                if (it.text != null) say(p, h, "ได้ครับ จะเอา " + itemName(it.text) + " ไปขายชาวบ้านแลกมรกต", "Sure, I'll sell " + itemName(it.text) + " to the villagers for emeralds");
+                else say(p, h, "ได้ครับ จะไปแลก " + wn + " กับชาวบ้านแถวนี้ (ใช้ของในกระเป๋าผมจ่าย)", "Sure, I'll trade with the villagers around here for " + wn + " (paying with what's in my bag)");
+                h.brain().tasks().start(Tasks.trade(want, it.text, it.n));
+            }
+            case "enchant" -> {
+                say(p, h, "ได้ครับ จะไปร่ายมนตร์ที่โต๊ะร่ายมนตร์ให้ (ใช้ลาพิสในกระเป๋าผม กับเลเวลของคุณ)", "Sure, I'll enchant it at the enchanting table (my lapis, your levels)");
+                h.brain().tasks().start(Tasks.enchant(it.item, it.text));
+            }
+            case "brew" -> {
+                if (it.text == null) {
+                    say(p, h, "จะเอายาอะไรล่ะ? เช่น ยาวิ่งเร็ว ยาเพิ่มเลือด ยาพลัง ยากันไฟ ยามองกลางคืน ยาหายใจใต้น้ำ ยาล่องหน ยากระโดดสูง ยาตกช้า ยาฟื้นฟู (เติม \"นานขึ้น\" \"แรงขึ้น\" หรือ \"แบบปา\" ได้)",
+                            "Which potion? e.g. swiftness, healing, strength, fire resistance, night vision, water breathing, invisibility, leaping, slow falling, regeneration (add \"long\", \"strong\" or \"splash\")");
+                    return;
+                }
+                String id = "minecraft:" + (it.name == null ? "" : it.name) + it.text;
+                if (com.helperbuddy.compat.Compat.potion(net.minecraft.world.item.Items.POTION, id).isEmpty()) id = "minecraft:" + it.text;
+                ItemStack goal = com.helperbuddy.compat.Compat.potion(it.item == null ? net.minecraft.world.item.Items.POTION : BuiltInRegistries.ITEM.get(HelperBuddy.rl(it.item)), id);
+                say(p, h, "ได้ครับ จะไปต้ม " + goal.getHoverName().getString() + " ที่แท่นต้มยาให้", "Sure, I'll brew " + goal.getHoverName().getString() + " at the brewing stand");
+                h.brain().tasks().start(Tasks.brew(id, it.item, it.n));
+            }
+            case "machine" -> {
+                BlockPos at = null;
+                String words = it.text == null ? "" : it.text;
+                if (Nlu.has(words, "นี้", "นั้น", "this", "that") || words.replaceAll("เครื่อง|machine|the|\\s", "").isEmpty()) {
+                    var hit = Knowledge.looked(p);
+                    if (hit instanceof net.minecraft.world.phys.BlockHitResult bh && hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK) at = bh.getBlockPos();
+                    words = "";
+                }
+                if (it.on) say(p, h, "ได้ครับ จะเอา" + (it.item != null ? " " + itemName(it.item) : "ของ") + " ไปใส่เครื่องแล้วรอเก็บของที่ได้ให้", "Sure, I'll load the machine" + (it.item != null ? " with " + itemName(it.item) : "") + " and collect what it makes");
+                else say(p, h, "ได้ครับ จะไปเก็บของออกจากเครื่องให้", "Sure, I'll collect what's in the machine");
+                h.brain().tasks().start(Tasks.machine(it.item, it.n, words, at, it.on ? "run" : "collect"));
+            }
+            case "boss" -> {
+                h.brain().combat().startBoss();
+                boolean bow = Bag.has(h, s -> s.getItem() instanceof net.minecraft.world.item.BowItem) && Bag.has(h, s -> s.getItem() instanceof net.minecraft.world.item.ArrowItem);
+                h.setMode(Mode.FOLLOW);
+                say(p, h, bow ? "ลุย! ผมจะยิงคริสตัลก่อน แล้วค่อยจัดการบอส (ตามคุณไปนะ)" : "ลุย! แต่ผมไม่มีธนูกับลูกธนู ยิงคริสตัลไม่ได้ จะฟันตอนบอสลงมาใกล้ๆ นะ (ส่งธนูกับลูกธนูมาจะดีกว่า)",
+                        bow ? "Let's go! I'll shoot the crystals first, then the boss (I'm following you)" : "Let's go! But I have no bow and arrows, so no crystals: I'll hit the boss when it comes down (a bow would help)");
+            }
+            case "redstone" -> say(p, h, "งานเรดสโตนที่ผมสร้างได้: §e\"สร้างประตูอัตโนมัติ\"§r (ประตูเหล็ก + แผ่นกด), §e\"สร้างเตาเผาอัตโนมัติ\"§r (เตา + ฮอปเปอร์ + หีบ ใส่ของบนสุด เชื้อเพลิงด้านข้าง), §e\"สร้างไฟพื้นเปิดปิด\"§r (โคมเรดสโตน + คันโยก)",
+                    "Redstone builds I know: §e\"build an automatic door\"§r (iron door + pressure plates), §e\"build an auto smelter\"§r (furnace + hoppers + chests: items on top, fuel at the side), §e\"build a light switch\"§r (redstone lamps + lever)");
             case "mods" -> {
                 List<String> mods = Knowledge.mods();
                 Say.raw(p, h, (th ? "มอดที่ลงไว้ (" + mods.size() + "): " : "Installed mods (" + mods.size() + "): ") + String.join(", ", mods));
@@ -348,6 +396,10 @@ public final class Talk {
         if (it.lead) {
             Navigator.startGuide(p, h, f);
             say(p, h, desc + "\n§aตามผมมาเลย!§r ผมจะพาไปเอง (บอกระยะให้เรื่อยๆ)", desc + "\n§aFollow me!§r I'll lead the way (and tell you how far)");
+            if ("end".equals(it.text))
+                say(p, h, "ประตูไปเอนด์อยู่ในสตรองโฮลด์ใต้ดิน ต้องใช้§eตาเอนเดอร์ 12 ลูก§rใส่กรอบประตู เตรียมธนู อาหาร และบล็อกไว้ด้วยนะ",
+                        "The End portal is inside the stronghold underground: it takes §e12 eyes of ender§r. Bring a bow, food and blocks");
+            if (pl.kind().equals("portal")) say(p, h, "ถึงประตูแล้วเดินเข้าไปเลย ผมตามไปด้วย", "When we get there just walk in, I'll come with you");
         } else say(p, h, desc + "\n§7(อยากให้พาไป พิมพ์ \"พาไป\")", desc + "\n§7(say \"take me there\" and I'll lead you)");
     }
 
@@ -786,6 +838,17 @@ public final class Talk {
                 return Plan.task(Tasks.spec("torch"), "ปักคบเพลิง", "place torches");
             case "flatten":
                 return Plan.task(Tasks.spec("flatten"), "ปรับพื้นที่", "flatten the ground");
+            case "fish":
+                return Plan.task(Tasks.fish(it.n), "ตกปลา", "go fishing");
+            case "trade":
+                return Plan.task(Tasks.trade(it.item, it.text, it.n), "แลกของกับชาวบ้าน", "trade with villagers");
+            case "enchant":
+                return Plan.task(Tasks.enchant(it.item, it.text), "ร่ายมนตร์", "enchant");
+            case "brew":
+                if (it.text == null) return new String[] {"บอกด้วยว่าจะต้มยาอะไร", "Say which potion to brew"};
+                return Plan.task(Tasks.brew("minecraft:" + (it.name == null ? "" : it.name) + it.text, it.item, it.n), "ต้มยา", "brew");
+            case "machine":
+                return Plan.task(Tasks.machine(it.item, it.n, it.text, null, it.on ? "run" : "collect"), "ใช้เครื่อง", "run the machine");
             case "goto": {
                 if (it.pos != null)
                     return Plan.gotoStep(new BlockPos(it.pos[0], it.pos[1], it.pos[2]), h.level().dimension().location().toString(),
@@ -857,6 +920,8 @@ public final class Talk {
                 "§e• สร้างเหมือง §7เช่น \"สร้างเหมือง ลึก 40 ยาว 30\"",
                 "§e• สร้าง §7บ้าน (สุ่มแบบใหม่ทุกครั้ง) โรงแรม โรงเรียน โรงพยาบาล คุก ห้องสมุด โบสถ์ โรงนา ตลาด ปราสาท หอคอย บ้านต้นไม้ อิกลู ปิรามิด บังเกอร์ รูปปั้น ประตูเนเธอร์"
                         + (AiBridge.enabled() && HBConfig.AI_FOR_BUILDING.get() ? " และอะไรก็ได้ที่ AI ออกแบบให้ (เช่น \"สร้างรถ\")" : ""),
+                "§e• ทักษะ §7| ตกปลา 10 ตัว | แลกมรกตกับชาวบ้าน | ซื้อหนังสือจากชาวบ้าน | ร่ายมนตร์ดาบ | ต้มยาวิ่งเร็ว | ใส่เหล็กดิบในเตาเผา | สร้างประตูอัตโนมัติ / เตาเผาอัตโนมัติ",
+                "§e• เดินทาง §7| หมู่บ้านอยู่ไหน | พาไปหมู่บ้าน | ไปเนเธอร์ | ไปเอนด์ | ฆ่ามังกร",
                 "§e• มานี่ §7| §eตามมา §7| §eรอตรงนั้น §7| §eรอ 30 วินาที §7| §eไปที่ 100 64 -50 §7| §eกลับบ้าน §7| §eปักคบเพลิง §7| §eปรับพื้นที่",
                 "§e• เอาของมาให้ §7| §eเก็บเข้าหีบ §7| §eช่วยสู้ §7| §eไม่ต้องสู้ §7| §eไม่ต้องสู้กลับ §7| §eเฝ้าตรงนี้ §7| §eช่วยด้วย!",
                 "§e• สถานะ §7| §eเลเวล §7| §eทำต่อ §7| §eยกเลิก §7| §eเปลี่ยนชื่อเป็น ...",
@@ -871,6 +936,8 @@ public final class Talk {
                 "§e• build a mine §7e.g. \"build a mine 40 deep 30 long\"",
                 "§e• build §7a house (random design every time), hotel, school, hospital, prison, library, church, barn, market, castle, tower, tree house, igloo, pyramid, bunker, statue, nether portal"
                         + (AiBridge.enabled() && HBConfig.AI_FOR_BUILDING.get() ? " and anything the AI can design (e.g. \"build a car\")" : ""),
+                "§e• skills §7| go fishing | trade with villagers for emeralds | buy a book from villagers | enchant my sword | brew a swiftness potion | put raw iron in the furnace | build an automatic door / auto smelter",
+                "§e• travel §7| where is the village | take me to a village | take me to the nether | take me to the end | kill the dragon",
                 "§e• come §7| §efollow me §7| §estay §7| §ewait 30 seconds §7| §ego to 100 64 -50 §7| §ego home §7| §eplace torches §7| §eflatten the ground",
                 "§e• bring me the items §7| §eput them in the chest §7| §efight §7| §edon't fight §7| §edon't fight back §7| §eguard here §7| §ehelp me!",
                 "§e• status §7| §elevel §7| §eresume §7| §ecancel §7| §eyour name is ...",
@@ -891,7 +958,12 @@ public final class Talk {
             + "\"where is the <village|stronghold|ruined portal|shipwreck|ocean monument|mansion|desert pyramid|jungle temple|witch hut|igloo|outpost|ancient city|trail ruins|buried treasure|trial chambers|nether fortress|bastion|end city|mineshaft>\", "
             + "\"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|flowers|lush caves>\", "
             + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"take me to the <any of those>\" (the helper walks ahead and leads the player, any distance), "
-            + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\". "
+            + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\", "
+            + "\"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
+            + "\"enchant <item>\" (or \"enchant this\": what the player holds), \"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "
+            + "\"put <item> in the <furnace|smoker|blast furnace|any machine name>\" (also other mods' machines), \"collect from the <machine>\", "
+            + "\"take me to the nether\" (leads to the nearest nether portal), \"go back to the overworld\", \"take me to the end\" (the stronghold), "
+            + "\"kill the dragon\" / \"fight the wither\" (shoots end crystals first), \"build an automatic door\", \"build an auto smelter\", \"build a light switch\". "
             + "Rules: keep the player's exact numbers and items (\"64 meat\" means 64 pieces of meat, never fewer animals). Several commands run one after another. "
             + "Questions about the game you can answer yourself go in \"reply\" (you know Minecraft and every installed mod well; use the world facts you are given). "
             + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the player's language (Thai if they wrote Thai), "

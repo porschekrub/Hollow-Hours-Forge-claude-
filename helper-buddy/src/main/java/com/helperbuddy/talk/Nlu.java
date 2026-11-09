@@ -326,6 +326,9 @@ public final class Nlu {
             {"underground", "(ห้องนิรภัย|นิรภัย|\\bvault\\b|ไซโล|\\bsilo\\b)", true},
             {"statue", "(รูปปั้น|ปั้น|ประติมากรรม|โมเดล|statue|sculpture|\\bmodel\\b|pixel ?art|พิกเซล)", true},
             {"portal", "(ประตูเนเธอร์|ประตูนรก|ประตูมิติ|พอร์ทัล|พอร์ตัล|nether ?portal|\\bportal\\b)", true},
+            {"autodoor", "(ประตูอัตโนมัติ|ประตูออโต้|ประตูเหล็กอัตโนมัติ|ประตูเปิดเอง|automatic door|auto ?door|self.?opening door)", true},
+            {"smelter", "(เตาอัตโนมัติ|เตาเผาอัตโนมัติ|เตาถลุงอัตโนมัติ|ระบบเผาอัตโนมัติ|auto ?smelter|super ?smelter|automatic furnace|auto ?furnace)", true},
+            {"lamp", "(ไฟเปิดปิด|สวิตช์ไฟ|สวิทช์ไฟ|โคมไฟเรดสโตน|ไฟเรดสโตน|ไฟพื้น|light switch|redstone lamps?|lamp switch|floor lights?)", true},
             {"prison", "(คุก|เรือนจำ|ที่คุมขัง|ห้องขัง|สถานีตำรวจ|\\bprison\\b|\\bjail\\b|\\bcell ?block\\b|police)", true},
             {"hospital", "(โรงพยาบาล|สถานพยาบาล|คลินิก|สถานีอนามัย|\\bhospital\\b|\\bclinic\\b)", true},
             {"hotel", "(โรงแรม|โฮเทล|โฮสเทล|เกสต์เฮ้าส์|เกสต์เฮาส์|โรงเตี๊ยม|ที่พักแรม|อพาร์ทเมนท์|คอนโด|\\bhotel\\b|\\bhostel\\b|\\bmotel\\b|\\binn\\b|guest ?house|apartment|condo)", true},
@@ -436,7 +439,8 @@ public final class Nlu {
                     "like the last one" + (r.relSize != null ? (r.relSize > 0 ? ", bigger" : ", smaller") : "") + (r.relFloors != null ? (r.relFloors > 0 ? ", one more floor" : ", one floor less") : "")));
         }
         // ---- type
-        String nt = matchNewType(t0);
+        String nt = matchNewType(raw0);
+        if (nt == null) nt = matchNewType(t0);
         if (nt != null) o.type = nt;
         else
             for (String[] e : TYPE_RE)
@@ -715,6 +719,7 @@ public final class Nlu {
             {"biome", "ถ้ำเขียว|ถ้ำต้นไม้", "lush caves?", "ถ้ำเขียว", "lush caves", "minecraft:lush_caves"},
             {"biome", "ทุ่งหญ้า|ที่ราบ", "\\bplains\\b|grasslands?", "ทุ่งหญ้า", "plains", "minecraft:plains", "minecraft:sunflower_plains"},
             {"biome", "ป่า(?!ดิบ|ดง|ฝน|สน|ไผ่|มืด|รก|ชมพู|ดอก|ชายเลน)", "\\bforests?\\b|\\bwoods\\b", "ป่า", "a forest", "#minecraft:is_forest"},
+            {"portal", "ประตูเนเธอร์|ประตูนรก|ประตูมิติ|พอร์ทัล|พอร์ตัล|ประตูไปเนเธอร์", "nether portals?|\\bportals?\\b", "ประตูเนเธอร์", "the nether portal", ""},
             {"death", "ที่ตาย|จุดตาย|ที่ฉันตาย|ที่เราตาย|ศพ|ของที่ตก|ของที่หล่น|หลุมศพ|ที่ตายล่าสุด", "where (did )?i (die|died)|death (point|spot|place)|my grave|my (stuff|items|loot)", "ที่คุณตายล่าสุด", "where you died", ""},
             {"spawn", "จุดเกิดโลก|สปอน|สปอว์น|จุดเกิดของโลก", "\\bspawn\\b", "จุดเกิดของโลก", "the world spawn", ""},
             {"me", "(ฉัน|กู|ข้า|ผม|หนู|เรา|เค้า)(ตอนนี้)?อยู่(ที่|ตรง)?ไหน|ตอนนี้(ฉัน|กู|ข้า|ผม|เรา)?อยู่(ที่|ตรง)?ไหน|พิกัด(ของ)?(ฉัน|กู|ข้า|ผม|เรา|ตอนนี้)|ตำแหน่ง(ของ)?(ฉัน|กู|ข้า|ผม|เรา)", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
@@ -749,6 +754,115 @@ public final class Nlu {
     /** Whatever is left of a where-question once the question words are gone ("dungeon" in "where is the dungeon"). */
     static String placeWords(String t) {
         return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b|^มี", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    /** {potion id, Thai words, English words} (slow falling before slowness) */
+    public static final String[][] POTIONS = {
+            {"swiftness", "วิ่งเร็ว|ความเร็ว|เร็ว|สปีด", "swift|speed|fast"},
+            {"strength", "ความแรง|พลัง|กำลัง|ตีแรง|สเตรงท์", "strength"},
+            {"healing", "เพิ่มเลือด|ฟื้นเลือด|รักษา|ฮีล|เลือด", "heal|health"},
+            {"regeneration", "ฟื้นฟู|รีเจน", "regen"},
+            {"fire_resistance", "กันไฟ|ทนไฟ|กันลาวา", "fire"},
+            {"night_vision", "มองกลางคืน|มองในที่มืด|มองเห็นในที่มืด|ไนท์วิชั่น|ตาแมว", "night"},
+            {"water_breathing", "หายใจใต้น้ำ|หายใจในน้ำ", "water ?breathing|breath"},
+            {"invisibility", "ล่องหน|หายตัว", "invis"},
+            {"leaping", "กระโดดสูง|กระโดด", "leap|jump"},
+            {"slow_falling", "ตกช้า|ร่อน", "slow ?fall|feather"},
+            {"poison", "พิษ", "poison"},
+            {"harming", "ทำร้าย|ทำดาเมจ", "harm|damage"},
+            {"weakness", "อ่อนแอ", "weak"},
+            {"slowness", "ช้าลง|ทำให้ช้า|ความช้า", "slow"},
+            {"turtle_master", "เต่า", "turtle"},
+    };
+
+    /** {words, item kind} for "enchant my sword" (pickaxe before axe, crossbow before bow) */
+    static final String[][] ENCHANT_KINDS = {{"ดาบ|sword", "sword"}, {"อีเต้อ|pickaxe|\\bpick\\b", "pickaxe"}, {"ขวาน|\\baxe\\b", "axe"}, {"พลั่ว|shovel|spade", "shovel"},
+            {"จอบ|\\bhoe\\b", "hoe"}, {"หน้าไม้|crossbow", "crossbow"}, {"ธนู|\\bbow\\b", "bow"}, {"เบ็ด|fishing rod|\\brod\\b", "fishing_rod"}, {"ตรีศูล|trident", "trident"},
+            {"หมวก|helmet", "helmet"}, {"เสื้อ|chestplate|chest plate", "chestplate"}, {"กางเกง|leggings|pants", "leggings"}, {"รองเท้า|boots", "boots"},
+            {"หนังสือ|\\bbooks?\\b", "book"}};
+
+    static final String TRADE_FILL = "(แลกของ|แลกเปลี่ยน|แลก|ค้าขาย|เทรด|ซื้อ|ขาย|กับ|จาก|ให้|ชาวบ้าน|พ่อค้า|หน่อย|มา|เอา|ทั้งหมด|ทุกอย่าง|\\btrade\\b|\\bbarter\\b|\\bbuy\\b|\\bsell\\b"
+            + "|\\bfrom\\b|\\bto\\b|\\bwith\\b|\\bthe\\b|\\bvillagers?\\b|\\btraders?\\b|\\bfor\\b|\\bsome\\b|\\bme\\b|\\ball\\b|\\d+|ชิ้น|อัน|ก้อน|pieces?)";
+
+    /** Fishing, trading, enchanting, brewing, machines, bosses (null: none of those). */
+    static Intent parseSkills(String t) {
+        String nt = numify(t);
+        if (has(t, "ตกปลา", "จับปลา", "หาปลา", "go fishing", "fishing", "catch fish", "catch some fish", "fish for") || test("^fish\\b|\\bcatch \\d+ fish", nt)) {
+            Intent i = new Intent("fish");
+            i.n = extractQty(t).n();
+            return i;
+        }
+        // bosses
+        if (has(t, "ฆ่ามังกร", "สู้มังกร", "ล่ามังกร", "สู้กับมังกร", "ฆ่าเอนเดอร์ดราก้อน", "ยิงคริสตัล", "ทำลายคริสตัล", "ฆ่าวิเธอร์", "สู้วิเธอร์", "สู้กับวิเธอร์", "สู้บอส",
+                "ฆ่าบอส", "ตีบอส", "kill the dragon", "fight the dragon", "kill the ender dragon", "fight the ender dragon", "shoot the crystals", "destroy the crystals",
+                "fight the wither", "kill the wither", "fight the boss", "kill the boss"))
+            return new Intent("boss");
+        // villagers
+        boolean villager = has(t, "ชาวบ้าน", "villager", "พ่อค้า", "trader");
+        boolean sell = test("^(ขาย|sell)\\b", t) || villager && has(t, "ขาย", "sell") || has(t, "แลกมรกต", "ได้มรกต", "for emeralds", "get emeralds");
+        boolean buy = test("^(ซื้อ|buy)\\b", t) || villager && has(t, "ซื้อ", "buy", "แลก", "get");
+        if (sell || buy || has(t, "แลกของ", "แลกเปลี่ยน", "ค้าขาย", "เทรด", "trade", "barter")) {
+            Intent i = new Intent("trade");
+            String rest = t.replaceAll(TRADE_FILL, " ").replaceAll("\\s+", " ").trim();
+            String item = rest.isEmpty() ? null : ItemWords.resolve(rest);
+            if (sell) {
+                i.item = "minecraft:emerald";
+                if (item != null && !item.equals("minecraft:emerald")) i.text = item;
+            } else i.item = item != null ? item : "minecraft:emerald";
+            i.n = extractQty(t).n();
+            return i;
+        }
+        boolean question = test("(ยังไง|อย่างไร|ทำไง|ได้ไหม|ได้มั้ย|\\bhow\\b|\\bwhat\\b|\\?)", t);
+        if (has(t, "ร่ายมนตร์", "ร่ายมนต์", "ร่ายเวท", "เอ็นชานท์", "เอนชานต์", "เอ็นชาน", "เอนชาน", "enchant") && !has(t, "โต๊ะร่าย", "enchanting table", "enchantment table")
+                && !question) {
+            Intent i = new Intent("enchant");
+            for (String[] k : ENCHANT_KINDS)
+                if (test("(" + k[0] + ")", t)) {
+                    i.text = k[1];
+                    break;
+                }
+            String rest = t.replaceAll("(ร่ายมนตร์|ร่ายมนต์|ร่ายเวท|เอ็นชานท์|เอนชานต์|เอ็นชาน|เอนชาน|enchant(ing|ed)?|ให้|หน่อย|ที่|ทีนึง|ของ|ใน|มือ|อันนี้|นี่|\\bmy\\b|\\bthe\\b|\\bthis\\b|\\bme\\b|\\bplease\\b|\\bin\\b|\\bhand\\b|\\ba\\b)", " ").trim();
+            // "ดาบเพชร": that exact item; "ดาบ": any sword
+            i.item = rest.isEmpty() || i.text != null && !has(t, "เพชร", "เหล็ก", "ทอง", "หิน", "ไม้", "เนเธอ", "หนัง", "diamond", "iron", "gold", "stone", "wood", "netherite", "leather", "chain")
+                    ? null : ItemWords.resolve(rest);
+            return i;
+        }
+        if (has(t, "ต้มยา", "ปรุงยา", "ทำยา", "โพชั่น", "potion", "brew") && !has(t, "แท่นต้มยา", "brewing stand") && !question) {
+            Intent i = new Intent("brew");
+            for (String[] p : POTIONS)
+                if (test("(" + p[1] + ")", t) || test("(" + p[2] + ")", t)) {
+                    i.text = p[0];
+                    break;
+                }
+            boolean lng = has(t, "นานขึ้น", "นานๆ", "ยาวนาน", "อยู่นาน", "แบบนาน", "long", "extended", "8 นาที");
+            boolean strong = has(t, "ระดับ 2", "ระดับสอง", "level 2", "เข้มข้น", "แรงขึ้น", "แรงกว่า", "strong") || test("\\bii\\b", t);
+            i.name = lng ? "long_" : strong ? "strong_" : "";
+            i.item = has(t, "ขวดปา", "ปาได้", "สาด", "splash", "ระเบิด") ? "minecraft:splash_potion" : has(t, "ค้าง", "lingering", "ฟุ้ง") ? "minecraft:lingering_potion" : null;
+            i.n = extractQty(t).n();
+            return i;
+        }
+        // machines: furnaces and other mods' machines
+        Matcher mm = match("^(?:ใส่|เอา|put|load|insert|feed)\\s*(.+?)\\s*(?:ลง|เข้า)?\\s*(?:ไปใน|ใน|into|in|to)\\s*(?:the\\s*)?((?:เครื่อง|เตา|machine|furnace|smoker|blast|crusher|grinder|press|mill|smelter).*)$", t);
+        if (mm != null && !has(t, "หีบ", "chest", "barrel", "กระเป๋า", "bag")) {
+            Intent i = new Intent("machine");
+            String what = mm.group(1).replaceAll("\\d+|ชิ้น|อัน|ก้อน|ทั้งหมด|\\ball\\b|\\bthe\\b|\\bsome\\b", " ").trim();
+            i.item = what.isEmpty() ? null : ItemWords.resolve(what);
+            i.text = mm.group(2);
+            i.n = extractQty(mm.group(1)).n();
+            i.on = true;
+            return i;
+        }
+        if (test("(เอาของออกจาก|เก็บของจาก|เอาของจาก|collect from|take (the )?(stuff|items|things|everything) out of|empty the)", t) && has(t, "เครื่อง", "เตา", "machine", "furnace", "smoker")) {
+            Intent i = new Intent("machine");
+            i.text = t.replaceAll("(เอาของออกจาก|เก็บของจาก|เอาของจาก|collect from|take (the )?(stuff|items|things|everything) out of|empty the)", " ").trim();
+            i.on = false;
+            return i;
+        }
+        // redstone without saying what: the helper lists what it can make
+        if (has(t, "เรดสโตน", "redstone", "วงจร", "circuit", "contraption", "กลไก") && matchNewType(t) == null && test(BUILD_VERB + "|ต่อ", t)
+                && !has(t, "ขุด", "mine", "หา", "find", "เก็บ", "collect", "แร่", "ore"))
+            return new Intent("redstone");
+        return null;
     }
 
     /** Navigation, memory, personality and "what is this" (null: none of those). */
@@ -788,7 +902,7 @@ public final class Nlu {
             return i;
         }
         // what is this / what is around / which mods
-        if (has(t, "นี่คืออะไร", "อันนี้คืออะไร", "นี่อะไร", "อันนี้อะไร", "ตัวนี้คืออะไร", "ตัวนี้อะไร", "บล็อกนี้คืออะไร", "บล็อกนี้อะไร", "ของในมือ", "ถืออะไรอยู่", "มองอะไรอยู่",
+        if (!has(t, "ร่ายมนตร์", "ร่ายมนต์", "enchant") && has(t, "นี่คืออะไร", "อันนี้คืออะไร", "นี่อะไร", "อันนี้อะไร", "ตัวนี้คืออะไร", "ตัวนี้อะไร", "บล็อกนี้คืออะไร", "บล็อกนี้อะไร", "ของในมือ", "ถืออะไรอยู่", "มองอะไรอยู่",
                 "นั่นคืออะไร", "นั่นอะไร", "ตัวนั้นคืออะไร", "ของมอดอะไร", "มาจากมอดไหน", "what is this", "whats this", "what is that", "whats that", "what am i holding",
                 "what am i looking at", "which mod"))
             return new Intent("whatis");
@@ -797,13 +911,28 @@ public final class Nlu {
         if (has(t, "แถวนี้มีอะไร", "รอบๆ มีอะไร", "รอบตัวมีอะไร", "มีอะไรอยู่ใกล้", "เห็นอะไรบ้าง", "มีมอนอะไร", "มีสัตว์อะไร", "มีอะไรแถวนี้", "what's around", "whats around",
                 "what is around", "what do you see", "anything nearby", "what mobs", "whats nearby", "what's nearby", "what is nearby", "scan the area"))
             return new Intent("around");
+        // to the Nether (a portal), back, or to the End (the stronghold)
+        if (test("((ไป|เข้า|ลง|พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทางไป)\\s*(ที่)?\\s*(เนเธอร์|นรก)|(go|take me|lead me|get|travel|bring me|head)( back)? to the nether|enter the nether)", t)
+                || has(t, "กลับโลกปกติ", "กลับโลกจริง", "กลับไปโลกปกติ", "ออกจากเนเธอร์", "back to the overworld", "leave the nether", "get out of the nether")) {
+            Intent i = new Intent("locate");
+            i.place = new Place("portal", new String[0], "ประตูเนเธอร์", "the nether portal", t, null);
+            i.lead = true;
+            return i;
+        }
+        if (test("((ไป|เข้า|พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทางไป)\\s*(ที่)?\\s*(เอนด์|ดิเอนด์|end\\b)|(go|take me|lead me|get|travel|bring me|head) to the end\\b)", t)) {
+            Intent i = new Intent("locate");
+            i.place = placeIn("stronghold");
+            i.lead = true;
+            i.text = "end";
+            return i;
+        }
         // where is ... / take me to ...
         boolean lead = test(LEAD, t);
         boolean where = test(WHERE, t);
         // "หาหมู่บ้านให้", "find a village": finding a place is a where-question too
         if (!lead && !where && test("^(ไป)?หา|^find\\b|^look for\\b|^search for\\b", t)) {
             Place pl = placeIn(t);
-            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome"))) {
+            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("portal"))) {
                 Intent i = new Intent("locate");
                 i.place = pl;
                 return i;
@@ -816,7 +945,7 @@ public final class Nlu {
             String left = row == null ? "x" : gm.group(1).replaceAll("(" + row[1] + ")|(" + row[2] + ")", " ")
                     .replaceAll("(ที่|ยัง|กัน|เลย|หน่อย|ด้วย|ดิ|ดีกว่า|นะ|ใกล้ๆ|ใกล้สุด|ใกล้ที่สุด|สักที่|ซักที่|ไหนก็ได้|the|an?|nearest|closest|now|together|please|pls)", " ").trim();
             Place pl = left.isEmpty() ? placeIn(gm.group(1)) : null;
-            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome"))) {
+            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("portal"))) {
                 Intent i = new Intent("locate");
                 i.place = pl;
                 i.lead = true;
@@ -918,6 +1047,8 @@ public final class Nlu {
         if (has(t, "ไม่ต้องตาม", "อย่าตาม", "don't follow", "dont follow", "stop following")) return new Intent("stay");
         Intent extra = parseExtra(t, raw);
         if (extra != null) return extra;
+        Intent skill = parseSkills(t);
+        if (skill != null) return skill;
         String nt = numify(t);
         Matcher wm = match("(?:รอ|wait|พัก)\\s*(?:ก่อน|for)?\\s*(\\d+)\\s*(วินาที|วิ|seconds?|secs?|s\\b|นาที|minutes?|mins?)", nt);
         if (wm != null) {

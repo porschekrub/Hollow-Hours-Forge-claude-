@@ -36,6 +36,9 @@ public final class SmokeTest {
 
     static MinecraftServer server;
     static HelperEntity h;
+    /** the skills: fishing, trading, enchanting, brewing, a machine, end crystals */
+    static HelperEntity hf, ht, he, hb, hm, hc;
+    static net.minecraft.world.entity.Entity crystal;
     static int t;
     static BlockPos base;
 
@@ -136,6 +139,14 @@ public final class SmokeTest {
         check(com.helperbuddy.talk.Persona.th(com.helperbuddy.talk.Persona.Style.SASSY, "ผมไปแล้วนะครับ", new java.util.Random(1)).contains("ข้า"), "persona sassy");
         check(com.helperbuddy.talk.Persona.th(com.helperbuddy.talk.Persona.Style.RUDE, "คุณต้องการอะไรครับ", new java.util.Random(1)).contains("มึง"), "persona rude");
         check(com.helperbuddy.talk.Memory.selfTest(), "memory file");
+        check(Nlu.parse("ตกปลา 10 ตัว").k.equals("fish") && Nlu.parse("go fishing").k.equals("fish"), "nlu fishing");
+        check(Nlu.parse("แลกมรกตกับชาวบ้าน").k.equals("trade") && Nlu.parse("buy bread from villagers").k.equals("trade"), "nlu trading");
+        check(Nlu.parse("ร่ายมนตร์ดาบ").k.equals("enchant") && "sword".equals(Nlu.parse("enchant my sword").text) && !Nlu.parse("คราฟโต๊ะร่ายมนตร์").k.equals("enchant"), "nlu enchanting");
+        check(Nlu.parse("ต้มยาวิ่งเร็ว").k.equals("brew") && "swiftness".equals(Nlu.parse("ต้มยาวิ่งเร็ว").text) && "long_".equals(Nlu.parse("brew a long potion of swiftness").name), "nlu brewing");
+        check(Nlu.parse("put raw iron in the furnace").k.equals("machine") && Nlu.parse("ใส่เหล็กดิบในเตาเผา").k.equals("machine"), "nlu machines");
+        check(Nlu.parse("ไปเนเธอร์").k.equals("locate") && Nlu.parse("ไปเนเธอร์").place.kind().equals("portal") && Nlu.parse("take me to the end").lead, "nlu nether / end");
+        check(Nlu.parse("ฆ่ามังกร").k.equals("boss") && Nlu.parse("kill the dragon").k.equals("boss"), "nlu boss");
+        check("smelter".equals(Nlu.parse("build an auto smelter").house.o.type) && "autodoor".equals(Nlu.parse("สร้างประตูอัตโนมัติ").house.o.type), "nlu redstone builds");
         byte[] pcm = new byte[] {0, 0, (byte) 0xE8, 0x03, 0x18, (byte) 0xFC, (byte) 0xFF, 0x7F};
         byte[] u = com.helperbuddy.talk.VoiceTts.toUlaw(pcm);
         check(u.length == 4 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[1]) - 1000) < 40 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[2]) + 1000) < 40, "mu-law");
@@ -186,6 +197,33 @@ public final class SmokeTest {
                 HelperBuddy.LOG.info("[smoke] bag: {}", bag);
                 check(Bag.count(h, Items.IRON_INGOT) > 0 || Bag.count(h, Items.CRAFTING_TABLE) > 0, "crafting / smelting produced something");
                 HelperBuddy.LOG.info("[smoke] mode {} status '{}' bag {}/36", h.mode(), h.status(), Bag.usedSlots(h));
+                startSkills(server.overworld());
+            }
+            if (t == 820) {
+                BlockPos portal = com.helperbuddy.brain.Navigator.findPortal(server.overworld(), base, 128);
+                HelperBuddy.LOG.info("[smoke] nearest nether portal: {}", portal);
+                check(portal != null, "found the nether portal");
+            }
+            if (t > 810 && t % 100 == 0)
+                for (HelperEntity x : new HelperEntity[] {hf, ht, he, hb, hm, hc})
+                    if (x != null) HelperBuddy.LOG.info("[smoke] skill helper {}: mode {} status '{}' task {}", x.helperName(), x.mode(), x.status(), x.brain().tasks().active());
+            if (t == 1200) {
+                int caught = Bag.count(hf, st -> !st.isEmpty() && !(st.getItem() instanceof net.minecraft.world.item.FishingRodItem));
+                HelperBuddy.LOG.info("[smoke] fishing: {} things caught", caught);
+                check(caught > 0, "fishing caught something");
+                HelperBuddy.LOG.info("[smoke] trading: {} emeralds, {} wheat left", Bag.count(ht, Items.EMERALD), Bag.count(ht, Items.WHEAT));
+                check(Bag.count(ht, Items.EMERALD) > 0, "trading with a villager");
+                HelperBuddy.LOG.info("[smoke] enchanting: {} enchanted books", Bag.count(he, Items.ENCHANTED_BOOK));
+                check(Bag.count(he, Items.ENCHANTED_BOOK) > 0, "enchanting a book");
+                HelperBuddy.LOG.info("[smoke] end crystal alive: {}", crystal.isAlive());
+                check(!crystal.isAlive(), "shooting the end crystal");
+            }
+            if (t == 1900) {
+                int swift = Bag.count(hb, st -> com.helperbuddy.compat.Compat.potionId(st).equals("minecraft:swiftness"));
+                HelperBuddy.LOG.info("[smoke] brewing: {} potions of swiftness", swift);
+                check(swift > 0, "brewing a potion of swiftness");
+                HelperBuddy.LOG.info("[smoke] machine: {} iron ingots from the furnace", Bag.count(hm, Items.IRON_INGOT));
+                check(Bag.count(hm, Items.IRON_INGOT) > 0, "running a furnace (a machine)");
                 HelperBuddy.LOG.info("SMOKE TEST OK");
                 h = null;
                 server.halt(false);
@@ -195,6 +233,78 @@ public final class SmokeTest {
             h = null;
             server.halt(false);
         }
+    }
+
+    static HelperEntity spawnHelper(ServerLevel level, BlockPos at, ItemStack... bag) {
+        HelperEntity x = HBRegistry.HELPER.get().create(level);
+        x.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0, 0);
+        HelperEntity.initNew(x, null);
+        level.addFreshEntity(x);
+        for (ItemStack st : bag) Bag.add(x, st);
+        return x;
+    }
+
+    /** One helper for each skill, each with what it needs, all at once. */
+    static void startSkills(ServerLevel level) {
+        // fishing at a little pond
+        BlockPos fp = base.offset(20, 0, 20);
+        for (int dx = 2; dx <= 4; dx++)
+            for (int dz = -1; dz <= 1; dz++) level.setBlockAndUpdate(fp.offset(dx, -1, dz), net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
+        hf = spawnHelper(level, fp, new ItemStack(Items.FISHING_ROD));
+        net.minecraft.nbt.CompoundTag fish = Tasks.fish(2);
+        fish.putBoolean("fast", true);
+        hf.brain().tasks().start(fish);
+        // trading with a farmer who buys wheat
+        BlockPos tp = base.offset(-20, 0, 20);
+        ht = spawnHelper(level, tp, new ItemStack(Items.WHEAT, 40));
+        net.minecraft.world.entity.npc.Villager v = net.minecraft.world.entity.EntityType.VILLAGER.create(level);
+        v.moveTo(tp.getX() + 2.5, tp.getY(), tp.getZ() + 0.5, 0, 0);
+        v.setVillagerData(v.getVillagerData().setProfession(net.minecraft.world.entity.npc.VillagerProfession.FARMER));
+        v.setNoAi(true);
+        level.addFreshEntity(v);
+        //#if MC>=12100
+        //$$ v.getOffers().add(new net.minecraft.world.item.trading.MerchantOffer(new net.minecraft.world.item.trading.ItemCost(Items.WHEAT, 20), new ItemStack(Items.EMERALD), 12, 2, 0.05f));
+        //#else
+        v.getOffers().add(new net.minecraft.world.item.trading.MerchantOffer(new ItemStack(Items.WHEAT, 20), new ItemStack(Items.EMERALD), 12, 2, 0.05f));
+        //#endif
+        ht.brain().tasks().start(Tasks.trade("minecraft:emerald", null, 1));
+        // enchanting a book
+        BlockPos ep = base.offset(20, 0, -20);
+        level.setBlockAndUpdate(ep.offset(2, 0, 0), net.minecraft.world.level.block.Blocks.ENCHANTING_TABLE.defaultBlockState());
+        he = spawnHelper(level, ep, new ItemStack(Items.BOOK), new ItemStack(Items.LAPIS_LAZULI, 3));
+        net.minecraft.nbt.CompoundTag en = Tasks.enchant(null, "book");
+        en.putBoolean("free", true);
+        he.brain().tasks().start(en);
+        // brewing swiftness: nether wart, then sugar
+        BlockPos bp = base.offset(-20, 0, -20);
+        level.setBlockAndUpdate(bp.offset(2, 0, 0), net.minecraft.world.level.block.Blocks.BREWING_STAND.defaultBlockState());
+        ItemStack water = com.helperbuddy.compat.Compat.potion(Items.POTION, "minecraft:water");
+        hb = spawnHelper(level, bp, water.copy(), water.copy(), water.copy(), new ItemStack(Items.NETHER_WART), new ItemStack(Items.SUGAR), new ItemStack(Items.BLAZE_POWDER, 2));
+        hb.brain().tasks().start(Tasks.brew("minecraft:swiftness", null, 3));
+        // a furnace run as a machine
+        BlockPos mp = base.offset(0, 0, -24);
+        level.setBlockAndUpdate(mp.offset(2, 0, 0), net.minecraft.world.level.block.Blocks.FURNACE.defaultBlockState());
+        hm = spawnHelper(level, mp, new ItemStack(Items.RAW_IRON, 2), new ItemStack(Items.COAL, 4));
+        hm.brain().tasks().start(Tasks.machine("minecraft:raw_iron", 2, "furnace", null, "run"));
+        // an end crystal to shoot
+        BlockPos cp = base.offset(0, 0, 14);
+        hc = spawnHelper(level, cp, new ItemStack(Items.BOW), new ItemStack(Items.ARROW, 16));
+        crystal = new net.minecraft.world.entity.boss.enderdragon.EndCrystal(level, cp.getX() + 0.5, cp.getY() + 3, cp.getZ() + 10.5);
+        ((net.minecraft.world.entity.boss.enderdragon.EndCrystal) crystal).setShowBottom(false);
+        level.addFreshEntity(crystal);
+        hc.brain().combat().startBoss();
+        // a nether portal to find
+        BlockPos pp = base.offset(-26, 0, 0);
+        for (int x = 0; x <= 3; x++)
+            for (int y = 0; y <= 4; y++) {
+                boolean frame = x == 0 || x == 3 || y == 0 || y == 4;
+                if (frame) level.setBlockAndUpdate(pp.offset(x, y, 0), net.minecraft.world.level.block.Blocks.OBSIDIAN.defaultBlockState());
+            }
+        for (int x = 1; x <= 2; x++)
+            for (int y = 1; y <= 3; y++)
+                level.setBlock(pp.offset(x, y, 0), net.minecraft.world.level.block.Blocks.NETHER_PORTAL.defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.NetherPortalBlock.AXIS, Direction.Axis.X), 2 | 16);
+        HelperBuddy.LOG.info("[smoke] skills started");
     }
 
     static void check(boolean ok, String what) {

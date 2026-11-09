@@ -50,6 +50,8 @@ public final class Tasks {
     @Nullable
     net.minecraft.world.entity.LivingEntity animal;
     final List<BlockPos> todo = new ArrayList<>();
+    /** villagers (or other things) already tried that did not work out */
+    final java.util.Set<java.util.UUID> skip = new java.util.HashSet<>();
 
     Tasks(Brain b) {
         this.b = b;
@@ -95,6 +97,54 @@ public final class Tasks {
         return t;
     }
 
+    /** Fishing: n fish. */
+    public static CompoundTag fish(@Nullable Integer n) {
+        CompoundTag t = spec("fish");
+        if (n != null) t.putInt("n", n);
+        t.putBoolean("long", true);
+        return t;
+    }
+
+    /** Trading with villagers for `want` (null: emeralds), paying with `pay` when given. */
+    public static CompoundTag trade(@Nullable String want, @Nullable String pay, @Nullable Integer n) {
+        CompoundTag t = spec("trade");
+        if (want != null) t.putString("want", want);
+        if (pay != null) t.putString("pay", pay);
+        if (n != null) t.putInt("n", n);
+        t.putBoolean("long", true);
+        return t;
+    }
+
+    /** Enchanting an item (null: what the owner holds, else a book). */
+    public static CompoundTag enchant(@Nullable String item, @Nullable String kind) {
+        CompoundTag t = spec("enchant");
+        if (item != null) t.putString("item", item);
+        if (kind != null) t.putString("kind", kind);
+        return t;
+    }
+
+    /** Brewing a potion ("minecraft:long_swiftness"), as potion / splash_potion / lingering_potion. */
+    public static CompoundTag brew(String potion, @Nullable String form, @Nullable Integer n) {
+        CompoundTag t = spec("brew");
+        t.putString("potion", potion);
+        if (form != null) t.putString("form", form);
+        if (n != null) t.putInt("n", n);
+        t.putBoolean("long", true);
+        return t;
+    }
+
+    /** Running a machine: put the item in and collect what it makes ("run"), or just collect ("collect"). */
+    public static CompoundTag machine(@Nullable String item, @Nullable Integer n, @Nullable String words, @Nullable BlockPos pos, String mode) {
+        CompoundTag t = spec("machine");
+        if (item != null) t.putString("item", item);
+        if (n != null) t.putInt("n", n);
+        if (words != null) t.putString("words", words);
+        if (pos != null) t.putLong("pos", pos.asLong());
+        t.putString("mode", mode);
+        t.putBoolean("long", true);
+        return t;
+    }
+
     public void start(CompoundTag s) {
         b.leaveJob();
         spec = s.copy();
@@ -103,6 +153,7 @@ public final class Tasks {
         guard = 0;
         at = h.blockPosition();
         todo.clear();
+        skip.clear();
         animal = null;
         h.setMode(Mode.TASK);
     }
@@ -131,6 +182,11 @@ public final class Tasks {
             case "torch" -> (th ? "ปักคบเพลิง " : "torches ") + count;
             case "flatten" -> (th ? "ปรับพื้นที่ " : "flattening ") + (todo.isEmpty() ? "" : count + "/" + (count + todo.size()));
             case "fetch" -> th ? "หยิบของจากหีบ" : "fetching";
+            case "fish" -> (th ? "ตกปลา " : "fishing ") + count;
+            case "trade" -> (th ? "แลกของ " : "trading ") + count;
+            case "enchant" -> th ? "ร่ายมนตร์" : "enchanting";
+            case "brew" -> (th ? "ต้มยา " : "brewing ") + (spec.contains("step") ? (spec.getInt("step") + 1) + "/" + spec.getList("path", 8).size() : "");
+            case "machine" -> (th ? "ใช้เครื่อง " : "machine ") + count;
             default -> k;
         };
     }
@@ -145,7 +201,7 @@ public final class Tasks {
             b.breaker.tick();
             return;
         }
-        if (++guard > 20 * 60 * 5) {
+        if (++guard > (spec.getBoolean("long") ? 20 * 60 * 30 : 20 * 60 * 5)) {
             Say.owner(h, "งานนี้ใช้เวลานานเกินไป ขอหยุดก่อนนะ", "This is taking too long, I'll stop here");
             done(true);
             return;
@@ -158,6 +214,11 @@ public final class Tasks {
             case "shear" -> tickShear();
             case "torch" -> tickTorch();
             case "flatten" -> tickFlatten();
+            case "fish" -> Skills.fish(this);
+            case "trade" -> Skills.trade(this);
+            case "enchant" -> Skills.enchant(this);
+            case "brew" -> Skills.brew(this);
+            case "machine" -> Skills.machine(this);
             default -> done(true);
         }
     }

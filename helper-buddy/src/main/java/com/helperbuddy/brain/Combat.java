@@ -57,6 +57,10 @@ public final class Combat {
     final Map<UUID, Long> unreachable = new HashMap<>();
     @Nullable
     ItemStack stashedTool;
+    /** boss fight ordered ("kill the dragon"): looks far for bosses and end crystals, until this game time */
+    long bossUntil;
+    @Nullable
+    Entity crystal;
 
     Combat(Brain b) {
         this.b = b;
@@ -72,7 +76,37 @@ public final class Combat {
         return target;
     }
 
+    /** "Fight the dragon / the wither": bosses and end crystals are looked for far away, for 10 minutes. */
+    public void startBoss() {
+        bossUntil = h.level().getGameTime() + 20 * 60 * 10;
+    }
+
+    public boolean bossFight() {
+        return h.level().getGameTime() < bossUntil || h.level().dimension() == net.minecraft.world.level.Level.END;
+    }
+
+    static boolean isBoss(Entity e) {
+        return e instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon || e instanceof net.minecraft.world.entity.boss.wither.WitherBoss;
+    }
+
+    /** The end crystals heal the dragon: shot first (needs a bow and arrows). */
+    @Nullable
+    Entity findCrystal() {
+        if (bowSlot() < 0 || !hasArrows()) return null;
+        Entity best = null;
+        double bd = Double.MAX_VALUE;
+        for (Entity c : h.level().getEntitiesOfClass(net.minecraft.world.entity.boss.enderdragon.EndCrystal.class, h.getBoundingBox().inflate(64, 48, 64), Entity::isAlive)) {
+            double d = c.distanceToSqr(h);
+            if (d < bd && h.hasLineOfSight(c)) {
+                bd = d;
+                best = c;
+            }
+        }
+        return best;
+    }
+
     void clear() {
+        crystal = null;
         target = null;
         hunting = false;
         restoreTool();
@@ -123,7 +157,29 @@ public final class Combat {
 
     /** Looks for monsters close to the helper or its owner. */
     void scan() {
-        if (h.isKO() || !h.settings.get("fight") || fighting()) return;
+        if (h.isKO()) return;
+        if (bossFight() && (h.settings.get("fight") || h.level().getGameTime() < bossUntil)) {
+            if (crystal == null || !crystal.isAlive()) crystal = findCrystal();
+            if (crystal != null) return;
+            if (!fighting() || !isBoss(target)) {
+                LivingEntity boss = null;
+                double bd = Double.MAX_VALUE;
+                for (LivingEntity e : h.level().getEntitiesOfClass(LivingEntity.class, h.getBoundingBox().inflate(96, 64, 96), e -> isBoss(e) && e.isAlive())) {
+                    double d = e.distanceToSqr(h);
+                    if (d < bd) {
+                        bd = d;
+                        boss = e;
+                    }
+                }
+                if (boss != null) {
+                    target = boss;
+                    hunting = false;
+                    since = h.level().getGameTime();
+                    return;
+                }
+            }
+        }
+        if (!h.settings.get("fight") || fighting()) return;
         double r = h.mode() == com.helperbuddy.entity.Mode.GUARD ? 16 : 10;
         LivingEntity best = null;
         double bd = Double.MAX_VALUE;
@@ -234,11 +290,23 @@ public final class Combat {
     // ------------------------------------------------------------------ tick
     /** Fights the current target. Returns true while busy fighting. */
     boolean tick() {
+        if (crystal != null) {
+            int bow = bowSlot();
+            if (!crystal.isAlive() || crystal.isRemoved() || crystal.level() != h.level() || bow < 0 || !hasArrows()) crystal = null;
+            else {
+                if (bowCd > 0) bowCd--;
+                b.mover().stop();
+                b.mover().look(crystal.position());
+                if (bowCd <= 0 && h.hasLineOfSight(crystal)) shoot(crystal, bow);
+                return true;
+            }
+        }
         if (target == null) return false;
         LivingEntity t = target;
         long now = h.level().getGameTime();
         boolean alive = t.isAlive() && t.level() == h.level() && !t.isRemoved();
-        if (!alive || t.distanceToSqr(h) > 32 * 32 || now - since > 20 * 90 || (!hunting && !h.settings.get("fight") && !h.settings.get("fightBack"))
+        boolean boss = isBoss(t);
+        if (!alive || t.distanceToSqr(h) > (boss ? 128 * 128 : 32 * 32) || !boss && now - since > 20 * 90 || (!hunting && !h.settings.get("fight") && !h.settings.get("fightBack"))
                 || t instanceof Player p && (p.isCreative() || p.isSpectator())) {
             if (!alive && t.isDeadOrDying()) onKill(t);
             clear();
@@ -260,8 +328,8 @@ public final class Combat {
         }
         // ---- bow: creepers, flying mobs, or targets it cannot walk to
         int bow = bowSlot();
-        boolean ranged = bow >= 0 && hasArrows() && (creeper || !t.onGround() && !t.isInWater() || d > 5 && b.mover().stuck(40));
-        if (ranged && d > 4 && d < 20 && h.hasLineOfSight(t)) {
+        boolean ranged = bow >= 0 && hasArrows() && (creeper || boss || !t.onGround() && !t.isInWater() || d > 5 && b.mover().stuck(40));
+        if (ranged && d > 4 && d < (boss ? 64 : 20) && h.hasLineOfSight(t)) {
             b.mover().stop();
             if (bowCd <= 0) shoot(t, bow);
             return true;
@@ -310,7 +378,7 @@ public final class Combat {
         b.mover().moveTo(goal, 1.45, 1.0);
     }
 
-    void shoot(LivingEntity t, int bowSlot) {
+    void shoot(Entity t, int bowSlot) {
         ItemStack bow = h.bag.getItem(bowSlot);
         int arrowSlot = -1;
         for (int i = 0; i < h.bag.getContainerSize(); i++) if (h.bag.getItem(i).getItem() instanceof ArrowItem) {

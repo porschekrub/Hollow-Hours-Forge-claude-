@@ -134,6 +134,13 @@ public final class BlockMap {
                     .setValue(DoorBlock.HINGE, Boolean.TRUE.equals(st.hinge) ? DoorHingeSide.RIGHT : DoorHingeSide.LEFT).setValue(DoorBlock.OPEN, false);
         } else if (block instanceof BedBlock) {
             s = s.setValue(BedBlock.FACING, dir(facing, st.f, "pz")).setValue(BedBlock.PART, Boolean.TRUE.equals(st.head) ? BedPart.HEAD : BedPart.FOOT);
+        } else if (block instanceof net.minecraft.world.level.block.HopperBlock) {
+            s = s.setValue(net.minecraft.world.level.block.HopperBlock.FACING, st.f == null ? Direction.DOWN : dir(facing, st.f, "nz"));
+        } else if (block instanceof net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock && !(block instanceof GrindstoneBlock)) {
+            // levers and buttons: on the floor unless told otherwise
+            s = s.setValue(net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACE,
+                            "wall".equals(st.half) ? AttachFace.WALL : "top".equals(st.half) ? AttachFace.CEILING : AttachFace.FLOOR)
+                    .setValue(net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.FACING, dir(facing, st.f, "nz"));
         } else if (block == Blocks.LADDER) {
             s = s.setValue(BlockStateProperties.HORIZONTAL_FACING, dir(facing, st.f, "nz"));
         } else if (block instanceof GrindstoneBlock) {

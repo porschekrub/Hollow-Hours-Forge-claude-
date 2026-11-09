@@ -196,6 +196,91 @@ public final class Compat {
         //#endif
     }
 
+    // ------------------------------------------------------------------ fishing
+    /** What one catch brings up (the vanilla fishing loot, luck of the sea counts). */
+    public static java.util.List<ItemStack> fishLoot(net.minecraft.server.level.ServerLevel level, net.minecraft.world.phys.Vec3 at, ItemStack rod, float luck) {
+        //#if MC>=12100
+        //$$ var table = level.getServer().reloadableRegistries().getLootTable(net.minecraft.world.level.storage.loot.BuiltInLootTables.FISHING);
+        //#else
+        var table = level.getServer().getLootData().getLootTable(net.minecraft.world.level.storage.loot.BuiltInLootTables.FISHING);
+        //#endif
+        var params = new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, at)
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.TOOL, rod).withLuck(luck)
+                .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.FISHING);
+        return table.getRandomItems(params);
+    }
+
+    /** Luck of the Sea, Lure. */
+    public static int fishLuck(ItemStack rod) {
+        //#if MC>=12100
+        //$$ return enchant(rod, net.minecraft.world.item.enchantment.Enchantments.LUCK_OF_THE_SEA);
+        //#else
+        return enchant(rod, net.minecraft.world.item.enchantment.Enchantments.FISHING_LUCK);
+        //#endif
+    }
+
+    public static int fishLure(ItemStack rod) {
+        //#if MC>=12100
+        //$$ return enchant(rod, net.minecraft.world.item.enchantment.Enchantments.LURE);
+        //#else
+        return enchant(rod, net.minecraft.world.item.enchantment.Enchantments.FISHING_SPEED);
+        //#endif
+    }
+
+    // ------------------------------------------------------------------ enchanting
+    /** Enchants a copy like an enchanting table would at this level (a book becomes an enchanted book). */
+    public static ItemStack enchantAt(net.minecraft.server.level.ServerLevel level, net.minecraft.util.RandomSource r, ItemStack st, int lvl) {
+        //#if MC>=12100
+        //$$ var tag = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).getTag(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE);
+        //$$ return net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(r, st.copy(), lvl, level.registryAccess(), tag);
+        //#else
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.enchantItem(r, st.copy(), lvl, false);
+        //#endif
+    }
+
+    // ------------------------------------------------------------------ potions
+    /** "minecraft:swiftness" of a potion item ("" when it has none). */
+    public static String potionId(ItemStack s) {
+        //#if MC>=12100
+        //$$ var c = s.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+        //$$ return c == null ? "" : c.potion().flatMap(h -> h.unwrapKey()).map(k -> k.location().toString()).orElse("");
+        //#else
+        var p = net.minecraft.world.item.alchemy.PotionUtils.getPotion(s);
+        return p == net.minecraft.world.item.alchemy.Potions.EMPTY ? "" : net.minecraft.core.registries.BuiltInRegistries.POTION.getKey(p).toString();
+        //#endif
+    }
+
+    /** A potion item (potion / splash / lingering) of a potion type; empty when there is no such potion. */
+    public static ItemStack potion(net.minecraft.world.item.Item item, String potionId) {
+        //#if MC>=12100
+        //$$ var h = net.minecraft.core.registries.BuiltInRegistries.POTION.getHolder(com.helperbuddy.HelperBuddy.rl(potionId));
+        //$$ return h.map(p -> net.minecraft.world.item.alchemy.PotionContents.createItemStack(item, p)).orElse(ItemStack.EMPTY);
+        //#else
+        var rl = com.helperbuddy.HelperBuddy.rl(potionId);
+        if (!net.minecraft.core.registries.BuiltInRegistries.POTION.containsKey(rl)) return ItemStack.EMPTY;
+        return net.minecraft.world.item.alchemy.PotionUtils.setPotion(new ItemStack(item), net.minecraft.core.registries.BuiltInRegistries.POTION.get(rl));
+        //#endif
+    }
+
+    /** What brewing this ingredient into this potion makes (empty: nothing). */
+    public static ItemStack brew(net.minecraft.world.level.Level level, ItemStack ingredient, ItemStack potion) {
+        //#if MC>=12100
+        //$$ var pb = level.potionBrewing();
+        //$$ return pb.hasMix(potion, ingredient) ? pb.mix(ingredient, potion) : ItemStack.EMPTY;
+        //#else
+        return net.minecraft.world.item.alchemy.PotionBrewing.hasMix(potion, ingredient) ? net.minecraft.world.item.alchemy.PotionBrewing.mix(ingredient, potion) : ItemStack.EMPTY;
+        //#endif
+    }
+
+    public static boolean brewIngredient(net.minecraft.world.level.Level level, ItemStack s) {
+        //#if MC>=12100
+        //$$ return level.potionBrewing().isIngredient(s);
+        //#else
+        return net.minecraft.world.item.alchemy.PotionBrewing.isIngredient(s);
+        //#endif
+    }
+
     /** Every recipe that makes this item. */
     public static java.util.List<net.minecraft.world.item.crafting.Recipe<?>> recipesFor(net.minecraft.server.MinecraftServer server, net.minecraft.world.item.Item item) {
         java.util.List<net.minecraft.world.item.crafting.Recipe<?>> out = new java.util.ArrayList<>();

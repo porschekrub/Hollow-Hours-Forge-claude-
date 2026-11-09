@@ -48,6 +48,9 @@ public final class ExtraGen {
             {"market", "ตลาด", "Market"},
             {"statue", "รูปปั้น", "Statue"},
             {"portal", "ประตูเนเธอร์", "Nether portal"},
+            {"autodoor", "ประตูอัตโนมัติ", "Automatic door"},
+            {"smelter", "เตาเผาอัตโนมัติ", "Auto smelter"},
+            {"lamp", "ไฟพื้นเปิดปิด", "Light switch floor"},
     };
 
     public static final String[][] MATS = {
@@ -841,6 +844,10 @@ public final class ExtraGen {
             case "statue":
             case "portal":
                 return StatueGen.generate(o);
+            case "autodoor":
+            case "smelter":
+            case "lamp":
+                return RedstoneGen.generate(o);
             case "igloo":
                 return igloo(o);
             case "pyramid":

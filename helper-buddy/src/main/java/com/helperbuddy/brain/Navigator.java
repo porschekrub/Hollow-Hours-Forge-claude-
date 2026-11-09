@@ -95,6 +95,18 @@ public final class Navigator {
                 GlobalPos g = d.get();
                 return new Found("ที่คุณตายล่าสุด", "where you last died", g.pos(), g.dimension());
             }
+            case "portal" -> {
+                BlockPos at = findPortal(level, from, 128);
+                if (at == null) {
+                    boolean nether = level.dimension() == Level.NETHER;
+                    why[0] = "ไม่เจอประตูเนเธอร์ในระยะ 128 บล็อก" + (nether ? " (ในเนเธอร์ประตูจะอยู่ใกล้กว่าในโลกปกติ 8 เท่า ลองเดินไปทางที่มา)"
+                            : " สั่ง \"สร้างประตูเนเธอร์\" ได้เลย (ส่งออบซิเดียน 10 ก้อน + หินเหล็กไฟให้ผมก่อน)");
+                    why[1] = "No nether portal within 128 blocks" + (nether ? " (in the Nether portals are 8 times closer, try going back the way you came)"
+                            : ". Say \"build a nether portal\" (give me 10 obsidian and a flint and steel first)");
+                    return null;
+                }
+                return new Found(place.th(), place.en(), at, level.dimension());
+            }
             case "structure" -> {
                 Found f = structure(level, from, place.ids(), place.th(), place.en());
                 if (f == null) notFound(place, why, level);
@@ -122,6 +134,18 @@ public final class Navigator {
                 && (place.ids()[0].contains("fortress") || place.ids()[0].contains("bastion")) ? " (อันนี้อยู่ในเนเธอร์นะ ไปเนเธอร์ก่อน)" : "");
         why[1] = "No " + place.en() + " in this dimension (" + dim + ") within about 1,600 blocks" + (dim.equals("overworld") && place.ids().length > 0
                 && (place.ids()[0].contains("fortress") || place.ids()[0].contains("bastion")) ? " (that one is in the Nether)" : "");
+    }
+
+    /** The closest nether portal block (from the portal points of interest, loaded or not). */
+    @Nullable
+    public static BlockPos findPortal(ServerLevel level, BlockPos from, int r) {
+        try {
+            return level.getPoiManager().findClosest(p -> p.is(net.minecraft.world.entity.ai.village.poi.PoiTypes.NETHER_PORTAL), from, r,
+                    net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY).orElse(null);
+        } catch (Exception e) {
+            HelperBuddy.LOG.warn("[Helper Buddy] could not look for portals: {}", e.toString());
+            return null;
+        }
     }
 
     /** (tests) */
