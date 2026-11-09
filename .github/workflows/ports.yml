@@ -95,7 +95,8 @@ jobs:
           mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
           PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
           M=$PWD/mc; rm -rf $M; mkdir -p $M/mods $M/saves $M/config
-          cp build/libs/*.jar $M/mods/ && rm -f $M/mods/*-sources.jar
+          cp build/libs/*.jar $M/mods/
+          rm -f $M/mods/*-sources.jar
           case "${{ matrix.target }}" in
             # Forge 1.21 loses its loot modifiers with quick play: the test opens the world from the title screen
             forge-1.21.1) VER=forge:1.21.1; JOIN=""; MENU=",-Dhollowhours.menuload=true,-Dhelperbuddy.menuload=true";;

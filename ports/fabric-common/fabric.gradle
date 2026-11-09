@@ -44,10 +44,14 @@ sourceSets.main.java.srcDirs = [files("${ppOut}/java").builtBy(preprocess)]
 sourceSets.main.resources.srcDirs = [files("${ppOut}/resources").builtBy(preprocess)]
 
 repositories {
+    mavenCentral()
     maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content { includeGroup('software.bernie.geckolib') }
+        content {
+            includeGroup('software.bernie.geckolib')
+            includeGroup('com.eliotlash.mclib')
+        }
     }
     maven {
         name = 'Fuzs'
@@ -57,6 +61,8 @@ repositories {
 }
 
 dependencies {
+    // @Nullable (Minecraft 1.21 no longer brings it)
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${loader_version}"
