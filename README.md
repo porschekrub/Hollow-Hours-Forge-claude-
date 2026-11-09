@@ -74,8 +74,8 @@ Hardcore ghost horror. Five ghosts stalk you, search your hiding spots, break do
 A helper that does (almost) everything you ask in plain Thai or English.
 ผู้ช่วยที่ทำได้เกือบทุกอย่าง แค่พิมพ์สั่งเป็นประโยคธรรมดา (ไทยหรืออังกฤษ)
 
-**Getting one / การเรียกผู้ช่วย**: you get a *Helper Contract* when you first join (or craft it: paper + iron ingot + bread + feather). Use it on the ground.
-ได้ *สัญญาจ้างผู้ช่วย* ตอนเข้าเกมครั้งแรก (หรือคราฟต์: กระดาษ + แท่งเหล็ก + ขนมปัง + ขนนก) แล้วคลิกขวาที่พื้น
+**Getting one / การเรียกผู้ช่วย**: you get a *Helper Contract* when you first join (or craft it, shaped: gold ingot · emerald · gold ingot / diamond · book and quill · diamond / gold ingot · iron block · gold ingot). Use it on the ground.
+ได้ *สัญญาจ้างผู้ช่วย* ตอนเข้าเกมครั้งแรก (หรือคราฟต์แบบเรียงช่อง: ทอง · มรกต · ทอง / เพชร · หนังสือกับปากกาขนนก · เพชร / ทอง · บล็อกเหล็ก · ทอง) แล้วคลิกขวาที่พื้น
 
 **Talking / การสั่ง**: type in chat starting with `!` (or the helper's name), or right-click the helper → *Talk*, or `/helper ...`
 พิมพ์ในแชตโดยขึ้นต้นด้วย `!` (หรือชื่อผู้ช่วย) หรือคลิกขวาที่ผู้ช่วย → แท็บ *คุย* หรือใช้ `/helper ...`

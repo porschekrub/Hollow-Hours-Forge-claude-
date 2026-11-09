@@ -126,6 +126,10 @@ public final class SmokeTest {
         Nlu.Intent meat = Nlu.parse("หาเนื้อมา 64 อัน");
         check(meat.k.equals("findFood") && meat.meat && Integer.valueOf(64).equals(Nlu.extractQty(Nlu.norm("หาเนื้อมา 64 อัน")).n()), "nlu 64 meat");
         check(Nlu.parse("get 20 beef").meat && !Nlu.parse("hunt 3 cows").meat, "nlu beef vs cows");
+        check(Nlu.parse("get me 64 meat").k.equals("findFood") && Nlu.parse("get me 64 meat").meat && Nlu.parse("เอาหมูมา 20 ชิ้น").meat
+                && !Nlu.parse("ฆ่าวัว 3 ตัว").meat, "nlu meat pieces");
+        check(Nlu.parse("ไปหมู่บ้านกัน").lead && Nlu.parse("มีหมู่บ้านแถวนี้ไหม").k.equals("locate") && Nlu.parse("ไปสร้างบ้านในป่า").k.equals("house")
+                && Nlu.parse("go to the nearest village").lead && !Nlu.parse("หมู่บ้านไปทางไหน").lead, "nlu go to a place");
         check(Nlu.parse("หมู่บ้านอยู่ไหน").k.equals("locate") && Nlu.parse("หมู่บ้านอยู่ไหน").place.kind().equals("structure"), "nlu where is the village");
         check(Nlu.parse("take me to a desert").lead && Nlu.parse("take me to a desert").place.kind().equals("biome"), "nlu take me to");
         check(Nlu.parse("สร้างบ้าน").k.equals("house") && Nlu.parse("จำไว้ว่าฉันชอบแมว").k.equals("remember") && Nlu.parse("พูดหยาบได้").k.equals("persona"), "nlu new intents");

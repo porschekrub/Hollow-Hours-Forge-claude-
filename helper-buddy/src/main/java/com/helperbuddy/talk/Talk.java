@@ -351,8 +351,23 @@ public final class Talk {
         } else say(p, h, desc + "\n§7(อยากให้พาไป พิมพ์ \"พาไป\")", desc + "\n§7(say \"take me there\" and I'll lead you)");
     }
 
+    /** Being called names: a cheeky helper answers back. */
+    static final String INSULT = "(โง่|ควาย|กาก|ห่วย|ไร้ประโยชน์|ใช้ไม่ได้|ไม่ได้เรื่อง|ปัญญาอ่อน|ไอ้เวร|ไอ้บ้า|เหี้ย|สัส|สัด|ไปตาย|หุบปาก|stupid|dumb|useless|idiot|moron|noob|trash|loser|shut up)";
+
     static void unknown(ServerPlayer p, HelperEntity h, String text, boolean allowAi) {
         boolean th = th(p);
+        Persona.Style st = Persona.of(h);
+        if (st != Persona.Style.POLITE && Nlu.test(INSULT, Nlu.norm(text))) {
+            if (allowAi && AiBridge.enabled() && HBConfig.AI_FOR_CHAT.get()) {
+                aiUnderstand(p, h, text, false);
+                return;
+            }
+            String[] q = Persona.quip(st, "insulted", Persona.R);
+            if (q != null) {
+                Say.raw(p, h, Say.t(p, q[0], q[1]));
+                return;
+            }
+        }
         String reply = SmallTalk.reply(Nlu.norm(text), ctx(h, p), th);
         if (reply != null) {
             say(p, h, reply, reply);

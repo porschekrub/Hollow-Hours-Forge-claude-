@@ -159,6 +159,13 @@ public final class Persona {
                     ? pair(r, new String[][] {{"จะยืนเฉยๆ อีกนานไหมวะ", "Are we just gonna stand here?"}, {"เบื่อโว้ย หางานให้ทำหน่อย", "Bored as hell, give me something to do"}})
                     : pair(r, new String[][] {{"เบื่อว่ะ หางานให้ทำหน่อย", "Bored... give me a job"}, {"ยืนเฉยๆ แบบนี้ เงินเดือนยังได้เท่าเดิมไหม", "Do I still get paid for standing here?"},
                     {"ถ้าไม่สั่งอะไร ข้าขอนอนนะ", "If you've got nothing, I'm taking a nap"}});
+            case "insulted" -> rude
+                    ? pair(r, new String[][] {{"มึงนั่นแหละโง่ สั่งงานยังสั่งไม่เป็นเลย", "You're the idiot, you can't even give orders"},
+                    {"ด่ากูอีกทีกูนั่งเฉยๆ ทั้งวันเลยนะ", "Insult me again and I'll sit here all day"}, {"ปากดีนักนะ ไปขุดเองดิ", "Big mouth. Go dig it yourself then"},
+                    {"กูโง่ แต่มึงจ้างกูนะ คิดดูดีๆ", "Sure I'm dumb, but you hired me. Think about that"}})
+                    : pair(r, new String[][] {{"พูดงี้ข้าก็เสียใจนะ... ล้อเล่น ไม่เสียใจหรอก", "Ouch... just kidding, I don't care"},
+                    {"ข้าโง่ แต่เอ็งตายบ่อยกว่าข้านะ", "I may be dumb, but you die way more than I do"}, {"ว่าข้าอีกที ข้าจะขุดหลุมหนีเหมือนตอนผีมาเลย", "Say that again and I'll dig a hole and hide, like with the ghosts"},
+                    {"โอเค งั้นเอ็งทำเองเลย ข้าจะนั่งดู", "Fine, you do it then. I'll watch"}});
             case "levelUp" -> rude
                     ? pair(r, new String[][] {{"เลเวลอัพแล้วโว้ย เก่งกว่ามึงอีก", "Level up! Already better than you"}})
                     : pair(r, new String[][] {{"เลเวลอัพ! ตอนนี้ข้าเก่งกว่าเอ็งแล้วมั้ง", "Level up! Pretty sure I'm better than you now"}});

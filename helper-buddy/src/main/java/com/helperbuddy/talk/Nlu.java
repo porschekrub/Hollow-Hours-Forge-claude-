@@ -653,7 +653,7 @@ public final class Nlu {
         if (test("(จน(กว่า)?(กระเป๋า)?(จะ)?เต็ม|ให้เต็ม|เต็มกระเป๋า|until (the |your )?(bag |inventory )?(is )?full|fill (up )?(your |the )?(bag|inventory)|as (much|many) as (you can|possible))", t))
             return new Qty(null, true, false);
         String n = numify(t);
-        Matcher m = match("(\\d+)\\s*(?:กอง|stacks?)", n);
+        Matcher m = match("(\\d+)\\s*(?:กอง|แถว|stacks?)", n);
         if (m != null) return new Qty(clampN(Integer.parseInt(m.group(1)) * 64), false, false);
         if (test("(ครึ่งกอง|half a stack)", t)) return new Qty(32, false, false);
         if (test("(?:^|[^\\d])(กอง|a stack|one stack)", n)) return new Qty(64, false, false);
@@ -680,12 +680,12 @@ public final class Nlu {
             {"structure", "เหมืองร้าง|เหมืองเก่า|เหมืองทิ้ง", "mineshafts?|abandoned mines?", "เหมืองร้าง", "a mineshaft", "#minecraft:mineshaft"},
             {"structure", "สตรองโฮลด์|ป้อมใต้ดิน|ประตูเอนด์|พอร์ทัลเอนด์|ประตูไปเอนด์|ป้อมปราการใต้ดิน", "strongholds?|end portal", "สตรองโฮลด์ (ประตูไปเอนด์)", "the stronghold", "minecraft:stronghold"},
             {"structure", "ประตูเนเธอร์พัง|พอร์ทัลพัง|ประตูร้าง|ซากประตู|พอร์ทัลร้าง", "ruined portals?", "ซากประตูเนเธอร์", "a ruined portal", "#minecraft:ruined_portal"},
-            {"structure", "เรืออับปาง|ซากเรือ|เรือจม|เรือแตก", "shipwrecks?|sunken ships?|\\bwrecks?\\b", "ซากเรือ", "a shipwreck", "#minecraft:shipwreck"},
+            {"structure", "เรืออับปาง|ซากเรือ|เรือจม|เรือแตก|เรือโจรสลัด|เรือผี|เรือร้าง", "shipwrecks?|sunken ships?|\\bwrecks?\\b|pirate ships?", "ซากเรือ", "a shipwreck", "#minecraft:shipwreck"},
             {"structure", "ซากใต้น้ำ|ซากปรักหักพังใต้ทะเล|ซากเมืองใต้น้ำ", "ocean ruins?|underwater ruins?", "ซากใต้น้ำ", "ocean ruins", "#minecraft:ocean_ruin"},
             {"structure", "วิหารใต้ทะเล|วิหารใต้น้ำ|มอนูเมนต์|ปราสาทใต้น้ำ", "monuments?|guardian temple", "วิหารใต้ทะเล", "an ocean monument", "minecraft:monument"},
             {"structure", "คฤหาสน์|แมนชั่น", "mansions?", "คฤหาสน์", "a woodland mansion", "minecraft:mansion"},
-            {"structure", "พีระมิด|ปิรามิด|วิหารทะเลทราย", "pyramids?|desert temples?", "พีระมิดทะเลทราย", "a desert pyramid", "minecraft:desert_pyramid"},
-            {"structure", "วิหารป่า|วิหารในป่า|วิหารป่าดิบ", "jungle temples?|jungle pyramids?", "วิหารป่า", "a jungle temple", "minecraft:jungle_pyramid"},
+            {"structure", "พีระมิด|ปิรามิด|วิหาร(ใน|กลาง)?ทะเลทราย", "pyramids?|desert temples?", "พีระมิดทะเลทราย", "a desert pyramid", "minecraft:desert_pyramid"},
+            {"structure", "วิหาร(ใน)?ป่า", "jungle temples?|jungle pyramids?", "วิหารป่า", "a jungle temple", "minecraft:jungle_pyramid"},
             {"structure", "บ้านแม่มด|กระท่อมแม่มด", "witch huts?|swamp huts?", "บ้านแม่มด", "a witch hut", "minecraft:swamp_hut"},
             {"structure", "อิกลู|บ้านน้ำแข็ง", "igloos?", "อิกลู", "an igloo", "minecraft:igloo"},
             {"structure", "ป้อมโจร|ป้อมพิลเลเจอร์|ค่ายโจร|หอโจร", "outposts?", "ป้อมโจร", "a pillager outpost", "minecraft:pillager_outpost"},
@@ -717,13 +717,13 @@ public final class Nlu {
             {"biome", "ป่า(?!ดิบ|ดง|ฝน|สน|ไผ่|มืด|รก|ชมพู|ดอก|ชายเลน)", "\\bforests?\\b|\\bwoods\\b", "ป่า", "a forest", "#minecraft:is_forest"},
             {"death", "ที่ตาย|จุดตาย|ที่ฉันตาย|ที่เราตาย|ศพ|ของที่ตก|ของที่หล่น|หลุมศพ|ที่ตายล่าสุด", "where (did )?i (die|died)|death (point|spot|place)|my grave|my (stuff|items|loot)", "ที่คุณตายล่าสุด", "where you died", ""},
             {"spawn", "จุดเกิดโลก|สปอน|สปอว์น|จุดเกิดของโลก", "\\bspawn\\b", "จุดเกิดของโลก", "the world spawn", ""},
-            {"me", "ฉันอยู่(ที่|ตรง)?ไหน|ตอนนี้อยู่(ที่|ตรง)?ไหน|เราอยู่(ที่|ตรง)?ไหน|พิกัดฉัน|พิกัดตอนนี้|กูอยู่ไหน", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
+            {"me", "(ฉัน|กู|ข้า|ผม|หนู|เรา|เค้า)(ตอนนี้)?อยู่(ที่|ตรง)?ไหน|ตอนนี้(ฉัน|กู|ข้า|ผม|เรา)?อยู่(ที่|ตรง)?ไหน|พิกัด(ของ)?(ฉัน|กู|ข้า|ผม|เรา|ตอนนี้)|ตำแหน่ง(ของ)?(ฉัน|กู|ข้า|ผม|เรา)", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
             {"helper", "(แก|เอ็ง|นาย|ตัวเอง|มึง|เธอ)อยู่(ที่|ตรง)?ไหน", "where are you", "ตำแหน่งของผม", "where I am", ""},
             {"work", "ที่ทำงาน|จุดทำงาน", "work ?(spot|place)", "ที่ทำงานของผม", "my work spot", ""},
             {"bed", "(?<!หมู่)บ้าน|เตียง|ฐานทัพ|ฐาน(?!ะ)", "\\bhome\\b|\\bhouse\\b|\\bbed\\b|\\bbase\\b", "บ้านของคุณ (เตียง)", "your home (bed)", ""},
     };
 
-    static final String WHERE = "(อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน"
+    static final String WHERE = "(อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน|^ไป.+(ยังไง|ไง)$|(แถวนี้|ใกล้ๆ(นี้)?|รอบๆ(นี้)?)\\s*(มี)?\\s*(ไหม|มั้ย|ป่ะ|ปะ|รึเปล่า|หรือเปล่า|บ้างไหม|บ้าง)"
             + "|where('s| is| are| can i find| do i find)?\\b|which way|how (do i|can i|to) get( to)?|\\bnearest\\b|\\bclosest\\b|\\blocate\\b|direction to|way to|is there an?)";
     static final String LEAD = "(พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทาง|พาทาง|ไปด้วยกัน|take me|lead me|guide me|bring me to|show me the way|escort me|walk me to|lead the way)";
 
@@ -733,19 +733,22 @@ public final class Nlu {
         Matcher c = match("(-?\\d+)[\\s,]+(-?\\d+)[\\s,]+(-?\\d+)", nt);
         if (c != null) return new Place("coords", new String[0], "พิกัดนั้น", "those coordinates", t,
                 new int[] {Integer.parseInt(c.group(1)), Integer.parseInt(c.group(2)), Integer.parseInt(c.group(3))});
-        for (String[] p : PLACES) {
-            if (test("(" + p[1] + ")", t) || test("(" + p[2] + ")", t)) {
-                String[] ids = java.util.Arrays.copyOfRange(p, 5, p.length);
-                if (ids.length == 1 && ids[0].isEmpty()) ids = new String[0];
-                return new Place(p[0], ids, p[3], p[4], t, null);
-            }
-        }
+        String[] p = placeRow(t);
+        if (p == null) return null;
+        String[] ids = java.util.Arrays.copyOfRange(p, 5, p.length);
+        if (ids.length == 1 && ids[0].isEmpty()) ids = new String[0];
+        return new Place(p[0], ids, p[3], p[4], t, null);
+    }
+
+    /** The PLACES row for t, or null. */
+    static String[] placeRow(String t) {
+        for (String[] p : PLACES) if (test("(" + p[1] + ")", t) || test("(" + p[2] + ")", t)) return p;
         return null;
     }
 
     /** Whatever is left of a where-question once the question words are gone ("dungeon" in "where is the dungeon"). */
     static String placeWords(String t) {
-        return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b", " ").replaceAll("\\s+", " ").trim();
+        return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b|^มี", " ").replaceAll("\\s+", " ").trim();
     }
 
     /** Navigation, memory, personality and "what is this" (null: none of those). */
@@ -806,6 +809,20 @@ public final class Nlu {
                 return i;
             }
         }
+        Matcher gm = lead || where ? null : match("^(?:ไป|เดินไป|ออกเดินทางไป|go to|head to|let'?s go to|travel to)\\s*(.+)$", t);
+        if (gm != null) {
+            // only a place and filler words after it ("ไปหมู่บ้านกัน"), not "ไปสร้างบ้านในป่า"
+            String[] row = placeRow(gm.group(1));
+            String left = row == null ? "x" : gm.group(1).replaceAll("(" + row[1] + ")|(" + row[2] + ")", " ")
+                    .replaceAll("(ที่|ยัง|กัน|เลย|หน่อย|ด้วย|ดิ|ดีกว่า|นะ|ใกล้ๆ|ใกล้สุด|ใกล้ที่สุด|สักที่|ซักที่|ไหนก็ได้|the|an?|nearest|closest|now|together|please|pls)", " ").trim();
+            Place pl = left.isEmpty() ? placeIn(gm.group(1)) : null;
+            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome"))) {
+                Intent i = new Intent("locate");
+                i.place = pl;
+                i.lead = true;
+                return i;
+            }
+        }
         if (lead || where) {
             Place pl = placeIn(t);
             if (pl == null && where && !lead) {
@@ -821,7 +838,8 @@ public final class Nlu {
             }
             Intent i = new Intent("locate");
             i.place = pl;
-            i.lead = lead;
+            // "ไปหมู่บ้านที่ใกล้ที่สุด", "go to the nearest village": go there, not just tell
+            i.lead = lead || (test("^(ไป|เดินไป|go to|head to|let'?s go to|travel to)", t) && !test("(ทางไหน|ยังไง|ไปไง|ทิศไหน|อยู่(ที่|ตรง)?ไหน|which way|how)", t));
             return i;
         }
         return null;
@@ -965,6 +983,7 @@ public final class Nlu {
         String[] animal = animalIn(t);
         boolean cropsOnly = has(t, "เก็บเกี่ยว", "เก็บผัก", "เก็บผลไม้", "เก็บข้าวสาลี", "เก็บแครอท", "เก็บมัน", "เก็บเบอร์รี่", "harvest", "berries", "crops", "pick vegetables");
         boolean huntWords = has(t, "ล่า", "ฆ่า", "จับ", "หาเนื้อ", "เอาเนื้อ", "hunt", "kill", "slaughter", "get meat", "meat", "butcher");
+        boolean meatWords = has(t, "เนื้อ", "meat", "beef", "pork", "porkchop", "porkchops", "mutton", "steak", "steaks", "drumstick", "raw chicken");
         // farming: plant seeds, breed, shear
         if (has(t, "ปลูก", "หว่าน", "ทำไร่", "ทำนา", "ทำสวน", "ทำฟาร์ม", "plant", "sow", "farm", "farming", "grow crops", "grow food", "make a farm")) {
             Intent i = new Intent("farm");
@@ -978,13 +997,15 @@ public final class Nlu {
         }
         if (has(t, "ตัดขน", "เล็มขน", "shear", "wool")) return new Intent("shear");
         if (has(t, "หาอาหาร", "หาของกิน", "หาอะไรกิน", "หาข้าว", "หาเสบียง", "หาเนื้อ", "ล่าสัตว์", "find food", "get food", "gather food", "look for food", "go hunting", "collect food")
-                || cropsOnly || (animal != null && (huntWords || has(t, "หา", "เอา", "get", "find")))) {
+                || cropsOnly || (animal != null && (huntWords || has(t, "หา", "เอา", "get", "find")))
+                || (meatWords && has(t, "หา", "เอา", "ล่า", "get", "find", "bring", "fetch", "collect", "gather", "hunt"))) {
             Intent i = new Intent("findFood");
             i.hunt = !cropsOnly;
             i.crops = !huntWords && animal == null;
             i.animal = animal;
             // "64 meat", "20 beef", "เนื้อ 64 ชิ้น": count the meat, not the animals ("3 cows", "วัว 3 ตัว" count animals)
-            i.meat = !cropsOnly && has(t, "เนื้อ", "meat", "beef", "pork", "porkchop", "porkchops", "mutton", "steak", "steaks", "drumstick", "raw chicken")
+            // "หมู 20 ชิ้น" / "20 pieces of pork": pieces are meat too
+            i.meat = !cropsOnly && (meatWords || test("\\d+\\s*(ชิ้น|อัน|pieces?|pcs)", numify(t)))
                     && !test("\\d+\\s*(ตัว|animals?|cows|pigs|sheep|chickens|rabbits)", numify(t));
             return i;
         }
