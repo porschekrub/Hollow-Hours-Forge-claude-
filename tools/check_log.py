@@ -24,8 +24,10 @@ if marker not in text:
 OUR = re.compile(r"(com\.hollowhours|com\.helperbuddy|hollowhours:|helperbuddy:)")
 BAD = re.compile(r"(Exception|Error|Couldn't parse|Parsing error|Failed to load|Unknown|Couldn't load)", re.I)
 lines = text.splitlines()
+# harmless lines that name our ids (Fabric logs every modded entity type without a data fixer)
+HARMLESS = re.compile(r"No data fixer registered for")
 for i, line in enumerate(lines):
-    if not BAD.search(line):
+    if not BAD.search(line) or HARMLESS.search(line):
         continue
     window = "\n".join(lines[i:i + 6])
     if not OUR.search(window):

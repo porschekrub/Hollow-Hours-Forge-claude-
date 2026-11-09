@@ -6,11 +6,15 @@ import net.minecraft.server.level.ServerPlayer;
 public final class Lang {
     private Lang() {}
 
+    public interface Holder {
+        String shim$language();
+    }
+
     public static String of(ServerPlayer p) {
         //#if MC>=12100
         //$$ return p.clientInformation().language();
         //#else
-        return ((net.minecraftforge.internal.mixin.ServerPlayerAccess) p).shim$language();
+        return ((Holder) p).shim$language();
         //#endif
     }
 }

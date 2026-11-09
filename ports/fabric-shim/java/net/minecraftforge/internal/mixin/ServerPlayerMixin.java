@@ -17,7 +17,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerMixin {
+public abstract class ServerPlayerMixin implements net.minecraftforge.internal.Lang.Holder {
+    /** The game language the client told (Forge: ServerPlayer#getLanguage). */
+    @org.spongepowered.asm.mixin.Unique
+    private String shim$lang = "en_us";
+
+    @Override
+    public String shim$language() {
+        return shim$lang;
+    }
+
+    //#if MC<12100
+    @Inject(method = "updateOptions", at = @At("HEAD"))
+    private void shim$options(net.minecraft.network.protocol.game.ServerboundClientInformationPacket packet, CallbackInfo ci) {
+        shim$lang = packet.language();
+    }
+    //#endif
+
     @Inject(method = "die", at = @At("HEAD"), cancellable = true)
     private void shim$die(DamageSource source, CallbackInfo ci) {
         if (Hooks.post(new LivingDeathEvent((ServerPlayer) (Object) this, source))) ci.cancel();
