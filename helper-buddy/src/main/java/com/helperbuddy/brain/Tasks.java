@@ -166,6 +166,8 @@ public final class Tasks {
     }
 
     void done(boolean stay) {
+        if (com.helperbuddy.talk.Say.LOG_UNHEARD && spec != null)
+            com.helperbuddy.HelperBuddy.LOG.info("[{}] task {} done (count {}, phase {})", h.helperName(), spec.getString("kind"), count, phase);
         end();
         if (!b.plan.active()) h.setMode(stay ? Mode.STAY : Mode.FOLLOW);
         b.report("task", null);
@@ -194,6 +196,7 @@ public final class Tasks {
     // ------------------------------------------------------------------ tick
     void tick() {
         if (spec == null) {
+            if (com.helperbuddy.talk.Say.LOG_UNHEARD) com.helperbuddy.HelperBuddy.LOG.info("[{}] working on a task that is gone", h.helperName());
             h.setMode(Mode.STAY);
             return;
         }

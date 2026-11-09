@@ -544,7 +544,7 @@ final class Skills {
         h.swing(InteractionHand.MAIN_HAND);
         h.addXp(3);
         t.b.report("enchant", result);
-        Say.owner(h, Say.mix(o, "ร่ายมนตร์เสร็จแล้ว (ระดับ " + cost[pick] + ", ชั้นหนังสือ " + power + "): ", "Enchanted (level " + cost[pick] + ", " + power + " bookshelves): ", Say.item(result)));
+        Say.owner(h, Say.mix(o, "ร่ายมนตร์เสร็จแล้ว (ระดับ " + cost[pick] + ", ชั้นหนังสือ " + power + "): {}", "Enchanted (level " + cost[pick] + ", " + power + " bookshelves): {}", Say.item(result)));
         handOver(h, result);
         t.done(false);
     }
@@ -788,7 +788,7 @@ final class Skills {
                 be.setItem(i, ItemStack.EMPTY);
             }
         if (t.count > 0) {
-            Say.owner(h, Say.mix(h.owner(), "ต้มยาเสร็จแล้ว §e" + t.count + "§r ขวด: ", "Brewed §e" + t.count + "§r bottles: ", Say.item(goal)));
+            Say.owner(h, Say.mix(h.owner(), "ต้มยาเสร็จแล้ว §e" + t.count + "§r ขวด: {}", "Brewed §e" + t.count + "§r bottles: {}", Say.item(goal)));
             ServerPlayer o = h.owner();
             if (o != null && o.level() == h.level() && o.distanceTo(h) < 8) {
                 Item gi = goal.getItem();

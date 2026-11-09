@@ -95,6 +95,8 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     private BlockPos home;
     /** Saved jobs (build, mine, plan, gather ids ...), owned by the brain modules. */
     public CompoundTag jobs = new CompoundTag();
+    /** the first error of its brain is always logged, then one every 10 seconds */
+    boolean errorLogged;
     @Nullable
     private Brain brain;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -482,7 +484,8 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         try {
             brain().tick();
         } catch (Exception e) {
-            if (tickCount % 200 == 0) HelperBuddy.LOG.warn("[Helper Buddy] tick error", e);
+            if (!errorLogged || tickCount % 200 == 0) HelperBuddy.LOG.warn("[Helper Buddy] tick error", e);
+            errorLogged = true;
         }
     }
 

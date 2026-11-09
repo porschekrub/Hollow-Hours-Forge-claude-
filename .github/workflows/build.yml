@@ -47,7 +47,7 @@ jobs:
           # GitHub sometimes fails to hand out the Gradle download (504): try again a little later
           for try in 1 2 3 4; do
             ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log && break
-            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|Could not GET\|Could not HEAD" build.log && [ $try -lt 4 ] || exit 1
+            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|timeout (\|Could not GET\|Could not HEAD\|Failed to provision\|sha256 Invalid\|Could not resolve" build.log && [ $try -lt 4 ] || exit 1
             echo "download failed, trying again"; sleep 45
           done
 
@@ -163,7 +163,7 @@ jobs:
           # GitHub sometimes fails to hand out the Gradle download (504): try again a little later
           for try in 1 2 3 4; do
             ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log && break
-            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|Could not GET\|Could not HEAD" build.log && [ $try -lt 4 ] || exit 1
+            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|timeout (\|Could not GET\|Could not HEAD\|Failed to provision\|sha256 Invalid\|Could not resolve" build.log && [ $try -lt 4 ] || exit 1
             echo "download failed, trying again"; sleep 45
           done
           ls -la build/libs
@@ -210,7 +210,7 @@ jobs:
           import json; a=json.load(open('pmc-release.json')).get('assets', [])
           ok=[x['browser_download_url'] for x in a if 'linux' in x['name'].lower() and 'x86_64' in x['name'] and x['name'].endswith('.tar.gz')]
           print(ok[0] if ok else '')")
-          mkdir -p pmc && curl -sL "$U" | tar xz -C pmc
+          mkdir -p pmc && for try in 1 2 3 4; do curl -sL "$U" | tar xz -C pmc && break; echo "portablemc download failed, trying again"; sleep 20; done
           PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
           M=$PWD/mc; rm -rf $M; mkdir -p $M/mods $M/saves $M/config
           cp build/libs/*.jar $M/mods/

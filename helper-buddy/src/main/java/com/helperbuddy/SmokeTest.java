@@ -39,6 +39,15 @@ public final class SmokeTest {
     /** the skills: fishing, trading, enchanting, brewing, a machine, end crystals */
     static HelperEntity hf, ht, he, hb, hm, hc;
     static net.minecraft.world.entity.Entity crystal;
+    static final boolean[] skillsOk = new boolean[4];
+
+    static String bagText(HelperEntity x) {
+        StringBuilder b = new StringBuilder();
+        if (!x.tool().isEmpty()) b.append("hand ").append(x.tool().getItem()).append("; ");
+        for (int i = 0; i < x.bag.getContainerSize(); i++)
+            if (!x.bag.getItem(i).isEmpty()) b.append(x.bag.getItem(i).getCount()).append(' ').append(x.bag.getItem(i).getItem()).append(", ");
+        return b.toString();
+    }
     static int t;
     static BlockPos base;
 
@@ -208,21 +217,26 @@ public final class SmokeTest {
                 for (HelperEntity x : new HelperEntity[] {hf, ht, he, hb, hm, hc})
                     if (x != null) HelperBuddy.LOG.info("[smoke] skill helper {}: mode {} status '{}' task {}", x.helperName(), x.mode(), x.status(), x.brain().tasks().active());
             if (t == 1200) {
+                // log everything first, then check (one run shows every skill that broke)
                 int caught = Bag.count(hf, st -> !st.isEmpty() && !(st.getItem() instanceof net.minecraft.world.item.FishingRodItem));
                 HelperBuddy.LOG.info("[smoke] fishing: {} things caught", caught);
-                check(caught > 0, "fishing caught something");
                 HelperBuddy.LOG.info("[smoke] trading: {} emeralds, {} wheat left", Bag.count(ht, Items.EMERALD), Bag.count(ht, Items.WHEAT));
-                check(Bag.count(ht, Items.EMERALD) > 0, "trading with a villager");
-                HelperBuddy.LOG.info("[smoke] enchanting: {} enchanted books", Bag.count(he, Items.ENCHANTED_BOOK));
-                check(Bag.count(he, Items.ENCHANTED_BOOK) > 0, "enchanting a book");
-                HelperBuddy.LOG.info("[smoke] end crystal alive: {}", crystal.isAlive());
-                check(!crystal.isAlive(), "shooting the end crystal");
+                HelperBuddy.LOG.info("[smoke] enchanting: {} enchanted books, bag {}", Bag.count(he, Items.ENCHANTED_BOOK), bagText(he));
+                HelperBuddy.LOG.info("[smoke] end crystal alive: {}, arrows left {}", crystal.isAlive(), Bag.count(hc, Items.ARROW));
+                skillsOk[0] = caught > 0;
+                skillsOk[1] = Bag.count(ht, Items.EMERALD) > 0;
+                skillsOk[2] = Bag.count(he, Items.ENCHANTED_BOOK) > 0;
+                skillsOk[3] = !crystal.isAlive();
             }
             if (t == 1900) {
                 int swift = Bag.count(hb, st -> com.helperbuddy.compat.Compat.potionId(st).equals("minecraft:swiftness"));
-                HelperBuddy.LOG.info("[smoke] brewing: {} potions of swiftness", swift);
+                HelperBuddy.LOG.info("[smoke] brewing: {} potions of swiftness, bag {}", swift, bagText(hb));
+                HelperBuddy.LOG.info("[smoke] machine: {} iron ingots from the furnace, bag {}", Bag.count(hm, Items.IRON_INGOT), bagText(hm));
+                check(skillsOk[0], "fishing caught something");
+                check(skillsOk[1], "trading with a villager");
+                check(skillsOk[2], "enchanting a book");
+                check(skillsOk[3], "shooting the end crystal");
                 check(swift > 0, "brewing a potion of swiftness");
-                HelperBuddy.LOG.info("[smoke] machine: {} iron ingots from the furnace", Bag.count(hm, Items.IRON_INGOT));
                 check(Bag.count(hm, Items.IRON_INGOT) > 0, "running a furnace (a machine)");
                 HelperBuddy.LOG.info("SMOKE TEST OK");
                 h = null;

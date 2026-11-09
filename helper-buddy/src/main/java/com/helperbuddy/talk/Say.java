@@ -74,14 +74,19 @@ public final class Say {
         Voice.speak(p, h, text);
     }
 
+    /** (the server smoke test: what a helper without an owner would have said goes to the log) */
+    public static final boolean LOG_UNHEARD = Boolean.getBoolean("helperbuddy.smoketest");
+
     public static void owner(HelperEntity h, String th, String en) {
         Player p = h.owner();
         if (p != null) to(p, h, th, en);
+        else if (LOG_UNHEARD) com.helperbuddy.HelperBuddy.LOG.info("[{} says] {}", h.helperName(), en);
     }
 
     public static void owner(HelperEntity h, Component msg) {
         Player p = h.owner();
         if (p != null) to(p, h, msg);
+        else if (LOG_UNHEARD) com.helperbuddy.HelperBuddy.LOG.info("[{} says] {}", h.helperName(), msg.getString());
     }
 
     /** Rate limited message to the owner. */
