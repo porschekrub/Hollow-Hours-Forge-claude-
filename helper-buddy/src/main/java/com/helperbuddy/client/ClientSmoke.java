@@ -345,6 +345,20 @@ public final class ClientSmoke {
             }
             return t >= 182;
         });
+        // talking by voice: a recording (a hum here, no microphone in CI) goes to the server
+        STEPS.add(t -> {
+            if (t == 0) {
+                short[] hum = new short[16000];
+                for (int i = 0; i < hum.length; i++) hum[i] = (short) (6000 * Math.sin(2 * Math.PI * 220 * i / 16000.0));
+                VoiceInput.send(mc, hum);
+            }
+            if (t == 30) server(sp -> {
+                HelperBuddy.LOG.info("[client smoke] voice recordings received: {}", com.helperbuddy.talk.VoiceIn.received);
+                if (com.helperbuddy.talk.VoiceIn.received == 0) HelperBuddy.LOG.error("[client smoke] the voice recording never reached the server (com.helperbuddy)");
+            });
+            if (t == 34) shot("voice_in");
+            return t >= 36;
+        });
         // building: a hotel and a random house, watched from the side
         String[][] builds = {{"hotel", "build_hotel"}, {"standard", "build_house"}, {"statue", "build_statue"}};
         for (int bi = 0; bi < builds.length; bi++) {

@@ -12,7 +12,7 @@ public final class HBConfig {
 
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED, AI_FOR_COMMANDS, AI_FOR_CHAT, AI_FOR_BUILDING;
     public static final ForgeConfigSpec.ConfigValue<String> STYLE, VOICE, VOICE_MODEL, VOICE_NAME;
-    public static final ForgeConfigSpec.BooleanValue TROLLING, BANTER, MEMORY, KEEP_LOADED, EXPLORE;
+    public static final ForgeConfigSpec.BooleanValue TROLLING, BANTER, MEMORY, KEEP_LOADED, EXPLORE, LISTEN;
     public static final ForgeConfigSpec.DoubleValue TROLL_CHANCE, VOICE_VOLUME;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
     public static final ForgeConfigSpec.IntValue AI_TIMEOUT, AI_MAX_BUILD;
@@ -50,6 +50,8 @@ public final class HBConfig {
         VOICE_MODEL = b.comment("Gemini speech model (if it is gone, the newer ones are tried by themselves)").define("speechModel", "gemini-3.8-flash-lite-tts");
         VOICE_NAME = b.comment("Gemini voice (Puck, Kore, Charon, Fenrir, Leda, Orus, Zephyr, ...); empty = one per helper").define("speechVoice", "");
         VOICE_VOLUME = b.comment("Voice loudness (also follows the game's Voice/Speech volume slider)").defineInRange("volume", 1.0, 0.0, 2.0);
+        LISTEN = b.comment("Talking to helpers with your voice: hold the key (B, see Controls) and speak. Needs the Gemini AI ([ai] key):",
+                "the recording is sent to Google to be written down, then the helper does what you said").define("listen", true);
         b.pop();
 
         b.comment("Optional real AI (understands any sentence, chats, designs custom buildings).",

@@ -154,6 +154,13 @@ public final class SmokeTest {
         check(Nlu.parse("ต้มยาวิ่งเร็ว").k.equals("brew") && "swiftness".equals(Nlu.parse("ต้มยาวิ่งเร็ว").text) && "long_".equals(Nlu.parse("brew a long potion of swiftness").name), "nlu brewing");
         check(Nlu.parse("put raw iron in the furnace").k.equals("machine") && Nlu.parse("ใส่เหล็กดิบในเตาเผา").k.equals("machine"), "nlu machines");
         check(Nlu.parse("ไปเนเธอร์").k.equals("locate") && Nlu.parse("ไปเนเธอร์").place.kind().equals("portal") && Nlu.parse("take me to the end").lead, "nlu nether / end");
+        // voice orders: the recording as a WAV file, the request to the AI, what it heard
+        byte[] wav = com.helperbuddy.talk.VoiceIn.wav(new byte[] {(byte) 0xFF, (byte) 0x80, 0x00, 0x7F}, 16000);
+        check(wav.length == 44 + 8 && new String(wav, 0, 4).equals("RIFF") && new String(wav, 8, 4).equals("WAVE"), "voice wav");
+        check(com.helperbuddy.talk.AiBridge.heardRequest(wav).toString().contains("\"mime_type\":\"audio/wav\""), "voice request");
+        check(com.helperbuddy.talk.AiBridge.heardText("{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"\\\"ตกปลา  3 ตัว\\\"\\n\"}]}}]}").equals("ตกปลา 3 ตัว"),
+                "voice heard text");
+        check(com.helperbuddy.talk.AiBridge.heardText("{\"candidates\":[]}").isEmpty(), "voice heard nothing");
         check(Nlu.parse("ฆ่ามังกร").k.equals("boss") && Nlu.parse("kill the dragon").k.equals("boss"), "nlu boss");
         check("smelter".equals(Nlu.parse("build an auto smelter").house.o.type) && "autodoor".equals(Nlu.parse("สร้างประตูอัตโนมัติ").house.o.type), "nlu redstone builds");
         byte[] pcm = new byte[] {0, 0, (byte) 0xE8, 0x03, 0x18, (byte) 0xFC, (byte) 0xFF, 0x7F};

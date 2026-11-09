@@ -6,5 +6,7 @@
   "item.helperbuddy.command_book.tip": "Order your helpers from anywhere",
   "item.helperbuddy.helper_spawn_egg": "Helper Spawn Egg",
   "itemGroup.helperbuddy": "Helper Buddy",
-  "helperbuddy.subtitle.voice": "Helper talks"
+  "helperbuddy.subtitle.voice": "Helper talks",
+  "key.helperbuddy.talk": "Talk to your helper (hold and speak)",
+  "key.categories.helperbuddy": "Helper Buddy"
 }

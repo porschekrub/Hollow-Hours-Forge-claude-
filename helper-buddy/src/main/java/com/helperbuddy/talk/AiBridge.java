@@ -181,6 +181,85 @@ public final class AiBridge {
         }
     }
 
+    /** Speech can be written down: Gemini through its own endpoint (it hears audio). */
+    public static boolean canHear() {
+        return enabled() && provider().equals("gemini") && HBConfig.AI_URL.get().isBlank();
+    }
+
+    /** The request that asks Gemini to write down what is said in a WAV recording. */
+    public static JsonObject heardRequest(byte[] wav) {
+        JsonObject audio = new JsonObject();
+        JsonObject inline = new JsonObject();
+        inline.addProperty("mime_type", "audio/wav");
+        inline.addProperty("data", java.util.Base64.getEncoder().encodeToString(wav));
+        audio.add("inline_data", inline);
+        JsonObject ask = new JsonObject();
+        ask.addProperty("text", "This is a player of Minecraft talking to their helper (in Thai, English or both). Write down exactly what they say, "
+                + "in the language they speak (Thai words in Thai script). Reply with only those words: no quotes, no notes, no translation. "
+                + "If nobody speaks, reply with nothing.");
+        JsonArray ps = new JsonArray();
+        ps.add(audio);
+        ps.add(ask);
+        JsonObject c = new JsonObject();
+        c.addProperty("role", "user");
+        c.add("parts", ps);
+        JsonArray contents = new JsonArray();
+        contents.add(c);
+        JsonObject body = new JsonObject();
+        body.add("contents", contents);
+        JsonObject gen = new JsonObject();
+        gen.addProperty("maxOutputTokens", 2048);
+        gen.addProperty("temperature", 0);
+        body.add("generationConfig", gen);
+        return body;
+    }
+
+    /** The words in Gemini's answer ("" when it heard nothing). */
+    public static String heardText(String response) {
+        JsonObject o = JsonParser.parseString(response).getAsJsonObject();
+        StringBuilder sb = new StringBuilder();
+        var cand = o.getAsJsonArray("candidates");
+        if (cand == null || cand.isEmpty()) return "";
+        JsonObject content = cand.get(0).getAsJsonObject().getAsJsonObject("content");
+        if (content == null || !content.has("parts")) return "";
+        for (JsonElement p : content.getAsJsonArray("parts")) {
+            JsonObject po = p.getAsJsonObject();
+            if (po.has("thought") && po.get("thought").getAsBoolean()) continue;
+            if (po.has("text")) sb.append(po.get("text").getAsString());
+        }
+        return sb.toString().replaceAll("[\"“”]", "").replaceAll("\\s+", " ").trim();
+    }
+
+    /** What is said in a WAV recording, written down (null on failure, "" when nobody speaks). */
+    public static CompletableFuture<String> transcribe(byte[] wav) {
+        try {
+            String model = model().replaceFirst("^models/", "");
+            HttpRequest rq = HttpRequest.newBuilder(URI.create(geminiBase + model + ":generateContent"))
+                    .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
+                    .header("content-type", "application/json")
+                    .header("x-goog-api-key", HBConfig.AI_KEY.get().trim())
+                    .POST(HttpRequest.BodyPublishers.ofString(heardRequest(wav).toString())).build();
+            return client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
+                if (r.statusCode() / 100 != 2) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] {}", "listening failed (" + r.statusCode() + "): " + trim(r.body(), 300));
+                    return (String) null;
+                }
+                try {
+                    return heardText(r.body());
+                } catch (Exception e) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] {}", "what was heard could not be read: " + trim(r.body(), 300));
+                    return null;
+                }
+            }).exceptionally(e -> {
+                HelperBuddy.LOG.warn("[Helper Buddy] {}", "listening failed: " + e);
+                return null;
+            });
+        } catch (Exception e) {
+            HelperBuddy.LOG.warn("[Helper Buddy] {}", "listening could not start: " + e);
+            return CompletableFuture.completedFuture(null);
+        }
+    }
+
     static JsonObject parts(String text) {
         JsonObject t = new JsonObject();
         t.addProperty("text", text);

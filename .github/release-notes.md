@@ -3,13 +3,21 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.14.0.jar` · `helperbuddy-forge-1.20.1-2.14.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.14.0.jar` · `helperbuddy-neoforge-1.21.1-2.14.0.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.14.0.jar` · `helperbuddy-forge-1.21.1-2.14.0.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.14.0.jar` · `helperbuddy-fabric-1.20.1-2.14.0.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.14.0.jar` · `helperbuddy-fabric-1.21.1-2.14.0.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.15.0.jar` · `helperbuddy-forge-1.20.1-2.15.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.15.0.jar` · `helperbuddy-neoforge-1.21.1-2.15.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.15.0.jar` · `helperbuddy-forge-1.21.1-2.15.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.15.0.jar` · `helperbuddy-fabric-1.20.1-2.15.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.15.0.jar` · `helperbuddy-fabric-1.21.1-2.15.0.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
+
+**2.15.0 — talk to your helper**
+- 🎤 **Voice orders**: hold **B** (change it in Controls → Helper Buddy), say what you want ("ไปตัดไม้ 20 ท่อน", "take me to the village", "ตกปลา 10 ตัว"...) and let go. The helper hears it, shows what it understood in chat, and does it, answering in its own voice. Works in Thai and English, for everyone on the server (each player talks to their own helpers).
+  🎤 **สั่งด้วยเสียง**: กดปุ่ม **B** ค้างไว้ (เปลี่ยนได้ใน การตั้งค่าปุ่ม → Helper Buddy) พูดสิ่งที่อยากให้ทำ แล้วปล่อยปุ่ม ผู้ช่วยจะฟัง ขึ้นข้อความในแชทว่าได้ยินอะไร แล้วทำตาม พร้อมตอบด้วยเสียงของมัน ใช้ได้ทั้งไทยและอังกฤษ ทุกคนในเซิร์ฟเวอร์ใช้ได้ (สั่งผู้ช่วยของตัวเอง)
+- It needs the Gemini AI key in `config/helperbuddy-common.toml` (`[ai]`) on the computer that runs the world; the recording is sent to Google to be written down. Turn it off with `listen = false` in `[voice]`.
+  ต้องใส่คีย์ Gemini ใน `config/helperbuddy-common.toml` (`[ai]`) ในเครื่องที่เปิดโลก เสียงที่อัดจะถูกส่งไปให้ Google แปลงเป็นข้อความ ปิดได้ที่ `listen = false` ใน `[voice]`
+- On a Mac, allow the game (Java / the launcher) to use the microphone the first time.
+  ถ้าใช้ Mac ครั้งแรกต้องกดอนุญาตให้เกมใช้ไมโครโฟน
 
 **2.14.0 — a helper that can do (almost) everything**
 - 🎣 **Fishing**: "go fishing" / "catch 10 fish" / "ตกปลา 10 ตัว". It finds water nearby and fishes like a player (fish, junk, the odd treasure, XP), with its own rod (or makes one).

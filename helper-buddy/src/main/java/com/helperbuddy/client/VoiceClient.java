@@ -98,6 +98,7 @@ public final class VoiceClient {
         if (e.phase != TickEvent.Phase.END) return;
         tick++;
         Minecraft mc = Minecraft.getInstance();
+        VoiceInput.tick(mc);
         if (mc.level == null) {
             QUEUE.clear();
             ClipPlayer.stopAll();

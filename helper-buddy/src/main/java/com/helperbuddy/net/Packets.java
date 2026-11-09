@@ -13,7 +13,7 @@ import java.util.function.Function;
  */
 public final class Packets {
     /** Bump when a packet changes: client and server must have the same set. */
-    public static final String VERSION = "2";
+    public static final String VERSION = "3";
 
     public interface Registrar {
         <T> void s2c(Class<T> type, BiConsumer<T, FriendlyByteBuf> encode, Function<FriendlyByteBuf, T> decode, Consumer<T> handle);
@@ -29,5 +29,6 @@ public final class Packets {
         r.c2s(C2STalk.class, C2STalk::encode, C2STalk::decode, C2STalk::handle);
         r.s2c(S2CSpeak.class, S2CSpeak::encode, S2CSpeak::decode, S2CSpeak::handle);
         r.s2c(S2CVoice.class, S2CVoice::encode, S2CVoice::decode, S2CVoice::handle);
+        r.c2s(C2SVoiceIn.class, C2SVoiceIn::encode, C2SVoiceIn::decode, C2SVoiceIn::handle);
     }
 }

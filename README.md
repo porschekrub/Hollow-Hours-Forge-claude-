@@ -95,6 +95,8 @@ A helper that does (almost) everything you ask in plain Thai or English.
 !สร้างประตูอัตโนมัติ            !build an auto smelter
 ```
 
+**🎤 Voice / สั่งด้วยเสียง**: hold **B**, speak, let go (needs the Gemini key). / กดปุ่ม **B** ค้าง พูด แล้วปล่อย (ต้องใส่คีย์ Gemini)
+
 - **Fights back** when attacked (setting, on by default), defends you, handles creepers by hitting and backing off (or with a bow).
   **สู้กลับ** เมื่อโดนตี (ตั้งค่าได้ เปิดไว้เป็นค่าเริ่มต้น) ปกป้องคุณ เจอครีปเปอร์จะตีแล้วถอย (หรือยิงธนู)
 - **Builds** houses, hotels, schools, hospitals, prisons, libraries, churches, barns, markets, castles, towers, tree houses, igloos, pyramids, bunkers, statues and nether portals — **a different random design every time**. Building is free by default; turn on *Build with real blocks* in the settings to use real blocks. A nether portal always needs 10 obsidian + flint and steel.
