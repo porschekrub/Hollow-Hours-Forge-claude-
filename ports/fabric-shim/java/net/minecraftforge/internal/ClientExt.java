@@ -23,6 +23,22 @@ public final class ClientExt {
         return net.minecraft.client.Minecraft.getInstance().level;
     }
 
+    /**
+     * A post shader program of a mod, like Forge reads it: "shaders/program/mymod:haunt.json" is
+     * mymod:shaders/program/haunt.json (vanilla only knows minecraft's). null: no mod name in it.
+     */
+    public static ResourceLocation programLocation(String path) {
+        String dir = "shaders/program/";
+        int c = path.indexOf(':');
+        if (c < 0 || !path.startsWith(dir)) return null;
+        String ns = path.substring(dir.length(), c), rest = dir + path.substring(c + 1);
+        //#if MC>=12100
+        //$$ return ResourceLocation.fromNamespaceAndPath(ns, rest);
+        //#else
+        return new ResourceLocation(ns, rest);
+        //#endif
+    }
+
     public static Slot hoveredSlot(AbstractContainerScreen<?> s) {
         return ((net.minecraftforge.internal.mixin.client.AbstractContainerScreenAccess) s).shim$hoveredSlot();
     }
