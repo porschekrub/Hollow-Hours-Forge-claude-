@@ -58,8 +58,20 @@ public final class Say {
         p.sendSystemMessage(head.append(msg));
     }
 
+    /** A line in the helper's own way of talking (polite / sassy / rude), spoken with its voice. */
     public static void to(@Nullable Player p, HelperEntity h, String th, String en) {
-        to(p, h, Component.literal(t(p, th, en)));
+        if (p == null) return;
+        Persona.Style st = Persona.of(h);
+        String line = thai(p) ? Persona.th(st, th, Persona.R) : Persona.en(st, en, Persona.R);
+        to(p, h, Component.literal(line));
+        Voice.speak(p, h, line);
+    }
+
+    /** A line exactly as given (the AI already wrote it in the helper's style). */
+    public static void raw(@Nullable Player p, HelperEntity h, String text) {
+        if (p == null) return;
+        to(p, h, Component.literal(text));
+        Voice.speak(p, h, text);
     }
 
     public static void owner(HelperEntity h, String th, String en) {

@@ -15,6 +15,12 @@ public final class ModList {
         return FabricLoader.getInstance().isModLoaded(modId);
     }
 
+    public java.util.List<Info> getMods() {
+        java.util.List<Info> out = new java.util.ArrayList<>();
+        for (net.fabricmc.loader.api.ModContainer c : FabricLoader.getInstance().getAllMods()) out.add(new Info(c));
+        return out;
+    }
+
     public java.util.Optional<Container> getModContainerById(String modId) {
         return FabricLoader.getInstance().getModContainer(modId).map(Container::new);
     }

@@ -1,0 +1,198 @@
+package com.helperbuddy.talk;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.helperbuddy.HelperBuddy;
+import com.helperbuddy.Helpers;
+import com.helperbuddy.config.HBConfig;
+import com.helperbuddy.entity.HelperEntity;
+import com.helperbuddy.net.HBNet;
+import com.helperbuddy.net.S2CVoice;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * A real voice for the helper's answers: Gemini's speech model reads the line (in the helper's mood), the server
+ * sends it to the player as 8-bit mu-law pieces, the client plays it at the helper. Falls back to the babble.
+ */
+public final class VoiceTts {
+    private VoiceTts() {}
+
+    static final String[] VOICES = {"Puck", "Fenrir", "Charon", "Kore", "Leda", "Orus", "Zephyr", "Aoede"};
+    static final Set<UUID> BUSY = new HashSet<>();
+    /** recent clips (text + voice -> mu-law), so a repeated line costs nothing */
+    static final Map<String, byte[]> CACHE = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, byte[]> e) {
+            return size() > 40;
+        }
+    };
+    static final Map<String, Integer> RATE = new java.util.HashMap<>();
+    static long pausedUntil;
+    static int clipIds;
+
+    static String voiceFor(HelperEntity h) {
+        String v = HBConfig.VOICE_NAME.get().trim();
+        if (!v.isEmpty()) return v;
+        return VOICES[Math.floorMod(h.getUUID().hashCode(), VOICES.length)];
+    }
+
+    static String how(int style) {
+        return switch (style) {
+            case 0 -> "Say this in a friendly, cheerful voice";
+            case 2 -> "Say this in an annoyed, rude, mocking voice";
+            default -> "Say this in a cheeky, sarcastic, playful voice";
+        };
+    }
+
+    /** @return false when the real voice can't be made now (the caller babbles instead) */
+    static boolean speak(ServerPlayer p, HelperEntity h, String text, int style) {
+        if (System.currentTimeMillis() < pausedUntil || BUSY.contains(h.getUUID())) return false;
+        String voice = voiceFor(h);
+        String key = voice + "|" + style + "|" + text;
+        byte[] cached;
+        synchronized (CACHE) {
+            cached = CACHE.get(key);
+        }
+        if (cached != null) {
+            send(p, h, cached, RATE.getOrDefault(key, 24000));
+            return true;
+        }
+        BUSY.add(h.getUUID());
+        MinecraftServer server = p.server;
+        UUID pid = p.getUUID(), hid = h.getUUID();
+        try {
+            JsonObject body = new JsonObject();
+            JsonArray contents = new JsonArray();
+            JsonObject c = new JsonObject();
+            JsonArray parts = new JsonArray();
+            JsonObject part = new JsonObject();
+            part.addProperty("text", how(style) + ": " + text);
+            parts.add(part);
+            c.add("parts", parts);
+            contents.add(c);
+            body.add("contents", contents);
+            JsonObject gen = new JsonObject();
+            JsonArray mods = new JsonArray();
+            mods.add("AUDIO");
+            gen.add("responseModalities", mods);
+            JsonObject speech = new JsonObject(), vc = new JsonObject(), pre = new JsonObject();
+            pre.addProperty("voiceName", voice);
+            vc.add("prebuiltVoiceConfig", pre);
+            speech.add("voiceConfig", vc);
+            gen.add("speechConfig", speech);
+            body.add("generationConfig", gen);
+            String model = HBConfig.VOICE_MODEL.get().trim().replaceFirst("^models/", "");
+            HttpRequest rq = HttpRequest.newBuilder(URI.create(AiBridge.geminiBase + model + ":generateContent"))
+                    .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
+                    .header("content-type", "application/json").header("x-goog-api-key", HBConfig.AI_KEY.get().trim())
+                    .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
+            AiBridge.client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).whenComplete((r, err) -> {
+                byte[] ulaw = null;
+                int rate = 24000;
+                if (err != null) HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
+                else if (r.statusCode() / 100 != 2) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}): {}", r.statusCode(), AiBridge.trim(r.body(), 300));
+                    // out of quota or not allowed: babble for a while
+                    if (r.statusCode() == 429 || r.statusCode() == 403 || r.statusCode() == 404) pausedUntil = System.currentTimeMillis() + 10 * 60_000L;
+                } else {
+                    try {
+                        JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
+                        for (JsonElement cand : o.getAsJsonArray("candidates")) {
+                            for (JsonElement pe : cand.getAsJsonObject().getAsJsonObject("content").getAsJsonArray("parts")) {
+                                JsonObject po = pe.getAsJsonObject();
+                                if (!po.has("inlineData")) continue;
+                                JsonObject d = po.getAsJsonObject("inlineData");
+                                Matcher m = Pattern.compile("rate=(\\d+)").matcher(d.has("mimeType") ? d.get("mimeType").getAsString() : "");
+                                if (m.find()) rate = Integer.parseInt(m.group(1));
+                                ulaw = toUlaw(Base64.getDecoder().decode(d.get("data").getAsString()));
+                                break;
+                            }
+                            if (ulaw != null) break;
+                        }
+                    } catch (Exception e) {
+                        HelperBuddy.LOG.warn("[Helper Buddy] voice answer could not be read: {}", e.toString());
+                    }
+                }
+                byte[] clip = ulaw;
+                int clipRate = rate;
+                server.execute(() -> {
+                    BUSY.remove(hid);
+                    ServerPlayer pl = server.getPlayerList().getPlayer(pid);
+                    HelperEntity hh = Helpers.byUuid(server, hid);
+                    if (pl == null || hh == null) return;
+                    if (clip == null) {
+                        Voice.babble(pl, hh, text, style);
+                        return;
+                    }
+                    synchronized (CACHE) {
+                        CACHE.put(key, clip);
+                    }
+                    RATE.put(key, clipRate);
+                    send(pl, hh, clip, clipRate);
+                });
+            });
+            return true;
+        } catch (Exception e) {
+            BUSY.remove(hid);
+            HelperBuddy.LOG.warn("[Helper Buddy] voice request could not be sent: {}", e.toString());
+            return false;
+        }
+    }
+
+    static void send(ServerPlayer p, HelperEntity h, byte[] ulaw, int rate) {
+        int clip = ++clipIds;
+        int size = 30000;
+        int parts = Math.max(1, (ulaw.length + size - 1) / size);
+        for (int i = 0; i < parts; i++) {
+            int from = i * size, to = Math.min(ulaw.length, from + size);
+            HBNet.toPlayer(p, new S2CVoice(h.getId(), clip, i, i == parts - 1, rate, java.util.Arrays.copyOfRange(ulaw, from, to)));
+        }
+    }
+
+    /** 16-bit little-endian PCM -> 8-bit mu-law (G.711). */
+    public static byte[] toUlaw(byte[] pcm) {
+        byte[] out = new byte[pcm.length / 2];
+        for (int i = 0; i < out.length; i++) {
+            int s = (short) ((pcm[2 * i] & 0xFF) | (pcm[2 * i + 1] << 8));
+            out[i] = ulaw(s);
+        }
+        return out;
+    }
+
+    static byte ulaw(int sample) {
+        final int BIAS = 0x84, CLIP = 32635;
+        int sign = (sample >> 8) & 0x80;
+        if (sign != 0) sample = -sample;
+        if (sample > CLIP) sample = CLIP;
+        sample += BIAS;
+        int exp = 7;
+        for (int mask = 0x4000; (sample & mask) == 0 && exp > 0; exp--, mask >>= 1) ;
+        int mant = (sample >> (exp + 3)) & 0x0F;
+        return (byte) ~(sign | (exp << 4) | mant);
+    }
+
+    /** 8-bit mu-law -> 16-bit sample. */
+    public static short fromUlaw(byte b) {
+        int u = ~b & 0xFF;
+        int sign = u & 0x80, exp = (u >> 4) & 0x07, mant = u & 0x0F;
+        int s = ((mant << 3) + 0x84) << exp;
+        s -= 0x84;
+        return (short) (sign != 0 ? -s : s);
+    }
+}

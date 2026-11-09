@@ -86,6 +86,8 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     @Nullable
     private UUID ownerId;
     private String ownerName = "";
+    /** "polite" / "sassy" / "rude", or "" = the config's style. */
+    private String persona = "";
     public final Settings settings = new Settings();
     public final SimpleContainer bag = new SimpleContainer(36);
     private float xp;
@@ -157,6 +159,14 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     @Nullable
     public UUID ownerId() {
         return ownerId;
+    }
+
+    public String persona() {
+        return persona;
+    }
+
+    public void setPersona(String p) {
+        persona = p == null ? "" : p;
     }
 
     public String ownerName() {
@@ -299,6 +309,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         Player o = owner();
         Say.owner(this, Component.literal(Say.t(o, "§6§lเลเวลอัป!§r ตอนนี้ผม §bเลเวล " + after + "§r แล้ว เลือดสูงสุด §a" + maxHp(),
                 "§6§lLevel up!§r I'm §blevel " + after + "§r now, max health §a" + maxHp())));
+        if (getRandom().nextBoolean()) brain().antics().quip("levelUp");
     }
 
     /** Health as shown to the player (0 while knocked out). */
@@ -375,8 +386,9 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         }
         if (isKO() && !src.is(DamageTypes.GENERIC_KILL)) return false;
         if (src.getEntity() instanceof Player p && isOwner(p)) {
-            // the owner tapping it: a little hop, no damage
+            // the owner tapping it: a little hop, no damage (and a remark)
             if (onGround()) setDeltaMovement(getDeltaMovement().add(0, 0.25, 0));
+            if (brain().cooldown("hitByOwner", 20 * 8) && getRandom().nextInt(3) == 0) brain().antics().quip("hitByOwner");
             return false;
         }
         boolean r = super.hurt(src, amount);
@@ -558,6 +570,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         super.addAdditionalSaveData(t);
         if (ownerId != null) t.putUUID("Owner", ownerId);
         t.putString("OwnerName", ownerName);
+        t.putString("Persona", persona);
         t.putString("HName", rawName());
         t.putString("Mode", mode().name());
         t.put("Settings", settings.save());
@@ -581,6 +594,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         super.readAdditionalSaveData(t);
         if (t.hasUUID("Owner")) ownerId = t.getUUID("Owner");
         ownerName = t.getString("OwnerName");
+        persona = t.getString("Persona");
         setHelperName(t.getString("HName"));
         entityData.set(MODE, Mode.of(t.getString("Mode")).name());
         settings.load(t.getCompound("Settings"));

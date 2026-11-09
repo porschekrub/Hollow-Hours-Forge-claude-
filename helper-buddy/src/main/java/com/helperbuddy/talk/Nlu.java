@@ -670,9 +670,169 @@ public final class Nlu {
         return Math.max(1, Math.min(2304, v));
     }
 
+    // ================================================================== places: "where is the village?", "take me to a desert"
+    /** kind: structure / biome / bed / death / spawn / me / helper / work / coords / search; ids: registry ids ("#" = a tag). */
+    public record Place(String kind, String[] ids, String th, String en, String text, int[] pos) {}
+
+    /** {kind, Thai regex, English regex, Thai name, English name, ids...} */
+    static final String[][] PLACES = {
+            {"structure", "หมู่บ้าน|ชุมชน|ชาวบ้าน", "\\bvillages?\\b|\\btowns?\\b", "หมู่บ้าน", "a village", "#minecraft:village"},
+            {"structure", "เหมืองร้าง|เหมืองเก่า|เหมืองทิ้ง", "mineshafts?|abandoned mines?", "เหมืองร้าง", "a mineshaft", "#minecraft:mineshaft"},
+            {"structure", "สตรองโฮลด์|ป้อมใต้ดิน|ประตูเอนด์|พอร์ทัลเอนด์|ประตูไปเอนด์|ป้อมปราการใต้ดิน", "strongholds?|end portal", "สตรองโฮลด์ (ประตูไปเอนด์)", "the stronghold", "minecraft:stronghold"},
+            {"structure", "ประตูเนเธอร์พัง|พอร์ทัลพัง|ประตูร้าง|ซากประตู|พอร์ทัลร้าง", "ruined portals?", "ซากประตูเนเธอร์", "a ruined portal", "#minecraft:ruined_portal"},
+            {"structure", "เรืออับปาง|ซากเรือ|เรือจม|เรือแตก", "shipwrecks?|sunken ships?|\\bwrecks?\\b", "ซากเรือ", "a shipwreck", "#minecraft:shipwreck"},
+            {"structure", "ซากใต้น้ำ|ซากปรักหักพังใต้ทะเล|ซากเมืองใต้น้ำ", "ocean ruins?|underwater ruins?", "ซากใต้น้ำ", "ocean ruins", "#minecraft:ocean_ruin"},
+            {"structure", "วิหารใต้ทะเล|วิหารใต้น้ำ|มอนูเมนต์|ปราสาทใต้น้ำ", "monuments?|guardian temple", "วิหารใต้ทะเล", "an ocean monument", "minecraft:monument"},
+            {"structure", "คฤหาสน์|แมนชั่น", "mansions?", "คฤหาสน์", "a woodland mansion", "minecraft:mansion"},
+            {"structure", "พีระมิด|ปิรามิด|วิหารทะเลทราย", "pyramids?|desert temples?", "พีระมิดทะเลทราย", "a desert pyramid", "minecraft:desert_pyramid"},
+            {"structure", "วิหารป่า|วิหารในป่า|วิหารป่าดิบ", "jungle temples?|jungle pyramids?", "วิหารป่า", "a jungle temple", "minecraft:jungle_pyramid"},
+            {"structure", "บ้านแม่มด|กระท่อมแม่มด", "witch huts?|swamp huts?", "บ้านแม่มด", "a witch hut", "minecraft:swamp_hut"},
+            {"structure", "อิกลู|บ้านน้ำแข็ง", "igloos?", "อิกลู", "an igloo", "minecraft:igloo"},
+            {"structure", "ป้อมโจร|ป้อมพิลเลเจอร์|ค่ายโจร|หอโจร", "outposts?", "ป้อมโจร", "a pillager outpost", "minecraft:pillager_outpost"},
+            {"structure", "เมืองโบราณ|นครโบราณ|เมืองวอร์เดน", "ancient cit(y|ies)", "เมืองโบราณ", "an ancient city", "minecraft:ancient_city"},
+            {"structure", "ซากโบราณสถาน|ซากเมืองเก่า", "trail ruins?", "ซากโบราณสถาน", "trail ruins", "minecraft:trail_ruins"},
+            {"structure", "สมบัติ|หีบสมบัติ", "(buried )?treasure", "สมบัติที่ฝังไว้", "buried treasure", "minecraft:buried_treasure"},
+            {"structure", "ห้องทดสอบ|ห้องทดลอง", "trial chambers?", "ห้องทดสอบ", "trial chambers", "minecraft:trial_chambers"},
+            {"structure", "ป้อมเนเธอร์|ป้อมนรก|ฟอร์ทเรส", "fortress(es)?", "ป้อมเนเธอร์", "a nether fortress", "minecraft:fortress"},
+            {"structure", "บาสเตียน|ป้อมพิกลิน|ป้อมหมูทอง", "bastions?", "บาสเตียน", "a bastion", "minecraft:bastion_remnant"},
+            {"structure", "เมืองเอนด์|เอนด์ซิตี้", "end cit(y|ies)", "เมืองเอนด์", "an end city", "minecraft:end_city"},
+            {"biome", "ทะเลทราย", "\\bdeserts?\\b", "ทะเลทราย", "a desert", "minecraft:desert"},
+            {"biome", "ป่าดิบ|ป่าดงดิบ|ป่าฝน|จังเกิล", "jungles?", "ป่าดงดิบ", "a jungle", "#minecraft:is_jungle"},
+            {"biome", "ป่าไผ่", "bamboo", "ป่าไผ่", "a bamboo jungle", "minecraft:bamboo_jungle"},
+            {"biome", "ป่าสน|ไทกา", "taigas?|spruce", "ป่าสน", "a taiga", "#minecraft:is_taiga"},
+            {"biome", "ป่ามืด|ป่ารกทึบ", "dark forests?|roofed forests?", "ป่ามืด", "a dark forest", "minecraft:dark_forest"},
+            {"biome", "ซากุระ|เชอร์รี่|ป่าชมพู", "cherry", "ป่าซากุระ", "a cherry grove", "minecraft:cherry_grove"},
+            {"biome", "ทุ่งดอกไม้|ป่าดอกไม้", "flowers?|meadows?", "ทุ่งดอกไม้", "flowers", "minecraft:flower_forest", "minecraft:meadow", "minecraft:sunflower_plains"},
+            {"biome", "เกาะเห็ด|ทุ่งเห็ด|มูชรูม", "mushroom", "เกาะเห็ด", "a mushroom island", "minecraft:mushroom_fields"},
+            {"biome", "ทะเล(?!ทราย)|มหาสมุทร", "\\boceans?\\b|\\bseas?\\b", "ทะเล", "the ocean", "#minecraft:is_ocean"},
+            {"biome", "ชายหาด|หาด", "beach(es)?", "ชายหาด", "a beach", "#minecraft:is_beach"},
+            {"biome", "แม่น้ำ|ลำธาร", "rivers?", "แม่น้ำ", "a river", "#minecraft:is_river"},
+            {"biome", "ภูเขา|ยอดเขา|เขาสูง", "mountains?|peaks?", "ภูเขา", "mountains", "#minecraft:is_mountain"},
+            {"biome", "เมซา|แบดแลนด์|ดินแดง", "badlands|mesa", "เมซา (ดินแดง)", "the badlands", "#minecraft:is_badlands"},
+            {"biome", "ซาวันนา|สะวันนา", "savannas?", "ซาวันนา", "a savanna", "#minecraft:is_savanna"},
+            {"biome", "หนองน้ำ|หนอง|บึง|ป่าชายเลน", "swamps?|marsh|mangroves?", "หนองน้ำ", "a swamp", "minecraft:swamp", "minecraft:mangrove_swamp"},
+            {"biome", "หิมะ|ทุ่งหิมะ|น้ำแข็ง", "snowy|\\bsnow\\b|ice spikes|frozen", "ทุ่งหิมะ", "snow", "minecraft:snowy_plains", "minecraft:ice_spikes", "minecraft:snowy_taiga", "minecraft:grove"},
+            {"biome", "ถ้ำเขียว|ถ้ำต้นไม้", "lush caves?", "ถ้ำเขียว", "lush caves", "minecraft:lush_caves"},
+            {"biome", "ทุ่งหญ้า|ที่ราบ", "\\bplains\\b|grasslands?", "ทุ่งหญ้า", "plains", "minecraft:plains", "minecraft:sunflower_plains"},
+            {"biome", "ป่า(?!ดิบ|ดง|ฝน|สน|ไผ่|มืด|รก|ชมพู|ดอก|ชายเลน)", "\\bforests?\\b|\\bwoods\\b", "ป่า", "a forest", "#minecraft:is_forest"},
+            {"death", "ที่ตาย|จุดตาย|ที่ฉันตาย|ที่เราตาย|ศพ|ของที่ตก|ของที่หล่น|หลุมศพ|ที่ตายล่าสุด", "where (did )?i (die|died)|death (point|spot|place)|my grave|my (stuff|items|loot)", "ที่คุณตายล่าสุด", "where you died", ""},
+            {"spawn", "จุดเกิดโลก|สปอน|สปอว์น|จุดเกิดของโลก", "\\bspawn\\b", "จุดเกิดของโลก", "the world spawn", ""},
+            {"me", "ฉันอยู่(ที่|ตรง)?ไหน|ตอนนี้อยู่(ที่|ตรง)?ไหน|เราอยู่(ที่|ตรง)?ไหน|พิกัดฉัน|พิกัดตอนนี้|กูอยู่ไหน", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
+            {"helper", "(แก|เอ็ง|นาย|ตัวเอง|มึง|เธอ)อยู่(ที่|ตรง)?ไหน", "where are you", "ตำแหน่งของผม", "where I am", ""},
+            {"work", "ที่ทำงาน|จุดทำงาน", "work ?(spot|place)", "ที่ทำงานของผม", "my work spot", ""},
+            {"bed", "(?<!หมู่)บ้าน|เตียง|ฐานทัพ|ฐาน(?!ะ)", "\\bhome\\b|\\bhouse\\b|\\bbed\\b|\\bbase\\b", "บ้านของคุณ (เตียง)", "your home (bed)", ""},
+    };
+
+    static final String WHERE = "(อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน"
+            + "|where('s| is| are| can i find| do i find)?\\b|which way|how (do i|can i|to) get( to)?|\\bnearest\\b|\\bclosest\\b|\\blocate\\b|direction to|way to|is there an?)";
+    static final String LEAD = "(พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทาง|พาทาง|ไปด้วยกัน|take me|lead me|guide me|bring me to|show me the way|escort me|walk me to|lead the way)";
+
+    /** The place named in t, or null. */
+    public static Place placeIn(String t) {
+        String nt = numify(t);
+        Matcher c = match("(-?\\d+)[\\s,]+(-?\\d+)[\\s,]+(-?\\d+)", nt);
+        if (c != null) return new Place("coords", new String[0], "พิกัดนั้น", "those coordinates", t,
+                new int[] {Integer.parseInt(c.group(1)), Integer.parseInt(c.group(2)), Integer.parseInt(c.group(3))});
+        for (String[] p : PLACES) {
+            if (test("(" + p[1] + ")", t) || test("(" + p[2] + ")", t)) {
+                String[] ids = java.util.Arrays.copyOfRange(p, 5, p.length);
+                if (ids.length == 1 && ids[0].isEmpty()) ids = new String[0];
+                return new Place(p[0], ids, p[3], p[4], t, null);
+            }
+        }
+        return null;
+    }
+
+    /** Whatever is left of a where-question once the question words are gone ("dungeon" in "where is the dungeon"). */
+    static String placeWords(String t) {
+        return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b", " ").replaceAll("\\s+", " ").trim();
+    }
+
+    /** Navigation, memory, personality and "what is this" (null: none of those). */
+    static Intent parseExtra(String t, String raw) {
+        // personality ("อย่าหยาบ" before "หยาบ")
+        if (has(t, "พูดสุภาพ", "พูดดีๆ", "สุภาพหน่อย", "เลิกกวน", "อย่ากวน", "อย่าหยาบ", "เลิกหยาบ", "เลิกด่า", "อย่าด่า", "be polite", "be nice", "stop being rude", "no swearing", "stop swearing", "stop teasing")) {
+            Intent i = new Intent("persona");
+            i.text = "polite";
+            return i;
+        }
+        if (has(t, "พูดหยาบ", "หยาบได้", "ด่าได้", "ด่าเลย", "ด่าแรง", "พูดกูมึง", "กูมึงได้", "be rude", "you can swear", "swear at me", "insult me", "be mean")) {
+            Intent i = new Intent("persona");
+            i.text = "rude";
+            return i;
+        }
+        if (has(t, "กวนตีน", "กวนๆ", "กวนได้", "ขี้เล่นหน่อย", "แซวได้", "be sassy", "be cheeky", "tease me", "be funny")) {
+            Intent i = new Intent("persona");
+            i.text = "sassy";
+            return i;
+        }
+        // memory
+        Matcher rm = match("^(?:จำไว้(?:นะ)?(?:ว่า)?|จำให้ดี(?:ว่า)?|ช่วยจำ(?:ว่า)?|remember(?: that)?|don'?t forget(?: that)?|note that)\\s*(.+)$", t);
+        if (rm != null && !test("(จำอะไร|จำได้ไหม|จำ.*ได้บ้าง|remember me|what do you remember)", t)) {
+            Intent i = new Intent("remember");
+            i.text = raw.replaceAll("§.", "").trim().replaceFirst("(?iu)^.*?(จำไว้(นะ)?(ว่า)?|จำให้ดี(ว่า)?|ช่วยจำ(ว่า)?|remember( that)?|don'?t forget( that)?|note that)\\s*", "");
+            return i;
+        }
+        if (has(t, "จำอะไรได้บ้าง", "จำอะไรได้", "จำฉันได้ไหม", "จำได้ไหม", "รู้อะไรเกี่ยวกับฉัน", "รู้อะไรเกี่ยวกับเรา", "ความจำ", "what do you remember", "do you remember me",
+                "what do you know about me", "your memory"))
+            return new Intent("recall");
+        Matcher fm = match("^(?:ลืม|forget)\\s*(?:เรื่อง|about|that)?\\s*(.*)$", t);
+        if (fm != null && !has(t, "forget it")) {
+            Intent i = new Intent("forget");
+            String w = fm.group(1).trim();
+            i.all = w.isEmpty() || has(w, "ทุกอย่าง", "หมด", "ทั้งหมด", "everything", "all");
+            i.text = i.all ? "" : w;
+            return i;
+        }
+        // what is this / what is around / which mods
+        if (has(t, "นี่คืออะไร", "อันนี้คืออะไร", "นี่อะไร", "อันนี้อะไร", "ตัวนี้คืออะไร", "ตัวนี้อะไร", "บล็อกนี้คืออะไร", "บล็อกนี้อะไร", "ของในมือ", "ถืออะไรอยู่", "มองอะไรอยู่",
+                "นั่นคืออะไร", "นั่นอะไร", "ตัวนั้นคืออะไร", "ของมอดอะไร", "มาจากมอดไหน", "what is this", "whats this", "what is that", "whats that", "what am i holding",
+                "what am i looking at", "which mod"))
+            return new Intent("whatis");
+        if (has(t, "มีมอดอะไร", "ลงมอดอะไร", "มอดอะไรบ้าง", "มอดที่ลง", "what mods", "which mods", "mod list", "installed mods"))
+            return new Intent("mods");
+        if (has(t, "แถวนี้มีอะไร", "รอบๆ มีอะไร", "รอบตัวมีอะไร", "มีอะไรอยู่ใกล้", "เห็นอะไรบ้าง", "มีมอนอะไร", "มีสัตว์อะไร", "มีอะไรแถวนี้", "what's around", "whats around",
+                "what is around", "what do you see", "anything nearby", "what mobs", "whats nearby", "what's nearby", "what is nearby", "scan the area"))
+            return new Intent("around");
+        // where is ... / take me to ...
+        boolean lead = test(LEAD, t);
+        boolean where = test(WHERE, t);
+        // "หาหมู่บ้านให้", "find a village": finding a place is a where-question too
+        if (!lead && !where && test("^(ไป)?หา|^find\\b|^look for\\b|^search for\\b", t)) {
+            Place pl = placeIn(t);
+            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome"))) {
+                Intent i = new Intent("locate");
+                i.place = pl;
+                return i;
+            }
+        }
+        if (lead || where) {
+            Place pl = placeIn(t);
+            if (pl == null && where && !lead) {
+                // "where is <something we have no word for>": maybe a structure or biome of another mod, by name
+                String w = placeWords(t);
+                if (w.isEmpty() || w.length() > 40) return null;
+                pl = new Place("search", new String[0], w, w, w, null);
+            } else if (pl == null) {
+                String w = placeWords(t);
+                // "พาไปเลย", "take me there": the place asked about last
+                if (w.isEmpty() || test("^(เลย|ที่นั่น|ตรงนั้น|ตรงนั้นเลย|there|now|that place|it)$", w)) pl = new Place("last", new String[0], "", "", w, null);
+                else pl = new Place("search", new String[0], w, w, w, null);
+            }
+            Intent i = new Intent("locate");
+            i.place = pl;
+            i.lead = lead;
+            return i;
+        }
+        return null;
+    }
+
     // ================================================================== intents
     public static final class Intent {
         public String k = "unknown";
+        /** where-is / take-me-to: the place, and whether to lead the way */
+        public Place place;
+        public boolean lead, meat;
         public String name, text, item;
         public Integer secs, n;
         public int[] pos;
@@ -738,6 +898,8 @@ public final class Nlu {
             return i;
         }
         if (has(t, "ไม่ต้องตาม", "อย่าตาม", "don't follow", "dont follow", "stop following")) return new Intent("stay");
+        Intent extra = parseExtra(t, raw);
+        if (extra != null) return extra;
         String nt = numify(t);
         Matcher wm = match("(?:รอ|wait|พัก)\\s*(?:ก่อน|for)?\\s*(\\d+)\\s*(วินาที|วิ|seconds?|secs?|s\\b|นาที|minutes?|mins?)", nt);
         if (wm != null) {
@@ -821,6 +983,9 @@ public final class Nlu {
             i.hunt = !cropsOnly;
             i.crops = !huntWords && animal == null;
             i.animal = animal;
+            // "64 meat", "20 beef", "เนื้อ 64 ชิ้น": count the meat, not the animals ("3 cows", "วัว 3 ตัว" count animals)
+            i.meat = !cropsOnly && has(t, "เนื้อ", "meat", "beef", "pork", "porkchop", "porkchops", "mutton", "steak", "steaks", "drumstick", "raw chicken")
+                    && !test("\\d+\\s*(ตัว|animals?|cows|pigs|sheep|chickens|rabbits)", numify(t));
             return i;
         }
         if (has(t, "หิว", "hungry", "starving")) return new Intent("hungry");

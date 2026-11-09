@@ -1,9 +1,10 @@
 {
- "entity.helperbuddy.helper": "Helper",
- "item.helperbuddy.helper_contract": "Helper Contract",
- "item.helperbuddy.helper_contract.tip": "Use on the ground: a helper appears and works for you",
- "item.helperbuddy.command_book": "Command Book",
- "item.helperbuddy.command_book.tip": "Order your helpers from anywhere",
- "item.helperbuddy.helper_spawn_egg": "Helper Spawn Egg",
- "itemGroup.helperbuddy": "Helper Buddy"
+  "entity.helperbuddy.helper": "Helper",
+  "item.helperbuddy.helper_contract": "Helper Contract",
+  "item.helperbuddy.helper_contract.tip": "Use on the ground: a helper appears and works for you",
+  "item.helperbuddy.command_book": "Command Book",
+  "item.helperbuddy.command_book.tip": "Order your helpers from anywhere",
+  "item.helperbuddy.helper_spawn_egg": "Helper Spawn Egg",
+  "itemGroup.helperbuddy": "Helper Buddy",
+  "helperbuddy.subtitle.voice": "Helper talks"
 }

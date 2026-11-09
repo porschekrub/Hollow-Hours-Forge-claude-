@@ -67,6 +67,38 @@ public final class FoodJob {
         return th ? "เก็บผักผลไม้ที่สุกแล้ว (ปลูกคืนให้ด้วย)" : "harvesting ripe crops (and replanting)";
     }
 
+    /** Raw or cooked meat (of that animal; null: of any). */
+    public static boolean isMeat(ItemStack s, @Nullable String animal) {
+        boolean cow = s.is(net.minecraft.world.item.Items.BEEF) || s.is(net.minecraft.world.item.Items.COOKED_BEEF);
+        boolean pig = s.is(net.minecraft.world.item.Items.PORKCHOP) || s.is(net.minecraft.world.item.Items.COOKED_PORKCHOP);
+        boolean sheep = s.is(net.minecraft.world.item.Items.MUTTON) || s.is(net.minecraft.world.item.Items.COOKED_MUTTON);
+        boolean chicken = s.is(net.minecraft.world.item.Items.CHICKEN) || s.is(net.minecraft.world.item.Items.COOKED_CHICKEN);
+        boolean rabbit = s.is(net.minecraft.world.item.Items.RABBIT) || s.is(net.minecraft.world.item.Items.COOKED_RABBIT);
+        if (animal == null) return cow || pig || sheep || chicken || rabbit
+                // other mods' meat, by name
+                || com.helperbuddy.compat.Compat.nutrition(s) > 0
+                && net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(s.getItem()).getPath().matches(".*(meat|beef|pork|mutton|chicken|venison|steak|bacon|ham).*");
+        return switch (animal) {
+            case "cow" -> cow;
+            case "pig" -> pig;
+            case "sheep" -> sheep;
+            case "chicken" -> chicken;
+            case "rabbit" -> rabbit;
+            default -> false;
+        };
+    }
+
+    /** About how many animals give n meat (a cow drops 1-3 beef, a chicken 1, a rabbit 0-1 ...). */
+    public static int animalsFor(@Nullable String animal, int n) {
+        double each = animal == null ? 1.8 : switch (animal) {
+            case "cow", "pig" -> 2.0;
+            case "sheep" -> 1.5;
+            case "rabbit" -> 0.5;
+            default -> 1.0;
+        };
+        return (int) Math.ceil(n / each);
+    }
+
     static String animalName(String a, boolean th) {
         return switch (a) {
             case "cow" -> th ? "วัว" : "cows";

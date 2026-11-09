@@ -122,6 +122,19 @@ public final class SmokeTest {
         check("minecraft:diamond_sword".equals(ItemWords.resolve("diamond sword")), "item words en");
         check("minecraft:diamond_sword".equals(ItemWords.resolve("ดาบเพชร")), "item words th");
         check(Crafter.craftable(server.overworld(), Items.CRAFTING_TABLE), "crafting recipes");
+        // understanding amounts, places, memory and personality
+        Nlu.Intent meat = Nlu.parse("หาเนื้อมา 64 อัน");
+        check(meat.k.equals("findFood") && meat.meat && Integer.valueOf(64).equals(Nlu.extractQty(Nlu.norm("หาเนื้อมา 64 อัน")).n()), "nlu 64 meat");
+        check(Nlu.parse("get 20 beef").meat && !Nlu.parse("hunt 3 cows").meat, "nlu beef vs cows");
+        check(Nlu.parse("หมู่บ้านอยู่ไหน").k.equals("locate") && Nlu.parse("หมู่บ้านอยู่ไหน").place.kind().equals("structure"), "nlu where is the village");
+        check(Nlu.parse("take me to a desert").lead && Nlu.parse("take me to a desert").place.kind().equals("biome"), "nlu take me to");
+        check(Nlu.parse("สร้างบ้าน").k.equals("house") && Nlu.parse("จำไว้ว่าฉันชอบแมว").k.equals("remember") && Nlu.parse("พูดหยาบได้").k.equals("persona"), "nlu new intents");
+        check(com.helperbuddy.talk.Persona.th(com.helperbuddy.talk.Persona.Style.SASSY, "ผมไปแล้วนะครับ", new java.util.Random(1)).contains("ข้า"), "persona sassy");
+        check(com.helperbuddy.talk.Persona.th(com.helperbuddy.talk.Persona.Style.RUDE, "คุณต้องการอะไรครับ", new java.util.Random(1)).contains("มึง"), "persona rude");
+        check(com.helperbuddy.talk.Memory.selfTest(), "memory file");
+        byte[] pcm = new byte[] {0, 0, (byte) 0xE8, 0x03, 0x18, (byte) 0xFC, (byte) 0xFF, 0x7F};
+        byte[] u = com.helperbuddy.talk.VoiceTts.toUlaw(pcm);
+        check(u.length == 4 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[1]) - 1000) < 40 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[2]) + 1000) < 40, "mu-law");
     }
 
     static void tick(TickEvent.ServerTickEvent e) {
@@ -153,6 +166,14 @@ public final class SmokeTest {
             if (t == 700) h.brain().tasks().start(Tasks.craft("minecraft:crafting_table", 1));
             if (t == 760) h.brain().tasks().start(Tasks.smelt("iron", 4));
             if (t % 100 == 50) HelperBuddy.LOG.info("[smoke] t={} mode {} status '{}' tasks {} bag {}/36", t, h.mode(), h.status(), h.brain().tasks().active(), Bag.usedSlots(h));
+            if (t == 790) {
+                // finding a village (the flat test world has some) and a biome it doesn't have
+                long t0 = System.currentTimeMillis();
+                var v = com.helperbuddy.brain.Navigator.findStructure(server.overworld(), base, new String[] {"#minecraft:village"});
+                HelperBuddy.LOG.info("[smoke] nearest village: {} ({} ms)", v, System.currentTimeMillis() - t0);
+                check(v != null, "found a village");
+                check(com.helperbuddy.brain.Navigator.findBiome(server.overworld(), base, new String[] {"minecraft:desert"}) == null, "no desert in a flat world");
+            }
             if (t == 800) {
                 check(h.isAlive(), "helper alive");
                 StringBuilder bag = new StringBuilder();

@@ -34,6 +34,7 @@ public final class Brain {
     final Plan plan;
     final Tasks tasks;
     final FarmJob farm;
+    final Antics antics;
     private final Map<String, Long> cooldowns = new HashMap<>();
     long t;
     private int followTpCd;
@@ -51,6 +52,7 @@ public final class Brain {
         plan = new Plan(this);
         tasks = new Tasks(this);
         farm = new FarmJob(this);
+        antics = new Antics(this);
         load(h.jobs);
     }
 
@@ -98,6 +100,10 @@ public final class Brain {
         return care;
     }
 
+    public Antics antics() {
+        return antics;
+    }
+
     public ServerLevel level() {
         return (ServerLevel) h.level();
     }
@@ -126,6 +132,7 @@ public final class Brain {
             return;
         }
         if (t % 20 == 0) updateStatus();
+        if (antics.tick()) return;
         care.tick();
         plan.tick();
         if (t % 10 == 3) combat.scan();
@@ -153,6 +160,7 @@ public final class Brain {
             case BUILD -> build.tick();
             case FARM -> farm.tick();
             case TASK -> tasks.tick();
+            case GUIDE -> Navigator.tick(this);
         }
     }
 
@@ -274,6 +282,8 @@ public final class Brain {
     /** Progress events for multi-step orders ("chop 20 logs"). */
     public void report(String ev, Object what) {
         plan.onProgress(ev, what);
+        if ((ev.equals("break") || ev.equals("hunt") || ev.equals("kill") || ev.equals("build")) && h.owner() != null)
+            com.helperbuddy.talk.Memory.count(h.owner(), ev, 1);
     }
 
     /** Items the current job collects on purpose (never thrown away as junk). */
@@ -317,6 +327,8 @@ public final class Brain {
         care.cancelHunger();
         combat.dropHunt();
         h.jobs.remove("goto");
+        h.jobs.remove("guide");
+        antics.endHide();
         h.setWorking(false);
     }
 

@@ -195,4 +195,22 @@ public final class Compat {
         return s.hasCustomHoverName();
         //#endif
     }
+
+    /** Every recipe that makes this item. */
+    public static java.util.List<net.minecraft.world.item.crafting.Recipe<?>> recipesFor(net.minecraft.server.MinecraftServer server, net.minecraft.world.item.Item item) {
+        java.util.List<net.minecraft.world.item.crafting.Recipe<?>> out = new java.util.ArrayList<>();
+        //#if MC>=12100
+        //$$ for (var holder : server.getRecipeManager().getRecipes()) {
+        //$$     var r = holder.value();
+        //#else
+        for (var r : server.getRecipeManager().getRecipes()) {
+        //#endif
+            try {
+                if (r.getResultItem(server.registryAccess()).is(item)) out.add(r);
+            } catch (Exception ignored) {
+                // a mod's recipe that cannot tell its result without a grid
+            }
+        }
+        return out;
+    }
 }

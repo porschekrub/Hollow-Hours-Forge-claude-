@@ -70,6 +70,8 @@ dependencies {
     // bundled inside our jar (jar-in-jar): players only need Fabric API next to this mod
     modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
     include "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    // GeckoLib 4 for 1.20.1 does its Molang maths with mclib (inside its jar; needed to compile against MolangParser)
+    if (minecraft_version == '1.20.1') compileOnly 'com.eliotlash.mclib:mclib:20'
     modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${fcap_version}"
     include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${fcap_version}"
 }

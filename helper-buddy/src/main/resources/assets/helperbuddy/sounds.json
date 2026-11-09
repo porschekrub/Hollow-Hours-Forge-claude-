@@ -1,0 +1,110 @@
+{
+ "voice.s0": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s0",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s1": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s1",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s2": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s2",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s3": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s3",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s4": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s4",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s5": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s5",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s6": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s6",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s7": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s7",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s8": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s8",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s9": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s9",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s10": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s10",
+    "attenuation_distance": 24
+   }
+  ]
+ },
+ "voice.s11": {
+  "subtitle": "helperbuddy.subtitle.voice",
+  "sounds": [
+   {
+    "name": "helperbuddy:voice/s11",
+    "attenuation_distance": 24
+   }
+  ]
+ }
+}

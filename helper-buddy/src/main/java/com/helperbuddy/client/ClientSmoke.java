@@ -305,6 +305,46 @@ public final class ClientSmoke {
             if (t == 32) mc.setScreen(null);
             return t >= 34;
         });
+        // the cheeky helper: where is the village, remembering, what's around, 64 meat, two helpers chatting, leading the way
+        STEPS.add(t -> {
+            if (t == 0) server(sp -> {
+                HelperEntity h = first(sp);
+                if (h == null) return;
+                h.setPersona("sassy");
+                Talk.handle(sp, h, "หมู่บ้านอยู่ไหน");
+                Talk.handle(sp, h, "จำไว้ว่าฉันชอบสีชมพู");
+                Talk.handle(sp, h, "จำอะไรได้บ้าง");
+                Talk.handle(sp, h, "หาเนื้อมา 64 อัน");
+                HelperEntity h2 = spawn(sp, origin.add(1.5, 0, 3), 1);
+                if (h2 != null) com.helperbuddy.talk.Banter.start(sp, h, h2);
+            });
+            if (t == 12) mc.setScreen(new net.minecraft.client.gui.screens.ChatScreen(""));
+            if (t == 40) shot("talk_sassy");
+            if (t == 120) shot("talk_banter");
+            if (t == 124) {
+                mc.setScreen(null);
+                server(sp -> {
+                    HelperEntity h = first(sp);
+                    if (h != null) Talk.handle(sp, h, "พาไปหมู่บ้าน");
+                });
+            }
+            if (t == 170) server(sp -> {
+                HelperEntity h = first(sp);
+                HelperBuddy.LOG.info("[client smoke] leading the way: {}", h == null ? null : h.mode());
+                if (h == null || h.mode() != Mode.GUIDE) HelperBuddy.LOG.error("[client smoke] the helper did not lead the way to the village (com.helperbuddy)");
+                if (h != null) {
+                    Talk.handle(sp, h, "หยุด");
+                    Talk.handle(sp, h, "ลืมเรื่องสีชมพู");
+                    Talk.handle(sp, h, "be polite");
+                }
+            });
+            if (t == 150) shot("guide");
+            if (t == 180) {
+                HelperBuddy.LOG.info("[client smoke] voice syllables played: {}", VoiceClient.played);
+                if (VoiceClient.played == 0) HelperBuddy.LOG.error("[client smoke] the helper's voice never played (com.helperbuddy)");
+            }
+            return t >= 182;
+        });
         // building: a hotel and a random house, watched from the side
         String[][] builds = {{"hotel", "build_hotel"}, {"standard", "build_house"}, {"statue", "build_statue"}};
         for (int bi = 0; bi < builds.length; bi++) {

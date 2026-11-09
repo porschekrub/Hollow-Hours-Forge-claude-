@@ -14,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
@@ -32,6 +33,66 @@ public final class HBEvents {
         // before graves (Hollow Hours) or anything else takes the drops
         bus.addListener(EventPriority.HIGH, HBEvents::keepBookOnDeath);
         bus.addListener(HBEvents::giveBookBack);
+        bus.addListener(HBEvents::serverTick);
+        bus.addListener(HBEvents::death);
+        bus.addListener(HBEvents::logout);
+        bus.addListener(HBEvents::stopping);
+    }
+
+    // ------------------------------------------------------------------ later (server ticks)
+    record Later(long at, Runnable r) {}
+
+    static final java.util.List<Later> LATER = new java.util.ArrayList<>();
+    static long ticks;
+
+    /** Runs on the server thread after `delay` ticks. */
+    public static void later(int delay, Runnable r) {
+        LATER.add(new Later(ticks + Math.max(1, delay), r));
+    }
+
+    static void serverTick(TickEvent.ServerTickEvent e) {
+        if (e.phase != TickEvent.Phase.END) return;
+        ticks++;
+        if (!LATER.isEmpty()) {
+            java.util.List<Later> due = new java.util.ArrayList<>();
+            LATER.removeIf(l -> {
+                if (l.at() > ticks) return false;
+                due.add(l);
+                return true;
+            });
+            for (Later l : due) {
+                try {
+                    l.r().run();
+                } catch (Exception ex) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] scheduled task failed", ex);
+                }
+            }
+        }
+        net.minecraft.server.MinecraftServer server = e.getServer();
+        com.helperbuddy.talk.Banter.tick(server);
+        if (ticks % (20 * 60) == 0) com.helperbuddy.talk.Memory.save();
+        Helpers.keepLoaded(server, ticks);
+    }
+
+    /** Its owner died: remembered, and a sassy helper has something to say about it. */
+    static void death(net.minecraftforge.event.entity.living.LivingDeathEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p)) return;
+        String cause = e.getSource().getLocalizedDeathMessage(p).getString().replace(p.getGameProfile().getName(), "").trim();
+        com.helperbuddy.talk.Memory.onDeath(p, cause);
+        for (HelperEntity h : Helpers.owned(p)) {
+            if (h.level() != p.level() || h.distanceTo(p) > 48) continue;
+            later(30, () -> h.brain().antics().quip("ownerDied"));
+            break;
+        }
+    }
+
+    static void logout(PlayerEvent.PlayerLoggedOutEvent e) {
+        if (e.getEntity() instanceof ServerPlayer p) com.helperbuddy.talk.Memory.onLogout(p);
+    }
+
+    static void stopping(net.minecraftforge.event.server.ServerStoppingEvent e) {
+        com.helperbuddy.talk.Memory.save();
+        LATER.clear();
     }
 
     static final String KEPT = "helperbuddy_kept";
@@ -109,6 +170,23 @@ public final class HBEvents {
 
     /** The first time a player joins they get a helper contract (config). */
     static void login(PlayerEvent.PlayerLoggedInEvent e) {
+        if (e.getEntity() instanceof ServerPlayer pl) {
+            // a helper that remembers you (from any world)
+            String[] greet = com.helperbuddy.talk.Memory.onLogin(pl);
+            if (greet != null) {
+                java.util.UUID id = pl.getUUID();
+                net.minecraft.server.MinecraftServer server = pl.server;
+                later(20 * 6, () -> {
+                    ServerPlayer p2 = server.getPlayerList().getPlayer(id);
+                    if (p2 == null) return;
+                    for (HelperEntity h : Helpers.owned(p2)) {
+                        if (h.level() != p2.level()) continue;
+                        com.helperbuddy.talk.Say.to(p2, h, greet[0], greet[1]);
+                        break;
+                    }
+                });
+            }
+        }
         if (!(e.getEntity() instanceof ServerPlayer p) || !HBConfig.GIVE_CONTRACT_ON_JOIN.get()) return;
         CompoundTag data = p.getPersistentData();
         CompoundTag keep = data.getCompound("PlayerPersisted");

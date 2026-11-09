@@ -53,4 +53,20 @@ public final class Helpers {
         }
         return null;
     }
+
+    // ------------------------------------------------------------------ working far away
+    /** Keeps a helper's chunks loaded while it works (or travels) and its owner is online. */
+    static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> TICKET =
+            net.minecraft.server.level.TicketType.create("helperbuddy", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 60);
+
+    public static void keepLoaded(MinecraftServer server, long ticks) {
+        if (ticks % 20 != 0 || !com.helperbuddy.config.HBConfig.KEEP_LOADED.get()) return;
+        for (HelperEntity h : all(server)) {
+            var m = h.mode();
+            if (!(m.working() || m == com.helperbuddy.entity.Mode.GOTO || m == com.helperbuddy.entity.Mode.BUILD || m == com.helperbuddy.entity.Mode.GUARD)) continue;
+            if (h.ownerId() == null || server.getPlayerList().getPlayer(h.ownerId()) == null) continue;
+            net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(h.blockPosition());
+            ((ServerLevel) h.level()).getChunkSource().addRegionTicket(TICKET, cp, 3, cp);
+        }
+    }
 }

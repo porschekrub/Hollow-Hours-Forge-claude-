@@ -13,7 +13,8 @@ public enum Mode {
     BUILD("สร้าง", "building", 0xFF55FF),
     GUARD("เฝ้ายาม", "guarding", 0xFF5555),
     FARM("ทำฟาร์ม", "farming", 0x55FF55),
-    TASK("ทำงาน", "working", 0xFFFFFF);
+    TASK("ทำงาน", "working", 0xFFFFFF),
+    GUIDE("นำทาง", "leading the way", 0x55FFAA);
 
     public final String th, en;
     public final int color;

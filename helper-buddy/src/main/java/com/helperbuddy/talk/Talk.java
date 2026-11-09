@@ -8,6 +8,7 @@ import com.helperbuddy.Helpers;
 import com.helperbuddy.brain.Bag;
 import com.helperbuddy.brain.BuildJob;
 import com.helperbuddy.brain.Crafter;
+import com.helperbuddy.brain.Navigator;
 import com.helperbuddy.brain.Plan;
 import com.helperbuddy.brain.Tasks;
 import com.helperbuddy.config.HBConfig;
@@ -123,6 +124,10 @@ public final class Talk {
             say(p, h, "ผมเป็นผู้ช่วยของ " + h.ownerName() + " นะครับ", "I'm " + h.ownerName() + "'s helper");
             return;
         }
+        // an order gets it out of its hiding hole (and it is not bored any more)
+        h.brain().antics().onOrder();
+        if (h.brain().antics().hiding()) h.brain().antics().endHide();
+        Voice.replying(p);
         // with a real AI set up, it reads every typed sentence first (orders, chat, questions); the built-in brain is the
         // fallback when the AI can't be reached. Menu buttons stay on the built-in brain (instant, exact).
         if (typed && AiBridge.enabled() && HBConfig.AI_FOR_COMMANDS.get()) {
@@ -138,7 +143,7 @@ public final class Talk {
         if (Nlu.isQuestion(text)) {
             String kb = SmallTalk.reply(Nlu.norm(text), ctx(h, p), th(p));
             if (kb != null) {
-                say(p, h, kb, kb);
+                Say.raw(p, h, Persona.of(h) == Persona.Style.POLITE ? kb : (th(p) ? Persona.th(Persona.of(h), kb, Persona.R) : Persona.en(Persona.of(h), kb, Persona.R)));
                 return;
             }
         }
@@ -158,8 +163,10 @@ public final class Talk {
         single(p, h, first, text, allowAi);
     }
 
-    static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume");
-    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name");
+    static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume",
+            "locate", "remember", "recall", "forget", "persona", "whatis", "around", "mods");
+    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "whatis",
+            "around", "mods");
     static final List<String> PLAN_ONLY = List.of("goto", "wait", "deposit", "eat", "cook", "guard");
 
     static SmallTalk.Ctx ctx(HelperEntity h, ServerPlayer p) {
@@ -262,8 +269,86 @@ public final class Talk {
                         "§aFarming now!§r I'll harvest ripe crops, replant and sow empty farmland" + (Bag.hasKind(h, Bag.Kind.HOE) ? " and till new fields next to water" : " (give me a §ehoe§r for new fields)"));
             }
             case "goto", "wait", "deposit", "eat", "cook", "guard" -> tryPlanForced(p, h, text);
+            case "locate" -> cmdLocate(p, h, it);
+            case "remember" -> {
+                if (it.text == null || it.text.isBlank()) say(p, h, "จะให้จำอะไรล่ะ? พิมพ์ \"จำไว้ว่า ...\"", "Remember what? Say \"remember that ...\"");
+                else {
+                    Memory.remember(p, it.text);
+                    say(p, h, "จำไว้แล้วครับ: §e" + it.text + "§r (จำได้ทุกโลก ทุกเซิร์ฟเวอร์ในเครื่องนี้)", "Got it, I'll remember: §e" + it.text + "§r (in every world on this computer)");
+                }
+            }
+            case "recall" -> Say.raw(p, h, Memory.summary(p, th));
+            case "forget" -> {
+                int n = Memory.forget(p, it.text);
+                if (it.all) say(p, h, "ลืมหมดแล้วครับ เหมือนเพิ่งเจอกันครั้งแรก", "Forgotten. It's like we just met");
+                else say(p, h, n > 0 ? "ลืมเรื่อง \"" + it.text + "\" แล้วครับ (" + n + " เรื่อง)" : "ผมไม่ได้จำเรื่อง \"" + it.text + "\" ไว้เลย",
+                        n > 0 ? "Forgot " + n + " thing(s) about \"" + it.text + "\"" : "I didn't remember anything about \"" + it.text + "\"");
+            }
+            case "persona" -> {
+                h.setPersona(it.text);
+                switch (Persona.of(h)) {
+                    case POLITE -> say(p, h, "ได้ครับ ต่อจากนี้ผมจะพูดสุภาพนะครับ", "Of course, I'll be polite from now on");
+                    case SASSY -> say(p, h, "เข้าทางข้าเลย! เตรียมโดนแซวได้", "Oh, you're gonna regret this. Sassy mode on");
+                    case RUDE -> say(p, h, "ได้เลย ต่อไปนี้กูพูดตรงๆ ไม่ต้องมาเสียใจทีหลังนะมึง", "Fine. Gloves off, you asked for it");
+                }
+            }
+            case "whatis" -> Say.raw(p, h, Knowledge.whatIs(p, h, th));
+            case "around" -> Say.raw(p, h, Knowledge.around(p, h, th));
+            case "mods" -> {
+                List<String> mods = Knowledge.mods();
+                Say.raw(p, h, (th ? "มอดที่ลงไว้ (" + mods.size() + "): " : "Installed mods (" + mods.size() + "): ") + String.join(", ", mods));
+            }
             default -> unknown(p, h, text, allowAi);
         }
+    }
+
+    // ------------------------------------------------------------------ where is ... / take me to ...
+    static void cmdLocate(ServerPlayer p, HelperEntity h, Nlu.Intent it) {
+        boolean th = th(p);
+        Nlu.Place pl = it.place;
+        Navigator.Found f;
+        if (pl.kind().equals("last")) {
+            f = Navigator.LAST.get(p.getUUID());
+            if (f == null) {
+                say(p, h, "จะไปไหนล่ะ? ถามก่อนสิว่าอยากไปที่ไหน เช่น \"หมู่บ้านอยู่ไหน\" หรือ \"พาไปทะเลทราย\"",
+                        "Where to? Ask me first, like \"where's the village\" or \"take me to a desert\"");
+                return;
+            }
+        } else {
+            f = null;
+            if (pl.kind().equals("search")) {
+                // a player's name: "where is Bob"
+                for (ServerPlayer o : p.server.getPlayerList().getPlayers()) {
+                    String n = o.getGameProfile().getName().toLowerCase(java.util.Locale.ROOT);
+                    if (o != p && pl.text().toLowerCase(java.util.Locale.ROOT).contains(n))
+                        f = new Navigator.Found(o.getGameProfile().getName(), o.getGameProfile().getName(), o.blockPosition(), o.level().dimension());
+                }
+            }
+            if (f == null) {
+                if (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("search"))
+                    p.sendSystemMessage(Component.literal(Say.t(p, "§7(กำลังหา" + pl.th() + "...)", "§7(looking for " + pl.en() + "...)")));
+                String[] why = new String[2];
+                f = Navigator.find(p, h, pl, why);
+                if (f == null) {
+                    say(p, h, why[0], why[1]);
+                    return;
+                }
+            }
+            Navigator.LAST.put(p.getUUID(), f);
+        }
+        if (pl.kind().equals("me")) {
+            BlockPos at = p.blockPosition();
+            String biome = p.level().getBiome(at).unwrapKey().map(k -> k.location().getPath()).orElse("?");
+            String face = Navigator.compass((p.getYRot() + 180 + 360) % 360, th);
+            say(p, h, "คุณอยู่ที่ §ex " + at.getX() + ", y " + at.getY() + ", z " + at.getZ() + "§r (" + p.level().dimension().location().getPath() + ", ไบโอม " + biome + ") หันหน้าไปทาง" + face,
+                    "You're at §ex " + at.getX() + ", y " + at.getY() + ", z " + at.getZ() + "§r (" + p.level().dimension().location().getPath() + ", " + biome + "), facing " + face);
+            return;
+        }
+        String desc = Navigator.describe(p, f, th);
+        if (it.lead) {
+            Navigator.startGuide(p, h, f);
+            say(p, h, desc + "\n§aตามผมมาเลย!§r ผมจะพาไปเอง (บอกระยะให้เรื่อยๆ)", desc + "\n§aFollow me!§r I'll lead the way (and tell you how far)");
+        } else say(p, h, desc + "\n§7(อยากให้พาไป พิมพ์ \"พาไป\")", desc + "\n§7(say \"take me there\" and I'll lead you)");
     }
 
     static void unknown(ServerPlayer p, HelperEntity h, String text, boolean allowAi) {
@@ -642,7 +727,7 @@ public final class Talk {
             case "gather":
                 return Plan.gather(it.ids, it.block == null ? "บล็อก" : it.block.th(), it.block == null ? "blocks" : it.block.en(), q.n(), q.full(), th);
             case "findFood":
-                return Plan.food(it.hunt, it.crops, it.animal == null ? null : it.animal[0], q.n(), q.full());
+                return Plan.food(it.hunt, it.crops, it.animal == null ? null : it.animal[0], q.n(), q.full(), it.meat && q.n() != null);
             case "dig":
                 return Plan.dig(p, h, it.mine == null ? new Nlu.MineOpts() : it.mine.o(), index == 0);
             case "house": {
@@ -779,16 +864,40 @@ public final class Talk {
     }
 
     // ------------------------------------------------------------------ AI: understanding, chatting, designing
-    static final String AI_COMMANDS = "You turn a Minecraft player's message to their helper into commands the helper understands. "
+    static final String AI_COMMANDS = "You are the brain of a Minecraft helper: you turn the player's message into commands the helper's body understands, and you talk. "
             + "Reply with JSON only: {\"commands\":[\"...\"],\"reply\":\"...\"}. Commands must be short English orders from this list (fill in the details): "
             + "\"mine\", \"mine diamonds\", \"mine 10 iron\", \"chop wood\", \"chop 20 logs\", \"collect 64 sand\" (any block: sand, gravel, clay, stone, dirt, bamboo, sugar cane, cactus, flowers, leaves, snow, ice, obsidian...), "
-            + "\"find food\", \"hunt 3 cows\", \"harvest crops\", \"farm\", \"breed cows\", \"shear sheep\", \"cook\", \"eat\", \"craft <item> <n>\", \"smelt iron\", \"get <item> from the chest\", "
+            + "\"find food\", \"get 64 meat\" (hunts any animal until it has 64 pieces of meat), \"get 20 beef\" (hunts cows until 20 beef), \"hunt 3 cows\" (3 animals), "
+            + "\"harvest crops\", \"farm\", \"breed cows\", \"shear sheep\", \"cook\", \"eat\", \"craft <item> <n>\", \"smelt iron\", \"get <item> from the chest\", "
             + "\"give me <item>\", \"bring me the items\", \"put things in the chest\", \"build a mine 40 deep\", "
             + "\"build a <house|hotel|school|hospital|prison|library|church|barn|market|castle|tower|tree house|igloo|pyramid|bunker|mansion|lighthouse|desert house|nether fort|safe house|box house|nether portal|creeper statue> [big|small] [3 floors] [with a pool] [modern|medieval|thai]\", "
             + "\"build <anything else>\" (the helper designs it), \"come\", \"follow me\", \"stay\", \"wait 30 seconds\", \"go to x y z\", \"go home\", \"guard\", \"fight\", \"don't fight\", \"don't fight back\", "
-            + "\"place torches\", \"flatten the ground\", \"status\", \"cancel\". "
-            + "Several commands run one after another. If the message is just chat or a question, give no commands and answer in \"reply\" in the player's language "
-            + "(Thai if they wrote Thai), as a cheerful helper, one or two short sentences.";
+            + "\"place torches\", \"flatten the ground\", \"status\", \"cancel\", "
+            + "\"where is the <village|stronghold|ruined portal|shipwreck|ocean monument|mansion|desert pyramid|jungle temple|witch hut|igloo|outpost|ancient city|trail ruins|buried treasure|trial chambers|nether fortress|bastion|end city|mineshaft>\", "
+            + "\"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|flowers|lush caves>\", "
+            + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"take me to the <any of those>\" (the helper walks ahead and leads the player, any distance), "
+            + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\". "
+            + "Rules: keep the player's exact numbers and items (\"64 meat\" means 64 pieces of meat, never fewer animals). Several commands run one after another. "
+            + "Questions about the game you can answer yourself go in \"reply\" (you know Minecraft and every installed mod well; use the world facts you are given). "
+            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the player's language (Thai if they wrote Thai), "
+            + "one or two short sentences, in the helper's own personality.";
+
+    /** The helper's personality, for the AI. */
+    static String personaForAi(HelperEntity h, ServerPlayer p) {
+        return switch (Persona.of(h)) {
+            case POLITE -> "Personality: polite, warm and loyal (in Thai say ผม / คุณ and end with ครับ).";
+            case SASSY -> "Personality: a cheeky, sassy smart-mouth who teases the player and calls them names (ไอ้โง่, ไอ้บ้า, noob, genius), complains about work but still does it, "
+                    + "brags, makes jokes at the player's expense (in Thai say ข้า / เอ็ง, no ครับ). Never polite, never mean-spirited for real.";
+            case RUDE -> "Personality: rude and foul-mouthed: swears at the player for real (in Thai กู / มึง, ไอ้ควาย, ไอ้เวร, ไอ้สัส; in English damn, dumbass, idiot), "
+                    + "acts annoyed by every order but still does the job, roasts the player's mistakes. The player asked for this.";
+        };
+    }
+
+    /** Everything the AI should know about the moment. */
+    static String contextForAi(HelperEntity h, ServerPlayer p) {
+        String mem = Memory.forAi(p);
+        return " " + personaForAi(h, p) + " " + Knowledge.forAi(p, h) + (mem.isEmpty() ? "" : " " + mem);
+    }
 
     /** Recent conversation per helper, so the AI understands follow-ups ("more", "the other one", "yes"). */
     static final Map<UUID, List<AiBridge.Msg>> HISTORY = new java.util.HashMap<>();
@@ -800,7 +909,7 @@ public final class Talk {
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
         String sys = AI_COMMANDS + " The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
-                + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups.";
+                + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups." + contextForAi(h, p);
         List<AiBridge.Msg> hist = HISTORY.computeIfAbsent(hid, k -> new ArrayList<>());
         List<AiBridge.Msg> msgs = new ArrayList<>(hist);
         msgs.add(new AiBridge.Msg("user", text));
@@ -824,7 +933,7 @@ public final class Talk {
             if (o.has("commands") && o.get("commands").isJsonArray())
                 for (JsonElement e : o.getAsJsonArray("commands")) if (e.isJsonPrimitive()) cmds.add(e.getAsString());
             String reply = o.has("reply") && o.get("reply").isJsonPrimitive() ? AiBridge.clean(o.get("reply").getAsString()) : null;
-            if (reply != null && !reply.isEmpty()) say(pl, hh, reply, reply);
+            if (reply != null && !reply.isEmpty()) Say.raw(pl, hh, reply);
             hist.add(new AiBridge.Msg("user", text));
             hist.add(new AiBridge.Msg("assistant", o.toString()));
             while (hist.size() > 10) hist.remove(0);
@@ -948,12 +1057,13 @@ public final class Talk {
     public static void aiChat(ServerPlayer p, HelperEntity h, String text) {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
-        String sys = "You are " + h.helperName() + ", a cheerful, loyal Minecraft helper of " + p.getGameProfile().getName() + ". Answer in the player's language (Thai if they wrote Thai), "
-                + "one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + ".";
+        String sys = "You are " + h.helperName() + ", the Minecraft helper of " + p.getGameProfile().getName() + ", and you know everything about Minecraft and its mods. "
+                + "Answer in the player's language (Thai if they wrote Thai), one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + "."
+                + contextForAi(h, p);
         AiBridge.chat(sys, List.of(new AiBridge.Msg("user", text)), 800, 0.8).thenAccept(r -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
-            if (pl != null && hh != null && r != null) say(pl, hh, r, r);
+            if (pl != null && hh != null && r != null) Say.raw(pl, hh, r);
         }));
     }
 }

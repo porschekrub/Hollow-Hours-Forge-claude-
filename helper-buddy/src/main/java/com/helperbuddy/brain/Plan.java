@@ -46,6 +46,8 @@ public final class Plan {
         public String[] ids;
         public String name = "";
         public boolean hunt = true, crops = true;
+        /** food: count the meat (items), not the animals */
+        public boolean meat;
         @Nullable
         public String animal;
         // dig
@@ -116,7 +118,7 @@ public final class Plan {
     // ------------------------------------------------------------------ labels
     static String unit(Step s, boolean th) {
         if (s.k.equals("chop")) return th ? "ท่อน" : "logs";
-        if (s.k.equals("food")) return s.animal != null ? (th ? "ตัว" : "") : (th ? "ชิ้น" : "pieces");
+        if (s.k.equals("food")) return s.animal != null && !s.meat ? (th ? "ตัว" : "") : (th ? "ชิ้น" : "pieces");
         return th ? "ก้อน" : "blocks";
     }
 
@@ -153,7 +155,12 @@ public final class Plan {
                 s.en = "collect " + (s.name.isEmpty() ? "blocks" : s.name) + amtEn;
             }
             case "food" -> {
-                if (s.animal != null) {
+                if (s.meat && s.n != null) {
+                    int about = FoodJob.animalsFor(s.animal, s.n);
+                    String a = s.animal != null ? FoodJob.animalName(s.animal, true) : "สัตว์";
+                    s.th = "ล่า" + a + "จนได้เนื้อ " + s.n + " ชิ้น (ประมาณ " + about + " ตัว)";
+                    s.en = "hunt " + (s.animal != null ? FoodJob.animalName(s.animal, false) : "animals") + " until I have " + s.n + " meat (about " + about + " animals)";
+                } else if (s.animal != null) {
                     s.th = "ล่า" + FoodJob.animalName(s.animal, true) + amtTh + (s.n != null ? " ตัว" : "");
                     s.en = "hunt " + FoodJob.animalName(s.animal, false) + amtEn;
                 } else {
@@ -199,9 +206,14 @@ public final class Plan {
     }
 
     public static Step food(boolean hunt, boolean crops, @Nullable String animal, @Nullable Integer n, boolean full) {
+        return food(hunt, crops, animal, n, full, false);
+    }
+
+    public static Step food(boolean hunt, boolean crops, @Nullable String animal, @Nullable Integer n, boolean full, boolean meat) {
         Step s = new Step("food");
         s.hunt = hunt;
-        s.crops = crops;
+        s.crops = crops && !meat;
+        s.meat = meat;
         s.animal = animal;
         s.n = n;
         s.full = full;
@@ -520,7 +532,9 @@ public final class Plan {
                 if (ev.equals("item") && what instanceof ItemStack st && b.work.wantsItem(st)) add = st.getCount();
             }
             case "food" -> {
-                if (s.animal != null) {
+                if (s.meat) {
+                    if (ev.equals("item") && what instanceof ItemStack st && FoodJob.isMeat(st, s.animal)) add = st.getCount();
+                } else if (s.animal != null) {
                     if (ev.equals("hunt") && what instanceof LivingEntity le && FoodJob.matches(le, s.animal)) add = 1;
                 } else if (ev.equals("item") && what instanceof ItemStack st && Care.foodValue(st) > 0) add = st.getCount();
             }
@@ -570,6 +584,7 @@ public final class Plan {
         t.putString("name", s.name);
         t.putBoolean("hunt", s.hunt);
         t.putBoolean("crops", s.crops);
+        t.putBoolean("meat", s.meat);
         if (s.animal != null) t.putString("animal", s.animal);
         if (s.mine != null) {
             CompoundTag m = new CompoundTag();
@@ -610,6 +625,7 @@ public final class Plan {
         s.name = t.getString("name");
         s.hunt = t.getBoolean("hunt");
         s.crops = t.getBoolean("crops");
+        s.meat = t.getBoolean("meat");
         s.animal = t.contains("animal") ? t.getString("animal") : null;
         if (t.contains("mine")) {
             CompoundTag m = t.getCompound("mine");
