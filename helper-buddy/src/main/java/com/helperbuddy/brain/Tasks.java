@@ -119,7 +119,7 @@ public final class Tasks {
     public static CompoundTag enchant(@Nullable String item, @Nullable String kind) {
         CompoundTag t = spec("enchant");
         if (item != null) t.putString("item", item);
-        if (kind != null) t.putString("kind", kind);
+        if (kind != null) t.putString("itemKind", kind);
         return t;
     }
 

@@ -434,11 +434,11 @@ final class Skills {
             ItemStack target = ItemStack.EMPTY;
             Predicate<ItemStack> told = st -> {
                 if (s.contains("item")) return st.is(item(s.getString("item")));
-                if (!s.contains("kind")) return true;
-                String path = BuiltInRegistries.ITEM.getKey(st.getItem()).getPath(), k = s.getString("kind");
+                if (!s.contains("itemKind")) return true;
+                String path = BuiltInRegistries.ITEM.getKey(st.getItem()).getPath(), k = s.getString("itemKind");
                 return path.equals(k) || path.endsWith("_" + k);
             };
-            boolean named = s.contains("item") || s.contains("kind");
+            boolean named = s.contains("item") || s.contains("itemKind");
             if (named) {
                 for (int i = 0; i < h.bag.getContainerSize() && target.isEmpty(); i++) {
                     ItemStack b = h.bag.getItem(i);
@@ -460,7 +460,7 @@ final class Skills {
             if (target.isEmpty() && !named)
                 for (int i = 0; i < h.bag.getContainerSize() && target.isEmpty(); i++) if (h.bag.getItem(i).is(Items.BOOK)) target = h.bag.getItem(i);
             if (target.isEmpty()) {
-                String what = s.contains("item") ? name(item(s.getString("item"))) : s.contains("kind") ? s.getString("kind") : null;
+                String what = s.contains("item") ? name(item(s.getString("item"))) : s.contains("itemKind") ? s.getString("itemKind") : null;
                 Say.owner(h, what != null ? "ผมไม่มี " + what + " ที่ร่ายมนตร์ได้ (ของที่ร่ายแล้วร่ายซ้ำไม่ได้) ส่งให้ผมก่อนนะ"
                                 : "จะให้ร่ายมนตร์อะไรล่ะ? ถือของไว้ในมือแล้วสั่ง หรือใส่ของ/หนังสือในกระเป๋าผม",
                         what != null ? "I have no " + what + " that can be enchanted (enchanted things can't be enchanted again). Give me one first"
