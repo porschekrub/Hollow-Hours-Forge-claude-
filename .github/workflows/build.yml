@@ -44,7 +44,12 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+          # GitHub sometimes fails to hand out the Gradle download (504): try again a little later
+          for try in 1 2 3 4; do
+            ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log && break
+            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|Could not GET\|Could not HEAD" build.log && [ $try -lt 4 ] || exit 1
+            echo "download failed, trying again"; sleep 45
+          done
 
       - name: Upload jar
         uses: actions/upload-artifact@v4
@@ -155,7 +160,12 @@ jobs:
         run: |
           set -o pipefail
           chmod +x gradlew
-          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+          # GitHub sometimes fails to hand out the Gradle download (504): try again a little later
+          for try in 1 2 3 4; do
+            ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log && break
+            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|Could not GET\|Could not HEAD" build.log && [ $try -lt 4 ] || exit 1
+            echo "download failed, trying again"; sleep 45
+          done
           ls -la build/libs
       - name: Upload jar
         uses: actions/upload-artifact@v4

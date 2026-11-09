@@ -88,6 +88,11 @@ A helper that does (almost) everything you ask in plain Thai or English.
 !คราฟต์คบเพลิง 16 อัน           !smelt iron
 !ทำฟาร์ม  !ผสมพันธุ์วัว  !ตัดขนแกะ  !ปักคบเพลิง  !ปรับพื้นที่
 !สร้างเหมือง ลึก 40 ยาว 30     !build a nether portal
+!ตกปลา 10 ตัว                  !trade with villagers for emeralds
+!ร่ายมนตร์ดาบ                   !brew a potion of swiftness
+!ใส่เหล็กดิบในเตาเผา            !put raw iron in the furnace
+!หมู่บ้านอยู่ไหน  !พาไปหมู่บ้าน  !ไปเนเธอร์  !ไปเอนด์  !ฆ่ามังกร
+!สร้างประตูอัตโนมัติ            !build an auto smelter
 ```
 
 - **Fights back** when attacked (setting, on by default), defends you, handles creepers by hitting and backing off (or with a bow).

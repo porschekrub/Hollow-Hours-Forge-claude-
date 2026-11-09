@@ -3,13 +3,32 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.13.0.jar` · `helperbuddy-forge-1.20.1-2.13.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.13.0.jar` · `helperbuddy-neoforge-1.21.1-2.13.0.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.13.0.jar` · `helperbuddy-forge-1.21.1-2.13.0.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.13.0.jar` · `helperbuddy-fabric-1.20.1-2.13.0.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.13.0.jar` · `helperbuddy-fabric-1.21.1-2.13.0.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.14.0.jar` · `helperbuddy-forge-1.20.1-2.14.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.14.0.jar` · `helperbuddy-neoforge-1.21.1-2.14.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.14.0.jar` · `helperbuddy-forge-1.21.1-2.14.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.14.0.jar` · `helperbuddy-fabric-1.20.1-2.14.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.14.0.jar` · `helperbuddy-fabric-1.21.1-2.14.0.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
+
+**2.14.0 — a helper that can do (almost) everything**
+- 🎣 **Fishing**: "go fishing" / "catch 10 fish" / "ตกปลา 10 ตัว". It finds water nearby and fishes like a player (fish, junk, the odd treasure, XP), with its own rod (or makes one).
+  🎣 **ตกปลา**: "ตกปลา 10 ตัว" หาน้ำใกล้ๆ เอง ได้ของแบบตกปลาจริง (ปลา ของเก่า บางทีได้สมบัติ และ XP) ใช้เบ็ดของมันเอง (ไม่มีก็ทำเอง)
+- 💰 **Trading with villagers**: "trade with villagers for emeralds", "sell wheat to the villagers", "buy a book from villagers" / "แลกมรกตกับชาวบ้าน", "ขายข้าวสาลีให้ชาวบ้าน", "ซื้อหนังสือจากชาวบ้าน". It pays with what's in its bag and says what it's missing.
+  💰 **แลกของกับชาวบ้าน**: จ่ายด้วยของในกระเป๋ามัน ถ้าไม่พอจะบอกว่าต้องใช้อะไรเท่าไหร่
+- ✨ **Enchanting**: "enchant my sword", "enchant this" / "ร่ายมนตร์ดาบ", "ร่ายมนตร์ของในมือ". It goes to an enchanting table (or places / crafts one), uses its lapis and your levels; more bookshelves, better enchantments.
+  ✨ **ร่ายมนตร์**: ไปที่โต๊ะร่ายมนตร์เอง (ไม่มีก็วาง/คราฟให้) ใช้ลาพิสของมัน กับเลเวลของคุณ ชั้นหนังสือเยอะ ได้เวทดีขึ้น
+- 🧪 **Brewing**: "brew a potion of swiftness", "a long fire resistance potion", "a splash healing potion" / "ต้มยาวิ่งเร็ว", "ยากันไฟแบบนาน", "ยาเพิ่มเลือดแบบปา". It works out the recipe, fills the bottles at the water and brews on a real brewing stand; it tells you what's missing.
+  🧪 **ต้มยา**: คิดสูตรเอง ไปเติมน้ำใส่ขวด แล้วต้มที่แท่นต้มยาจริง ขาดอะไรจะบอก
+- ⚙️ **Machines**: "put raw iron in the furnace", "put coal in this machine", "collect from the furnace" / "ใส่เหล็กดิบในเตาเผา", "ใส่ถ่านในเครื่องนี้". Works with other mods' machines too (anything hoppers can use): it loads it, adds fuel, waits and collects what comes out.
+  ⚙️ **ใช้เครื่องจักร**: ใช้กับเครื่องจักรของมอดอื่นได้ด้วย ใส่ของ เติมเชื้อเพลิง รอแล้วเก็บของที่ออกมาให้
+- 🌋 **The Nether and the End**: "take me to the nether" / "ไปเนเธอร์" leads you to the nearest nether portal (or tells you to have one built), "go back to the overworld", "take me to the end" / "ไปเอนด์" leads you to the stronghold.
+  🌋 **เนเธอร์และเอนด์**: "ไปเนเธอร์" พาไปประตูเนเธอร์ที่ใกล้สุด "กลับโลกปกติ" "ไปเอนด์" พาไปสตรองโฮลด์
+- 🐉 **Bosses**: "kill the dragon", "fight the wither" / "ฆ่ามังกร", "สู้วิเธอร์". It shoots the end crystals first (with a bow and arrows), then the boss, from far away. In the End it does this by itself.
+  🐉 **สู้บอส**: ยิงคริสตัลบนเสาก่อน (ต้องมีธนูกับลูกธนู) แล้วยิง/ฟันบอสจากระยะไกล อยู่ในเอนด์จะทำเองอัตโนมัติ
+- 🔴 **Redstone builds**: "build an automatic door" (iron door + pressure plates), "build an auto smelter" (furnace + hoppers + chests: things to smelt on top, fuel at the side, results in the floor), "build a light switch" (redstone lamps in the floor + a lever) / "สร้างประตูอัตโนมัติ", "สร้างเตาเผาอัตโนมัติ", "สร้างไฟพื้นเปิดปิด".
+  🔴 **งานเรดสโตน**: ประตูอัตโนมัติ เตาเผาอัตโนมัติ (ใส่ของบนสุด เชื้อเพลิงด้านข้าง ของที่เผาแล้วลงหีบที่พื้น) ไฟพื้นเปิดปิดด้วยคันโยก
+- The AI (when a key is set) knows all the new orders too. / ถ้าเปิด AI ไว้ AI ก็รู้จักคำสั่งใหม่ทั้งหมด
 
 **2.13.0 — every loader, and a helper with a big mouth**
 - Both mods now run on **Forge 1.20.1, NeoForge 1.20.1, NeoForge 1.21.1, Forge 1.21.1, Fabric 1.20.1 and Fabric 1.21.1** (Fabric needs Fabric API). Same features everywhere.
