@@ -18,7 +18,7 @@ public final class Snapshot {
     private Snapshot() {}
 
     public static CompoundTag of(HelperEntity h, ServerPlayer p) {
-        boolean th = Say.thai(p);
+        boolean th = Say.gameThai(p); // the menu follows the game language
         Brain b = h.brain();
         CompoundTag t = new CompoundTag();
         t.putInt("id", h.getId());

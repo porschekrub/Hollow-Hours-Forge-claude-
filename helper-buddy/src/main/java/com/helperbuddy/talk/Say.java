@@ -45,6 +45,11 @@ public final class Say {
         String s = speak(p);
         if (s.equals("th")) return true;
         if (!s.isEmpty()) return false;
+        return gameThai(p);
+    }
+
+    /** The game's own language is Thai (menus and screens follow this, whatever the helpers were told to speak). */
+    public static boolean gameThai(@Nullable Player p) {
         return p instanceof ServerPlayer sp && sp.getLanguage() != null && sp.getLanguage().toLowerCase().startsWith("th");
     }
 

@@ -29,7 +29,7 @@ public final class Menus {
         ListTag l = new ListTag();
         for (HelperEntity h : Helpers.owned(p)) l.add(Snapshot.of(h, p));
         t.put("helpers", l);
-        t.putBoolean("thai", com.helperbuddy.talk.Say.thai(p));
+        t.putBoolean("thai", com.helperbuddy.talk.Say.gameThai(p));
         toPlayer(p, new S2COpen("book", t));
     }
 }
