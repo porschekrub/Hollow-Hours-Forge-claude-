@@ -56,6 +56,9 @@ public final class SmokeTest {
         try {
             staticChecks();
             ServerLevel level = s.overworld();
+            // no monsters to keep the helper busy fighting (the checks are about its work); the end crystal and bosses are tested on their own
+            s.setDifficulty(net.minecraft.world.Difficulty.PEACEFUL, true);
+            level.setDayTime(1000);
             BlockPos sp = level.getSharedSpawnPos();
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());
             base = new BlockPos(sp.getX(), y, sp.getZ());
