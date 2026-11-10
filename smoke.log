@@ -1,0 +1,239 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.2.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Creating Minecraft artifacts without recompilation.
+
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :preprocess UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+
+> Task :downloadAssets
+Loaded 131 artifacts from /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/neoforge-1.21.1/helper-buddy/build/tmp/downloadAssets/nfrt_artifact_manifest.properties
+Downloading asset index 17
+Using Minecraft asset root: /home/runner/.gradle/caches/neoformruntime/assets
+  ↓ https://piston-meta.mojang.com/v1/packages/4ca8e1a1edd37a703c5d1594f71d409852cd9770/17.json
+100/3888 downloads
+200/3888 downloads
+300/3888 downloads
+400/3888 downloads
+500/3888 downloads
+600/3888 downloads
+700/3888 downloads
+800/3888 downloads
+900/3888 downloads
+1000/3888 downloads
+1100/3888 downloads
+1200/3888 downloads
+1300/3888 downloads
+1400/3888 downloads
+1500/3888 downloads
+1600/3888 downloads
+1700/3888 downloads
+1800/3888 downloads
+1900/3888 downloads
+2000/3888 downloads
+2100/3888 downloads
+2200/3888 downloads
+2300/3888 downloads
+2400/3888 downloads
+2500/3888 downloads
+2600/3888 downloads
+2700/3888 downloads
+2800/3888 downloads
+2900/3888 downloads
+3000/3888 downloads
+3100/3888 downloads
+3200/3888 downloads
+3300/3888 downloads
+3400/3888 downloads
+3500/3888 downloads
+3600/3888 downloads
+3700/3888 downloads
+3800/3888 downloads
+Downloaded 3888 files with a total size of 787 MiB
+
+> Task :writeServerLegacyClasspath
+> Task :prepareServerRun
+
+> Task :runServer
+WARN StatusConsoleListener Advanced terminal features are not available in this environment
+[09:58:28] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.45, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.265, --fml.neoFormVersion, 20240808.144430, --nogui]
+[09:58:28] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.13+9-LTS
+[09:58:28] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.13 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure
+[09:58:29] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[09:58:29] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.4+mixin.0.8.7/26d01f0567ab46e9ca0d2ed89d0ecc11aadbd433/sponge-mixin-0.16.4+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[09:58:29] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[09:58:29] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		GeckoLib 4 4.9.3 (geckolib)
+		Helper Buddy 2.16.3 (helperbuddy)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.265 (neoforge)
+[09:58:30] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[09:58:30] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, ., --nogui]
+[09:58:30] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+[09:58:31] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[09:58:37] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:58:37] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:58:37] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[09:58:37] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[09:58:37] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[09:58:37] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.265, for MC 1.21.1
+[09:58:38] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[09:58:38] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/neoforge-1.21.1/helper-buddy/build/moddev/artifacts/neoforge-21.1.265.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[09:58:38] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/neoforge-1.21.1/helper-buddy/build/moddev/artifacts/neoforge-21.1.265.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[09:58:39] [main/INFO] [minecraft/Main]: No existing world data, creating new world
+[09:58:39] [main/ERROR] [minecraft/DedicatedServerProperties]: No key layers in MapLike[{}]
+[09:58:39] [main/INFO] [minecraft/RecipeManager]: Loaded 1292 recipes
+[09:58:40] [main/INFO] [minecraft/AdvancementTree]: Loaded 1399 advancements
+[09:58:40] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.21.1
+[09:58:40] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[09:58:40] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[09:58:40] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[09:58:40] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[09:58:40] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using epoll channel type
+[09:58:40] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[09:58:40] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[09:58:40] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[09:58:40] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[09:58:40] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[09:58:41] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[09:58:41] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[09:58:42] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 278 ms
+[09:58:42] [Server thread/INFO] [minecraft/DedicatedServer]: Done (1.225s)! For help, type "help"
+[09:58:42] [Server thread/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: []
+[09:58:42] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[09:58:43] [Server thread/INFO] [HelperBuddy/]: [smoke] 720 plans, 926340 blocks checked
+[09:58:43] [Server thread/INFO] [HelperBuddy/]: [smoke] build site: ok=true 
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] t=50 mode BUILD status '24%' tasks false bag 9/36
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] t=150 mode BUILD status '55%' tasks false bag 9/36
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] t=250 mode BUILD status '63%' tasks false bag 9/36
+[09:58:58] [Server thread/INFO] [HelperBuddy/]: [smoke] build progress 69% (placed blocks)
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] t=350 mode MINE status '250/250' tasks false bag 9/36
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] t=450 mode GATHER status '249/250' tasks false bag 10/36
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] t=550 mode FARM status '' tasks false bag 10/36
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] t=650 mode DIG status '30%' tasks false bag 10/36
+[09:59:18] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Crafted 1 Crafting Table!
+[09:59:18] [Server thread/INFO] [HelperBuddy/]: [Buddy] task craft done (count 0, phase 0)
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] t=750 mode FOLLOW status '' tasks false bag 11/36
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [smoke] nearest village: BlockPos{x=320, y=-64, z=368} (165 ms)
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [smoke] bag: 1 minecraft:iron_pickaxe, 1 minecraft:iron_axe, 1 minecraft:iron_hoe, 61 minecraft:torch, 16 minecraft:bread, 15 minecraft:coal, 16 minecraft:wheat_seeds, 15 minecraft:oak_log, 27 minecraft:dirt, 1 minecraft:crafting_table, 4 minecraft:iron_ingot, 
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [smoke] mode TASK status 'smelting 3' bag 11/36
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [smoke] skills started
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Enchanted (level 5, 0 bookshelves): Enchanted Book
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [Buddy] task enchant done (count 0, phase 1)
+[09:59:23] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Put 2 Raw Iron in the Furnace, I'll wait and collect what comes out
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Smelted 4 items, they're in my bag
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [Buddy] task smelt done (count 4, phase 0)
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Traded for 1 Emerald, they're in my bag
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [Buddy] task trade done (count 1, phase 0)
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [smoke] nearest nether portal: BlockPos{x=-24, y=-59, z=0}
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Caught 2 fish, they're in my bag
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [Buddy] task fish done (count 2, phase 2)
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] t=850 mode STAY status '' tasks false bag 11/36
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:59:28] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] t=950 mode STAY status '' tasks false bag 11/36
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:59:33] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1050 mode STAY status '' tasks false bag 11/36
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:59:38] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:41] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1150 mode STAY status '' tasks false bag 11/36
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] fishing: 2 things caught
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] trading: 1 emeralds, 20 wheat left
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] enchanting: 1 enchanted books, bag 1 minecraft:enchanted_book, 
+[09:59:43] [Server thread/INFO] [HelperBuddy/]: [smoke] end crystal alive: false, arrows left 15
+[09:59:44] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Collected 2 items from the Furnace, they're in my bag
+[09:59:44] [Server thread/INFO] [HelperBuddy/]: [Buddy] task machine done (count 2, phase 2)
+[09:59:46] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1250 mode STAY status '' tasks false bag 11/36
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:48] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:51] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1350 mode STAY status '' tasks false bag 11/36
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:53] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:56] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1450 mode STAY status '' tasks false bag 11/36
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:58] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:01] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1550 mode STAY status '' tasks false bag 11/36
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Brewed 3 bottles: Potion of Swiftness
+[10:00:03] [Server thread/INFO] [HelperBuddy/]: [Buddy] task brew done (count 3, phase 4)
+[10:00:06] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1650 mode STAY status '' tasks false bag 11/36
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:08] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:11] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1750 mode STAY status '' tasks false bag 11/36
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:13] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:16] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1850 mode STAY status '' tasks false bag 11/36
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] brewing: 3 potions of swiftness, bag 1 minecraft:potion, 1 minecraft:potion, 1 minecraft:potion, 1 minecraft:blaze_powder, 
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: [smoke] machine: 2 iron ingots from the furnace, bag 2 minecraft:iron_ingot, 3 minecraft:coal, 
+[10:00:18] [Server thread/INFO] [HelperBuddy/]: SMOKE TEST OK
+[10:00:18] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[10:00:18] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[10:00:18] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[10:00:19] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1794304695441.json
+
+BUILD SUCCESSFUL in 2m 8s
+8 actionable tasks: 4 executed, 4 up-to-date
