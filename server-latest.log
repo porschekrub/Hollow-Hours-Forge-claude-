@@ -1,0 +1,76 @@
+[10Nov2026 09:57:31.489] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.45, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.265, --fml.neoFormVersion, 20240808.144430, --nogui]
+[10Nov2026 09:57:31.492] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.13+9-LTS
+[10Nov2026 09:57:31.494] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.13 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure
+[10Nov2026 09:57:31.604] [main/INFO] [net.neoforged.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[10Nov2026 09:57:31.643] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.4+mixin.0.8.7/26d01f0567ab46e9ca0d2ed89d0ecc11aadbd433/sponge-mixin-0.16.4+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[10Nov2026 09:57:31.943] [main/INFO] [net.neoforged.fml.loading.moddiscovery.locators.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[10Nov2026 09:57:31.945] [main/INFO] [net.neoforged.fml.loading.moddiscovery.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		GeckoLib 4 4.9.3 (geckolib)
+		Hollow Hours 2.16.0 (hollowhours)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.265 (neoforge)
+[10Nov2026 09:57:32.639] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[10Nov2026 09:57:32.647] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, ., --nogui]
+[10Nov2026 09:57:32.702] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+[10Nov2026 09:57:34.181] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[10Nov2026 09:57:40.012] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Nov2026 09:57:40.014] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Nov2026 09:57:40.016] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[10Nov2026 09:57:40.017] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[10Nov2026 09:57:40.018] [main/WARN] [net.minecraft.commands.Commands/]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[10Nov2026 09:57:40.104] [modloading-worker-0/INFO] [net.neoforged.neoforge.common.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.265, for MC 1.21.1
+[10Nov2026 09:57:40.539] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[10Nov2026 09:57:40.587] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/neoforge-1.21.1/hollow-hours/build/moddev/artifacts/neoforge-21.1.265.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[10Nov2026 09:57:40.588] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/neoforge-1.21.1/hollow-hours/build/moddev/artifacts/neoforge-21.1.265.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[10Nov2026 09:57:41.315] [main/INFO] [net.minecraft.server.Main/]: No existing world data, creating new world
+[10Nov2026 09:57:41.321] [main/ERROR] [net.minecraft.server.dedicated.DedicatedServerProperties/]: No key layers in MapLike[{}]
+[10Nov2026 09:57:41.876] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1340 recipes
+[10Nov2026 09:57:42.195] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1399 advancements
+[10Nov2026 09:57:42.705] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting minecraft server version 1.21.1
+[10Nov2026 09:57:42.705] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Loading properties
+[10Nov2026 09:57:42.706] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Default game type: SURVIVAL
+[10Nov2026 09:57:42.706] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[10Nov2026 09:57:42.854] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting Minecraft server on *:25565
+[10Nov2026 09:57:42.890] [Server thread/INFO] [net.minecraft.server.network.ServerConnectionListener/]: Using epoll channel type
+[10Nov2026 09:57:42.919] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[10Nov2026 09:57:42.920] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: The server will make no attempt to authenticate usernames. Beware.
+[10Nov2026 09:57:42.920] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[10Nov2026 09:57:42.920] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: To change this, set "online-mode" to "true" in the server.properties file.
+[10Nov2026 09:57:42.965] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Preparing level "world"
+[10Nov2026 09:57:43.650] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[10Nov2026 09:57:43.693] [worldgen/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[10Nov2026 09:57:43.900] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 250 ms
+[10Nov2026 09:57:43.901] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Done (0.964s)! For help, type "help"
+[10Nov2026 09:57:43.941] [Server thread/INFO] [net.neoforged.neoforge.gametest.GameTestHooks/]: Enabled Gametest Namespaces: []
+[10Nov2026 09:57:43.947] [Server thread/INFO] [net.neoforged.neoforge.server.permission.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[10Nov2026 09:57:48.930] [Server thread/INFO] [HollowHours/]: Loaded 30 kill cinematic tracks
+[10Nov2026 09:57:49.129] [Server thread/INFO] [HollowHours/]: [smoke] AI understanding OK: Understood[intent=ask_item, topic=null, offer=null, offerName=null, ask=diamond_sword, count=2] | Understood[intent=bargain, topic=null, offer=minecraft:cooked_beef, offerName=steak, ask=null, count=1]
+[10Nov2026 09:57:49.154] [Server thread/INFO] [HollowHours/]: [smoke] blood moon OK (ghost damage 24.0)
+[10Nov2026 09:57:49.162] [Server thread/INFO] [HollowHours/]: [smoke] story, phone, thirst and blood OK
+[10Nov2026 09:57:49.195] [Server thread/INFO] [HollowHours/]: [smoke] physics and playground OK (ball rebound 2.01 blocks)
+[10Nov2026 09:57:53.168] [Server thread/INFO] [HollowHours/]: [smoke] rescue OK: haven biomes [hollowhours:haven_beach, hollowhours:haven_blossom, hollowhours:haven_flower_woods, hollowhours:haven_fruit_jungle, hollowhours:haven_lagoon, hollowhours:haven_meadow], landing at BlockPos{x=136, y=72, z=8}
+[10Nov2026 09:57:53.173] [Server thread/INFO] [HollowHours/]: [smoke] graves OK
+[10Nov2026 09:57:53.255] [Server thread/INFO] [HollowHours/]: [smoke] combat: 13 pistol hits knock ghost 3 out (poise 115.0)
+[10Nov2026 09:57:53.273] [Server thread/INFO] [HollowHours/]: [smoke] drinking water OK (still, flowing, lily pad, past grass, cauldron; not through stone)
+[10Nov2026 09:57:53.277] [Server thread/INFO] [HollowHours/]: [Hollow Hours] all five are down: the mountain is at BlockPos{x=188, y=64, z=-538}
+[10Nov2026 09:57:54.421] [Server thread/INFO] [HollowHours/]: [Hollow Hours] building the mountain at BlockPos{x=300, y=-60, z=40} (cavern floor -60, 56467 blocks)
+[10Nov2026 09:57:54.669] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the mountain is built (56467 blocks)
+[10Nov2026 09:57:54.674] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the thing under the mountain wakes at (300.5, -60.0, 40.5)
+[10Nov2026 09:57:54.777] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the story is over: the world is at peace
+[10Nov2026 09:57:54.778] [Server thread/INFO] [HollowHours/]: [smoke] endgame OK: mountain 56467 blocks, boss beaten in 15 hits, 1505 ms
+[10Nov2026 09:57:54.786] [Server thread/INFO] [HollowHours/]: SMOKE TEST OK
+[10Nov2026 09:57:54.799] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[10Nov2026 09:57:54.801] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[10Nov2026 09:57:54.801] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[10Nov2026 09:57:56.318] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[10Nov2026 09:57:56.823] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[10Nov2026 09:57:56.825] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/hollowhours:haven
+[10Nov2026 09:57:56.828] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[10Nov2026 09:57:56.834] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[10Nov2026 09:57:56.834] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[10Nov2026 09:57:56.835] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (haven): All chunks are saved
+[10Nov2026 09:57:56.835] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[10Nov2026 09:57:56.835] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
