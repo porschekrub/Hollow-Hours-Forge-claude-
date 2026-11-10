@@ -56,7 +56,8 @@ public final class Voice {
         if (text.isEmpty() || text.startsWith("(")) return; // "(thinking...)"
         int style = Persona.of(h).ordinal();
         boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
-        if (reply && aiVoice() && VoiceTts.speak(sp, h, text, style, cartoon())) return;
+        // the cartoon voice says every line in words (chatter between helpers too); the plain AI voice only answers
+        if ((reply || cartoon()) && aiVoice() && VoiceTts.speak(sp, h, text, style, cartoon())) return;
         HBNet.toPlayer(sp, new S2CSpeak(h.getId(), text, h.getUUID().hashCode(), style));
     }
 
