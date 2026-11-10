@@ -1,0 +1,14 @@
+/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/site-packages/torch/jit/_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/762 [00:00<?, ?it/s]Loading weights:  57%|█████▋    | 436/762 [00:00<00:00, 4359.33it/s]Loading weights: 100%|██████████| 762/762 [00:00<00:00, 4339.82it/s]
+0 4.124444 Hollow Hours. Now on Forge, NeoForge, and Fabric.
+1 3.539274 Five versions. Pick the one for your game.
+2 1.806712 Five ghosts hunt you.
+3 3.177891 They grab you. Break free, or die.
+4 3.688141 Under the blood moon, they hit three times harder.
+5 3.753673 Sell out a friend, or refuse, and die.
+6 4.08322 A helicopter is coming. It waits five minutes.
+7 2.425805 Then face the thing under the mountain.
+8 2.43941 And talk to them, in any language.
+9 3.888435 Hollow Hours. Get your version in the Files tab.
