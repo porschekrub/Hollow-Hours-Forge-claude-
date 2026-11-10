@@ -1,0 +1,23 @@
+name: Generate narration
+on:
+  push:
+    branches: [gen-narration]
+jobs:
+  narr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q --index-url https://download.pytorch.org/whl/cpu torch
+          pip install -q transformers numpy
+      - run: mkdir -p out && python tools/gen_narration.py out 2>&1 | tee out/log.txt
+      - run: |
+          cd out && git init -q && git checkout -q -b narration-out && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm narration
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" narration-out
