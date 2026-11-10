@@ -3,13 +3,21 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.15.0.jar` · `helperbuddy-forge-1.20.1-2.15.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.15.0.jar` · `helperbuddy-neoforge-1.21.1-2.15.0.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.15.0.jar` · `helperbuddy-forge-1.21.1-2.15.0.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.15.0.jar` · `helperbuddy-fabric-1.20.1-2.15.0.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.15.0.jar` · `helperbuddy-fabric-1.21.1-2.15.0.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.0.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
+
+**2.16.0 — English first**
+- Both mods are now in **English unless your game is set to Thai** (Options → Language → ภาษาไทย). Before, the helper answered in Thai as soon as you typed Thai, even with an English game.
+  มอดทั้งสองตัวเป็น**ภาษาอังกฤษเป็นหลัก** จะเป็นภาษาไทยก็ต่อเมื่อตั้งภาษาเกมเป็นภาษาไทย (Options → Language → ภาษาไทย) เมื่อก่อนถ้าพิมพ์ไทย ผู้ช่วยจะตอบไทยทันทีแม้เกมเป็นภาษาอังกฤษ
+- You can still give orders in Thai or English (typed or spoken): the helper understands both, but answers in your game's language. The AI (helper and ghosts) answers in your game's language too.
+  ยังสั่งเป็นไทยหรืออังกฤษได้เหมือนเดิม (พิมพ์หรือพูด) ผู้ช่วยเข้าใจทั้งสองภาษา แต่จะตอบเป็นภาษาของเกม AI (ทั้งผู้ช่วยและผี) ก็ตอบตามภาษาของเกมเช่นกัน
+- Hollow Hours: the yellow lines on the main menu are English, or Thai when the game is in Thai.
+  Hollow Hours: ข้อความสีเหลืองที่หน้าเมนูหลักเป็นภาษาอังกฤษ หรือภาษาไทยเมื่อเกมเป็นภาษาไทย
 
 **2.15.0 — talk to your helper**
 - 🎤 **Voice orders**: hold **B** (change it in Controls → Helper Buddy), say what you want ("ไปตัดไม้ 20 ท่อน", "take me to the village", "ตกปลา 10 ตัว"...) and let go. The helper hears it, shows what it understood in chat, and does it, answering in its own voice. Works in Thai and English, for everyone on the server (each player talks to their own helpers).

@@ -14,22 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/** Messages from a helper to its owner, in the owner's language (Thai when the game is in Thai, otherwise English). */
+/** Messages from a helper to its owner, in the language of the owner's game: Thai when the game is set to Thai, English for everything else. */
 public final class Say {
     private Say() {}
 
-    /** Language each player last talked in (so a Thai player with an English game still gets Thai answers). */
-    static final Map<UUID, Boolean> SPOKE_THAI = new HashMap<>();
-
-    public static void noteLanguage(Player p, String text) {
-        if (Nlu.looksThai(text)) SPOKE_THAI.put(p.getUUID(), true);
-        else if (text.matches(".*[a-zA-Z]{3,}.*")) SPOKE_THAI.put(p.getUUID(), false);
-    }
-
+    /** Thai only when the player's game is set to Thai (whatever language they type in); English otherwise. */
     public static boolean thai(@Nullable Player p) {
-        if (p == null) return false;
-        Boolean b = SPOKE_THAI.get(p.getUUID());
-        if (b != null) return b;
         return p instanceof ServerPlayer sp && sp.getLanguage() != null && sp.getLanguage().toLowerCase().startsWith("th");
     }
 

@@ -53,6 +53,11 @@ public final class Talk {
         return Say.thai(p);
     }
 
+    /** The language the AI answers in: the player's game language. */
+    static String lang(ServerPlayer p) {
+        return Say.thai(p) ? "Thai" : "English";
+    }
+
     static void say(ServerPlayer p, HelperEntity h, String th, String en) {
         Say.to(p, h, th, en);
     }
@@ -60,7 +65,6 @@ public final class Talk {
     // ------------------------------------------------------------------ entry from chat / command / screen
     /** Picks which helper(s) the player is talking to ("ทุกคน ..." / "everyone ..." / "<name> ...", else the last or nearest). */
     public static void command(ServerPlayer p, String raw) {
-        Say.noteLanguage(p, raw);
         List<HelperEntity> mine = Helpers.owned(p);
         if (mine.isEmpty()) {
             p.sendSystemMessage(Component.literal(Say.t(p, "§6[ผู้ช่วย]§r คุณยังไม่มีผู้ช่วยเลย ใช้ §eสัญญาจ้างผู้ช่วย§r คลิกที่พื้นเพื่อเรียกผู้ช่วยก่อนนะ",
@@ -117,7 +121,6 @@ public final class Talk {
         if (text.isEmpty()) return;
         LAST_HELPER.put(p.getUUID(), h.getUUID());
         if (typed) {
-            Say.noteLanguage(p, text);
             p.sendSystemMessage(Component.literal("§7[" + Say.t(p, "คุณ", "You") + " → " + h.helperName() + "]§f " + text));
         }
         if (!h.isOwner(p)) {
@@ -968,7 +971,7 @@ public final class Talk {
             + "\"kill the dragon\" / \"fight the wither\" (shoots end crystals first), \"build an automatic door\", \"build an auto smelter\", \"build a light switch\". "
             + "Rules: keep the player's exact numbers and items (\"64 meat\" means 64 pieces of meat, never fewer animals). Several commands run one after another. "
             + "Questions about the game you can answer yourself go in \"reply\" (you know Minecraft and every installed mod well; use the world facts you are given). "
-            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the player's language (Thai if they wrote Thai), "
+            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the reply language given below (the language of the player's game, whatever language they wrote in), "
             + "one or two short sentences, in the helper's own personality.";
 
     /** The helper's personality, for the AI. */
@@ -997,7 +1000,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
-        String sys = AI_COMMANDS + " The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
+        String sys = AI_COMMANDS + " Reply language: " + lang(p) + ". The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
                 + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups." + contextForAi(h, p);
         List<AiBridge.Msg> hist = HISTORY.computeIfAbsent(hid, k -> new ArrayList<>());
         List<AiBridge.Msg> msgs = new ArrayList<>(hist);
@@ -1045,7 +1048,7 @@ public final class Talk {
     }
 
     static final String AI_BUILD = "You design small Minecraft (Java 1.20.1) builds for a helper to place. Reply with JSON only: "
-            + "{\"name\":\"short name in the player's language\",\"boxes\":[{\"from\":[x,y,z],\"to\":[x,y,z],\"block\":\"minecraft:block_id\",\"hollow\":false}]}. "
+            + "{\"name\":\"short name in LANG\",\"boxes\":[{\"from\":[x,y,z],\"to\":[x,y,z],\"block\":\"minecraft:block_id\",\"hollow\":false}]}. "
             + "Coordinates are blocks: x = left/right, y = up (0 = ground level, nothing below 0), z = away from the player (the front faces z = -1). "
             + "Every coordinate must be between 0 and MAX-1. Use real Java block ids (stone_bricks, oak_planks, glass, white_wool, red_concrete, black_concrete, quartz_block, iron_block, ...). "
             + "Boxes are filled; \"hollow\":true leaves the inside empty (walls only). Later boxes overwrite earlier ones, so carve doors and windows with \"minecraft:air\" boxes. "
@@ -1061,7 +1064,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังออกแบบ \"" + text + "\"...)", "§7(designing \"" + text + "\"...)");
-        AiBridge.send(AI_BUILD.replace("MAX", String.valueOf(max)), List.of(new AiBridge.Msg("user", "Build: " + text)), 4000, 0.4).thenAccept(res -> server.execute(() -> {
+        AiBridge.send(AI_BUILD.replace("MAX", String.valueOf(max)).replace("LANG", lang(p)), List.of(new AiBridge.Msg("user", "Build: " + text)), 4000, 0.4).thenAccept(res -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
             if (pl == null || hh == null) return;
@@ -1147,7 +1150,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         String sys = "You are " + h.helperName() + ", the Minecraft helper of " + p.getGameProfile().getName() + ", and you know everything about Minecraft and its mods. "
-                + "Answer in the player's language (Thai if they wrote Thai), one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + "."
+                + "Answer in " + lang(p) + " (the language of the player's game, whatever language they wrote in), one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + "."
                 + contextForAi(h, p);
         AiBridge.chat(sys, List.of(new AiBridge.Msg("user", text)), 800, 0.8).thenAccept(r -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
