@@ -1,0 +1,183 @@
+[10Nov2026 09:57:31.880] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_server, --gameDir, ., --nogui]
+[10Nov2026 09:57:31.882] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.13+9-LTS
+[10Nov2026 09:57:31.883] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.13 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure
+[10Nov2026 09:57:31.980] [main/WARN] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/hollow-hours/run/config/fml.toml is not correct. Correcting
+[10Nov2026 09:57:31.981] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSkipGLVersions] was corrected from null to []
+[10Nov2026 09:57:31.982] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowLogHelpMessage] was corrected from null to true
+[10Nov2026 09:57:31.982] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowSquir] was corrected from null to false
+[10Nov2026 09:57:31.982] [main/INFO] [net.minecraftforge.fml.loading.FMLConfig/CORE]: Incorrect key [earlyWindowShowCPU] was corrected from null to false
+[10Nov2026 09:57:32.045] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_server
+[10Nov2026 09:57:32.142] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=SERVER
+[10Nov2026 09:57:33.176] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[10Nov2026 09:57:33.939] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[10Nov2026 09:57:33.960] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_server' with arguments [--gameDir, ., --nogui]
+[10Nov2026 09:57:33.981] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+[10Nov2026 09:57:34.462] [main/WARN] [oshi.util.FileUtil/]: Configuration conflict: there is more than one oshi.properties file on the classpath: [jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties]
+[10Nov2026 09:57:35.077] [main/WARN] [oshi.util.FileUtil/]: Configuration conflict: there is more than one oshi.architecture.properties file on the classpath: [jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties]
+[10Nov2026 09:57:35.441] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[10Nov2026 09:57:39.121] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 52.1.21, for MC 1.21.1 with MCP 20240808.132146
+[10Nov2026 09:57:39.121] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v52.1.21 Initialized
+[10Nov2026 09:57:39.143] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[10Nov2026 09:57:39.372] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/hollow-hours/run/config/hollowhours-common.toml is not correct. Correcting
+[10Nov2026 09:57:39.374] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.firstSpawnMin was corrected from null to its default, 180. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.firstSpawnMax was corrected from null to its default, 300. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.gapMin was corrected from null to its default, 420. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.gapMax was corrected from null to its default, 720. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.quickChance was corrected from null to its default, 0.15. 
+[10Nov2026 09:57:39.376] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.respawnMin was corrected from null to its default, 900. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.respawnMax was corrected from null to its default, 1500. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.falseAlarmChance was corrected from null to its default, 0.12. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.houseEventChance was corrected from null to its default, 0.8. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.glimpseChance was corrected from null to its default, 0.1. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.maxAlive was corrected from null to its default, 1. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.chaseMaxSeconds was corrected from null to its default, 90. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.onlyAtNight was corrected from null to its default, false. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.huntInOtherDimensions was corrected from null to its default, false. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.fakeMessages was corrected from null to its default, true. 
+[10Nov2026 09:57:39.377] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.stalkers was corrected from null to its default, true. 
+[10Nov2026 09:57:39.380] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key spawning.randomEvents was corrected from null to its default, true. 
+[10Nov2026 09:57:39.384] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.384] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.speedMultiplier was corrected from null to its default, 1.0. 
+[10Nov2026 09:57:39.384] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.damage was corrected from null to its default, 8.0. 
+[10Nov2026 09:57:39.384] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.rageSpeed was corrected from null to its default, 1.4. 
+[10Nov2026 09:57:39.385] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.rageDamage was corrected from null to its default, 2.0. 
+[10Nov2026 09:57:39.385] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.breakDoors was corrected from null to its default, true. 
+[10Nov2026 09:57:39.385] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ghosts.breakWalls was corrected from null to its default, true. 
+[10Nov2026 09:57:39.386] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key story was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.386] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key story.startNight was corrected from null to its default, 3. 
+[10Nov2026 09:57:39.386] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key story.phoneAlert was corrected from null to its default, true. 
+[10Nov2026 09:57:39.386] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key story.givePhone was corrected from null to its default, true. 
+[10Nov2026 09:57:39.387] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key story.contactsLostNight was corrected from null to its default, 15. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival.thirst was corrected from null to its default, true. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival.thirstRate was corrected from null to its default, 1.0. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival.phoneDrain was corrected from null to its default, 1.0. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival.sanity was corrected from null to its default, true. 
+[10Nov2026 09:57:39.392] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key survival.blood was corrected from null to its default, true. 
+[10Nov2026 09:57:39.395] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key physics was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.395] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key physics.treeFelling was corrected from null to its default, true. 
+[10Nov2026 09:57:39.395] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key physics.veinMiningMax was corrected from null to its default, 64. 
+[10Nov2026 09:57:39.395] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key physics.explosionDebris was corrected from null to its default, true. 
+[10Nov2026 09:57:39.398] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key graves was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.398] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key graves.enabled was corrected from null to its default, true. 
+[10Nov2026 09:57:39.398] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key graves.minutes was corrected from null to its default, 15. 
+[10Nov2026 09:57:39.399] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key graves.hitsToBreak was corrected from null to its default, 3. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.enabled was corrected from null to its default, true. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.messageDay was corrected from null to its default, 7. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.minDays was corrected from null to its default, 35. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.maxDays was corrected from null to its default, 100. 
+[10Nov2026 09:57:39.400] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.pickupMinutes was corrected from null to its default, 5. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.invasionMinDays was corrected from null to its default, 5. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.invasionMaxDays was corrected from null to its default, 10. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.missedGhostMultiplier was corrected from null to its default, 2.0. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.missedBloodMoonMultiplier was corrected from null to its default, 5.0. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.returnGhostMultiplier was corrected from null to its default, 3.0. 
+[10Nov2026 09:57:39.401] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key rescue.returnBloodMoonMultiplier was corrected from null to its default, 6.0. 
+[10Nov2026 09:57:39.403] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.403] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.bloodMoonChance was corrected from null to its default, 0.1. 
+[10Nov2026 09:57:39.404] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.bloodMoonSpawnMultiplier was corrected from null to its default, 3.0. 
+[10Nov2026 09:57:39.404] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.bloodMoonDamageMultiplier was corrected from null to its default, 3.0. 
+[10Nov2026 09:57:39.404] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.bloodMoonSpeedMultiplier was corrected from null to its default, 1.25. 
+[10Nov2026 09:57:39.404] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.bloodMoonDoubleChance was corrected from null to its default, 0.5. 
+[10Nov2026 09:57:39.404] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.fog was corrected from null to its default, true. 
+[10Nov2026 09:57:39.405] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key atmosphere.fogChancePerMinute was corrected from null to its default, 0.05. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death.killMode was corrected from null to its default, LETHAL_HIT. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death.betrayalChance was corrected from null to its default, 0.25. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death.betrayalSeconds was corrected from null to its default, 10. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death.betrayalLieChance was corrected from null to its default, 0.0. 
+[10Nov2026 09:57:39.407] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key death.betrayalAcrossDimensions was corrected from null to its default, true. 
+[10Nov2026 09:57:39.410] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key talk was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.411] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key talk.negotiateChance was corrected from null to its default, 0.05. 
+[10Nov2026 09:57:39.411] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key talk.rageChance was corrected from null to its default, 0.25. 
+[10Nov2026 09:57:39.411] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key talk.askGiveChance was corrected from null to its default, 0.5. 
+[10Nov2026 09:57:39.411] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key talk.askLimit was corrected from null to its default, 3. 
+[10Nov2026 09:57:39.413] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.413] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.enabled was corrected from null to its default, false. 
+[10Nov2026 09:57:39.413] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.provider was corrected from null to its default, gemini. 
+[10Nov2026 09:57:39.413] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.apiKey was corrected from null to its default, . 
+[10Nov2026 09:57:39.413] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.model was corrected from null to its default, . 
+[10Nov2026 09:57:39.414] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.url was corrected from null to its default, . 
+[10Nov2026 09:57:39.414] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key ai.timeoutSeconds was corrected from null to its default, 20. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.knockOut was corrected from null to its default, true. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.knockOutSeconds was corrected from null to its default, 70. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.ghostToughness was corrected from null to its default, 1.0. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.struggle was corrected from null to its default, true. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.struggleSeconds was corrected from null to its default, 5.0. 
+[10Nov2026 09:57:39.416] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key combat.fitness was corrected from null to its default, true. 
+[10Nov2026 09:57:39.418] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key endgame was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.418] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key endgame.enabled was corrected from null to its default, true. 
+[10Nov2026 09:57:39.418] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key endgame.daysAfterReturn was corrected from null to its default, 20. 
+[10Nov2026 09:57:39.418] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key endgame.mountainDistance was corrected from null to its default, 520. 
+[10Nov2026 09:57:39.418] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key endgame.bossHealth was corrected from null to its default, 500. 
+[10Nov2026 09:57:39.425] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/hollow-hours/run/config/forge-common.toml is not correct. Correcting
+[10Nov2026 09:57:39.425] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key general was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:39.426] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key general.logLegacyTagWarnings was corrected from null to its default, OFF. 
+[10Nov2026 09:57:39.426] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key general.fixGameTestBlockPosAsserts was corrected from null to its default, true. 
+[10Nov2026 09:57:39.426] [main/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key general.channelListLimit was corrected from null to its default, 1024. 
+[10Nov2026 09:57:39.640] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[10Nov2026 09:57:39.995] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: AHEAD Current: 52.1.21 Target: null
+[10Nov2026 09:57:40.281] [main/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[10Nov2026 09:57:40.313] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/hollow-hours/.gradle/mavenizer/repo/net/minecraftforge/forge/1.21.1-52.1.21/forge-1.21.1-52.1.21.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[10Nov2026 09:57:40.313] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/hollow-hours/.gradle/mavenizer/repo/net/minecraftforge/forge/1.21.1-52.1.21/forge-1.21.1-52.1.21.jar%230!/data/.mcassetsroot' uses unexpected schema
+[10Nov2026 09:57:40.902] [main/INFO] [net.minecraft.server.Main/]: No existing world data, creating new world
+[10Nov2026 09:57:40.910] [main/ERROR] [net.minecraft.server.dedicated.DedicatedServerProperties/]: No key layers in MapLike[{}]
+[10Nov2026 09:57:41.735] [main/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 1340 recipes
+[10Nov2026 09:57:41.932] [main/INFO] [net.minecraft.advancements.AdvancementTree/]: Loaded 1399 advancements
+[10Nov2026 09:57:42.359] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting minecraft server version 1.21.1
+[10Nov2026 09:57:42.359] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Loading properties
+[10Nov2026 09:57:42.359] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Default game type: SURVIVAL
+[10Nov2026 09:57:42.359] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[10Nov2026 09:57:42.454] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Starting Minecraft server on *:25565
+[10Nov2026 09:57:42.492] [Server thread/INFO] [net.minecraft.server.network.ServerConnectionListener/]: Using epoll channel type
+[10Nov2026 09:57:42.576] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[10Nov2026 09:57:42.576] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: The server will make no attempt to authenticate usernames. Beware.
+[10Nov2026 09:57:42.576] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[10Nov2026 09:57:42.576] [Server thread/WARN] [net.minecraft.server.dedicated.DedicatedServer/]: To change this, set "online-mode" to "true" in the server.properties file.
+[10Nov2026 09:57:42.589] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Configuration file ./world/serverconfig/forge-server.toml is not correct. Correcting
+[10Nov2026 09:57:42.589] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[10Nov2026 09:57:42.589] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringBlockEntities was corrected from null to its default, false. 
+[10Nov2026 09:57:42.590] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringEntities was corrected from null to its default, false. 
+[10Nov2026 09:57:42.590] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.fullBoundingBoxLadders was corrected from null to its default, false. 
+[10Nov2026 09:57:42.590] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.permissionHandler was corrected from null to its default, forge:default_handler. 
+[10Nov2026 09:57:42.590] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.advertiseDedicatedServerToLan was corrected from null to its default, true. 
+[10Nov2026 09:57:42.590] [Server thread/WARN] [net.minecraftforge.common.ForgeConfigSpec/CORE]: Incorrect key server.useItemWithDurationZero was corrected from null to its default, false. 
+[10Nov2026 09:57:42.618] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Preparing level "world"
+[10Nov2026 09:57:43.146] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[10Nov2026 09:57:43.182] [Worker-Main-3/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 2%
+[10Nov2026 09:57:43.648] [Worker-Main-2/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 51%
+[10Nov2026 09:57:43.667] [Server thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 520 ms
+[10Nov2026 09:57:43.668] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer/]: Done (1.081s)! For help, type "help"
+[10Nov2026 09:57:43.678] [Server thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: []
+[10Nov2026 09:57:43.682] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[10Nov2026 09:57:48.657] [Server thread/INFO] [HollowHours/]: Loaded 30 kill cinematic tracks
+[10Nov2026 09:57:48.862] [Server thread/INFO] [HollowHours/]: [smoke] AI understanding OK: Understood[intent=ask_item, topic=null, offer=null, offerName=null, ask=diamond_sword, count=2] | Understood[intent=bargain, topic=null, offer=minecraft:cooked_beef, offerName=steak, ask=null, count=1]
+[10Nov2026 09:57:48.887] [Server thread/INFO] [HollowHours/]: [smoke] blood moon OK (ghost damage 24.0)
+[10Nov2026 09:57:48.894] [Server thread/INFO] [HollowHours/]: [smoke] story, phone, thirst and blood OK
+[10Nov2026 09:57:48.924] [Server thread/INFO] [HollowHours/]: [smoke] physics and playground OK (ball rebound 2.01 blocks)
+[10Nov2026 09:57:50.766] [Server thread/INFO] [HollowHours/]: [smoke] rescue OK: haven biomes [hollowhours:haven_beach, hollowhours:haven_blossom, hollowhours:haven_flower_woods, hollowhours:haven_lagoon, hollowhours:haven_meadow], landing at BlockPos{x=8, y=73, z=8}
+[10Nov2026 09:57:50.771] [Server thread/INFO] [HollowHours/]: [smoke] graves OK
+[10Nov2026 09:57:50.879] [Server thread/INFO] [HollowHours/]: [smoke] combat: 12 pistol hits knock ghost 3 out (poise 100.0)
+[10Nov2026 09:57:50.898] [Server thread/INFO] [HollowHours/]: [smoke] drinking water OK (still, flowing, lily pad, past grass, cauldron; not through stone)
+[10Nov2026 09:57:50.904] [Server thread/INFO] [HollowHours/]: [Hollow Hours] all five are down: the mountain is at BlockPos{x=-505, y=64, z=0}
+[10Nov2026 09:57:51.327] [Server thread/INFO] [HollowHours/]: [Hollow Hours] building the mountain at BlockPos{x=300, y=-60, z=40} (cavern floor -60, 56467 blocks)
+[10Nov2026 09:57:51.452] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the mountain is built (56467 blocks)
+[10Nov2026 09:57:51.454] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the thing under the mountain wakes at (300.5, -60.0, 40.5)
+[10Nov2026 09:57:51.511] [Server thread/INFO] [HollowHours/]: [Hollow Hours] the story is over: the world is at peace
+[10Nov2026 09:57:51.514] [Server thread/INFO] [HollowHours/]: [smoke] endgame OK: mountain 56467 blocks, boss beaten in 15 hits, 616 ms
+[10Nov2026 09:57:51.519] [Server thread/INFO] [HollowHours/]: SMOKE TEST OK
+[10Nov2026 09:57:51.522] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[10Nov2026 09:57:51.524] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[10Nov2026 09:57:51.524] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[10Nov2026 09:57:52.589] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[10Nov2026 09:57:53.263] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[10Nov2026 09:57:53.266] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/hollowhours:haven
+[10Nov2026 09:57:53.274] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[10Nov2026 09:57:53.297] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[10Nov2026 09:57:53.297] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[10Nov2026 09:57:53.297] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (haven): All chunks are saved
+[10Nov2026 09:57:53.297] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[10Nov2026 09:57:53.297] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
