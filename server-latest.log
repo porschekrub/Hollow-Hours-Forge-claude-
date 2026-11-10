@@ -1,0 +1,240 @@
+[09:57:29] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.20.1 with Fabric Loader 0.20.1
+[09:57:29] [main/INFO] (FabricLoader) Loading 49 mods:
+	- fabric-api 0.92.12+1.20.1
+	- fabric-api-base 0.4.32+1802ada577
+	- fabric-api-lookup-api-v1 1.6.37+1802ada577
+	- fabric-biome-api-v1 13.0.15+93aa238b77
+	- fabric-block-api-v1 1.0.12+1802ada577
+	- fabric-block-view-api-v2 1.0.3+924f046a77
+	- fabric-command-api-v1 1.2.35+f71b366f77
+	- fabric-command-api-v2 2.2.14+1802ada577
+	- fabric-commands-v0 0.2.52+df3654b377
+	- fabric-containers-v0 0.1.68+df3654b377
+	- fabric-content-registries-v0 4.0.13+1802ada577
+	- fabric-convention-tags-v1 1.5.6+1802ada577
+	- fabric-crash-report-info-v1 0.2.20+1802ada577
+	- fabric-data-attachment-api-v1 1.0.2+de0fd6d177
+	- fabric-data-generation-api-v1 12.4.0+238242b777
+	- fabric-dimensions-v1 2.1.55+1802ada577
+	- fabric-entity-events-v1 1.6.1+1c78457f77
+	- fabric-events-interaction-v0 0.6.6+13a40c6677
+	- fabric-events-lifecycle-v0 0.2.64+df3654b377
+	- fabric-game-rule-api-v1 1.0.41+1802ada577
+	- fabric-gametest-api-v1 1.2.15+1802ada577
+	- fabric-item-api-v1 2.1.29+1802ada577
+	- fabric-item-group-api-v1 4.0.14+1802ada577
+	- fabric-lifecycle-events-v1 2.2.23+1802ada577
+	- fabric-loot-api-v2 1.2.3+1802ada577
+	- fabric-loot-tables-v1 1.1.47+9e7660c677
+	- fabric-message-api-v1 5.1.10+1802ada577
+	- fabric-mining-level-api-v1 2.1.52+1802ada577
+	- fabric-networking-api-v1 1.3.15+0caff8d077
+	- fabric-networking-v0 0.3.55+df3654b377
+	- fabric-object-builder-api-v1 11.1.5+e35120df77
+	- fabric-particles-v1 1.1.3+1802ada577
+	- fabric-recipe-api-v1 1.0.25+1802ada577
+	- fabric-registry-sync-v0 2.4.1+4c0a70e677
+	- fabric-rendering-data-attachment-v1 0.3.39+92a0d36777
+	- fabric-rendering-fluids-v1 3.0.29+1802ada577
+	- fabric-resource-conditions-api-v1 2.3.9+1802ada577
+	- fabric-resource-loader-v0 0.11.12+fb82e9d777
+	- fabric-screen-handler-api-v1 1.3.34+1802ada577
+	- fabric-tag-api-v1 1.3.0+238242b777
+	- fabric-transfer-api-v1 3.3.6+8dd72ea377
+	- fabric-transitive-access-wideners-v1 4.3.2+1802ada577
+	- fabricloader 0.20.1
+	- forgeconfigapiport 8.0.3
+	- geckolib 4.8.4
+	- helperbuddy 2.16.3
+	- java 21
+	- minecraft 1.20.1
+	- mixinextras 0.5.5
+[09:57:29] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.17.5+mixin.0.8.7/cef8519a91129d0c21fa03bb9378f0e8ca810e5/sponge-mixin-0.17.5+mixin.0.8.7.jar Service=Knot/Fabric Env=SERVER
+[09:57:30] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
+[09:57:30] [main/INFO] (FabricLoader/MixinExtras|Service) Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[09:57:34] [main/ERROR] (Minecraft) No data fixer registered for helperbuddy:helper
+[09:57:34] [main/WARN] (Forge Config API Port) Configuration file ./config/helperbuddy-common.toml is not correct. Correcting
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper was corrected from null to its default, SimpleCommentedConfig:{}. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.sightRadius was corrected from null to its default, 0. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.maxHelpersPerPlayer was corrected from null to its default, 8. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.workSpeed was corrected from null to its default, 1.25. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.damageMultiplier was corrected from null to its default, 1.0. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.buildSpeed was corrected from null to its default, 1. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.freeBuild was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.contractOnFirstJoin was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.fightBackPlayers was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.teleportToOwner was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.keepCommandBookOnDeath was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.keepChunksLoaded was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key helper.exploreFurther was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality was corrected from null to its default, SimpleCommentedConfig:{}. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality.style was corrected from null to its default, sassy. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality.trolling was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality.trollChance was corrected from null to its default, 0.35. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality.helpersTalk was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key personality.memory was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice was corrected from null to its default, SimpleCommentedConfig:{}. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice.voice was corrected from null to its default, auto. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice.speechModel was corrected from null to its default, gemini-3.8-flash-lite-tts. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice.speechVoice was corrected from null to its default, . 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice.volume was corrected from null to its default, 1.0. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key voice.listen was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai was corrected from null to its default, SimpleCommentedConfig:{}. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.enabled was corrected from null to its default, false. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.provider was corrected from null to its default, gemini. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.apiKey was corrected from null to its default, . 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.model was corrected from null to its default, . 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.url was corrected from null to its default, . 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.timeoutSeconds was corrected from null to its default, 25. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.useForCommands was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.useForChat was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.useForBuilding was corrected from null to its default, true. 
+[09:57:34] [main/WARN] (Forge Config API Port) Incorrect key ai.maxBuildSize was corrected from null to its default, 32. 
+[09:57:35] [main/INFO] (Minecraft) Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[09:57:35] [main/ERROR] (Minecraft) No key layers in MapLike[{}]
+[09:57:36] [main/INFO] (Minecraft) Loaded 7 recipes
+[09:57:36] [main/INFO] (Minecraft) Loaded 1271 advancements
+[09:57:36] [main/INFO] (BiomeModificationImpl) Applied 0 biome modifications to 0 of 64 new biomes in 1.089 ms
+[09:57:36] [Server thread/INFO] (Minecraft) Starting minecraft server version 1.20.1
+[09:57:36] [Server thread/INFO] (Minecraft) Loading properties
+[09:57:36] [Server thread/INFO] (Minecraft) Default game type: SURVIVAL
+[09:57:36] [Server thread/INFO] (Minecraft) Generating keypair
+[09:57:36] [Server thread/INFO] (Minecraft) Starting Minecraft server on *:25565
+[09:57:36] [Server thread/INFO] (Minecraft) Using epoll channel type
+[09:57:36] [Server thread/WARN] (Minecraft) **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[09:57:36] [Server thread/WARN] (Minecraft) The server will make no attempt to authenticate usernames. Beware.
+[09:57:36] [Server thread/WARN] (Minecraft) While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[09:57:36] [Server thread/WARN] (Minecraft) To change this, set "online-mode" to "true" in the server.properties file.
+[09:57:36] [Server thread/INFO] (Minecraft) Preparing level "world"
+[09:57:37] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
+[09:57:37] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 0%
+[09:57:37] [Worker-Main-3/INFO] (Minecraft) Preparing spawn area: 1%
+[09:57:38] [Worker-Main-1/INFO] (Minecraft) Preparing spawn area: 47%
+[09:57:38] [Server thread/INFO] (Minecraft) Time elapsed: 1281 ms
+[09:57:38] [Server thread/INFO] (Minecraft) Done (1.768s)! For help, type "help"
+[09:57:39] [Server thread/INFO] (HelperBuddy) [smoke] 720 plans, 926340 blocks checked
+[09:57:39] [Server thread/INFO] (HelperBuddy) [smoke] build site: ok=true 
+[09:57:41] [Server thread/INFO] (HelperBuddy) [smoke] t=50 mode BUILD status '23%' tasks false bag 9/36
+[09:57:46] [Server thread/INFO] (HelperBuddy) [smoke] t=150 mode BUILD status '93%' tasks false bag 9/36
+[09:57:47] [Server thread/INFO] (HelperBuddy) [Buddy says] §a§lThe House is finished!§r Enjoy your new place
+[09:57:51] [Server thread/INFO] (HelperBuddy) [smoke] t=250 mode FOLLOW status '' tasks false bag 9/36
+[09:57:53] [Server thread/INFO] (HelperBuddy) [smoke] build progress 0% (placed blocks)
+[09:57:56] [Server thread/INFO] (HelperBuddy) [smoke] t=350 mode MINE status '250/250' tasks false bag 9/36
+[09:58:01] [Server thread/INFO] (HelperBuddy) [smoke] t=450 mode GATHER status '248/250' tasks false bag 10/36
+[09:58:06] [Server thread/INFO] (HelperBuddy) [smoke] t=550 mode FARM status '' tasks false bag 10/36
+[09:58:11] [Server thread/INFO] (HelperBuddy) [smoke] t=650 mode DIG status '30%' tasks false bag 10/36
+[09:58:13] [Server thread/INFO] (HelperBuddy) [Buddy says] Crafted §e1 Crafting Table§r!
+[09:58:13] [Server thread/INFO] (HelperBuddy) [Buddy] task craft done (count 0, phase 0)
+[09:58:16] [Server thread/INFO] (HelperBuddy) [smoke] t=750 mode FOLLOW status '' tasks false bag 11/36
+[09:58:18] [Server thread/INFO] (HelperBuddy) [smoke] nearest village: BlockPos{x=160, y=-64, z=384} (195 ms)
+[09:58:18] [Server thread/INFO] (HelperBuddy) [smoke] bag: 1 iron_pickaxe, 1 iron_axe, 1 iron_hoe, 61 torch, 16 bread, 15 coal, 16 wheat_seeds, 15 oak_log, 28 dirt, 1 crafting_table, 4 iron_ingot, 
+[09:58:18] [Server thread/INFO] (HelperBuddy) [smoke] mode TASK status 'smelting 3' bag 11/36
+[09:58:18] [Server thread/INFO] (HelperBuddy) [smoke] skills started
+[09:58:18] [Server thread/INFO] (HelperBuddy) [Buddy says] Enchanted (level 4, 0 bookshelves): Enchanted Book
+[09:58:18] [Server thread/INFO] (HelperBuddy) [Buddy] task enchant done (count 0, phase 1)
+[09:58:18] [Server thread/INFO] (HelperBuddy) [Buddy says] Put 2 Raw Iron in the Furnace, I'll wait and collect what comes out
+[09:58:19] [Server thread/INFO] (HelperBuddy) [Buddy says] Smelted §e4§r items, they're in my bag
+[09:58:19] [Server thread/INFO] (HelperBuddy) [Buddy] task smelt done (count 4, phase 0)
+[09:58:19] [Server thread/INFO] (HelperBuddy) [Buddy says] Traded for §e1 Emerald§r, they're in my bag
+[09:58:19] [Server thread/INFO] (HelperBuddy) [Buddy] task trade done (count 1, phase 0)
+[09:58:19] [Server thread/INFO] (HelperBuddy) [smoke] nearest nether portal: BlockPos{x=-24, y=-59, z=0}
+[09:58:21] [Server thread/INFO] (HelperBuddy) [smoke] t=850 mode STAY status '' tasks false bag 11/36
+[09:58:21] [Server thread/INFO] (HelperBuddy) [Buddy says] Caught §e2§r fish, they're in my bag
+[09:58:21] [Server thread/INFO] (HelperBuddy) [Buddy] task fish done (count 2, phase 2)
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:58:23] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:26] [Server thread/INFO] (HelperBuddy) [smoke] t=950 mode STAY status '' tasks false bag 11/36
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:58:28] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:31] [Server thread/INFO] (HelperBuddy) [smoke] t=1050 mode STAY status '' tasks false bag 11/36
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:58:33] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:36] [Server thread/INFO] (HelperBuddy) [smoke] t=1150 mode STAY status '' tasks false bag 11/36
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] fishing: 2 things caught
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] trading: 1 emeralds, 20 wheat left
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] enchanting: 1 enchanted books, bag 1 enchanted_book, 1 lapis_lazuli, 
+[09:58:38] [Server thread/INFO] (HelperBuddy) [smoke] end crystal alive: false, arrows left 15
+[09:58:39] [Server thread/INFO] (HelperBuddy) [Buddy says] Collected §e2§r items from the Furnace, they're in my bag
+[09:58:39] [Server thread/INFO] (HelperBuddy) [Buddy] task machine done (count 2, phase 2)
+[09:58:41] [Server thread/INFO] (HelperBuddy) [smoke] t=1250 mode STAY status '' tasks false bag 11/36
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:43] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:46] [Server thread/INFO] (HelperBuddy) [smoke] t=1350 mode STAY status '' tasks false bag 11/36
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:48] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:51] [Server thread/INFO] (HelperBuddy) [smoke] t=1450 mode STAY status '' tasks false bag 11/36
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:53] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:56] [Server thread/INFO] (HelperBuddy) [smoke] t=1550 mode STAY status '' tasks false bag 11/36
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:58] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:58] [Server thread/INFO] (HelperBuddy) [Buddy says] Brewed §e3§r bottles: Potion of Swiftness
+[09:58:58] [Server thread/INFO] (HelperBuddy) [Buddy] task brew done (count 3, phase 4)
+[09:59:01] [Server thread/INFO] (HelperBuddy) [smoke] t=1650 mode STAY status '' tasks false bag 11/36
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:03] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:06] [Server thread/INFO] (HelperBuddy) [smoke] t=1750 mode STAY status '' tasks false bag 11/36
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:08] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:11] [Server thread/INFO] (HelperBuddy) [smoke] t=1850 mode STAY status '' tasks false bag 11/36
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] brewing: 3 potions of swiftness, bag 1 potion, 1 potion, 1 potion, 1 blaze_powder, 
+[09:59:13] [Server thread/INFO] (HelperBuddy) [smoke] machine: 2 iron ingots from the furnace, bag 2 iron_ingot, 3 coal, 
+[09:59:13] [Server thread/INFO] (HelperBuddy) SMOKE TEST OK
+[09:59:13] [Server thread/INFO] (Minecraft) Stopping server
+[09:59:13] [Server thread/INFO] (Minecraft) Saving players
+[09:59:13] [Server thread/INFO] (Minecraft) Saving worlds
+[09:59:13] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[09:59:14] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[09:59:14] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[09:59:14] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (world): All chunks are saved
+[09:59:14] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[09:59:14] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[09:59:14] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage: All dimensions are saved
