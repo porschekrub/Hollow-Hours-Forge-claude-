@@ -21,7 +21,7 @@ public final class HBConfig {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
         b.comment("How the helper works").push("helper");
         SEARCH_RADIUS = b.comment("How far (blocks) the helper sees ores, trees, blocks and animals. 0 = no limit: everything loaded in the world around it",
-                "(the server view distance); when nothing is left it walks on further (exploreFurther). A number (16-512) limits it").defineInRange("searchRadius", 0, 0, 512);
+                "(the server view distance); when nothing is left it walks on further (exploreFurther). A number (16-512) limits it").defineInRange("sightRadius", 0, 0, 512);
         MAX_HELPERS_PER_PLAYER = b.comment("How many helpers one player may own").defineInRange("maxHelpersPerPlayer", 8, 1, 64);
         WORK_SPEED = b.comment("Mining / chopping speed multiplier (1 = like a player with the same tool)").defineInRange("workSpeed", 1.25, 0.25, 10.0);
         DAMAGE_MULT = b.comment("Helper attack damage multiplier").defineInRange("damageMultiplier", 1.0, 0.1, 10.0);
@@ -33,7 +33,7 @@ public final class HBConfig {
         KEEP_BOOK = b.comment("The command book stays with you when you die").define("keepCommandBookOnDeath", true);
         KEEP_LOADED = b.comment("A working helper keeps the chunks around it loaded, so it goes on working (and travelling) however far away you are",
                 "(only while its owner is online)").define("keepChunksLoaded", true);
-        EXPLORE = b.comment("When nothing is left within searchRadius, the helper walks on to look further away (no distance limit)").define("exploreFurther", true);
+        EXPLORE = b.comment("When nothing is left within sightRadius, the helper walks on to look further away (no distance limit)").define("exploreFurther", true);
         b.pop();
 
         b.comment("The helper's personality").push("personality");

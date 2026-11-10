@@ -3,17 +3,17 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.2.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.2.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.2.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.2.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.2.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.3.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.3.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.3.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.3.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.3.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
 
-**Helper Buddy 2.16.2 — no limit on how far the helper sees** (Hollow Hours stays 2.16.0)
-- The helper now sees **everything that is loaded in the world** (the whole view distance, top to bottom), not just 100 blocks; past that it walks on further by itself. `searchRadius = 0` (the new default) means no limit; a number still limits it. If you already have a config file, set `searchRadius = 0` in `config/helperbuddy-common.toml`.
-  ผู้ช่วย**มองเห็นทุกอย่างที่โหลดอยู่ในโลก** (ทั้งระยะการมองเห็นของเซิร์ฟเวอร์ ตั้งแต่บนสุดถึงล่างสุด) ไม่ใช่แค่ 100 บล็อกแล้ว ไกลกว่านั้นมันจะเดินไปหาเอง `searchRadius = 0` (ค่าเริ่มต้นใหม่) = ไม่จำกัด ถ้ามีไฟล์ config อยู่แล้ว ให้แก้เป็น `searchRadius = 0` ใน `config/helperbuddy-common.toml`
+**Helper Buddy 2.16.3 — no limit on how far the helper sees** (Hollow Hours stays 2.16.0)
+- The helper now sees **everything that is loaded in the world** (the whole view distance, top to bottom), not just 100 blocks; past that it walks on further by itself. Nothing to change: the setting is now `sightRadius` (0 = no limit, the default; a number limits it), so old config files get the new default by themselves.
+  ผู้ช่วย**มองเห็นทุกอย่างที่โหลดอยู่ในโลก** (ทั้งระยะการมองเห็นของเซิร์ฟเวอร์ ตั้งแต่บนสุดถึงล่างสุด) ไม่ใช่แค่ 100 บล็อกแล้ว ไกลกว่านั้นมันจะเดินไปหาเอง ไม่ต้องแก้อะไร ค่านี้เปลี่ยนชื่อเป็น `sightRadius` (0 = ไม่จำกัด เป็นค่าเริ่มต้น) ไฟล์ config เก่าจึงได้ค่าใหม่เอง
 
 **Helper Buddy 2.16.1 — a cartoon voice that speaks real words**
 - With the Gemini key, the helper now says everything **in real words with a cartoon voice**: its answers, what it says while working and its chatter with other helpers (faster and higher, a little different for each helper; if the free Gemini quota runs out it babbles for a while). Set `voice` in `[voice]` of `config/helperbuddy-common.toml`: `"cartoon"` (default with a key), `"ai"` (the plain AI voice), `"babble"` (the old cartoon sounds) or `"off"`.
