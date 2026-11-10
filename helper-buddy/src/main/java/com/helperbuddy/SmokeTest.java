@@ -162,6 +162,7 @@ public final class SmokeTest {
                 "voice heard text");
         check(com.helperbuddy.talk.AiBridge.heardText("{\"candidates\":[]}").isEmpty(), "voice heard nothing");
         check("th".equals(Nlu.parse("พูดภาษาไทยหน่อย").text) && Nlu.parse("speak english").k.equals("lang") && "en".equals(Nlu.parse("speak english").text), "nlu language");
+        check("Japanese".equals(Nlu.parse("พูดภาษาญี่ปุ่นนะ").text) && "Spanish".equals(Nlu.parse("talk in spanish").text) && !Nlu.parse("ใช้ลาวาเผา").k.equals("lang"), "nlu any language");
         check(!com.helperbuddy.talk.Say.thai(null), "english by default");
         check(Nlu.parse("ฆ่ามังกร").k.equals("boss") && Nlu.parse("kill the dragon").k.equals("boss"), "nlu boss");
         check("smelter".equals(Nlu.parse("build an auto smelter").house.o.type) && "autodoor".equals(Nlu.parse("สร้างประตูอัตโนมัติ").house.o.type), "nlu redstone builds");

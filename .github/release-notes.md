@@ -14,10 +14,11 @@ Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = h
 **2.16.0 — English first**
 - Everything is in **English unless your game is set to Thai** (Options → Language → ภาษาไทย).
   ทุกอย่างเป็น**ภาษาอังกฤษเป็นหลัก** จะเป็นภาษาไทยเมื่อตั้งภาษาเกมเป็นภาษาไทย
-- **The AI answers in the language you ask in**: write (or say) Thai and it answers in Thai, otherwise English. This goes for the helper, the ghosts and the people on the phone.
-  **AI ตอบตามภาษาที่ถาม**: พิมพ์ (หรือพูด) ไทย ก็ตอบไทย นอกนั้นตอบอังกฤษ ทั้งผู้ช่วย ผี และคนในโทรศัพท์
-- Tell the helper **"speak Thai"** / **"พูดภาษาไทย"** and it talks Thai from then on (all its messages too); **"speak English"** to switch back, **"speak my game's language"** to follow the game again. It remembers this in every world.
-  สั่งผู้ช่วยว่า **"พูดภาษาไทย"** แล้วมันจะพูดไทยตลอด (ข้อความทั้งหมดด้วย) **"พูดภาษาอังกฤษ"** เพื่อเปลี่ยนกลับ **"พูดตามภาษาเกม"** เพื่อให้ตามภาษาเกม มันจำไว้ทุกโลก
+- **The AI answers in the language you ask in, any language**: Thai, English, Japanese, Chinese, Spanish... (English when it can't tell). This goes for the helper, the ghosts and the people on the phone. Voice orders work in any language too.
+  **AI ตอบตามภาษาที่ถาม ได้ทุกภาษา**: ไทย อังกฤษ ญี่ปุ่น จีน สเปน... (ดูไม่ออกตอบอังกฤษ) ทั้งผู้ช่วย ผี และคนในโทรศัพท์ สั่งด้วยเสียงก็พูดได้ทุกภาษา
+- Tell the helper **"speak Thai"** / **"พูดภาษาไทย"** and it talks Thai from then on (all its messages too); **"speak Japanese"** / **"พูดภาษาญี่ปุ่น"** (or any language) makes the AI always answer in it (the built-in messages exist in English and Thai only); **"speak my game's language"** / **"พูดตามภาษาเกม"** goes back. It remembers this in every world.
+  สั่งผู้ช่วยว่า **"พูดภาษาไทย"** แล้วมันจะพูดไทยตลอด (ข้อความทั้งหมดด้วย) **"พูดภาษาญี่ปุ่น"** (หรือภาษาอื่น) ให้ AI ตอบภาษานั้นตลอด (ข้อความในตัวมอดมีแค่ไทยกับอังกฤษ) **"พูดตามภาษาเกม"** เพื่อกลับไปตามภาษาเกม มันจำไว้ทุกโลก
+- Without the AI, orders are understood in Thai and English. / ถ้าไม่ได้เปิด AI จะเข้าใจคำสั่งแค่ไทยกับอังกฤษ
 - Hollow Hours: the yellow lines on the main menu are English only.
   Hollow Hours: ข้อความสีเหลืองหน้าเมนูหลักเป็นภาษาอังกฤษอย่างเดียว
 

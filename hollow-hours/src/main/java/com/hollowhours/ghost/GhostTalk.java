@@ -647,7 +647,7 @@ public final class GhostTalk {
         int token = TOKEN.merge(p.getUUID(), 1, Integer::sum);
         // a short creepy pause while it "thinks"
         HHNet.toPlayer(p, new S2CSpeech(n, Component.literal("..."), 3));
-        String sys = systemPrompt(p, g, lang, outcome, fallback);
+        String sys = systemPrompt(p, g, lang, outcome, fallback, said);
         List<AiBridge.Msg> msgs = new ArrayList<>(mem.history);
         msgs.add(new AiBridge.Msg("user", said.isEmpty() ? "(silence)" : said));
         AiBridge.chat(sys, msgs, 600, 0.9).thenAccept(r -> p.server.execute(() -> {
@@ -663,9 +663,11 @@ public final class GhostTalk {
         }));
     }
 
-    static String systemPrompt(ServerPlayer p, GhostEntity g, String lang, String outcome, String fallback) {
+    static String systemPrompt(ServerPlayer p, GhostEntity g, String lang, String outcome, String fallback, String said) {
         int n = g.kind.n;
-        String language = lang.equals("th") ? "Thai (ภาษาไทย, casual spoken Thai, call the player เธอ)" : "English";
+        // the ghost answers in whatever language the player wrote in (Japanese, Spanish ...); English when it can't tell
+        String language = lang.equals("th") ? "Thai (ภาษาไทย, casual spoken Thai, call the player เธอ)"
+                : said != null && !said.isBlank() ? "the same language the player wrote in (English if you can't tell)" : "English";
         String what = switch (outcome) {
             case "LEAVE" -> "You have decided to LEAVE them alone for now. Say a short eerie goodbye; you are sinking into the ground.";
             case "ENRAGED" -> "You are now ENRAGED and will hunt them immediately. Threaten them.";

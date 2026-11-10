@@ -253,7 +253,7 @@ public final class PhoneChat {
                 : "Everything is normal; it's a peaceful week in a Minecraft-like world. Day " + Story.day(p.server.overworld()) + ".";
         return "You are " + role + ". You are texting with them on the phone. " + world
                 + " Reply like a real text message: one or two short sentences, no quotes, no emojis that are not on a basic phone. Reply in "
-                + (lang.equals("th") ? "Thai (casual, the way Thai family/friends text)" : "English") + ".";
+                + (lang.equals("th") ? "Thai (casual, the way Thai family/friends text)" : "the same language as the player's last message (English if you can't tell)") + ".";
     }
 
     static List<AiBridge.Msg> history(ServerPlayer p, String who) {

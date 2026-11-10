@@ -40,11 +40,11 @@ public final class Say {
         }
     }
 
-    /** Thai when the player told the helpers to speak Thai, or their game is set to Thai; English otherwise. */
+    /** Thai when the player told the helpers to speak Thai, or their game is set to Thai; English otherwise (the built-in lines know only these two). */
     public static boolean thai(@Nullable Player p) {
         String s = speak(p);
         if (s.equals("th")) return true;
-        if (s.equals("en")) return false;
+        if (!s.isEmpty()) return false;
         return p instanceof ServerPlayer sp && sp.getLanguage() != null && sp.getLanguage().toLowerCase().startsWith("th");
     }
 

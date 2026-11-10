@@ -194,8 +194,8 @@ public final class AiBridge {
         inline.addProperty("data", java.util.Base64.getEncoder().encodeToString(wav));
         audio.add("inline_data", inline);
         JsonObject ask = new JsonObject();
-        ask.addProperty("text", "This is a player of Minecraft talking to their helper (in Thai, English or both). Write down exactly what they say, "
-                + "in the language they speak (Thai words in Thai script). Reply with only those words: no quotes, no notes, no translation. "
+        ask.addProperty("text", "This is a player of Minecraft talking to their helper (in any language, often Thai or English). Write down exactly what they say, "
+                + "in the language they speak, in its own script (Thai in Thai script, Japanese in Japanese ...). Reply with only those words: no quotes, no notes, no translation. "
                 + "If nobody speaks, reply with nothing.");
         JsonArray ps = new JsonArray();
         ps.add(audio);

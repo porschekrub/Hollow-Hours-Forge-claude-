@@ -53,12 +53,14 @@ public final class Talk {
         return Say.thai(p);
     }
 
-    /** The language the AI answers in: what the player told it to speak, else the language they wrote in (English when unclear). */
+    /** The language the AI answers in: what the player told it to speak, else the language they wrote in, whatever it is (English when unclear). */
     static String lang(ServerPlayer p, String text) {
         String s = Say.speak(p);
         if (s.equals("th")) return "Thai";
         if (s.equals("en")) return "English";
-        return text != null && Nlu.looksThai(text) ? "Thai" : "English";
+        if (!s.isEmpty()) return s;
+        if (text != null && Nlu.looksThai(text)) return "Thai";
+        return "the same language as the player's message (English if you can't tell)";
     }
 
     static void say(ServerPlayer p, HelperEntity h, String th, String en) {
@@ -294,7 +296,9 @@ public final class Talk {
                 Say.setSpeak(p, it.text);
                 if (it.text.equals("th")) say(p, h, "ได้เลย ต่อจากนี้ผมจะพูดภาษาไทยนะครับ", "ได้เลย ต่อจากนี้ผมจะพูดภาษาไทยนะครับ");
                 else if (it.text.equals("en")) say(p, h, "OK, from now on I'll speak English", "OK, from now on I'll speak English");
-                else say(p, h, "โอเค ผมจะพูดตามภาษาของเกมนะครับ", "OK, I'll speak the language your game is set to");
+                else if (it.text.isEmpty()) say(p, h, "โอเค ผมจะพูดตามภาษาของเกมนะครับ", "OK, I'll speak the language your game is set to");
+                else say(p, h, "OK, from now on I'll talk to you in " + it.text + (AiBridge.enabled() ? " (my built-in messages stay in English)" : " when the AI is on (my built-in messages are English)"),
+                        "OK, from now on I'll talk to you in " + it.text + (AiBridge.enabled() ? " (my built-in messages stay in English)" : " when the AI is on (my built-in messages are English)"));
             }
             case "persona" -> {
                 h.setPersona(it.text);
@@ -973,7 +977,7 @@ public final class Talk {
             + "\"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|flowers|lush caves>\", "
             + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"take me to the <any of those>\" (the helper walks ahead and leads the player, any distance), "
             + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\", "
-            + "\"speak thai\" / \"speak english\" / \"speak my game's language\" (the language the helper talks in from now on), \"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
+            + "\"speak <any language>\" / \"speak my game's language\" (the language the helper talks in from now on), \"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
             + "\"enchant <item>\" (or \"enchant this\": what the player holds), \"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "
             + "\"put <item> in the <furnace|smoker|blast furnace|any machine name>\" (also other mods' machines), \"collect from the <machine>\", "
             + "\"take me to the nether\" (leads to the nearest nether portal), \"go back to the overworld\", \"take me to the end\" (the stronghold), "

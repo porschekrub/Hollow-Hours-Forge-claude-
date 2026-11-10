@@ -756,6 +756,23 @@ public final class Nlu {
         return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b|^มี", " ").replaceAll("\\s+", " ").trim();
     }
 
+    /** {code for Thai / English or the language's English name, Thai name, English name} */
+    static final String[][] LANGUAGES = {{"th", "ไทย", "thai"}, {"en", "อังกฤษ", "english"}, {"Japanese", "ญี่ปุ่น", "japanese"}, {"Chinese", "จีน", "chinese"},
+            {"Korean", "เกาหลี", "korean"}, {"Vietnamese", "เวียดนาม", "vietnamese"}, {"Lao", "ลาว", "lao"}, {"Indonesian", "อินโดนีเซีย|อินโด", "indonesian"},
+            {"Malay", "มลายู|มาเลย์|มาเลเซีย", "malay"}, {"Filipino", "ฟิลิปปินส์|ตากาล็อก", "filipino|tagalog"}, {"Burmese", "พม่า", "burmese"}, {"Khmer", "เขมร|กัมพูชา", "khmer"},
+            {"Hindi", "ฮินดี|อินเดีย", "hindi"}, {"Arabic", "อาหรับ", "arabic"}, {"Spanish", "สเปน", "spanish"}, {"French", "ฝรั่งเศส", "french"},
+            {"German", "เยอรมัน", "german"}, {"Italian", "อิตาลี", "italian"}, {"Portuguese", "โปรตุเกส", "portuguese"}, {"Russian", "รัสเซีย", "russian"},
+            {"Dutch", "ดัตช์|เนเธอร์แลนด์", "dutch"}, {"Turkish", "ตุรกี", "turkish"}, {"Polish", "โปแลนด์", "polish"}, {"Ukrainian", "ยูเครน", "ukrainian"}};
+
+    /** "th", "en" or a language's English name ("Japanese"), from a word in Thai or English; null when it is no language. */
+    public static String languageOf(String word) {
+        String w = word.toLowerCase(java.util.Locale.ROOT);
+        // "ไทยหน่อย", "ญี่ปุ่นนะ": the language and nothing else but a polite ending ("ใช้ลาวา" is lava, not Lao)
+        for (String[] l : LANGUAGES)
+            if (test("^(" + l[1] + ")(หน่อย|นะ|ด้วย|ได้ไหม|ได้มั้ย|ทีนะ|ที|เลย|ครับ|ค่ะ|คับ|จ้า|สิ|ดิ|กัน|ๆ)*$", w) || test("^(" + l[2] + ")$", w)) return l[0];
+        return null;
+    }
+
     /** {potion id, Thai words, English words} (slow falling before slowness) */
     public static final String[][] POTIONS = {
             {"swiftness", "วิ่งเร็ว|ความเร็ว|เร็ว|สปีด", "swift|speed|fast"},
@@ -867,22 +884,21 @@ public final class Nlu {
 
     /** Navigation, memory, personality and "what is this" (null: none of those). */
     static Intent parseExtra(String t, String raw) {
-        // the language the helpers speak
-        if (has(t, "พูดไทย", "พูดภาษาไทย", "ตอบไทย", "ตอบเป็นภาษาไทย", "ตอบภาษาไทย", "ใช้ภาษาไทย", "speak thai", "talk in thai", "reply in thai", "answer in thai", "use thai")) {
-            Intent i = new Intent("lang");
-            i.text = "th";
-            return i;
-        }
-        if (has(t, "พูดอังกฤษ", "พูดภาษาอังกฤษ", "ตอบอังกฤษ", "ตอบเป็นภาษาอังกฤษ", "ตอบภาษาอังกฤษ", "ใช้ภาษาอังกฤษ", "speak english", "talk in english", "reply in english",
-                "answer in english", "use english")) {
-            Intent i = new Intent("lang");
-            i.text = "en";
-            return i;
-        }
-        if (has(t, "พูดตามภาษาเกม", "ภาษาตามเกม", "speak my game's language", "speak the game's language", "game language", "ภาษาเกม")) {
+        // the language the helpers speak ("speak Thai", "พูดภาษาญี่ปุ่น", "speak my game's language")
+        if (has(t, "พูดตามภาษาเกม", "ภาษาตามเกม", "speak my game's language", "speak the game's language", "game language", "ภาษาเกม", "ภาษาอัตโนมัติ", "auto language")) {
             Intent i = new Intent("lang");
             i.text = "";
             return i;
+        }
+        Matcher lm = match("(?:^|\\s)(?:พูด|ตอบ(?:เป็น)?|ใช้|คุย(?:เป็น)?)\\s*(?:ภาษา)?\\s*(\\S+)", t);
+        if (lm == null) lm = match("\\b(?:speak|talk in|reply in|answer in|use|talk to me in|switch to)\\s+([a-z]+)\\b", t);
+        if (lm != null) {
+            String l = languageOf(lm.group(1));
+            if (l != null) {
+                Intent i = new Intent("lang");
+                i.text = l;
+                return i;
+            }
         }
         // personality ("อย่าหยาบ" before "หยาบ")
         if (has(t, "พูดสุภาพ", "พูดดีๆ", "สุภาพหน่อย", "เลิกกวน", "อย่ากวน", "อย่าหยาบ", "เลิกหยาบ", "เลิกด่า", "อย่าด่า", "be polite", "be nice", "stop being rude", "no swearing", "stop swearing", "stop teasing")) {
