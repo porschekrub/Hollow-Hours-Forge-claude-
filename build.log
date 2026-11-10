@@ -1,0 +1,112 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Minecraft Mavenizer 0.5.21 by Forge Development LLC
+  Output:             /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/.gradle/mavenizer/repo
+  Output JSON:        /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/.gradle/mavenizer/dependencies/default.json
+  Dependencies Only:  false
+  Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  Offline:            false
+  Cache Only:         false
+  Ignore Cache:       false
+  Mappings:           official-1.21.1
+  Foreign Repos:      [https://repo.maven.apache.org/maven2/, https://maven.minecraftforge.net/, https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/, https://libraries.minecraft.net/]
+  GradleVariantHack:  true
+  Disable Gradle:     false
+  Stub Jars:          false
+
+Processing Minecraft dependency: net.minecraftforge:forge:1.21.1-52.1.21
+Processing Minecraft Forge (userdev): 1.21.1-52.1.21
+Mappings Zip
+  extract[mappings]
+  downloadLauncherManifest
+  downloadVersionJson[1.21.1]
+  download[1.21.1][client_mappings]
+  mergeMappings
+  download[1.21.1][server_mappings]
+  srg2names[official-1.21.1]
+Mappings POM
+  pom[mappings_official]
+Mappings map2obf
+  mapped2obf[official-1.21.1]
+Mappings map2srg
+  mapped2srg[official-1.21.1]
+Client Extra
+  download[1.21.1][client]
+  extract[mappings]
+  mergeMappings
+  extra[client]
+Client Maven POM
+  pom[client-extra]
+Sources
+  listLibraries
+  download[1.21.1][server]
+  extractServer
+  stripServer
+  stripClient
+  merge
+  rename
+  modifyAccess
+  stripSides
+  decompile
+  extract[inject]
+  inject
+  patch
+  patch[forge]
+  downloadSources
+  injectSources[forge]
+  remap[forge][official-1.21.1][javadoc]
+  remap[forge][official-1.21.1][javadoc][variants]
+Cache miss!
+java.lang.Exception: Cache miss! Stacktrace for Information Only
+	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
+	at net.minecraftforge.mcmaven.impl.Mavenizer.checkCache(Mavenizer.java:94)
+	at net.minecraftforge.mcmaven.impl.MinecraftMaven.finalize(MinecraftMaven.java:416)
+	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:241)
+	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
+Classes
+  recompile[forge][official-1.21.1]
+  injectData[forge][official-1.21.1]
+  injectData[forge][official-1.21.1][variants]
+Maven POM
+  pom[forge]
+Metadata
+  metadata[forge]
+  metadata[forge][variants]
+Minecraft Maven has finished, took 0:02.239
+
+> Task :preprocess
+pp: 119 files -> /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/build/pp (MC=12101,FORGE)
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources
+> Task :classes
+> Task :writeJarJarMetadata
+> Task :jar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794304632813.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 25s
+5 actionable tasks: 5 executed

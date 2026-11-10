@@ -1,0 +1,254 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.3.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Minecraft Maven is up-to-date, took 0:00.794
+
+> Task :preprocess UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :slimeLauncherMetadataForForge
+
+> Task :runServer
+Slime Launcher setup is up-to-date, took 1139ms
+Launching using main class: net.minecraftforge.bootstrap.ForgeBootstrap
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener Advanced terminal features are not available in this environment
+[09:57:46] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_server, --gameDir, ., --nogui]
+[09:57:46] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.13+9-LTS
+[09:57:46] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.13 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure
+[09:57:46] [main/WARN] [ne.mi.fm.lo.FMLConfig/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/run/config/fml.toml is not correct. Correcting
+[09:57:46] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowSkipGLVersions] was corrected from null to []
+[09:57:46] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowLogHelpMessage] was corrected from null to true
+[09:57:46] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowSquir] was corrected from null to false
+[09:57:46] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowShowCPU] was corrected from null to false
+[09:57:46] [main/INFO] [ne.mi.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_server
+[09:57:46] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=SERVER
+[09:57:47] [main/INFO] [ne.mi.fm.lo.mo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[09:57:48] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[09:57:48] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_server' with arguments [--gameDir, ., --nogui]
+[09:57:48] [main/WARN] [mixin/]: Reference map 'geckolib.refmap.json' for geckolib.mixins.json could not be read. If this is a development environment you can ignore this message
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+[09:57:49] [main/WARN] [os.ut.FileUtil/]: Configuration conflict: there is more than one oshi.properties file on the classpath: [jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.properties]
+[09:57:49] [main/WARN] [os.ut.FileUtil/]: Configuration conflict: there is more than one oshi.architecture.properties file on the classpath: [jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:///home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties, jar:file:/home/runner/.gradle/caches/modules-2/files-2.1/com.github.oshi/oshi-core/6.4.10/b1d8ab82d11d92fd639b56d639f8f46f739dd5fa/oshi-core-6.4.10.jar!/oshi.architecture.properties]
+[09:57:50] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[09:57:54] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: Forge mod loading, version 52.1.21, for MC 1.21.1 with MCP 20240808.132146
+[09:57:54] [modloading-worker-0/INFO] [ne.mi.co.MinecraftForge/FORGE]: MinecraftForge v52.1.21 Initialized
+[09:57:54] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/run/config/helperbuddy-common.toml is not correct. Correcting
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.sightRadius was corrected from null to its default, 0. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.maxHelpersPerPlayer was corrected from null to its default, 8. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.workSpeed was corrected from null to its default, 1.25. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.damageMultiplier was corrected from null to its default, 1.0. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.buildSpeed was corrected from null to its default, 1. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.freeBuild was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.contractOnFirstJoin was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.fightBackPlayers was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.teleportToOwner was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.keepCommandBookOnDeath was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.keepChunksLoaded was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key helper.exploreFurther was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality.style was corrected from null to its default, sassy. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality.trolling was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality.trollChance was corrected from null to its default, 0.35. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality.helpersTalk was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key personality.memory was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice.voice was corrected from null to its default, auto. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice.speechModel was corrected from null to its default, gemini-3.8-flash-lite-tts. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice.speechVoice was corrected from null to its default, . 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice.volume was corrected from null to its default, 1.0. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key voice.listen was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.enabled was corrected from null to its default, false. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.provider was corrected from null to its default, gemini. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.apiKey was corrected from null to its default, . 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.model was corrected from null to its default, . 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.url was corrected from null to its default, . 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.timeoutSeconds was corrected from null to its default, 25. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForCommands was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForChat was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.useForBuilding was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key ai.maxBuildSize was corrected from null to its default, 32. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file /home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/run/config/forge-common.toml is not correct. Correcting
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key general was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key general.logLegacyTagWarnings was corrected from null to its default, OFF. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key general.fixGameTestBlockPosAsserts was corrected from null to its default, true. 
+[09:57:54] [main/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key general.channelListLimit was corrected from null to its default, 1024. 
+[09:57:55] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[09:57:55] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Found status: AHEAD Current: 52.1.21 Target: null
+[09:57:55] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[09:57:56] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/.gradle/mavenizer/repo/net/minecraftforge/forge/1.21.1-52.1.21/forge-1.21.1-52.1.21.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[09:57:56] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/ports/forge-1.21.1/helper-buddy/.gradle/mavenizer/repo/net/minecraftforge/forge/1.21.1-52.1.21/forge-1.21.1-52.1.21.jar%230!/data/.mcassetsroot' uses unexpected schema
+[09:57:56] [main/INFO] [minecraft/Main]: No existing world data, creating new world
+[09:57:56] [main/ERROR] [minecraft/DedicatedServerProperties]: No key layers in MapLike[{}]
+[09:57:57] [main/INFO] [minecraft/RecipeManager]: Loaded 1292 recipes
+[09:57:58] [main/INFO] [minecraft/AdvancementTree]: Loaded 1399 advancements
+[09:57:58] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.21.1
+[09:57:58] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[09:57:58] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[09:57:58] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[09:57:58] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25565
+[09:57:58] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using epoll channel type
+[09:57:58] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[09:57:58] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[09:57:58] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[09:57:58] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file ./world/serverconfig/forge-server.toml is not correct. Correcting
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server was corrected from null to its default, SynchronizedConfig{DataHolder:{}}. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringBlockEntities was corrected from null to its default, false. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringEntities was corrected from null to its default, false. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.fullBoundingBoxLadders was corrected from null to its default, false. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.permissionHandler was corrected from null to its default, forge:default_handler. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.advertiseDedicatedServerToLan was corrected from null to its default, true. 
+[09:57:58] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.useItemWithDurationZero was corrected from null to its default, false. 
+[09:57:58] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "world"
+[09:57:59] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[09:57:59] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[09:58:00] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 279 ms
+[09:58:00] [Server thread/INFO] [minecraft/DedicatedServer]: Done (1.238s)! For help, type "help"
+[09:58:00] [Server thread/INFO] [ne.mi.ga.ForgeGameTestHooks/]: Enabled Gametest Namespaces: []
+[09:58:00] [Server thread/INFO] [ne.mi.se.pe.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[09:58:01] [Server thread/INFO] [HelperBuddy/]: [smoke] 720 plans, 926340 blocks checked
+[09:58:01] [Server thread/INFO] [HelperBuddy/]: [smoke] build site: ok=true 
+[09:58:04] [Server thread/INFO] [HelperBuddy/]: [smoke] t=50 mode BUILD status '23%' tasks false bag 9/36
+[09:58:09] [Server thread/INFO] [HelperBuddy/]: [smoke] t=150 mode BUILD status '93%' tasks false bag 9/36
+[09:58:10] [Server thread/INFO] [HelperBuddy/]: [Buddy says] The House is finished! Enjoy your new place
+[09:58:14] [Server thread/INFO] [HelperBuddy/]: [smoke] t=250 mode FOLLOW status '' tasks false bag 9/36
+[09:58:16] [Server thread/INFO] [HelperBuddy/]: [smoke] build progress 0% (placed blocks)
+[09:58:19] [Server thread/INFO] [HelperBuddy/]: [smoke] t=350 mode MINE status '250/250' tasks false bag 9/36
+[09:58:24] [Server thread/INFO] [HelperBuddy/]: [smoke] t=450 mode GATHER status '247/250' tasks false bag 10/36
+[09:58:29] [Server thread/INFO] [HelperBuddy/]: [smoke] t=550 mode FARM status '' tasks false bag 10/36
+[09:58:34] [Server thread/INFO] [HelperBuddy/]: [smoke] t=650 mode DIG status '30%' tasks false bag 10/36
+[09:58:36] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Crafted 1 Crafting Table!
+[09:58:36] [Server thread/INFO] [HelperBuddy/]: [Buddy] task craft done (count 0, phase 0)
+[09:58:39] [Server thread/INFO] [HelperBuddy/]: [smoke] t=750 mode FOLLOW status '' tasks false bag 11/36
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [smoke] nearest village: BlockPos{x=16, y=-64, z=352} (75 ms)
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [smoke] bag: 1 minecraft:iron_pickaxe, 1 minecraft:iron_axe, 1 minecraft:iron_hoe, 61 minecraft:torch, 16 minecraft:bread, 15 minecraft:coal, 16 minecraft:wheat_seeds, 15 minecraft:oak_log, 30 minecraft:dirt, 1 minecraft:crafting_table, 4 minecraft:iron_ingot, 
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [smoke] mode TASK status 'smelting 3' bag 11/36
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [smoke] skills started
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Enchanted (level 6, 0 bookshelves): Enchanted Book
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [Buddy] task enchant done (count 0, phase 1)
+[09:58:41] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Put 2 Raw Iron in the Furnace, I'll wait and collect what comes out
+[09:58:42] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Smelted 4 items, they're in my bag
+[09:58:42] [Server thread/INFO] [HelperBuddy/]: [Buddy] task smelt done (count 4, phase 0)
+[09:58:42] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Traded for 1 Emerald, they're in my bag
+[09:58:42] [Server thread/INFO] [HelperBuddy/]: [Buddy] task trade done (count 1, phase 0)
+[09:58:42] [Server thread/INFO] [HelperBuddy/]: [smoke] nearest nether portal: BlockPos{x=-24, y=-59, z=0}
+[09:58:44] [Server thread/INFO] [HelperBuddy/]: [smoke] t=850 mode STAY status '' tasks false bag 11/36
+[09:58:45] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Caught 2 fish, they're in my bag
+[09:58:45] [Server thread/INFO] [HelperBuddy/]: [Buddy] task fish done (count 2, phase 2)
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:58:46] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:49] [Server thread/INFO] [HelperBuddy/]: [smoke] t=950 mode STAY status '' tasks false bag 11/36
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 0' task true
+[09:58:51] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:54] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1050 mode STAY status '' tasks false bag 11/36
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:58:56] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:58:59] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1150 mode STAY status '' tasks false bag 11/36
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 1/2' task true
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'machine 1' task true
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] fishing: 2 things caught
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] trading: 1 emeralds, 20 wheat left
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] enchanting: 1 enchanted books, bag 1 minecraft:enchanted_book, 
+[09:59:01] [Server thread/INFO] [HelperBuddy/]: [smoke] end crystal alive: false, arrows left 15
+[09:59:02] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Collected 2 items from the Furnace, they're in my bag
+[09:59:02] [Server thread/INFO] [HelperBuddy/]: [Buddy] task machine done (count 2, phase 2)
+[09:59:04] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1250 mode STAY status '' tasks false bag 11/36
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:06] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:09] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1350 mode STAY status '' tasks false bag 11/36
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:11] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:14] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1450 mode STAY status '' tasks false bag 11/36
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:16] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:19] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1550 mode STAY status '' tasks false bag 11/36
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode TASK status 'brewing 2/2' task true
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [Buddy says] Brewed 3 bottles: Potion of Swiftness
+[09:59:21] [Server thread/INFO] [HelperBuddy/]: [Buddy] task brew done (count 3, phase 4)
+[09:59:24] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1650 mode STAY status '' tasks false bag 11/36
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:26] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:29] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1750 mode STAY status '' tasks false bag 11/36
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:31] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:34] [Server thread/INFO] [HelperBuddy/]: [smoke] t=1850 mode STAY status '' tasks false bag 11/36
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode STAY status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] skill helper Buddy: mode FOLLOW status '' task false
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] brewing: 3 potions of swiftness, bag 1 minecraft:potion, 1 minecraft:potion, 1 minecraft:potion, 1 minecraft:blaze_powder, 
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: [smoke] machine: 2 iron ingots from the furnace, bag 2 minecraft:iron_ingot, 3 minecraft:coal, 
+[09:59:36] [Server thread/INFO] [HelperBuddy/]: SMOKE TEST OK
+[09:59:36] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[09:59:36] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[09:59:36] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[09:59:37] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1794304657900.json
+
+BUILD SUCCESSFUL in 2m 4s
+5 actionable tasks: 2 executed, 3 up-to-date
