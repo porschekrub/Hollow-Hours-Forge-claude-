@@ -3,13 +3,17 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.0.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.0.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.0.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.0.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.1.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.1.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.1.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.1.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.1.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
+
+**Helper Buddy 2.16.1 — a cartoon voice that speaks real words** (Hollow Hours stays 2.16.0)
+- With the Gemini key, the helper now answers in **real words in a cartoon voice** (faster and higher, a little different for each helper). Set `voice` in `[voice]` of `config/helperbuddy-common.toml`: `"cartoon"` (default with a key), `"ai"` (the plain AI voice), `"babble"` (the old cartoon sounds) or `"off"`.
+  เมื่อใส่คีย์ Gemini ผู้ช่วยจะตอบ**เป็นคำพูดจริงด้วยเสียงการ์ตูน** (เร็วขึ้น แหลมขึ้น แต่ละตัวเสียงต่างกันนิดหน่อย) ตั้งค่า `voice` ใน `[voice]` ของ `config/helperbuddy-common.toml`: `"cartoon"` (ค่าเริ่มต้นเมื่อมีคีย์) `"ai"` (เสียง AI ปกติ) `"babble"` (เสียงการ์ตูนอ้อแอ้แบบเดิม) หรือ `"off"`
 
 **2.16.0 — English first**
 - Everything is in **English unless your game is set to Thai** (Options → Language → ภาษาไทย).

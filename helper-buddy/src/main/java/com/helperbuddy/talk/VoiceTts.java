@@ -65,7 +65,17 @@ public final class VoiceTts {
         return VOICES[Math.floorMod(h.getUUID().hashCode(), VOICES.length)];
     }
 
-    static String how(int style) {
+    /** How much faster and higher a helper's cartoon voice is played (its own, 1.28 - 1.46). */
+    static float cartoonPitch(HelperEntity h) {
+        return 1.28f + Math.floorMod(h.getUUID().hashCode() >> 4, 7) * 0.03f;
+    }
+
+    static String how(int style, boolean cartoon) {
+        if (cartoon) return switch (style) {
+            case 0 -> "Say this like a happy, bouncy cartoon character, a bit slowly and clearly";
+            case 2 -> "Say this like a grumpy, mocking cartoon character, a bit slowly and clearly";
+            default -> "Say this like a cheeky, playful cartoon character, a bit slowly and clearly";
+        };
         return switch (style) {
             case 0 -> "Say this in a friendly, cheerful voice";
             case 2 -> "Say this in an annoyed, rude, mocking voice";
@@ -74,16 +84,17 @@ public final class VoiceTts {
     }
 
     /** @return false when the real voice can't be made now (the caller babbles instead) */
-    static boolean speak(ServerPlayer p, HelperEntity h, String text, int style) {
+    static boolean speak(ServerPlayer p, HelperEntity h, String text, int style, boolean cartoon) {
         if (System.currentTimeMillis() < pausedUntil || BUSY.contains(h.getUUID())) return false;
         String voice = voiceFor(h);
-        String key = voice + "|" + style + "|" + text;
+        String key = voice + "|" + style + "|" + cartoon + "|" + text;
+        float pitch = cartoon ? cartoonPitch(h) : 1f;
         byte[] cached;
         synchronized (CACHE) {
             cached = CACHE.get(key);
         }
         if (cached != null) {
-            send(p, h, cached, RATE.getOrDefault(key, 24000));
+            send(p, h, cached, Math.round(RATE.getOrDefault(key, 24000) * pitch));
             return true;
         }
         BUSY.add(h.getUUID());
@@ -95,7 +106,7 @@ public final class VoiceTts {
             JsonObject c = new JsonObject();
             JsonArray parts = new JsonArray();
             JsonObject part = new JsonObject();
-            part.addProperty("text", how(style) + ": " + text);
+            part.addProperty("text", how(style, cartoon) + ": " + text);
             parts.add(part);
             c.add("parts", parts);
             contents.add(c);
@@ -167,7 +178,7 @@ public final class VoiceTts {
                         CACHE.put(key, clip);
                     }
                     RATE.put(key, clipRate);
-                    send(pl, hh, clip, clipRate);
+                    send(pl, hh, clip, Math.round(clipRate * pitch));
                 });
             });
             return true;

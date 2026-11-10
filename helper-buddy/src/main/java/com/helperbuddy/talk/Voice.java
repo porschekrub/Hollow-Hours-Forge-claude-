@@ -31,10 +31,16 @@ public final class Voice {
         return HBConfig.VOICE.get().trim().toLowerCase(Locale.ROOT);
     }
 
+    /** Real words in a cartoon voice: the AI voice, sped up and pitched up per helper ("cartoon", and "auto"). */
+    static boolean cartoon() {
+        String m = mode();
+        return m.equals("cartoon") || m.equals("auto");
+    }
+
     /** A real voice is possible (Gemini with a key). */
     static boolean aiVoice() {
         String m = mode();
-        if (!m.equals("ai") && !m.equals("auto")) return false;
+        if (!m.equals("ai") && !m.equals("auto") && !m.equals("cartoon")) return false;
         return AiBridge.provider().equals("gemini") && !HBConfig.AI_KEY.get().isBlank() && HBConfig.AI_URL.get().isBlank();
     }
 
@@ -50,7 +56,7 @@ public final class Voice {
         if (text.isEmpty() || text.startsWith("(")) return; // "(thinking...)"
         int style = Persona.of(h).ordinal();
         boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
-        if (reply && aiVoice() && VoiceTts.speak(sp, h, text, style)) return;
+        if (reply && aiVoice() && VoiceTts.speak(sp, h, text, style, cartoon())) return;
         HBNet.toPlayer(sp, new S2CSpeak(h.getId(), text, h.getUUID().hashCode(), style));
     }
 

@@ -96,6 +96,7 @@ A helper that does (almost) everything you ask in plain Thai or English.
 ```
 
 **🎤 Voice / สั่งด้วยเสียง**: hold **B**, speak, let go (needs the Gemini key). / กดปุ่ม **B** ค้าง พูด แล้วปล่อย (ต้องใส่คีย์ Gemini)
+With the Gemini key it answers in real words in a cartoon voice (`voice = "cartoon"`; `"babble"`, `"ai"` or `"off"` in `[voice]`). / ใส่คีย์ Gemini แล้วผู้ช่วยตอบเป็นคำพูดด้วยเสียงการ์ตูน
 
 - **Fights back** when attacked (setting, on by default), defends you, handles creepers by hitting and backing off (or with a bow).
   **สู้กลับ** เมื่อโดนตี (ตั้งค่าได้ เปิดไว้เป็นค่าเริ่มต้น) ปกป้องคุณ เจอครีปเปอร์จะตีแล้วถอย (หรือยิงธนู)
