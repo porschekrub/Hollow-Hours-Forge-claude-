@@ -161,6 +161,8 @@ public final class SmokeTest {
         check(com.helperbuddy.talk.AiBridge.heardText("{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"\\\"ตกปลา  3 ตัว\\\"\\n\"}]}}]}").equals("ตกปลา 3 ตัว"),
                 "voice heard text");
         check(com.helperbuddy.talk.AiBridge.heardText("{\"candidates\":[]}").isEmpty(), "voice heard nothing");
+        check("th".equals(Nlu.parse("พูดภาษาไทยหน่อย").text) && Nlu.parse("speak english").k.equals("lang") && "en".equals(Nlu.parse("speak english").text), "nlu language");
+        check(!com.helperbuddy.talk.Say.thai(null), "english by default");
         check(Nlu.parse("ฆ่ามังกร").k.equals("boss") && Nlu.parse("kill the dragon").k.equals("boss"), "nlu boss");
         check("smelter".equals(Nlu.parse("build an auto smelter").house.o.type) && "autodoor".equals(Nlu.parse("สร้างประตูอัตโนมัติ").house.o.type), "nlu redstone builds");
         byte[] pcm = new byte[] {0, 0, (byte) 0xE8, 0x03, 0x18, (byte) 0xFC, (byte) 0xFF, 0x7F};

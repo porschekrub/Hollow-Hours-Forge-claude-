@@ -119,6 +119,12 @@ public final class GhostTalk {
         return l != null && l.toLowerCase().startsWith("th") ? "th" : "en";
     }
 
+    /** The AI answers in the language the player wrote in (Thai if there is Thai in it), English otherwise. */
+    public static String langOf(String text, String fallback) {
+        if (text == null || text.isBlank()) return fallback;
+        return text.codePoints().anyMatch(c -> c >= 0x0E00 && c <= 0x0E7F) ? "th" : "en";
+    }
+
     static String lang(ServerPlayer p, @Nullable String hint) {
         if (hint != null && !hint.isBlank()) return hint.toLowerCase().startsWith("th") ? "th" : "en";
         return lang(p);
@@ -414,15 +420,16 @@ public final class GhostTalk {
         String trimmed = rawText.trim();
         String text = trimmed.length() > 160 ? trimmed.substring(0, 160) : trimmed;
         if (AiBridge.enabled() && !text.isEmpty()) {
-            // the language model reads the sentence (any wording, Thai or English); the rules below still decide what happens
+            // the language model reads the sentence (any wording, Thai or English) and answers in that language; the rules below still decide what happens
+            String aiLang = langOf(text, lang);
             HHNet.toPlayer(p, new S2CSpeech(g.kind.n, Component.literal("..."), 3));
             understand(p, g, mem, text).thenAccept(u -> p.server.execute(() -> {
                 if (p.hasDisconnected() || !g.isAlive() || g.brain().isLeaving()) return;
                 if (u == null && AI_FAIL_TOLD.add(p.getUUID()))
-                    p.sendSystemMessage(Component.literal(lang.equals("th")
+                    p.sendSystemMessage(Component.literal(aiLang.equals("th")
                             ? "§7[Hollow Hours] เชื่อมต่อ AI ไม่ได้ (เช็ก apiKey ในไฟล์ config หรือดูรายละเอียดใน logs/latest.log) ผีจะใช้สมองในตัวแทน"
                             : "§7[Hollow Hours] The AI could not be reached (check apiKey in the config file, details in logs/latest.log). The ghosts use their built-in brain"));
-                respond(p, g, lang, mem, text, u);
+                respond(p, g, aiLang, mem, text, u);
             }));
             return;
         }

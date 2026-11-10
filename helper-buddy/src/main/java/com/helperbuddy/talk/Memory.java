@@ -42,6 +42,8 @@ public final class Memory {
         public List<String> events = new ArrayList<>();
         public Map<String, Integer> counts = new LinkedHashMap<>();
         public String nickname = "";
+        /** "th" / "en": the language the player told the helpers to speak ("" = the game's) */
+        public String lang = "";
     }
 
     static Map<String, Player> players = new LinkedHashMap<>();

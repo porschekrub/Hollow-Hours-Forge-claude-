@@ -201,7 +201,7 @@ public final class PhoneChat {
         boolean danger = Story.activeCached() || Story.alerted(p);
         int delay = R.randInt(50, 110);
         if (AiBridge.enabled()) {
-            AiBridge.chat(system(p, who, lang, danger), history(p, who), 90, 0.9).thenAccept(r -> p.server.execute(() -> {
+            AiBridge.chat(system(p, who, GhostTalk.langOf(text, "en"), danger), history(p, who), 90, 0.9).thenAccept(r -> p.server.execute(() -> {
                 if (r == null || r.isBlank()) Later.run(10, () -> scripted(p, who, text, danger));
                 else Later.run(Math.max(10, delay - 40), () -> {
                     if (!p.hasDisconnected()) answer(p, who, "them|t|" + r.replace('|', '/'));

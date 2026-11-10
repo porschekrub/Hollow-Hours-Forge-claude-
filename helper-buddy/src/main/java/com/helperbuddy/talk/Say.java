@@ -18,8 +18,33 @@ import java.util.UUID;
 public final class Say {
     private Say() {}
 
-    /** Thai only when the player's game is set to Thai (whatever language they type in); English otherwise. */
+    /** The language a player told the helpers to speak ("th" / "en"), kept even when the memory is off. */
+    static final Map<UUID, String> SPEAK = new HashMap<>();
+
+    /** "th", "en" or "" (the game's language). */
+    public static String speak(@Nullable Player p) {
+        if (!(p instanceof ServerPlayer sp)) return "";
+        String s = SPEAK.get(sp.getUUID());
+        if (s == null) {
+            s = Memory.on() && Memory.of(sp).lang != null ? Memory.of(sp).lang : "";
+            SPEAK.put(sp.getUUID(), s);
+        }
+        return s;
+    }
+
+    public static void setSpeak(ServerPlayer p, String lang) {
+        SPEAK.put(p.getUUID(), lang);
+        if (Memory.on()) {
+            Memory.of(p).lang = lang;
+            Memory.dirty = true;
+        }
+    }
+
+    /** Thai when the player told the helpers to speak Thai, or their game is set to Thai; English otherwise. */
     public static boolean thai(@Nullable Player p) {
+        String s = speak(p);
+        if (s.equals("th")) return true;
+        if (s.equals("en")) return false;
         return p instanceof ServerPlayer sp && sp.getLanguage() != null && sp.getLanguage().toLowerCase().startsWith("th");
     }
 

@@ -12,12 +12,14 @@
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
 
 **2.16.0 — English first**
-- Both mods are now in **English unless your game is set to Thai** (Options → Language → ภาษาไทย). Before, the helper answered in Thai as soon as you typed Thai, even with an English game.
-  มอดทั้งสองตัวเป็น**ภาษาอังกฤษเป็นหลัก** จะเป็นภาษาไทยก็ต่อเมื่อตั้งภาษาเกมเป็นภาษาไทย (Options → Language → ภาษาไทย) เมื่อก่อนถ้าพิมพ์ไทย ผู้ช่วยจะตอบไทยทันทีแม้เกมเป็นภาษาอังกฤษ
-- You can still give orders in Thai or English (typed or spoken): the helper understands both, but answers in your game's language. The AI (helper and ghosts) answers in your game's language too.
-  ยังสั่งเป็นไทยหรืออังกฤษได้เหมือนเดิม (พิมพ์หรือพูด) ผู้ช่วยเข้าใจทั้งสองภาษา แต่จะตอบเป็นภาษาของเกม AI (ทั้งผู้ช่วยและผี) ก็ตอบตามภาษาของเกมเช่นกัน
-- Hollow Hours: the yellow lines on the main menu are English, or Thai when the game is in Thai.
-  Hollow Hours: ข้อความสีเหลืองที่หน้าเมนูหลักเป็นภาษาอังกฤษ หรือภาษาไทยเมื่อเกมเป็นภาษาไทย
+- Everything is in **English unless your game is set to Thai** (Options → Language → ภาษาไทย).
+  ทุกอย่างเป็น**ภาษาอังกฤษเป็นหลัก** จะเป็นภาษาไทยเมื่อตั้งภาษาเกมเป็นภาษาไทย
+- **The AI answers in the language you ask in**: write (or say) Thai and it answers in Thai, otherwise English. This goes for the helper, the ghosts and the people on the phone.
+  **AI ตอบตามภาษาที่ถาม**: พิมพ์ (หรือพูด) ไทย ก็ตอบไทย นอกนั้นตอบอังกฤษ ทั้งผู้ช่วย ผี และคนในโทรศัพท์
+- Tell the helper **"speak Thai"** / **"พูดภาษาไทย"** and it talks Thai from then on (all its messages too); **"speak English"** to switch back, **"speak my game's language"** to follow the game again. It remembers this in every world.
+  สั่งผู้ช่วยว่า **"พูดภาษาไทย"** แล้วมันจะพูดไทยตลอด (ข้อความทั้งหมดด้วย) **"พูดภาษาอังกฤษ"** เพื่อเปลี่ยนกลับ **"พูดตามภาษาเกม"** เพื่อให้ตามภาษาเกม มันจำไว้ทุกโลก
+- Hollow Hours: the yellow lines on the main menu are English only.
+  Hollow Hours: ข้อความสีเหลืองหน้าเมนูหลักเป็นภาษาอังกฤษอย่างเดียว
 
 **2.15.0 — talk to your helper**
 - 🎤 **Voice orders**: hold **B** (change it in Controls → Helper Buddy), say what you want ("ไปตัดไม้ 20 ท่อน", "take me to the village", "ตกปลา 10 ตัว"...) and let go. The helper hears it, shows what it understood in chat, and does it, answering in its own voice. Works in Thai and English, for everyone on the server (each player talks to their own helpers).

@@ -21,37 +21,6 @@ public final class TitleDecor {
     private TitleDecor() {}
 
     static final long START = System.currentTimeMillis();
-    static java.util.List<String> thaiSplashes;
-
-    /** The yellow line next to the logo: the spooky English ones come from texts/splashes.txt; with the game in Thai, a Thai one. */
-    @SubscribeEvent
-    public static void init(ScreenEvent.Init.Post e) {
-        if (!(e.getScreen() instanceof TitleScreen s)) return;
-        Minecraft mc = Minecraft.getInstance();
-        String lang = mc.getLanguageManager().getSelected();
-        if (lang == null || !lang.startsWith("th")) return;
-        try {
-            if (thaiSplashes == null) {
-                thaiSplashes = new java.util.ArrayList<>();
-                var res = mc.getResourceManager().getResource(HollowHours.id("texts/splashes_th.txt"));
-                if (res.isPresent())
-                    try (var r = res.get().openAsReader()) {
-                        r.lines().map(String::trim).filter(l -> !l.isEmpty()).forEach(thaiSplashes::add);
-                    }
-            }
-            if (thaiSplashes.isEmpty()) return;
-            for (java.lang.reflect.Field f : TitleScreen.class.getDeclaredFields()) {
-                if (f.getType() != net.minecraft.client.gui.components.SplashRenderer.class) continue;
-                f.setAccessible(true);
-                if (f.get(s) == null) return;
-                f.set(s, new net.minecraft.client.gui.components.SplashRenderer(thaiSplashes.get(new java.util.Random().nextInt(thaiSplashes.size()))));
-                return;
-            }
-        } catch (Exception ex) {
-            thaiSplashes = java.util.List.of();
-        }
-    }
-
     @SubscribeEvent
     public static void render(ScreenEvent.Render.Post e) {
         if (!(e.getScreen() instanceof TitleScreen s)) return;

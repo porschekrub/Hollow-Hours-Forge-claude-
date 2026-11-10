@@ -867,6 +867,23 @@ public final class Nlu {
 
     /** Navigation, memory, personality and "what is this" (null: none of those). */
     static Intent parseExtra(String t, String raw) {
+        // the language the helpers speak
+        if (has(t, "พูดไทย", "พูดภาษาไทย", "ตอบไทย", "ตอบเป็นภาษาไทย", "ตอบภาษาไทย", "ใช้ภาษาไทย", "speak thai", "talk in thai", "reply in thai", "answer in thai", "use thai")) {
+            Intent i = new Intent("lang");
+            i.text = "th";
+            return i;
+        }
+        if (has(t, "พูดอังกฤษ", "พูดภาษาอังกฤษ", "ตอบอังกฤษ", "ตอบเป็นภาษาอังกฤษ", "ตอบภาษาอังกฤษ", "ใช้ภาษาอังกฤษ", "speak english", "talk in english", "reply in english",
+                "answer in english", "use english")) {
+            Intent i = new Intent("lang");
+            i.text = "en";
+            return i;
+        }
+        if (has(t, "พูดตามภาษาเกม", "ภาษาตามเกม", "speak my game's language", "speak the game's language", "game language", "ภาษาเกม")) {
+            Intent i = new Intent("lang");
+            i.text = "";
+            return i;
+        }
         // personality ("อย่าหยาบ" before "หยาบ")
         if (has(t, "พูดสุภาพ", "พูดดีๆ", "สุภาพหน่อย", "เลิกกวน", "อย่ากวน", "อย่าหยาบ", "เลิกหยาบ", "เลิกด่า", "อย่าด่า", "be polite", "be nice", "stop being rude", "no swearing", "stop swearing", "stop teasing")) {
             Intent i = new Intent("persona");

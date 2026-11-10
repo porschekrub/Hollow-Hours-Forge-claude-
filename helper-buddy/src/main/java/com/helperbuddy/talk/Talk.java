@@ -53,9 +53,12 @@ public final class Talk {
         return Say.thai(p);
     }
 
-    /** The language the AI answers in: the player's game language. */
-    static String lang(ServerPlayer p) {
-        return Say.thai(p) ? "Thai" : "English";
+    /** The language the AI answers in: what the player told it to speak, else the language they wrote in (English when unclear). */
+    static String lang(ServerPlayer p, String text) {
+        String s = Say.speak(p);
+        if (s.equals("th")) return "Thai";
+        if (s.equals("en")) return "English";
+        return text != null && Nlu.looksThai(text) ? "Thai" : "English";
     }
 
     static void say(ServerPlayer p, HelperEntity h, String th, String en) {
@@ -167,8 +170,8 @@ public final class Talk {
     }
 
     static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume",
-            "locate", "remember", "recall", "forget", "persona", "whatis", "around", "mods");
-    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "whatis",
+            "locate", "remember", "recall", "forget", "persona", "lang", "whatis", "around", "mods");
+    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "lang", "whatis",
             "around", "mods");
     static final List<String> PLAN_ONLY = List.of("goto", "wait", "deposit", "eat", "cook", "guard");
 
@@ -286,6 +289,12 @@ public final class Talk {
                 if (it.all) say(p, h, "ลืมหมดแล้วครับ เหมือนเพิ่งเจอกันครั้งแรก", "Forgotten. It's like we just met");
                 else say(p, h, n > 0 ? "ลืมเรื่อง \"" + it.text + "\" แล้วครับ (" + n + " เรื่อง)" : "ผมไม่ได้จำเรื่อง \"" + it.text + "\" ไว้เลย",
                         n > 0 ? "Forgot " + n + " thing(s) about \"" + it.text + "\"" : "I didn't remember anything about \"" + it.text + "\"");
+            }
+            case "lang" -> {
+                Say.setSpeak(p, it.text);
+                if (it.text.equals("th")) say(p, h, "ได้เลย ต่อจากนี้ผมจะพูดภาษาไทยนะครับ", "ได้เลย ต่อจากนี้ผมจะพูดภาษาไทยนะครับ");
+                else if (it.text.equals("en")) say(p, h, "OK, from now on I'll speak English", "OK, from now on I'll speak English");
+                else say(p, h, "โอเค ผมจะพูดตามภาษาของเกมนะครับ", "OK, I'll speak the language your game is set to");
             }
             case "persona" -> {
                 h.setPersona(it.text);
@@ -964,14 +973,14 @@ public final class Talk {
             + "\"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|flowers|lush caves>\", "
             + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"take me to the <any of those>\" (the helper walks ahead and leads the player, any distance), "
             + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\", "
-            + "\"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
+            + "\"speak thai\" / \"speak english\" / \"speak my game's language\" (the language the helper talks in from now on), \"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
             + "\"enchant <item>\" (or \"enchant this\": what the player holds), \"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "
             + "\"put <item> in the <furnace|smoker|blast furnace|any machine name>\" (also other mods' machines), \"collect from the <machine>\", "
             + "\"take me to the nether\" (leads to the nearest nether portal), \"go back to the overworld\", \"take me to the end\" (the stronghold), "
             + "\"kill the dragon\" / \"fight the wither\" (shoots end crystals first), \"build an automatic door\", \"build an auto smelter\", \"build a light switch\". "
             + "Rules: keep the player's exact numbers and items (\"64 meat\" means 64 pieces of meat, never fewer animals). Several commands run one after another. "
             + "Questions about the game you can answer yourself go in \"reply\" (you know Minecraft and every installed mod well; use the world facts you are given). "
-            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the reply language given below (the language of the player's game, whatever language they wrote in), "
+            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the reply language given below, "
             + "one or two short sentences, in the helper's own personality.";
 
     /** The helper's personality, for the AI. */
@@ -1000,7 +1009,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
-        String sys = AI_COMMANDS + " Reply language: " + lang(p) + ". The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
+        String sys = AI_COMMANDS + " Reply language: " + lang(p, text) + ". The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
                 + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups." + contextForAi(h, p);
         List<AiBridge.Msg> hist = HISTORY.computeIfAbsent(hid, k -> new ArrayList<>());
         List<AiBridge.Msg> msgs = new ArrayList<>(hist);
@@ -1064,7 +1073,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         say(p, h, "§7(กำลังออกแบบ \"" + text + "\"...)", "§7(designing \"" + text + "\"...)");
-        AiBridge.send(AI_BUILD.replace("MAX", String.valueOf(max)).replace("LANG", lang(p)), List.of(new AiBridge.Msg("user", "Build: " + text)), 4000, 0.4).thenAccept(res -> server.execute(() -> {
+        AiBridge.send(AI_BUILD.replace("MAX", String.valueOf(max)).replace("LANG", lang(p, text)), List.of(new AiBridge.Msg("user", "Build: " + text)), 4000, 0.4).thenAccept(res -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
             if (pl == null || hh == null) return;
@@ -1150,7 +1159,7 @@ public final class Talk {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
         String sys = "You are " + h.helperName() + ", the Minecraft helper of " + p.getGameProfile().getName() + ", and you know everything about Minecraft and its mods. "
-                + "Answer in " + lang(p) + " (the language of the player's game, whatever language they wrote in), one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + "."
+                + "Answer in " + lang(p, text) + ", one or two short sentences, no markdown. You are " + h.mode().label(false) + ", level " + h.helperLevel() + "."
                 + contextForAi(h, p);
         AiBridge.chat(sys, List.of(new AiBridge.Msg("user", text)), 800, 0.8).thenAccept(r -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
