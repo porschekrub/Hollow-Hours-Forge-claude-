@@ -471,13 +471,13 @@ public final class Talk {
         int r = HBConfig.SEARCH_RADIUS.get();
         if (m == Mode.MINE) {
             boolean has = Bag.hasKind(h, Bag.Kind.PICKAXE);
-            say(p, h, has ? "§6ไปหาแร่แล้วนะ!§r ผมจะหาแร่ที่มองเห็นในระยะ " + r + " บล็อก แล้วเดินหรือขุดทางไปเอง" + (Bag.hasKind(h, Bag.Kind.SHOVEL) ? "" : "\n§7ถ้าส่ง§eพลั่ว§7มาด้วย ขุดดิน/ทราย/กรวดจะเร็วขึ้น")
+            say(p, h, has ? "§6ไปหาแร่แล้วนะ!§r ผมจะหาแร่แถวนี้ก่อน แล้วเดินหรือขุดทางไปเอง ถ้าหมดจะไปหาไกลขึ้นเรื่อยๆ ไม่จำกัดระยะ" + (Bag.hasKind(h, Bag.Kind.SHOVEL) ? "" : "\n§7ถ้าส่ง§eพลั่ว§7มาด้วย ขุดดิน/ทราย/กรวดจะเร็วขึ้น")
                             : "§6โหมดขุดแร่!§r แต่ผมยังไม่มี§eอีเต้อ§rเลย ส่งให้ผมหน่อยนะ",
-                    has ? "§6Off to mine!§r I'll look for ores within " + r + " blocks and walk or dig my way there" : "§6Mining mode!§r But I have no §epickaxe§r yet. Please give me one");
+                    has ? "§6Off to mine!§r I'll look for ores around here and walk or dig my way there, then further and further away (no distance limit)" : "§6Mining mode!§r But I have no §epickaxe§r yet. Please give me one");
         } else {
             boolean has = Bag.hasKind(h, Bag.Kind.AXE);
-            say(p, h, "§2ไปตัดไม้แล้วนะ!§r ผมจะหาต้นไม้ในระยะ " + r + " บล็อก ตัดทั้งต้น เก็บกิ่งกับต้นกล้า แล้วปลูกคืนให้" + (has ? "" : "\n§7(ยังไม่มีขวาน จะใช้มือไปก่อน ส่ง§eขวาน§7มาจะเร็วขึ้นมาก)"),
-                    "§2Off to chop wood!§r I'll find trees within " + r + " blocks, fell them whole, collect saplings and replant" + (has ? "" : "\n§7(no axe yet: by hand for now, an §eaxe§7 makes it much faster)"));
+            say(p, h, "§2ไปตัดไม้แล้วนะ!§r ผมจะหาต้นไม้แถวนี้ก่อน (หมดแล้วไปไกลขึ้นเรื่อยๆ ไม่จำกัดระยะ) ตัดทั้งต้น เก็บกิ่งกับต้นกล้า แล้วปลูกคืนให้" + (has ? "" : "\n§7(ยังไม่มีขวาน จะใช้มือไปก่อน ส่ง§eขวาน§7มาจะเร็วขึ้นมาก)"),
+                    "§2Off to chop wood!§r I'll find trees around here, then further away (no distance limit), fell them whole, collect saplings and replant" + (has ? "" : "\n§7(no axe yet: by hand for now, an §eaxe§7 makes it much faster)"));
         }
     }
 
@@ -504,8 +504,8 @@ public final class Talk {
         h.setMode(Mode.GATHER);
         h.setHome(h.blockPosition());
         String th = it.block == null ? "บล็อก" : it.block.th(), en = it.block == null ? "blocks" : it.block.en();
-        say(p, h, "§eไปเก็บ" + th + "แล้วนะ!§r ผมจะหา" + th + "ในระยะ " + HBConfig.SEARCH_RADIUS.get() + " บล็อกแถวนี้" + (isPlant(it) ? " (เหลือโคนไว้ให้มันงอกใหม่ด้วย)" : ""),
-                "§eOff to collect " + en + "!§r I'll look within " + HBConfig.SEARCH_RADIUS.get() + " blocks" + (isPlant(it) ? " (leaving the roots so they grow back)" : ""));
+        say(p, h, "§eไปเก็บ" + th + "แล้วนะ!§r ผมจะหา" + th + "แถวนี้ก่อน หมดแล้วไปหาไกลขึ้นเรื่อยๆ ไม่จำกัดระยะ" + (isPlant(it) ? " (เหลือโคนไว้ให้มันงอกใหม่ด้วย)" : ""),
+                "§eOff to collect " + en + "!§r I'll look around here, then further away (no distance limit)" + (isPlant(it) ? " (leaving the roots so they grow back)" : ""));
     }
 
     static boolean isPlant(Nlu.Intent it) {
@@ -520,8 +520,8 @@ public final class Talk {
         h.brain().food().setOptions(it.hunt, it.crops, animal);
         h.setMode(Mode.FOOD);
         h.setHome(h.blockPosition());
-        say(p, h, "§cไปหาอาหารแล้วนะ!§r (" + h.brain().food().describe(true) + ") ในระยะ " + HBConfig.SEARCH_RADIUS.get() + " บล็อก\n§7ไม่ล่าลูกสัตว์ สัตว์เลี้ยง หรือสัตว์ที่มีชื่อ เก็บผักที่สุกแล้วปลูกคืนให้ (มีถ่านหินในกระเป๋า ผมจะย่างเนื้อให้สุกเอง)",
-                "§cOff to find food!§r (" + h.brain().food().describe(false) + ") within " + HBConfig.SEARCH_RADIUS.get() + " blocks\n§7I never hunt babies, pets or named animals, and I replant crops (with coal in my bag I cook the meat too)");
+        say(p, h, "§cไปหาอาหารแล้วนะ!§r (" + h.brain().food().describe(true) + ") แถวนี้ก่อน หมดแล้วไปไกลขึ้นเรื่อยๆ ไม่จำกัดระยะ\n§7ไม่ล่าลูกสัตว์ สัตว์เลี้ยง หรือสัตว์ที่มีชื่อ เก็บผักที่สุกแล้วปลูกคืนให้ (มีถ่านหินในกระเป๋า ผมจะย่างเนื้อให้สุกเอง)",
+                "§cOff to find food!§r (" + h.brain().food().describe(false) + ") around here, then further away (no distance limit)\n§7I never hunt babies, pets or named animals, and I replant crops (with coal in my bag I cook the meat too)");
     }
 
     static void cmdDig(ServerPlayer p, HelperEntity h, Nlu.Intent it) {

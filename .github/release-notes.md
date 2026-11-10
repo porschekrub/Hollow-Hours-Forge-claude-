@@ -16,6 +16,8 @@ Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = h
   เมื่อใส่คีย์ Gemini ผู้ช่วยจะพูด**เป็นคำพูดจริงด้วยเสียงการ์ตูน**ทุกประโยค ทั้งตอนตอบ ตอนทำงาน และตอนคุยกันเอง (เร็วขึ้น แหลมขึ้น แต่ละตัวเสียงต่างกันนิดหน่อย ถ้าโควตา Gemini ฟรีหมดจะกลับเป็นเสียงอ้อแอ้ชั่วคราว) ตั้งค่า `voice` ใน `[voice]` ของ `config/helperbuddy-common.toml`: `"cartoon"` (ค่าเริ่มต้นเมื่อมีคีย์) `"ai"` (เสียง AI ปกติ) `"babble"` (เสียงการ์ตูนอ้อแอ้แบบเดิม) หรือ `"off"`
 - The helper's menus and books are **always in English** now, whatever the game language.
   เมนูและหนังสือของผู้ช่วย**เป็นภาษาอังกฤษเสมอ** ไม่เปลี่ยนตามภาษาเกม
+- **No work distance limit**: the helper looks around first, and when nothing is left it moves on further and further (sooner than before), as far as it takes. `searchRadius` (how far it looks at once) can now go up to 512.
+  **ไม่จำกัดระยะทำงาน**: ผู้ช่วยหาแถวนี้ก่อน ถ้าหมดจะไปหาไกลขึ้นเรื่อยๆ (เร็วกว่าเดิม) ไกลแค่ไหนก็ได้ ตั้ง `searchRadius` (ระยะที่มองเห็นทีเดียว) ได้สูงสุด 512
 
 **2.16.0 — English first**
 - Everything is in **English unless your game is set to Thai** (Options → Language → ภาษาไทย).

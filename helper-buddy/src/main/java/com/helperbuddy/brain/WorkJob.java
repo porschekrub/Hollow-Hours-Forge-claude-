@@ -510,7 +510,7 @@ public final class WorkJob {
         int radius = Brain.radius();
         if (roam == null || now > roamUntil) {
             if (roam != null) roamFails++;
-            if (roamFails >= 6 && com.helperbuddy.config.HBConfig.EXPLORE.get() && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD)) {
+            if (roamFails >= 3 && com.helperbuddy.config.HBConfig.EXPLORE.get() && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD)) {
                 // nothing left here: on to a new area (no distance limit, its chunks stay loaded while it works)
                 exploreTurn += 2.39996; // the golden angle: never the same way twice
                 double step = Math.max(48, radius * 0.9);
@@ -526,7 +526,7 @@ public final class WorkJob {
                 b.mover().teleportNear(next);
                 return;
             }
-            if (roamFails >= 6) {
+            if (roamFails >= 3) {
                 switch (mode) {
                     case MINE -> Say.notify(h, "roam:mine", 20 * 120, "แถวนี้ไม่เหลือแร่ที่ผมมองเห็นแล้ว ลองพาผมไปที่ถ้ำหรือใต้ดินแล้วสั่งใหม่ หรือสั่ง 'สร้างเหมือง' ก็ได้นะ",
                             "No ores I can see around here. Take me to a cave and ask again, or tell me to 'build a mine'");
