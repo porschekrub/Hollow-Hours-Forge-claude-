@@ -14,8 +14,8 @@ Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = h
 **Helper Buddy 2.16.1 — a cartoon voice that speaks real words** (Hollow Hours stays 2.16.0)
 - With the Gemini key, the helper now says everything **in real words with a cartoon voice**: its answers, what it says while working and its chatter with other helpers (faster and higher, a little different for each helper; if the free Gemini quota runs out it babbles for a while). Set `voice` in `[voice]` of `config/helperbuddy-common.toml`: `"cartoon"` (default with a key), `"ai"` (the plain AI voice), `"babble"` (the old cartoon sounds) or `"off"`.
   เมื่อใส่คีย์ Gemini ผู้ช่วยจะพูด**เป็นคำพูดจริงด้วยเสียงการ์ตูน**ทุกประโยค ทั้งตอนตอบ ตอนทำงาน และตอนคุยกันเอง (เร็วขึ้น แหลมขึ้น แต่ละตัวเสียงต่างกันนิดหน่อย ถ้าโควตา Gemini ฟรีหมดจะกลับเป็นเสียงอ้อแอ้ชั่วคราว) ตั้งค่า `voice` ใน `[voice]` ของ `config/helperbuddy-common.toml`: `"cartoon"` (ค่าเริ่มต้นเมื่อมีคีย์) `"ai"` (เสียง AI ปกติ) `"babble"` (เสียงการ์ตูนอ้อแอ้แบบเดิม) หรือ `"off"`
-- The helper's menus and books follow **the game's language** again, even after you told the helpers to speak another language.
-  เมนูและหนังสือของผู้ช่วยกลับมา**เปลี่ยนตามภาษาเกม**แล้ว แม้จะเคยสั่งให้ผู้ช่วยพูดภาษาอื่นไว้
+- The helper's menus and books are **always in English** now, whatever the game language.
+  เมนูและหนังสือของผู้ช่วย**เป็นภาษาอังกฤษเสมอ** ไม่เปลี่ยนตามภาษาเกม
 
 **2.16.0 — English first**
 - Everything is in **English unless your game is set to Thai** (Options → Language → ภาษาไทย).
