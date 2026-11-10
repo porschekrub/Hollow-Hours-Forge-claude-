@@ -20,7 +20,8 @@ public final class HBConfig {
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
         b.comment("How the helper works").push("helper");
-        SEARCH_RADIUS = b.comment("How far (blocks) the helper looks around at once for ores, trees, blocks and animals; when nothing is left it moves on further (exploreFurther, no distance limit)").defineInRange("searchRadius", 100, 16, 512);
+        SEARCH_RADIUS = b.comment("How far (blocks) the helper sees ores, trees, blocks and animals. 0 = no limit: everything loaded in the world around it",
+                "(the server view distance); when nothing is left it walks on further (exploreFurther). A number (16-512) limits it").defineInRange("searchRadius", 0, 0, 512);
         MAX_HELPERS_PER_PLAYER = b.comment("How many helpers one player may own").defineInRange("maxHelpersPerPlayer", 8, 1, 64);
         WORK_SPEED = b.comment("Mining / chopping speed multiplier (1 = like a player with the same tool)").defineInRange("workSpeed", 1.25, 0.25, 10.0);
         DAMAGE_MULT = b.comment("Helper attack damage multiplier").defineInRange("damageMultiplier", 1.0, 0.1, 10.0);

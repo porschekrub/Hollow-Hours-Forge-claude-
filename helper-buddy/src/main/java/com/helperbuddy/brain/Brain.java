@@ -117,8 +117,19 @@ public final class Brain {
         return true;
     }
 
+    /** How far the helper sees. 0 (the default) = no limit: everything that is loaded around the players and the helper
+     * (the server's view distance); past that the world isn't there yet, so it walks on (exploreFurther). */
     public static int radius() {
-        return HBConfig.SEARCH_RADIUS.get();
+        int r = HBConfig.SEARCH_RADIUS.get();
+        if (r > 0) return r;
+        var srv = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer();
+        int chunks = srv == null ? 12 : Math.max(srv.getPlayerList().getViewDistance(), 8);
+        return (chunks + 1) * 16;
+    }
+
+    /** How far up and down it sees (no limit = the whole height of the world). */
+    public static int vRadius() {
+        return HBConfig.SEARCH_RADIUS.get() > 0 ? Math.min(radius(), 48) : 4096;
     }
 
     // ------------------------------------------------------------------ main tick
