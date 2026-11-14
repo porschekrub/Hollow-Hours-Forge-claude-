@@ -38,6 +38,8 @@ public final class Brain {
     private final Map<String, Long> cooldowns = new HashMap<>();
     long t;
     private int followTpCd;
+    /** true while the plan starts one of its own steps (see Plan.begin) */
+    boolean planStep;
 
     public Brain(HelperEntity h) {
         this.h = h;
@@ -262,7 +264,9 @@ public final class Brain {
             ServerLevel dl = h.getServer() == null ? null : h.getServer().getLevel(dim);
             if (dl != null && cooldown("gototp", 40)) {
                 BlockPos spot = Mover.safeSpotNear(dl, pos, 4);
+                if (spot == null) spot = Mover.landAround(dl, pos.getX(), pos.getZ(), pos.getY());
                 Vec3 at = Vec3.atBottomCenterOf(spot != null ? spot : pos);
+                com.helperbuddy.Helpers.hold(dl, BlockPos.containing(at));
                 Compat.toDimension(h, dl, at);
             }
             return;
@@ -273,7 +277,12 @@ public final class Brain {
             return;
         }
         if (dxz > 48) {
-            mover.teleportNear(pos);
+            if (!mover.teleportNear(pos)) {
+                // nothing to stand on right there (in the air, under water, inside rock): the nearest ground
+                BlockPos land = Mover.landAround(level(), pos.getX(), pos.getZ(), pos.getY());
+                if (land == null || !mover.jumpTo(land)) arrive(pos);
+                else if (Math.hypot(land.getX() - pos.getX(), land.getZ() - pos.getZ()) < 30) arrive(land);
+            }
             return;
         }
         Mover.Res r = mover.moveTo(pos, 1.2, 1.2);
@@ -335,7 +344,7 @@ public final class Brain {
         work.end();
         food.end();
         tasks.end();
-        plan.clear();
+        if (!planStep) plan.clear();
         care.cancelHunger();
         combat.dropHunt();
         h.jobs.remove("goto");

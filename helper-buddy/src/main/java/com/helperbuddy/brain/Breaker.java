@@ -80,7 +80,7 @@ public final class Breaker {
         ItemStack t = h.tool();
         float sp = t.isEmpty() ? 1f : Bag.speedOn(t, s);
         boolean harvest = Bag.canHarvest(t, s);
-        perTick = hard <= 0 ? 1f : (float) (sp / hard / (harvest ? 30f : 100f) * HBConfig.WORK_SPEED.get() * (1 + 0.1 * (h.helperLevel() - 1)));
+        perTick = hard <= 0 ? 1f : (float) (sp / hard / (harvest ? 30f : 100f) * HBConfig.WORK_SPEED.get() * h.workMult() * (1 + 0.1 * (h.helperLevel() - 1)));
         pos = p.immutable();
         state = s;
         progress = 0;

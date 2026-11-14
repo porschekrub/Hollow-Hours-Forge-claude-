@@ -238,4 +238,128 @@ final class Errands {
         for (String s : ids) l.add(StringTag.valueOf(s));
         return l;
     }
+
+    // ================================================================== things lying on the ground
+    static void pickup(Tasks t) {
+        HelperEntity h = t.h;
+        Brain b = t.b;
+        ServerLevel level = b.level();
+        if (Bag.isFull(h)) {
+            b.onBagFull();
+            if (Bag.isFull(h)) {
+                Say.owner(h, "เก็บมาได้ " + t.count + " ชิ้น กระเป๋าเต็มแล้ว เก็บต่อไม่ได้", "Picked up " + t.count + " items, my bag is full now");
+                t.done(false);
+                return;
+            }
+        }
+        if (t.animal != null) t.animal = null;
+        net.minecraft.world.entity.item.ItemEntity best = null;
+        double bd = Double.MAX_VALUE;
+        java.util.List<AABB> areas = new ArrayList<>();
+        areas.add(new AABB(t.at == null ? h.blockPosition() : t.at).inflate(32, 12, 32));
+        ServerPlayer o = h.owner();
+        if (o != null && o.level() == level && !t.spec.getBoolean("here")) areas.add(o.getBoundingBox().inflate(24, 8, 24));
+        for (AABB area : areas)
+            for (net.minecraft.world.entity.item.ItemEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, area, e -> e.isAlive() && !e.getItem().isEmpty())) {
+                if (t.skip.contains(e.getUUID())) continue;
+                double d = e.distanceToSqr(h);
+                if (d < bd) {
+                    bd = d;
+                    best = e;
+                }
+            }
+        if (best == null) {
+            // (a moment for things that are still falling)
+            if (++t.phase < 40) return;
+            Say.owner(h, t.count > 0 ? "เก็บของที่ตกอยู่มาแล้ว §e" + t.count + "§r ชิ้น อยู่ในกระเป๋าผม" : "แถวนี้ไม่มีของตกอยู่เลย",
+                    t.count > 0 ? "Picked up §e" + t.count + "§r items, they're in my bag" : "Nothing is lying around here");
+            t.done(false);
+            return;
+        }
+        t.phase = 0;
+        if (bd > 2.2 * 2.2) {
+            Mover.Res r = b.mover().moveTo(best, 1.25, 1.2);
+            if (r == Mover.Res.NO_PATH || b.mover().stuck(60)) {
+                if (!b.mover().teleportNear(best.blockPosition())) t.skip.add(best.getUUID());
+            }
+            return;
+        }
+        int got = b.work.pickup(st -> true, 3);
+        if (got <= 0) t.skip.add(best.getUUID());
+        t.count += got;
+    }
+
+    // ================================================================== a bucket of water, lava or milk
+    static void fill(Tasks t) {
+        HelperEntity h = t.h;
+        Brain b = t.b;
+        ServerLevel level = b.level();
+        String fluid = t.spec.getString("fluid");
+        int n = t.spec.contains("n") ? t.spec.getInt("n") : 1;
+        Item filled = fluid.equals("lava") ? Items.LAVA_BUCKET : fluid.equals("milk") ? Items.MILK_BUCKET : Items.WATER_BUCKET;
+        if (t.count >= n) {
+            Say.owner(h, "ได้ §e" + Skills.name(filled) + "§r " + t.count + " ถังแล้ว!", "Got §e" + t.count + " " + Skills.name(filled) + "§r!");
+            if (!b.plan.active()) t.deliver(filled, t.count);
+            t.done(false);
+            return;
+        }
+        if (Bag.count(h, Items.BUCKET) <= 0 && Crafter.craft(h, Items.BUCKET, 1, 0).made() <= 0) {
+            Say.owner(h, t.count > 0 ? "ถังหมดแล้ว ได้มา " + t.count + " ถัง" : "ผมไม่มี§eถังเปล่า§r (Bucket) เลย ส่งถังมาให้ผม หรือให้เหล็ก 3 แท่ง เดี๋ยวผมคราฟต์เอง",
+                    t.count > 0 ? "I'm out of buckets, got " + t.count : "I have no empty §ebucket§r. Give me one, or 3 iron ingots and I'll craft it");
+            if (t.count > 0 && !b.plan.active()) t.deliver(filled, t.count);
+            if (t.count > 0) t.done(false);
+            else t.fail();
+            return;
+        }
+        if (fluid.equals("milk")) {
+            if (t.animal == null || !t.animal.isAlive()) {
+                t.animal = null;
+                double bd = Double.MAX_VALUE;
+                for (net.minecraft.world.entity.animal.Cow c : level.getEntitiesOfClass(net.minecraft.world.entity.animal.Cow.class, new AABB(h.blockPosition()).inflate(Brain.radius(), 24, Brain.radius()),
+                        c -> c.isAlive() && !c.isBaby())) {
+                    double d = c.distanceToSqr(h);
+                    if (d < bd) {
+                        bd = d;
+                        t.animal = c;
+                    }
+                }
+                if (t.animal == null) {
+                    Say.owner(h, "แถวนี้ไม่มีวัวให้รีดนมเลย", "There are no cows to milk around here");
+                    t.fail();
+                    return;
+                }
+            }
+            Mover.Res r = b.mover().moveTo(t.animal, 1.15, 1.6);
+            if (h.distanceTo(t.animal) > 2.8) {
+                if (r == Mover.Res.NO_PATH || b.mover().stuck(80)) b.mover().teleportNear(t.animal.blockPosition());
+                return;
+            }
+        } else {
+            net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid> tag = fluid.equals("lava") ? net.minecraft.tags.FluidTags.LAVA : net.minecraft.tags.FluidTags.WATER;
+            BlockPos src = t.spec.contains("src") ? BlockPos.of(t.spec.getLong("src")) : null;
+            if (src != null && !(level.getFluidState(src).isSource() && level.getFluidState(src).is(tag))) src = null;
+            if (src == null) {
+                if (h.tickCount % 10 != 0) return;
+                src = Scan.nearest(level, h.blockPosition(), Brain.radius(), 48, st -> st.getBlock() instanceof net.minecraft.world.level.block.LiquidBlock && st.getFluidState().isSource()
+                        && st.getFluidState().is(tag), (pos, st) -> level.getFluidState(pos.above()).isEmpty());
+                if (src == null) {
+                    Say.owner(h, fluid.equals("lava") ? "แถวนี้ไม่มีลาวาเลย (ลองลงไปใต้ดินลึกๆ หรือในเนเธอร์)" : "แถวนี้ไม่มีแหล่งน้ำเลย",
+                            fluid.equals("lava") ? "There's no lava around here (try deep underground, or the Nether)" : "There's no water around here");
+                    t.fail();
+                    return;
+                }
+                t.spec.putLong("src", src.asLong());
+            }
+            if (!Skills.near(t, src, 3.6)) return;
+            level.setBlock(src, Blocks.AIR.defaultBlockState(), 3);
+            t.spec.remove("src");
+            level.playSound(null, src, fluid.equals("lava") ? net.minecraft.sounds.SoundEvents.BUCKET_FILL_LAVA : net.minecraft.sounds.SoundEvents.BUCKET_FILL, net.minecraft.sounds.SoundSource.NEUTRAL, 1f, 1f);
+        }
+        if (fluid.equals("milk")) level.playSound(null, h.blockPosition(), net.minecraft.sounds.SoundEvents.COW_MILK, net.minecraft.sounds.SoundSource.NEUTRAL, 1f, 1f);
+        Bag.take(h, Items.BUCKET, 1);
+        Bag.addOrDrop(h, new net.minecraft.world.item.ItemStack(filled), null);
+        h.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+        t.animal = null;
+        t.count++;
+    }
 }

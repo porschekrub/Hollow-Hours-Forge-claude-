@@ -44,6 +44,8 @@ public final class Plan {
         public List<String> ores = new ArrayList<>();
         @Nullable
         public String[] ids;
+        /** gather: the item that is counted when it is not the block itself; hand: the item to hand over */
+        public String item = "";
         public String name = "";
         public boolean hunt = true, crops = true;
         /** food: count the meat (items), not the animals */
@@ -85,7 +87,7 @@ public final class Plan {
     final HelperEntity h;
     final List<Step> steps = new ArrayList<>();
     int i;
-    boolean dirty;
+    boolean dirty, itemSeen;
 
     Plan(Brain b) {
         this.b = b;
@@ -205,6 +207,29 @@ public final class Plan {
         return s;
     }
 
+    /** Collecting blocks for an item ("wheat" from the wheat crop): the item is what gets counted. */
+    public static Step gatherFor(String[] ids, String item, String name, @Nullable Integer n, boolean full) {
+        Step s = new Step("gather");
+        s.ids = ids;
+        s.item = item;
+        s.name = name;
+        s.n = n;
+        s.full = full;
+        s.th = "เก็บ " + name + (full ? " จนกว่ากระเป๋าจะเต็ม" : n != null ? " " + n + " ชิ้น" : "");
+        s.en = "collect " + (full ? "" : n != null ? n + " " : "") + name + (full ? " until my bag is full" : "");
+        return s;
+    }
+
+    /** Bringing the owner one kind of item (all it has of it, or n). */
+    public static Step hand(String item, @Nullable Integer n, String name) {
+        Step s = new Step("hand");
+        s.item = item;
+        s.n = n;
+        s.th = "เอา " + name + " มาให้คุณ";
+        s.en = "bring you the " + name;
+        return s;
+    }
+
     public static Step food(boolean hunt, boolean crops, @Nullable String animal, @Nullable Integer n, boolean full) {
         return food(hunt, crops, animal, n, full, false);
     }
@@ -296,13 +321,27 @@ public final class Plan {
             }
         }
         boolean th = Say.thai(h.owner());
-        StringBuilder sb = new StringBuilder(th ? "§aรับทราบ! ผมจะทำตามนี้:§r" : "§aGot it! Here's the plan:§r");
-        for (int k = 0; k < steps.size(); k++) sb.append("\n§e").append(k + 1).append(".§r ").append(steps.get(k).label(th));
-        Say.owner(h, sb.toString(), sb.toString());
+        if (steps.size() == 1) Say.owner(h, "§aรับทราบ!§r " + steps.get(0).th, "§aGot it!§r I'll " + steps.get(0).en);
+        else {
+            StringBuilder sb = new StringBuilder(th ? "§aรับทราบ! ผมจะทำตามนี้:§r" : "§aGot it! Here's the plan:§r");
+            for (int k = 0; k < steps.size(); k++) sb.append("\n§e").append(k + 1).append(".§r ").append(steps.get(k).label(th));
+            Say.owner(h, sb.toString(), sb.toString());
+        }
         begin();
     }
 
     void begin() {
+        // starting a job leaves whatever it did before, but a step of the plan must not drop the plan itself
+        boolean was = b.planStep;
+        b.planStep = true;
+        try {
+            beginStep();
+        } finally {
+            b.planStep = was;
+        }
+    }
+
+    void beginStep() {
         Step s = current();
         if (s == null) {
             finish();
@@ -320,7 +359,7 @@ public final class Plan {
         switch (s.k) {
             case "chop", "mine", "gather", "food" -> {
                 if (s.k.equals("mine")) b.work.setOreOnly(s.ores);
-                if (s.k.equals("gather")) b.work.setGather(s.ids);
+                if (s.k.equals("gather")) b.work.setGather(s.ids, s.item.isEmpty() ? null : s.item);
                 if (s.k.equals("food")) b.food.setOptions(s.hunt, s.crops, s.animal);
                 h.setHome(h.blockPosition());
                 h.setMode(switch (s.k) {
@@ -375,6 +414,43 @@ public final class Plan {
                 if (p.level() != h.level() || p.distanceTo(h) > 6) b.mover().bringTo(p);
                 int n = Bag.giveAllTo(h, p, st -> !Bag.isTool(st) && !st.is(Items.TORCH));
                 Say.to(p, h, n > 0 ? "เอาของมาส่งให้แล้ว §e" + n + "§r ชิ้น!" : "ผมไม่มีของจะให้เลย", n > 0 ? "Here you go: §e" + n + "§r items!" : "I have nothing to give you");
+                h.setMode(Mode.FOLLOW);
+                instant = true;
+            }
+            case "hand" -> {
+                if (p == null) {
+                    s.t0 = -1; // waits until the owner is online
+                    return;
+                }
+                net.minecraft.world.item.Item it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(com.helperbuddy.HelperBuddy.rl(s.item));
+                int have = Bag.count(h, it) + (h.tool().is(it) ? h.tool().getCount() : 0);
+                String name = new ItemStack(it).getHoverName().getString();
+                if (have <= 0) {
+                    // (the block dropped something else: glowstone dust, cobblestone ...) whatever it brought back
+                    if (p.level() != h.level() || p.distanceTo(h) > 6) b.mover().bringTo(p);
+                    int n = Bag.giveAllTo(h, p, st -> !Bag.isTool(st) && !st.is(Items.TORCH) && Care.foodValue(st) <= 0);
+                    Say.to(p, h, n > 0 ? "เอาของมาส่งให้แล้ว §e" + n + "§r ชิ้น!" : "ผมหา " + name + " มาไม่ได้เลย", n > 0 ? "Here you go: §e" + n + "§r items!" : "I couldn't get any " + name);
+                } else {
+                    if (p.level() != h.level() || p.distanceTo(h) > 6) b.mover().bringTo(p);
+                    int left = s.n == null ? have : Math.min(have, s.n), given = 0;
+                    if (h.tool().is(it) && left > 0) {
+                        given += h.tool().getCount();
+                        left -= h.tool().getCount();
+                        Bag.giveTo(p, h.tool().copy());
+                        h.setTool(ItemStack.EMPTY);
+                    }
+                    for (int k = 0; k < h.bag.getContainerSize() && left > 0; k++) {
+                        ItemStack st = h.bag.getItem(k);
+                        if (!st.is(it)) continue;
+                        int take = Math.min(left, st.getCount());
+                        Bag.giveTo(p, st.split(take));
+                        left -= take;
+                        given += take;
+                    }
+                    h.bag.setChanged();
+                    Say.to(p, h, "นี่ครับ §e" + name + "§r " + given + " ชิ้น!", "Here you go: §e" + given + " " + name + "§r!");
+                    h.act("wave");
+                }
                 h.setMode(Mode.FOLLOW);
                 instant = true;
             }
@@ -495,11 +571,11 @@ public final class Plan {
                 if (s.full) done = Bag.isFull(h);
                 else if (s.n != null) done = s.got >= s.n;
                 if (!done && Bag.isFull(h) && !s.full) {
-                    Say.owner(h, "§eกระเป๋าเต็มแล้ว§r ได้ " + s.got + "/" + s.n + " เลยข้ามไปขั้นต่อไปนะ", "§eMy bag is full§r (" + s.got + "/" + s.n + "), moving on to the next step");
+                    Say.owner(h, "§eกระเป๋าเต็มแล้ว§r ได้ " + s.got + (s.n != null ? "/" + s.n : "") + " เลยไปขั้นต่อไปนะ", "§eMy bag is full§r (" + s.got + (s.n != null ? "/" + s.n : "") + "), moving on to the next step");
                     done = true;
                 }
                 if (!done && age > STEP_TIMEOUT) {
-                    Say.owner(h, s.th + " ได้ไม่ครบ (ได้ " + s.got + "/" + s.n + ") ข้ามไปขั้นต่อไปนะ", "Couldn't finish \"" + s.en + "\" (" + s.got + "/" + s.n + "), moving on");
+                    Say.owner(h, s.th + " ได้ไม่ครบ (ได้ " + s.got + (s.n != null ? "/" + s.n : "") + ") ไปขั้นต่อไปนะ", "Couldn't finish \"" + s.en + "\" (" + s.got + (s.n != null ? "/" + s.n : "") + "), moving on");
                     done = true;
                 }
             }
@@ -529,7 +605,14 @@ public final class Plan {
                 }
             }
             case "gather" -> {
-                if (ev.equals("item") && what instanceof ItemStack st && b.work.wantsItem(st)) add = st.getCount();
+                // what it is after counts; a block that drops something else (stone, glowstone, grass) counts as one itself
+                if (ev.equals("item") && what instanceof ItemStack st && b.work.wantsItem(st)) {
+                    add = st.getCount();
+                    itemSeen = true;
+                } else if (ev.equals("break") && what instanceof BlockState bs) {
+                    if (!itemSeen && b.work.wantItem == null && b.work.gather.contains(bs.getBlock())) add = 1;
+                    itemSeen = false;
+                }
             }
             case "food" -> {
                 if (s.meat) {
@@ -544,6 +627,8 @@ public final class Plan {
         if (add > 0) {
             s.got += add;
             dirty = true;
+            // the clock of a work step only runs while nothing comes in (it gives up after 10 minutes without any progress)
+            if (s.work()) s.t0 = h.level().getGameTime();
         }
     }
 
@@ -582,6 +667,7 @@ public final class Plan {
             t.put("ids", ids);
         }
         t.putString("name", s.name);
+        t.putString("item", s.item);
         t.putBoolean("hunt", s.hunt);
         t.putBoolean("crops", s.crops);
         t.putBoolean("meat", s.meat);
@@ -623,6 +709,7 @@ public final class Plan {
             for (int k = 0; k < l.size(); k++) s.ids[k] = l.getString(k);
         }
         s.name = t.getString("name");
+        s.item = t.getString("item");
         s.hunt = t.getBoolean("hunt");
         s.crops = t.getBoolean("crops");
         s.meat = t.getBoolean("meat");
@@ -674,6 +761,6 @@ public final class Plan {
         Step s = current();
         if (s != null && s.k.equals("mine")) b.work.setOreOnly(s.ores);
         // after a reload the current step restarts its clock but keeps its count
-        if (s != null) s.t0 = s.k.equals("deliver") ? -1 : -2;
+        if (s != null) s.t0 = s.k.equals("deliver") || s.k.equals("hand") ? -1 : -2;
     }
 }

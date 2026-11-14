@@ -8,6 +8,8 @@ import com.helperbuddy.Helpers;
 import com.helperbuddy.brain.Bag;
 import com.helperbuddy.brain.BuildJob;
 import com.helperbuddy.brain.Crafter;
+import com.helperbuddy.brain.Fetch;
+import com.helperbuddy.brain.Sources;
 import com.helperbuddy.brain.Navigator;
 import com.helperbuddy.brain.Plan;
 import com.helperbuddy.brain.Tasks;
@@ -70,7 +72,38 @@ public final class Talk {
     // ------------------------------------------------------------------ entry from chat / command / screen
     /** Picks which helper(s) the player is talking to ("ทุกคน ..." / "everyone ..." / "<name> ...", else the last or nearest). */
     public static void command(ServerPlayer p, String raw) {
+        command(p, raw, 0);
+    }
+
+    /** attempt: how often helpers left far away (in chunks that are not loaded) have been called for this order. */
+    static void command(ServerPlayer p, String raw, int attempt) {
         List<HelperEntity> mine = Helpers.owned(p);
+        // helpers that are not in the game's memory (left far away): call them first when the order is for them
+        com.helperbuddy.HelperIndex index = com.helperbuddy.HelperIndex.get(p.server);
+        List<com.helperbuddy.HelperIndex.Entry> asleep = index.asleep(p.server, p.getUUID());
+        if (!asleep.isEmpty()) {
+            String low = Nlu.norm(raw);
+            boolean everyone = low.matches("^(ทุกคน|ทุกตัว|all|everyone|everybody)\\b.*");
+            List<com.helperbuddy.HelperIndex.Entry> wanted = new ArrayList<>();
+            for (com.helperbuddy.HelperIndex.Entry e : asleep) {
+                String n = Nlu.norm(e.name());
+                if (mine.isEmpty() || everyone || !n.isEmpty() && low.startsWith(n)) wanted.add(e);
+            }
+            if (!wanted.isEmpty()) {
+                if (attempt < 3) {
+                    index.wake(p.server, wanted);
+                    if (attempt == 0) p.sendSystemMessage(Component.literal(Say.t(p, "§7(กำลังเรียกผู้ช่วยที่อยู่ไกล...)", "§7(calling your helper from far away...)")));
+                    java.util.UUID pid = p.getUUID();
+                    net.minecraft.server.MinecraftServer server = p.server;
+                    com.helperbuddy.HBEvents.later(attempt == 0 ? 25 : 40, () -> {
+                        ServerPlayer again = server.getPlayerList().getPlayer(pid);
+                        if (again != null) command(again, raw, attempt + 1);
+                    });
+                    return;
+                }
+                index.prune(p.server, wanted);
+            }
+        }
         if (mine.isEmpty()) {
             p.sendSystemMessage(Component.literal(Say.t(p, "§6[ผู้ช่วย]§r คุณยังไม่มีผู้ช่วยเลย ใช้ §eสัญญาจ้างผู้ช่วย§r คลิกที่พื้นเพื่อเรียกผู้ช่วยก่อนนะ",
                     "§6[Helper]§r You have no helper yet. Use a §eHelper Contract§r on the ground to call one")));
@@ -172,9 +205,10 @@ public final class Talk {
     }
 
     static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume",
-            "locate", "remember", "recall", "forget", "persona", "lang", "whatis", "around", "mods");
+            "locate", "remember", "recall", "forget", "persona", "lang", "whatis", "around", "mods", "speed", "outfit");
+    /** answered or done on the spot, also in the middle of a chain of orders */
     static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "lang", "whatis",
-            "around", "mods");
+            "around", "mods", "speed", "outfit", "fightback");
     static final List<String> PLAN_ONLY = List.of("goto", "wait", "deposit", "eat", "cook", "guard");
 
     static SmallTalk.Ctx ctx(HelperEntity h, ServerPlayer p) {
@@ -187,7 +221,22 @@ public final class Talk {
     static void single(ServerPlayer p, HelperEntity h, Nlu.Intent it, String text, boolean allowAi) {
         boolean th = th(p);
         switch (it.k) {
-            case "gather" -> cmdGather(p, h, it);
+            case "gather" -> {
+                // only in another dimension (soul sand from the Overworld)? then the trip there is part of the job
+                Fetch.Result far = Fetch.gather(h, it.ids, it.block == null ? "บล็อก" : it.block.th(), it.block == null ? "blocks" : it.block.en(), null, false, th);
+                if (!far.ok()) say(p, h, far.th(), far.en());
+                else if (!far.steps().isEmpty()) h.brain().plan().start(far.steps());
+                else cmdGather(p, h, it);
+            }
+            case "get" -> cmdGet(p, h, it.item, it.n, it.full);
+            case "slay" -> run(p, h, Fetch.slay(h, it.mobs, it.n));
+            case "pickup" -> {
+                say(p, h, "ได้ครับ จะเก็บของที่ตกอยู่แถวนี้ให้", "Sure, I'll pick up what's lying around here");
+                h.brain().tasks().start(Tasks.pickup(false));
+            }
+            case "recover" -> cmdRecover(p, h);
+            case "speed" -> cmdSpeed(p, h, it.text);
+            case "outfit" -> cmdOutfit(p, h, it.text);
             case "findFood" -> cmdFood(p, h, it);
             case "help" -> help(p);
             case "come" -> cmdCome(p, h);
@@ -197,7 +246,12 @@ public final class Talk {
             }
             case "follow" -> cmdStop(p, h, Mode.FOLLOW, false);
             case "stay" -> cmdStop(p, h, Mode.STAY, false);
-            case "mine" -> cmdMine(p, h, it);
+            case "mine" -> {
+                Fetch.Result far = Fetch.mine(h, it.ores, null, false);
+                if (!far.ok()) say(p, h, far.th(), far.en());
+                else if (!far.steps().isEmpty()) h.brain().plan().start(far.steps());
+                else cmdMine(p, h, it);
+            }
             case "chop" -> cmdWork(p, h, Mode.CHOP);
             case "dig" -> cmdDig(p, h, it);
             case "house" -> cmdHouse(p, h, it, text);
@@ -637,13 +691,76 @@ public final class Talk {
             say(p, h, "นี่ครับ §e" + name + "§r " + given + " ชิ้น", "Here you go: §e" + given + " " + name);
             return;
         }
-        if (Crafter.craftable(h.level(), item)) {
+        if (Crafter.craftable(h.level(), item) && !Sources.natural(net.minecraft.world.level.block.Block.byItem(item))) {
             say(p, h, "ผมไม่มี " + name + " อยู่ เดี๋ยวลองคราฟต์ให้นะ", "I don't have " + name + ", let me try to craft it");
             h.brain().tasks().start(Tasks.craft(it.item, want));
             return;
         }
-        say(p, h, "ผมไม่มี §e" + name + "§r เลยครับ และคราฟต์เองไม่ได้ (ลองสั่ง \"หยิบ" + name + "จากหีบ\" ถ้ามีในหีบ)",
-                "I don't have any §e" + name + "§r and can't craft it (try \"get " + name + " from the chest\")");
+        // not in the bag: go and get it, wherever it comes from
+        say(p, h, "ผมไม่มี " + name + " อยู่กับตัว เดี๋ยวไปหามาให้", "I don't have any " + name + " on me, let me go and get it");
+        cmdGet(p, h, it.item, it.n, false);
+    }
+
+    // ------------------------------------------------------------------ getting anything, speed, outfits
+    static void run(ServerPlayer p, HelperEntity h, Fetch.Result r) {
+        if (!r.ok()) {
+            say(p, h, r.th(), r.en());
+            return;
+        }
+        if (h.isKO()) say(p, h, "§cผมยังสลบอยู่...§r ให้อาหารผมก่อนนะ แล้วผมจะไปทำให้", "§cI'm still knocked out...§r Feed me first, then I'll go");
+        if (!r.steps().isEmpty()) h.brain().plan().start(r.steps());
+    }
+
+    /** "Get me X": whatever X is, the helper works out where it comes from and goes (see Fetch). */
+    static void cmdGet(ServerPlayer p, HelperEntity h, String itemId, @Nullable Integer n, boolean full) {
+        run(p, h, Fetch.plan(p, h, itemId, n, full, true));
+    }
+
+    /** "Get my stuff back": to where the player died, pick everything up, bring it. */
+    static void cmdRecover(ServerPlayer p, HelperEntity h) {
+        var d = p.getLastDeathLocation();
+        if (d.isEmpty()) {
+            say(p, h, "คุณยังไม่เคยตายในโลกนี้เลย ไม่มีของให้ไปเก็บ", "You haven't died in this world, there's nothing to get back");
+            return;
+        }
+        BlockPos at = d.get().pos();
+        List<Plan.Step> steps = new ArrayList<>();
+        steps.add(Plan.gotoStep(at, d.get().dimension().location().toString(), "ไปที่ที่คุณตาย (" + at.getX() + " " + at.getY() + " " + at.getZ() + ")", "go to where you died (" + at.getX() + " " + at.getY() + " " + at.getZ() + ")"));
+        steps.add(Plan.task(Tasks.pickup(true), "เก็บของที่ตกอยู่", "pick up what's lying there"));
+        steps.add(Plan.simple("deliver", "เอาของมาให้คุณ", "bring you the items"));
+        h.brain().plan().start(steps);
+    }
+
+    static void cmdSpeed(ServerPlayer p, HelperEntity h, String how) {
+        int was = h.speedLevel();
+        int to = switch (how) {
+            case "max" -> 3;
+            case "up" -> Math.min(3, was + 1);
+            case "down" -> Math.max(0, was - 1);
+            default -> 1;
+        };
+        h.setSpeedLevel(to);
+        String th = HelperEntity.SPEED_NAMES[to][0], en = HelperEntity.SPEED_NAMES[to][1];
+        if (to == was && how.equals("up")) say(p, h, "นี่ก็เร็วสุดแล้วนะ (เทอร์โบ)!", "This is as fast as I go (turbo)!");
+        else if (to == 3) say(p, h, "§bโหมดเทอร์โบ!§r ทำงานเร็วสุดขีด (ขุดเร็วขึ้น 10 เท่า เดินเร็วขึ้น) สั่ง \"ทำงานปกติ\" ถ้าอยากให้ช้าลง", "§bTurbo mode!§r As fast as I can (10x digging, faster on my feet). Say \"normal speed\" to slow me down");
+        else say(p, h, "ได้ ตอนนี้ผมทำงานแบบ §b" + th + "§r (เร็วกว่านี้ได้อีก: \"เร็วสุดๆ\")", "OK, I'm working §b" + en + "§r now (I can go faster: \"turbo\")");
+    }
+
+    static void cmdOutfit(ServerPlayer p, HelperEntity h, String which) {
+        boolean th = th(p);
+        if (which.equals("?")) {
+            StringBuilder sb = new StringBuilder(th ? "ผมมี " + HelperEntity.SKINS + " ชุด: " : "I have " + HelperEntity.SKINS + " outfits: ");
+            for (int i = 0; i < HelperEntity.SKINS; i++) sb.append(i > 0 ? ", " : "").append(i == h.skin() ? "§e" : "§f").append(HelperEntity.OUTFIT_NAMES[i][th ? 0 : 1]).append("§r");
+            sb.append(th ? "\n§7(สั่ง \"ใส่ชุดนินจา\" หรือ \"เปลี่ยนชุด\" เพื่อสลับไปชุดถัดไป)" : "\n§7(say \"wear the ninja outfit\", or \"change outfit\" for the next one)");
+            Say.raw(p, h, sb.toString());
+            return;
+        }
+        int to = which.isEmpty() ? h.skin() + 1 : which.equals("random") ? h.getRandom().nextInt(HelperEntity.SKINS) : HelperEntity.outfitIndex(which);
+        if (to < 0) to = h.skin() + 1;
+        if (which.equals("random") && Math.floorMod(to, HelperEntity.SKINS) == h.skin()) to++;
+        h.setSkin(to);
+        h.act("cheer");
+        say(p, h, "เปลี่ยนเป็น§d" + h.outfitName(true) + "§rแล้ว เป็นไง เท่ไหม", "Changed into my §d" + h.outfitName(false) + "§r outfit. How do I look?");
     }
 
     // ------------------------------------------------------------------ buildings
@@ -787,9 +904,15 @@ public final class Talk {
                 single(p, h, it, pieces.get(i), false);
                 continue;
             }
+            // "where is ..." / "take me to ..." in the middle of a chain: answered right away
+            if (it.k.equals("locate")) {
+                single(p, h, it, pieces.get(i), false);
+                continue;
+            }
             Object st = toStep(p, h, pieces.get(i), it, steps.size());
             if (st instanceof String[] err) say(p, h, "§eข้าม \"" + pieces.get(i) + "\":§r " + err[0], "§eSkipping \"" + pieces.get(i) + "\":§r " + err[1]);
             else if (st instanceof Plan.Step s) steps.add(s);
+            else if (st instanceof List<?> many) for (Object o : many) steps.add((Plan.Step) o);
             else if (it.k.equals("unknown")) say(p, h, "ไม่เข้าใจ \"§f" + pieces.get(i) + "§r\" เลยข้ามไปนะ", "I didn't understand \"§f" + pieces.get(i) + "§r\", skipping it");
         }
         if (steps.isEmpty()) return true;
@@ -805,10 +928,38 @@ public final class Talk {
         switch (it.k) {
             case "chop":
                 return Plan.work("chop", q.n(), q.full());
-            case "mine":
+            case "mine": {
+                Fetch.Result far = Fetch.mine(h, it.ores, q.n(), q.full());
+                if (!far.ok()) return new String[] {far.th(), far.en()};
+                if (!far.steps().isEmpty()) return far.steps().subList(0, far.steps().size() - 1); // (what comes after is the chain's business)
                 return Plan.mine(it.ores, q.n(), q.full());
-            case "gather":
-                return Plan.gather(it.ids, it.block == null ? "บล็อก" : it.block.th(), it.block == null ? "blocks" : it.block.en(), q.n(), q.full(), th);
+            }
+            case "gather": {
+                String bth = it.block == null ? "บล็อก" : it.block.th(), ben = it.block == null ? "blocks" : it.block.en();
+                Fetch.Result far = Fetch.gather(h, it.ids, bth, ben, q.n(), q.full(), th);
+                if (!far.ok()) return new String[] {far.th(), far.en()};
+                if (!far.steps().isEmpty()) return far.steps().subList(0, far.steps().size() - 1);
+                return Plan.gather(it.ids, bth, ben, q.n(), q.full(), th);
+            }
+            case "get": {
+                Fetch.Result r = Fetch.plan(p, h, it.item, it.n, it.full, false);
+                if (!r.ok()) return new String[] {r.th(), r.en()};
+                return r.steps();
+            }
+            case "slay": {
+                Fetch.Result r = Fetch.slay(h, it.mobs, it.n);
+                if (!r.ok()) return new String[] {r.th(), r.en()};
+                return r.steps();
+            }
+            case "pickup":
+                return Plan.task(Tasks.pickup(false), "เก็บของที่ตกอยู่", "pick up what's lying around");
+            case "recover": {
+                var d = p.getLastDeathLocation();
+                if (d.isEmpty()) return new String[] {"คุณยังไม่เคยตายในโลกนี้", "You haven't died in this world"};
+                BlockPos at = d.get().pos();
+                return List.of(Plan.gotoStep(at, d.get().dimension().location().toString(), "ไปที่ที่คุณตาย", "go to where you died"),
+                        Plan.task(Tasks.pickup(true), "เก็บของที่ตกอยู่", "pick up what's lying there"));
+            }
             case "findFood":
                 return Plan.food(it.hunt, it.crops, it.animal == null ? null : it.animal[0], q.n(), q.full(), it.meat && q.n() != null);
             case "dig":

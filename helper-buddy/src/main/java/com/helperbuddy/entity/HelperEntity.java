@@ -81,7 +81,46 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     public static final int HP_PER_LEVEL = 250;
     public static final String DEFAULT_NAME_TH = "น้องช่าง";
     public static final String DEFAULT_NAME_EN = "Buddy";
-    public static final int SKINS = 6;
+    /** The outfits, in the order of the textures helper_0.png ... (the first six are the plain work suits). */
+    public static final String[] OUTFITS = {"blue", "red", "green", "purple", "orange", "black", "knight", "ninja", "chef", "pirate", "astronaut", "wizard", "santa", "farmer",
+            "robot", "miner", "doctor", "police"};
+    public static final String[][] OUTFIT_NAMES = {{"ชุดช่างสีน้ำเงิน", "blue work suit"}, {"ชุดช่างสีแดง", "red work suit"}, {"ชุดช่างสีเขียว", "green work suit"},
+            {"ชุดช่างสีม่วง", "purple work suit"}, {"ชุดช่างสีส้ม", "orange work suit"}, {"ชุดช่างสีดำ", "black work suit"}, {"ชุดอัศวิน", "knight"}, {"ชุดนินจา", "ninja"},
+            {"ชุดเชฟ", "chef"}, {"ชุดโจรสลัด", "pirate"}, {"ชุดนักบินอวกาศ", "astronaut"}, {"ชุดพ่อมด", "wizard"}, {"ชุดซานต้า", "Santa"}, {"ชุดชาวนา", "farmer"},
+            {"ชุดหุ่นยนต์", "robot"}, {"ชุดคนงานเหมือง", "miner"}, {"ชุดหมอ", "doctor"}, {"ชุดตำรวจ", "police"}};
+    public static final int SKINS = OUTFITS.length;
+    /** How fast it works: 0 normal, 1 fast (the default), 2 very fast, 3 turbo. */
+    public static final String[][] SPEED_NAMES = {{"ปกติ", "normal"}, {"เร็ว", "fast"}, {"เร็วมาก", "very fast"}, {"เทอร์โบ", "turbo"}};
+    static final double[] WORK_MULT = {1, 2, 4, 10}, MOVE_MULT = {1, 1.15, 1.3, 1.5};
+    private int speed = 1;
+
+    public int speedLevel() {
+        return speed;
+    }
+
+    public void setSpeedLevel(int s) {
+        speed = Mth.clamp(s, 0, 3);
+        applyLevelStats();
+    }
+
+    /** Breaking, crafting, smelting, building: this many times faster. */
+    public double workMult() {
+        return WORK_MULT[speed];
+    }
+
+    public double moveMult() {
+        return MOVE_MULT[speed];
+    }
+
+    public String outfitName(boolean th) {
+        return OUTFIT_NAMES[skin()][th ? 0 : 1];
+    }
+
+    /** The outfit with that id ("ninja"), or -1. */
+    public static int outfitIndex(String id) {
+        for (int i = 0; i < OUTFITS.length; i++) if (OUTFITS[i].equals(id)) return i;
+        return -1;
+    }
 
     @Nullable
     private UUID ownerId;
@@ -289,6 +328,8 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     void applyLevelStats() {
         AttributeInstance hp = getAttribute(Attributes.MAX_HEALTH);
         if (hp != null && hp.getBaseValue() != maxHp()) hp.setBaseValue(maxHp());
+        AttributeInstance mv = getAttribute(Attributes.MOVEMENT_SPEED);
+        if (mv != null && Math.abs(mv.getBaseValue() - 0.3 * moveMult()) > 1e-6) mv.setBaseValue(0.3 * moveMult());
         AttributeInstance dmg = getAttribute(Attributes.ATTACK_DAMAGE);
         if (dmg != null) dmg.setBaseValue((3 + helperLevel()) * HBConfig.DAMAGE_MULT.get());
         AttributeInstance armor = getAttribute(Attributes.ARMOR);
@@ -588,6 +629,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         t.putBoolean("KO", isKO());
         t.putFloat("KoHp", koHp);
         t.putInt("Skin", skin());
+        t.putInt("Speed", speed);
         t.putBoolean("Sitting", isSitting());
         if (home != null) t.putLong("Home", home.asLong());
         //#if MC>=12100
@@ -613,6 +655,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         entityData.set(KO, t.getBoolean("KO"));
         koHp = t.getFloat("KoHp");
         entityData.set(SKIN, t.getInt("Skin"));
+        speed = t.contains("Speed") ? Mth.clamp(t.getInt("Speed"), 0, 3) : 1;
         entityData.set(SITTING, t.getBoolean("Sitting"));
         home = t.contains("Home") ? BlockPos.of(t.getLong("Home")) : null;
         //#if MC>=12100

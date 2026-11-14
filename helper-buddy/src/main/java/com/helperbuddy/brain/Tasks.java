@@ -163,6 +163,21 @@ public final class Tasks {
         return t;
     }
 
+    /** Picking up what lies on the ground around it (here = only around where it stands, not around its owner). */
+    public static CompoundTag pickup(boolean here) {
+        CompoundTag t = spec("pickup");
+        t.putBoolean("here", here);
+        return t;
+    }
+
+    /** Filling buckets: "water", "lava" or "milk". */
+    public static CompoundTag fill(String fluid, @Nullable Integer n) {
+        CompoundTag t = spec("fill");
+        t.putString("fluid", fluid);
+        if (n != null) t.putInt("n", n);
+        return t;
+    }
+
     /** The task could not be done: whatever was planned after it is dropped too (the owner has been told why). */
     void fail() {
         end();
@@ -222,6 +237,8 @@ public final class Tasks {
             case "machine" -> (th ? "ใช้เครื่อง " : "machine ") + count;
             case "travel" -> (th ? "ไป" : "going to ") + Errands.dimName(spec.getString("dim"), th);
             case "slay" -> (th ? "ล่า " : "hunting ") + count;
+            case "pickup" -> (th ? "เก็บของ " : "picking up ") + count;
+            case "fill" -> (th ? "ตักใส่ถัง " : "filling buckets ") + count;
             default -> k;
         };
     }
@@ -255,6 +272,8 @@ public final class Tasks {
             case "enchant" -> Skills.enchant(this);
             case "brew" -> Skills.brew(this);
             case "machine" -> Skills.machine(this);
+            case "pickup" -> Errands.pickup(this);
+            case "fill" -> Errands.fill(this);
             case "travel" -> Errands.travel(this);
             case "slay" -> Errands.slay(this);
             default -> done(true);
