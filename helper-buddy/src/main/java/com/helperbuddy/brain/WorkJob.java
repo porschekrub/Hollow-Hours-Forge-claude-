@@ -70,6 +70,7 @@ public final class WorkJob {
 
     long nextScan, lastFarScan, lastPickup;
     int roamFails;
+    long lastLeg;
     /** legs walked since it last found anything (a job nobody put an end to is given up after a while of nothing) */
     int emptyLegs;
     @Nullable
@@ -569,9 +570,13 @@ public final class WorkJob {
         BlockPos home = h.home() != null ? h.home() : h.blockPosition();
         int radius = Brain.radius();
         if (roam == null || now > roamUntil) {
-            // every leg walked without finding anything counts (it has looked at everything loaded from there)
-            roamFails++;
-            emptyLegs++;
+            // every leg walked without finding anything counts (it has looked at everything loaded from there);
+            // legs that end at once (no way there) count once a second at most
+            if (now - lastLeg >= 20) {
+                lastLeg = now;
+                roamFails++;
+                emptyLegs++;
+            }
             // nothing anywhere for minutes, and nobody is counting (an order that is part of a plan runs out by itself): back to the owner
             if (emptyLegs >= 16 && !b.plan.active() && mode != Mode.TASK) {
                 emptyLegs = 0;
@@ -586,7 +591,10 @@ public final class WorkJob {
                 h.setMode(Mode.FOLLOW);
                 return;
             }
-            if (roamFails >= 3 && com.helperbuddy.config.HBConfig.EXPLORE.get()
+            // moving on: only once everything loaded has been looked at, and only while the owner is in the game
+            // (the chunks around a helper are kept loaded for its owner; alone out there it would fall asleep)
+            boolean looked = mode != Mode.MINE && mode != Mode.CHOP && mode != Mode.GATHER || lastFarScan > 0;
+            if (roamFails >= 3 && looked && h.owner() != null && com.helperbuddy.config.HBConfig.EXPLORE.get()
                     && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD || mode == Mode.TASK)) {
                 roamFails = 0;
                 roam = null;

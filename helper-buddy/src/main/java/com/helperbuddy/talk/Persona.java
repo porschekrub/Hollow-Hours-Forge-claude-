@@ -111,7 +111,7 @@ public final class Persona {
     static final String[] TH_SASSY_OPEN = {"เออๆ", "ก็ได้ๆ", "จ้าาา", "ได้เลยเจ้านาย", "อืม ก็ได้", "จัดไป"};
     static final String[] TH_RUDE_OPEN = {"เออ!", "เออๆ รู้แล้ว", "สั่งเก่งจังนะ", "เหนื่อยโว้ย", "ได้ๆ"};
     static final String[] TH_SASSY_TAIL = {"เจ้าทึ่ม", "เจ้านายขี้สั่ง", "เจ้าเด็กน้อย", "นะจ๊ะ"};
-    static final String[] TH_RUDE_TAIL = {"ไอ้บ้า", "ไอ้ทึ่ม", "ไอ้ขี้เกียจ", "ไอ้ควาย"};
+    static final String[] TH_RUDE_TAIL = {"ไอ้บ้า", "ไอ้ทึ่ม", "ไอ้ขี้เกียจ", "เพื่อน"};
     static final String[] EN_SASSY_OPEN = {"Fiiine.", "Sure, boss.", "Yeah yeah.", "If I must.", "On it."};
     static final String[] EN_RUDE_OPEN = {"Ugh, fine.", "Yeah, yeah.", "What now?", "Fine, I'm going."};
     static final String[] EN_SASSY_TAIL = {"genius", "boss", "champ"};
