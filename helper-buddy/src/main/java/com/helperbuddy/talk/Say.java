@@ -78,20 +78,44 @@ public final class Say {
         p.sendSystemMessage(head.append(msg));
     }
 
+    /** While > 0 the helper's lines are written but not spoken (it has just said something aloud). */
+    static int quiet;
+    /** While set, the lines a helper says are kept here as well (what its body answered to an order of the AI). */
+    @Nullable
+    static java.util.List<String> heard;
+
+    /** Bad news, danger, a long explanation: said straight, without teasing on top. */
+    static boolean serious(Player p, HelperEntity h, String line) {
+        if (line.contains("§c") || line.indexOf('\n') >= 0 || line.length() > 90) return true;
+        if (p.getHealth() <= 8 || h.isKO()) return true;
+        return h.brain().combat().fighting();
+    }
+
     /** A line in the helper's own way of talking (polite / sassy / rude), spoken with its voice. */
     public static void to(@Nullable Player p, HelperEntity h, String th, String en) {
         if (p == null) return;
         Persona.Style st = Persona.of(h);
-        String line = thai(p) ? Persona.th(st, th, Persona.R) : Persona.en(st, en, Persona.R);
-        to(p, h, Component.literal(line));
-        Voice.speak(p, h, line);
+        boolean thai = thai(p);
+        boolean plain = serious(p, h, thai ? th : en);
+        String line = thai ? Persona.th(st, th, Persona.R, plain) : Persona.en(st, en, Persona.R, plain);
+        emit(p, h, line);
     }
 
     /** A line exactly as given (the AI already wrote it in the helper's style). */
     public static void raw(@Nullable Player p, HelperEntity h, String text) {
         if (p == null) return;
-        to(p, h, Component.literal(text));
-        Voice.speak(p, h, text);
+        emit(p, h, text);
+    }
+
+    static void emit(Player p, HelperEntity h, String line) {
+        to(p, h, Component.literal(line));
+        if (heard != null) heard.add(line);
+        if (quiet == 0) Voice.speak(p, h, line);
+    }
+
+    /** A small grey note above the hotbar (not chat, not spoken): "thinking..." */
+    public static void hint(@Nullable Player p, String th, String en) {
+        if (p instanceof ServerPlayer sp) sp.displayClientMessage(Component.literal(t(p, th, en)).withStyle(ChatFormatting.GRAY), true);
     }
 
     /** (the server smoke test: what a helper without an owner would have said goes to the log) */

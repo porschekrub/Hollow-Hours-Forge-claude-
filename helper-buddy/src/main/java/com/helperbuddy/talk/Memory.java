@@ -44,6 +44,8 @@ public final class Memory {
         public String nickname = "";
         /** "th" / "en": the language the player told the helpers to speak ("" = the game's) */
         public String lang = "";
+        /** how the player talks to the helpers (0-10 each): polite words, rough words */
+        public int polite, rough;
     }
 
     static Map<String, Player> players = new LinkedHashMap<>();

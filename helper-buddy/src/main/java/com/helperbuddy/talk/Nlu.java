@@ -724,13 +724,13 @@ public final class Nlu {
             {"portal", "ประตูเนเธอร์|ประตูนรก|ประตูมิติ|พอร์ทัล|พอร์ตัล|ประตูไปเนเธอร์", "nether portals?|\\bportals?\\b", "ประตูเนเธอร์", "the nether portal", ""},
             {"death", "ที่ตาย|จุดตาย|ที่ฉันตาย|ที่เราตาย|ศพ|ของที่ตก|ของที่หล่น|หลุมศพ|ที่ตายล่าสุด", "where (did )?i (die|died)|death (point|spot|place)|my grave|my (stuff|items|loot)", "ที่คุณตายล่าสุด", "where you died", ""},
             {"spawn", "จุดเกิดโลก|สปอน|สปอว์น|จุดเกิดของโลก", "\\bspawn\\b", "จุดเกิดของโลก", "the world spawn", ""},
-            {"me", "(ฉัน|กู|ข้า|ผม|หนู|เรา|เค้า)(ตอนนี้)?อยู่(ที่|ตรง)?ไหน|ตอนนี้(ฉัน|กู|ข้า|ผม|เรา)?อยู่(ที่|ตรง)?ไหน|พิกัด(ของ)?(ฉัน|กู|ข้า|ผม|เรา|ตอนนี้)|ตำแหน่ง(ของ)?(ฉัน|กู|ข้า|ผม|เรา)", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
+            {"me", "(?<!บ้าน)(?<!บ้านของ)(?<!เตียง)(?<!เตียงของ)(?<!ฐาน)(?<!ฐานของ)(ฉัน|กู|ข้า|ผม|หนู|เรา|เค้า)(ตอนนี้)?อยู่(ที่|ตรง)?ไหน|ตอนนี้(ฉัน|กู|ข้า|ผม|เรา)?อยู่(ที่|ตรง)?ไหน|พิกัด(ของ)?(ฉัน|กู|ข้า|ผม|เรา|ตอนนี้)|ตำแหน่ง(ของ)?(ฉัน|กู|ข้า|ผม|เรา)", "where am i|where are we|my (coords|coordinates|position)", "ตำแหน่งของคุณ", "where you are", ""},
             {"helper", "(แก|เอ็ง|นาย|ตัวเอง|มึง|เธอ)อยู่(ที่|ตรง)?ไหน", "where are you", "ตำแหน่งของผม", "where I am", ""},
             {"work", "ที่ทำงาน|จุดทำงาน", "work ?(spot|place)", "ที่ทำงานของผม", "my work spot", ""},
             {"bed", "(?<!หมู่)บ้าน|เตียง|ฐานทัพ|ฐาน(?!ะ)", "\\bhome\\b|\\bhouse\\b|\\bbed\\b|\\bbase\\b", "บ้านของคุณ (เตียง)", "your home (bed)", ""},
     };
 
-    static final String WHERE = "(อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน|^ไป.+(ยังไง|ไง)$|(แถวนี้|ใกล้ๆ(นี้)?|รอบๆ(นี้)?)\\s*(มี)?\\s*(ไหม|มั้ย|ป่ะ|ปะ|รึเปล่า|หรือเปล่า|บ้างไหม|บ้าง)"
+    static final String WHERE = "((หา|เจอ|มี|ได้|เอา)(ได้|มา)?(ที่|จาก)ไหน|ที่ไหนมี|อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน|^ไป.+(ยังไง|ไง)$|(แถวนี้|ใกล้ๆ(นี้)?|รอบๆ(นี้)?)\\s*(มี)?\\s*(ไหม|มั้ย|ป่ะ|ปะ|รึเปล่า|หรือเปล่า|บ้างไหม|บ้าง)"
             + "|where('s| is| are| can i find| do i find)?\\b|which way|how (do i|can i|to) get( to)?|\\bnearest\\b|\\bclosest\\b|\\blocate\\b|direction to|way to|is there an?)";
     static final String LEAD = "(พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทาง|พาทาง|ไปด้วยกัน|take me|lead me|guide me|bring me to|show me the way|escort me|walk me to|lead the way)";
 
@@ -754,8 +754,41 @@ public final class Nlu {
     }
 
     /** Whatever is left of a where-question once the question words are gone ("dungeon" in "where is the dungeon"). */
+    /** Creatures that are not monsters, for "where is the nearest ...": {id, Thai, English}. */
+    static final String[][] CREATURES = {
+            {"mooshroom", "วัวเห็ด|มูชรูม", "mooshrooms?"}, {"cow", "วัว", "cows?|cattle"}, {"pig", "หมู(?!่)", "pigs?"}, {"chicken", "ไก่", "chickens?"}, {"sheep", "แกะ", "sheep"},
+            {"rabbit", "กระต่าย", "rabbits?|bunny|bunnies"}, {"horse", "ม้า", "horses?"}, {"donkey", "ตัวลา", "donkeys?"}, {"mule", "ล่อ", "mules?"}, {"llama", "ลามะ", "llamas?"},
+            {"wandering_trader", "พ่อค้าเร่|พ่อค้าพเนจร", "wandering traders?"}, {"villager", "ชาวบ้าน", "villagers?"}, {"iron_golem", "โกเลมเหล็ก|โกเลม", "iron golems?|golems?"},
+            {"wolf", "หมาป่า|หมา|สุนัข", "wolf|wolves|dogs?"}, {"cat", "แมว", "cats?"}, {"ocelot", "แมวป่า|โอซีลอต", "ocelots?"}, {"fox", "จิ้งจอก|หมาจิ้งจอก", "fox(es)?"},
+            {"bee", "ผึ้ง", "bees?"}, {"turtle", "เต่า", "turtles?"}, {"panda", "แพนด้า", "pandas?"}, {"parrot", "นกแก้ว", "parrots?"}, {"axolotl", "แอกโซลอเติล|อะโซลอต", "axolotls?"},
+            {"frog", "กบ", "frogs?"}, {"camel", "อูฐ", "camels?"}, {"goat", "แพะ", "goats?"}, {"dolphin", "โลมา|ปลาโลมา", "dolphins?"}, {"squid", "ปลาหมึก|หมึก", "squids?"},
+            {"polar_bear", "หมีขั้วโลก|หมีขาว", "polar bears?"}, {"bat", "ค้างคาว", "bats?"}, {"allay", "อัลเลย์", "allays?"}, {"sniffer", "สนิฟเฟอร์", "sniffers?"},
+            {"armadillo", "อาร์มาดิลโล|ตัวนิ่ม", "armadillos?"}, {"strider", "สไตรเดอร์", "striders?"}, {"salmon", "แซลมอน", "salmon"}, {"cod", "ปลาค็อด", "cod"},
+    };
+
+    /** A creature ("mob") or an item / block ("thing") someone asks the way to; null when the words name neither. */
+    static Place thingPlace(String w) {
+        String words = w.replaceAll("\\b(can|could|do|does|would|should|i|we|you|find|get|some|any|is|are|there|nearest|closest|around|here|nearby|look for|search for)\\b", " ")
+                .replaceAll("หาได้|หาจาก|ได้จาก|แถวนี้|ใกล้ที่สุด|ใกล้สุด|ใกล้ๆ|มั้ย|ไหม|(บ้าง|ล่ะ|อะ|หรอ|เหรอ|วะ|ครับ|คะ|ค่ะ|นะ)+$", " ").replaceAll("^\\s*(ไป)?หา\\s*", "").replaceAll("\\s+", " ").trim();
+        if (words.isEmpty() || words.length() > 40) return null;
+        String[] mob = mobIn(words);
+        // "ครีปเปอร์" is the creature; "blaze rods", "กระดูกสเกเลตัน" are things
+        boolean only = mob != null && words.replaceAll("(" + mob[1] + ")|\\b(" + mob[2] + ")\\b", "").replaceAll("(ตัว|พวก|ฝูง|\\s)+", "").isEmpty();
+        String id = only ? null : ItemWords.resolve(words);
+        if (id == null && mob != null) return new Place("mob", new String[] {"minecraft:" + mob[0]}, mob[0].replace('_', ' '), mob[0].replace('_', ' '), words, null);
+        // an animal and nothing else ("วัวอยู่ไหน"; "เนื้อวัว" is a thing)
+        for (String[] c : CREATURES) {
+            if (!test("(" + c[1] + ")", words) && !test("\\b(" + c[2] + ")\\b", words)) continue;
+            if (id != null && !words.replaceAll("(" + c[1] + ")|\\b(" + c[2] + ")\\b", "").replaceAll("(ตัว|พวก|ฝูง|\\s)+", "").isEmpty()) break;
+            return new Place("mob", new String[] {"minecraft:" + c[0]}, c[0].replace('_', ' '), c[0].replace('_', ' '), words, null);
+        }
+        if (id == null) return null;
+        String nm = id.substring(id.indexOf(':') + 1).replace('_', ' ');
+        return new Place("thing", new String[] {id}, nm, nm, words, null);
+    }
+
     static String placeWords(String t) {
-        return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("(the|a|an|to|me|ที่|หน่อย|ให้|ฉัน|เรา)\\b|^มี", " ").replaceAll("\\s+", " ").trim();
+        return t.replaceAll(WHERE.replace("\\b", ""), " ").replaceAll(LEAD, " ").replaceAll("\\b(the|a|an|to|me)\\b|ที่|หน่อย|ให้|ฉัน|เรา|^มี", " ").replaceAll("\\s+", " ").trim();
     }
 
     /** {code for Thai / English or the language's English name, Thai name, English name} */
@@ -981,7 +1014,7 @@ public final class Nlu {
             String[] mob = mobIn(rest);
             if (mob != null && !test("\\d", numify(rest))) {
                 Intent i = new Intent("locate");
-                i.place = new Place("search", new String[0], mob[0], mob[0], mob[0].replace('_', ' '), null);
+                i.place = new Place("mob", new String[] {"minecraft:" + mob[0]}, mob[0].replace('_', ' '), mob[0].replace('_', ' '), mob[0].replace('_', ' '), null);
                 return i;
             }
         }
@@ -1001,6 +1034,8 @@ public final class Nlu {
         }
         if (lead || where) {
             Place pl = placeIn(t);
+            // a creature or a thing: "ครีปเปอร์อยู่ไหน", "where are the diamonds", "พาไปหาทรายวิญญาณ"
+            if (pl == null) pl = thingPlace(placeWords(t));
             if (pl == null && where && !lead) {
                 // "where is <something we have no word for>": maybe a structure or biome of another mod, by name
                 String w = placeWords(t);
@@ -1215,6 +1250,19 @@ public final class Nlu {
             if (cm.group(1) != null) i.n = clampN(Integer.parseInt(cm.group(1)));
             return i;
         }
+        cm = match("^(where is|where are|locate|take me to|lead me to|guide me to)\\s+(?:the\\s+)?([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);
+        if (cm != null) {
+            Intent i = new Intent("locate");
+            String id = cm.group(2), path = id.substring(id.indexOf(':') + 1);
+            String[] mob = null;
+            for (String[] m : MOBS) if (m[0].equals(path)) mob = m;
+            for (String[] m : CREATURES) if (m[0].equals(path)) mob = m;
+            if (mob != null) i.place = new Place("mob", new String[] {id}, path.replace('_', ' '), path.replace('_', ' '), path.replace('_', ' '), null);
+            else if (ItemWords.EXISTS.test(id)) i.place = new Place("thing", new String[] {id}, path.replace('_', ' '), path.replace('_', ' '), path.replace('_', ' '), null);
+            else i.place = new Place("search", new String[0], path.replace('_', ' '), path.replace('_', ' '), path.replace('_', ' '), null);
+            i.lead = !cm.group(1).startsWith("where") && !cm.group(1).equals("locate");
+            return i;
+        }
         cm = match("^speed\\s+(max|turbo|up|faster|fast|down|slower|slow|normal)$", t);
         String sp = cm != null ? switch (cm.group(1)) {
             case "max", "turbo" -> "max";
@@ -1414,7 +1462,9 @@ public final class Nlu {
         if (t.equals("มา") || has(t, "มานี่", "มาหา", "มาตรงนี้", "กลับมา", "มาเร็ว", "มาที่นี่", "come", "here", "teleport", "วาร์ป", "tp", "over here", "get over here"))
             return new Intent("come");
         if (has(t, "ตาม", "follow", "with me")) return new Intent("follow");
-        if (has(t, "รอ", "หยุด", "อยู่ตรงนั้น", "อยู่นิ่ง", "นั่ง", "พัก", "stay", "wait", "stop", "sit", "hold", "don't move", "dont move", "stay there"))
+        if (test("ทำ(อะ)?ไร(อยู่|กัน|เนี่ย)|ทำไรอยู่|ถึงไหนแล้ว|เสร็จ(หรือ)?ยัง|what('?s| is) up|how('?s| is) it going|are you done|done yet", t)) return new Intent("status");
+        // "รอ" as a word of its own ("รอตรงนี้", "รอก่อน"), not a piece of another one ("ทำไรอยู่", "กรอบ")
+        if (test("(?<![ก-ฮไใเแโ])รอ(?![ยงบดม]|ก(?!่))", t) || has(t, "หยุด", "อยู่ตรงนั้น", "อยู่นิ่ง", "นั่ง", "พัก", "stay", "wait", "stop", "sit", "hold", "don't move", "dont move", "stay there"))
             return new Intent("stay");
         if (has(t, "เลเวล", "เลเวิล", "อัพเลเวล", "อัปเลเวล", "ค่าประสบการณ์", "level", "lv", "exp", "xp", "เก่งขึ้น")) return new Intent("level");
         if (has(t, "สถานะ", "เป็นไง", "เป็นยังไง", "อยู่ไหน", "ที่ไหน", "เลือด", "status", "where", "hp", "health", "ทำอะไรอยู่", "report", "รายงาน", "what are you doing"))

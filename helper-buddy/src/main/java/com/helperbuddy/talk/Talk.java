@@ -443,8 +443,8 @@ public final class Talk {
                 }
             }
             if (f == null) {
-                if (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("search"))
-                    p.sendSystemMessage(Component.literal(Say.t(p, "§7(กำลังหา" + pl.th() + "...)", "§7(looking for " + pl.en() + "...)")));
+                if (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("search") || pl.kind().equals("thing"))
+                    Say.hint(p, "กำลังหา" + pl.th() + "...", "looking for " + pl.en() + "...");
                 String[] why = new String[2];
                 f = Navigator.find(p, h, pl, why);
                 if (f == null) {

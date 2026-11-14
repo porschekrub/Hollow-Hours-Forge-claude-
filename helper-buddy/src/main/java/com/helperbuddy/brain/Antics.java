@@ -74,7 +74,7 @@ public final class Antics {
         // bored
         ServerPlayer o = h.owner();
         if (st != Persona.Style.POLITE && o != null && o.level() == h.level() && o.distanceTo(h) < 16 && (h.mode() == Mode.FOLLOW || h.mode() == Mode.STAY)
-                && now - lastOrder > 20 * 60 * 6 && h.getRandom().nextInt(400) == 0 && b.cooldown("idle", 20 * 60 * 5))
+                && now - lastOrder > 20 * 60 * 15 && h.getRandom().nextInt(1200) == 0 && b.cooldown("idle", 20 * 60 * 20))
             quip("idle");
         return false;
     }

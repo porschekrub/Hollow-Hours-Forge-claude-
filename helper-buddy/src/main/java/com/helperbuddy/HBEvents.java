@@ -81,7 +81,7 @@ public final class HBEvents {
         com.helperbuddy.talk.Memory.onDeath(p, cause);
         for (HelperEntity h : Helpers.owned(p)) {
             if (h.level() != p.level() || h.distanceTo(p) > 48) continue;
-            later(30, () -> h.brain().antics().quip("ownerDied"));
+            if (h.getRandom().nextInt(3) == 0) later(30, () -> h.brain().antics().quip("ownerDied"));
             break;
         }
     }

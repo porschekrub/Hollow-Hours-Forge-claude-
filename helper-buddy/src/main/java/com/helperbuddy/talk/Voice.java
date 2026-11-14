@@ -13,9 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The helper's voice. Every line it says is spoken: by default with a cartoon babble of its own (made on the
- * client from short syllables, pitched per helper), or with a real voice from the AI (Gemini speech) for its answers
- * to what you say, when a Gemini key is set (see VoiceTts). Config [voice].
+ * The helper's voice. With a Gemini key every line it says is read aloud by a real voice from the AI (see VoiceTts);
+ * without one it babbles like a cartoon (made on the client from short syllables, pitched per helper). Config [voice].
  */
 public final class Voice {
     private Voice() {}
@@ -31,10 +30,9 @@ public final class Voice {
         return HBConfig.VOICE.get().trim().toLowerCase(Locale.ROOT);
     }
 
-    /** Real words in a cartoon voice: the AI voice, sped up and pitched up per helper ("cartoon", and "auto"). */
+    /** Real words in a cartoon voice: the AI voice, sped up and pitched up per helper (voiceMode = cartoon). */
     static boolean cartoon() {
-        String m = mode();
-        return m.equals("cartoon") || m.equals("auto");
+        return mode().equals("cartoon");
     }
 
     /** A real voice is possible (Gemini with a key). */
@@ -44,20 +42,31 @@ public final class Voice {
         return AiBridge.provider().equals("gemini") && !HBConfig.AI_KEY.get().isBlank() && HBConfig.AI_URL.get().isBlank();
     }
 
-    /** What is said, without colours and with no line breaks. */
+    /** What is said aloud: the first line only, without colours, cut at a pause when it is long. */
     static String clean(String s) {
-        String t = s.replaceAll("§.", "").replace('\n', ' ').replaceAll("\\s+", " ").trim();
-        return t.length() > 300 ? t.substring(0, 300) : t;
+        String t = s.replaceAll("§.", "").trim();
+        int nl = t.indexOf('\n');
+        if (nl > 0) t = t.substring(0, nl);
+        t = t.replaceAll("\\s+", " ").trim();
+        if (t.length() > 150) {
+            int cut = Math.max(t.lastIndexOf(' ', 150), Math.max(t.lastIndexOf('.', 150), t.lastIndexOf(',', 150)));
+            t = t.substring(0, cut > 60 ? cut : 150);
+        }
+        return t;
     }
 
     public static void speak(Player p, HelperEntity h, String line) {
-        if (!(p instanceof ServerPlayer sp) || sp.connection == null || mode().equals("off")) return;
+        String m = mode();
+        if (!(p instanceof ServerPlayer sp) || sp.connection == null || m.equals("off")) return;
         String text = clean(line);
         if (text.isEmpty() || text.startsWith("(")) return; // "(thinking...)"
         int style = Persona.of(h).ordinal();
-        boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
-        // the cartoon voice says every line in words (chatter between helpers too); the plain AI voice only answers
-        if ((reply || cartoon()) && aiVoice() && VoiceTts.speak(sp, h, text, style, cartoon())) return;
+        if (aiVoice()) {
+            // the real voice or nothing: when it can't be made right now (busy with the line before, no quota) it stays quiet
+            VoiceTts.speak(sp, h, text, style, cartoon());
+            return;
+        }
+        if (m.equals("ai") || m.equals("cartoon")) return;
         HBNet.toPlayer(sp, new S2CSpeak(h.getId(), text, h.getUUID().hashCode(), style));
     }
 

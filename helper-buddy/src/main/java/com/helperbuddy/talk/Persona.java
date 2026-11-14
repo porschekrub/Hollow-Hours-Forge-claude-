@@ -37,7 +37,56 @@ public final class Persona {
 
     public static Style of(HelperEntity h) {
         String own = h.persona();
-        return Style.of(own == null || own.isEmpty() ? HBConfig.STYLE.get() : own);
+        String s = own == null || own.isEmpty() ? HBConfig.STYLE.get() : own;
+        if (s.trim().equalsIgnoreCase("auto")) return mirror(h.owner());
+        return Style.of(s);
+    }
+
+    // ------------------------------------------------------------------ talking the way the player does
+    /** per player: {polite, rough} (0-10), from the words they use with their helpers */
+    static final java.util.Map<java.util.UUID, int[]> REGISTER = new java.util.HashMap<>();
+    static final Pattern POLITE_WORDS = Pattern.compile("(ครับ|ค่ะ|คะ(?!แนน)|นะคะ|กรุณา|รบกวน|ขอบคุณ|ขอบใจ|ขอโทษ|\\bplease\\b|\\bpls\\b|\\bthanks?\\b|\\bthank you\\b|could you|would you|\\bsorry\\b)", Pattern.CASE_INSENSITIVE);
+    static final Pattern ROUGH_WORDS = Pattern.compile("(กู(?![้่])|มึง|เหี้ย|สัส|สัด|แม่ง|ควาย|ไอ้|อีดอก|เชี่ย|โว้ย|\\bfuck|\\bshit|\\bdamn|\\bidiot|\\bstupid|\\bdumbass|\\bwtf\\b|\\bbitch)", Pattern.CASE_INSENSITIVE);
+
+    /** {polite, rough} found in a sentence (pure, for tests). */
+    public static int[] markers(String text) {
+        return new int[] {POLITE_WORDS.matcher(text).find() ? 1 : 0, ROUGH_WORDS.matcher(text).find() ? 1 : 0};
+    }
+
+    /** The style for a player whose words scored {polite, rough}. */
+    public static Style styleFor(int polite, int rough) {
+        if (rough >= 4 && rough > polite) return Style.RUDE;
+        if (polite >= 2 && polite >= rough) return Style.POLITE;
+        return Style.SASSY;
+    }
+
+    static int[] register(net.minecraft.server.level.ServerPlayer p) {
+        return REGISTER.computeIfAbsent(p.getUUID(), k -> Memory.on() ? new int[] {Memory.of(p).polite, Memory.of(p).rough} : new int[2]);
+    }
+
+    /** Every sentence a player says to a helper: how they talk is how the helper talks back (config talkStyle = auto). */
+    public static void observe(net.minecraft.server.level.ServerPlayer p, String text) {
+        int[] m = markers(text), r = register(p);
+        if (m[0] == 0 && m[1] == 0) return;
+        if (m[0] > 0) {
+            r[0] = Math.min(10, r[0] + 2);
+            r[1] = Math.max(0, r[1] - 1);
+        }
+        if (m[1] > 0) {
+            r[1] = Math.min(10, r[1] + 2);
+            r[0] = Math.max(0, r[0] - 1);
+        }
+        if (Memory.on()) {
+            Memory.of(p).polite = r[0];
+            Memory.of(p).rough = r[1];
+            Memory.dirty = true;
+        }
+    }
+
+    static Style mirror(@javax.annotation.Nullable net.minecraft.server.level.ServerPlayer owner) {
+        if (owner == null) return Style.SASSY;
+        int[] r = register(owner);
+        return styleFor(r[0], r[1]);
     }
 
     public static String name(Style s, boolean th) {
@@ -53,14 +102,14 @@ public final class Persona {
     }
 
     // ------------------------------------------------------------------ word lists
-    static final String[] TH_SASSY_OPEN = {"เออๆ", "ก็ได้ๆ", "เฮ้อ...", "สั่งจังนะ", "ขี้เกียจชะมัด แต่ก็ได้", "จ้าาา", "ได้เลยท่านเจ้านาย (ประชด)", "อืม ก็ได้"};
-    static final String[] TH_RUDE_OPEN = {"เออ!", "ทำเองไม่เป็นเหรอวะ", "สั่งเก่งจังนะมึง", "เหนื่อยโว้ย", "จะเอาอะไรอีกวะ", "เออๆ ไอ้ขี้เกียจ", "หนวกหูว่ะ"};
-    static final String[] TH_SASSY_TAIL = {"ไอ้โง่", "เจ้าทึ่ม", "ไอ้บ้า", "ไอ้ขี้เกียจ", "เจ้าหัวขี้เลื่อย", "ไอ้เต่า", "เจ้าเด็กน้อย", "ไอ้หน้าจืด"};
-    static final String[] TH_RUDE_TAIL = {"ไอ้ควาย", "ไอ้เวร", "ไอ้สัส", "ไอ้เหี้ย", "ไอ้ควายเอ๊ย", "ไอ้ห่า", "ไอ้บ้าเอ๊ย"};
-    static final String[] EN_SASSY_OPEN = {"Ugh, fine.", "Fiiine.", "Oh great, more work.", "Sure, boss... whatever.", "Yeah yeah.", "If I must."};
-    static final String[] EN_RUDE_OPEN = {"Fine, dumbass.", "Do it yourself next time.", "Ugh, you again.", "What now, idiot?", "Shut up, I'm going."};
-    static final String[] EN_SASSY_TAIL = {"genius", "slowpoke", "noob", "champ", "Einstein"};
-    static final String[] EN_RUDE_TAIL = {"dumbass", "idiot", "you muppet", "moron", "you absolute walnut"};
+    static final String[] TH_SASSY_OPEN = {"เออๆ", "ก็ได้ๆ", "จ้าาา", "ได้เลยเจ้านาย", "อืม ก็ได้", "จัดไป"};
+    static final String[] TH_RUDE_OPEN = {"เออ!", "เออๆ รู้แล้ว", "สั่งเก่งจังนะ", "เหนื่อยโว้ย", "ได้ๆ"};
+    static final String[] TH_SASSY_TAIL = {"เจ้าทึ่ม", "เจ้านายขี้สั่ง", "เจ้าเด็กน้อย", "นะจ๊ะ"};
+    static final String[] TH_RUDE_TAIL = {"ไอ้บ้า", "ไอ้ทึ่ม", "ไอ้ขี้เกียจ", "ไอ้ควาย"};
+    static final String[] EN_SASSY_OPEN = {"Fiiine.", "Sure, boss.", "Yeah yeah.", "If I must.", "On it."};
+    static final String[] EN_RUDE_OPEN = {"Ugh, fine.", "Yeah, yeah.", "What now?", "Fine, I'm going."};
+    static final String[] EN_SASSY_TAIL = {"genius", "boss", "champ"};
+    static final String[] EN_RUDE_TAIL = {"you muppet", "you walnut", "slowpoke"};
 
     /** Lines that are just "OK, doing it" (they get an opener). */
     static final Pattern TH_ACK = Pattern.compile("^(?:§.)*(ได้(?:เลย)?ครับ|ได้ครับ|โอเค(?:ครับ)?|ไปแล้วนะ|ไป(?:หา|เก็บ|ขุด|ตัด|ล่า|สร้าง)|เดี๋ยว|รับทราบ)");
@@ -69,12 +118,17 @@ public final class Persona {
     // ------------------------------------------------------------------ restyling
     /** A Thai line in the given style. */
     public static String th(Style st, String s, Random r) {
+        return th(st, s, r, false);
+    }
+
+    /** plain: its own way of saying I / you, but no teasing on top (bad news, danger, long explanations). */
+    public static String th(Style st, String s, Random r, boolean plain) {
         if (st == Style.POLITE || s == null || s.isEmpty()) return s;
         boolean rude = st == Style.RUDE;
         boolean ack = TH_ACK.matcher(s).find();
         String t = s;
         t = t.replace("ขอโทษครับ", rude ? "เออ โทษที" : "โทษทีเว้ย").replace("ขอบคุณครับ", rude ? "เออ ขอบใจ" : "ขอบใจนะเว้ย")
-                .replace("สวัสดีครับ", rude ? "ไง ไอ้หน้าโง่" : "ไง").replace("ได้เลยครับ", rude ? "เออ" : "ได้ดิ").replace("ได้ครับ", rude ? "เออ" : "ได้ดิ");
+                .replace("สวัสดีครับ", rude ? "ไง" : "ไง").replace("ได้เลยครับ", rude ? "เออ" : "ได้ดิ").replace("ได้ครับ", rude ? "เออ" : "ได้ดิ");
         t = replaceEach(t, "นะครับ", () -> rude ? pick(r, "นะโว้ย", "วะ", "นะมึง") : pick(r, "นะเว้ย", "นะ", "เว่ย", "นะจ๊ะ"));
         t = replaceEach(t, "ครับผม", () -> rude ? pick(r, "โว้ย", "วะ") : pick(r, "เว้ย", "จ้า"));
         t = replaceEach(t, "ครับ", () -> rude ? pick(r, "วะ", "โว้ย", "", "ว่ะ") : pick(r, "เว้ย", "", "ว่ะ", "จ้า", ""));
@@ -84,22 +138,28 @@ public final class Persona {
         t = t.replaceAll("คุณ(?!ภาพ|ค่า|สมบัติ|ธรรม|ลักษณะ|ประโยชน์|นาย|ป้า|ลุง)", rude ? "มึง" : "เอ็ง");
         t = t.replace("เรา", rude ? "กู" : "ข้า");
         t = t.replaceAll("\\s{2,}", " ").replaceAll("\\s+([.!?)])", "$1").trim();
-        if (ack && r.nextFloat() < (rude ? 0.7f : 0.5f)) t = pick(r, rude ? TH_RUDE_OPEN : TH_SASSY_OPEN) + " " + t;
-        else if (r.nextFloat() < (rude ? 0.15f : 0.08f)) t = pick(r, rude ? TH_RUDE_OPEN : TH_SASSY_OPEN) + " " + t;
-        if (r.nextFloat() < (rude ? 0.4f : 0.22f) && !t.contains("\n") && t.length() < 160) t = withTail(t, pick(r, rude ? TH_RUDE_TAIL : TH_SASSY_TAIL));
+        // a little teasing now and then, never on every line
+        if (plain) return t;
+        if (ack && r.nextFloat() < (rude ? 0.35f : 0.22f)) t = pick(r, rude ? TH_RUDE_OPEN : TH_SASSY_OPEN) + " " + t;
+        if (r.nextFloat() < (rude ? 0.12f : 0.05f) && !t.contains("\n") && t.length() < 90) t = withTail(t, pick(r, rude ? TH_RUDE_TAIL : TH_SASSY_TAIL));
         return t;
     }
 
     /** An English line in the given style. */
     public static String en(Style st, String s, Random r) {
+        return en(st, s, r, false);
+    }
+
+    public static String en(Style st, String s, Random r, boolean plain) {
         if (st == Style.POLITE || s == null || s.isEmpty()) return s;
         boolean rude = st == Style.RUDE;
         String t = s;
         boolean ack = EN_ACK.matcher(t).find();
         t = t.replaceFirst("^(§.)*Sorry,? ", "$1" + (rude ? "Whatever, " : "Oops, my bad. "));
         t = t.replaceFirst("^(§.)*Thanks!?", "$1" + (rude ? "Yeah, thanks or whatever." : "Thanks, I guess."));
-        if (ack && r.nextFloat() < (rude ? 0.7f : 0.5f)) t = pick(r, rude ? EN_RUDE_OPEN : EN_SASSY_OPEN) + " " + t;
-        if (r.nextFloat() < (rude ? 0.4f : 0.22f) && !t.contains("\n") && t.length() < 160) t = withTail(t, pick(r, rude ? EN_RUDE_TAIL : EN_SASSY_TAIL));
+        if (plain) return t;
+        if (ack && r.nextFloat() < (rude ? 0.35f : 0.22f)) t = pick(r, rude ? EN_RUDE_OPEN : EN_SASSY_OPEN) + " " + t;
+        if (r.nextFloat() < (rude ? 0.12f : 0.05f) && !t.contains("\n") && t.length() < 90) t = withTail(t, pick(r, rude ? EN_RUDE_TAIL : EN_SASSY_TAIL));
         return t;
     }
 
@@ -138,12 +198,12 @@ public final class Persona {
         }
         return switch (event) {
             case "ownerDied" -> rude
-                    ? pair(r, new String[][] {{"555+ ตายห่าอีกแล้วมึง", "LMAO you died again, dumbass"}, {"ตายเก่งจังนะมึง ไอ้ควาย", "Dying is your only talent, huh"},
-                    {"เล่นเกมเป็นปะเนี่ย ไอ้เวร", "Do you even know how to play?"}})
-                    : pair(r, new String[][] {{"555 ตายอีกแล้วเหรอ", "Haha, dead again?"}, {"เก่งมาก ตายเก่งที่สุดในโลกเลย", "Wow, world champion of dying"},
-                    {"ข้าว่าแล้วว่าเอ็งต้องตาย", "Called it. You were going to die"}, {"เกิดใหม่แล้วอย่าโง่ซ้ำนะ", "Respawn and try being less silly"}});
+                    ? pair(r, new String[][] {{"555 ตายอีกแล้วเหรอมึง", "Ha, dead again?"}, {"ลุกมา กูเฝ้าของให้อยู่", "Get up, I'm watching your stuff"},
+                    {"ไม่เป็นไร รอบหน้าเอาใหม่โว้ย", "Never mind, get them next time"}})
+                    : pair(r, new String[][] {{"555 ตายอีกแล้วเหรอ", "Haha, dead again?"}, {"ไม่เป็นไรนะ เดี๋ยวข้าเฝ้าของให้", "It's okay, I'll watch your stuff"},
+                    {"ข้าว่าแล้วว่าตรงนั้นอันตราย", "I knew that spot was dangerous"}, {"ลุกขึ้นมาใหม่ได้ สู้ๆ", "Up you get, you've got this"}});
             case "hitByOwner" -> rude
-                    ? pair(r, new String[][] {{"ตีกูทำไมวะ!", "Why the hell did you hit me?!"}, {"อีกทีกูไม่ทำงานให้นะเว้ย", "Do that again and I quit"}})
+                    ? pair(r, new String[][] {{"ตีกูทำไมวะ!", "Hey, what was that for?!"}, {"เจ็บนะเว้ย", "That hurt, you know"}})
                     : pair(r, new String[][] {{"โอ๊ย! ตีข้าทำไม!", "Ow! What was that for?!"}, {"จิ้มเล่นอยู่ได้ เบื่อแล้วเหรอ", "Poking me again? Bored?"},
                     {"อย่าตีสิ ข้าฟ้องแม่นะ", "Stop it or I'm telling mom"}});
             case "ghostRun" -> rude
@@ -160,12 +220,12 @@ public final class Persona {
                     : pair(r, new String[][] {{"เบื่อว่ะ หางานให้ทำหน่อย", "Bored... give me a job"}, {"ยืนเฉยๆ แบบนี้ เงินเดือนยังได้เท่าเดิมไหม", "Do I still get paid for standing here?"},
                     {"ถ้าไม่สั่งอะไร ข้าขอนอนนะ", "If you've got nothing, I'm taking a nap"}});
             case "insulted" -> rude
-                    ? pair(r, new String[][] {{"มึงนั่นแหละโง่ สั่งงานยังสั่งไม่เป็นเลย", "You're the idiot, you can't even give orders"},
-                    {"ด่ากูอีกทีกูนั่งเฉยๆ ทั้งวันเลยนะ", "Insult me again and I'll sit here all day"}, {"ปากดีนักนะ ไปขุดเองดิ", "Big mouth. Go dig it yourself then"},
+                    ? pair(r, new String[][] {{"เออ ด่าได้ แต่งานกูก็ทำให้อยู่นะ", "Sure, yell at me. I'm still doing your work"},
+                    {"ปากดีนักนะ เดี๋ยวกูทำให้ดูเอง", "Big mouth. Watch me do it then"},
                     {"กูโง่ แต่มึงจ้างกูนะ คิดดูดีๆ", "Sure I'm dumb, but you hired me. Think about that"}})
                     : pair(r, new String[][] {{"พูดงี้ข้าก็เสียใจนะ... ล้อเล่น ไม่เสียใจหรอก", "Ouch... just kidding, I don't care"},
                     {"ข้าโง่ แต่เอ็งตายบ่อยกว่าข้านะ", "I may be dumb, but you die way more than I do"}, {"ว่าข้าอีกที ข้าจะขุดหลุมหนีเหมือนตอนผีมาเลย", "Say that again and I'll dig a hole and hide, like with the ghosts"},
-                    {"โอเค งั้นเอ็งทำเองเลย ข้าจะนั่งดู", "Fine, you do it then. I'll watch"}});
+                    {"โอเคๆ ข้าจะตั้งใจกว่านี้ก็ได้", "Okay okay, I'll try harder"}});
             case "levelUp" -> rude
                     ? pair(r, new String[][] {{"เลเวลอัพแล้วโว้ย เก่งกว่ามึงอีก", "Level up! Already better than you"}})
                     : pair(r, new String[][] {{"เลเวลอัพ! ตอนนี้ข้าเก่งกว่าเอ็งแล้วมั้ง", "Level up! Pretty sure I'm better than you now"}});

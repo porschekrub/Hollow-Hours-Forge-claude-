@@ -38,17 +38,18 @@ public final class HBConfig {
 
         b.comment("The helper's personality").push("personality");
         STYLE = b.comment("How helpers talk (each helper can be told otherwise in chat: \"be polite\" / \"be sassy\" / \"be rude\"):",
-                "polite = always nice, sassy = cheeky, teases and calls you names, rude = swears at you for real").define("style", "sassy");
+                "auto = it talks the way you do (polite when you are polite, cheeky when you are casual, rough when you swear at it),",
+                "polite = always nice, sassy = cheeky, teases you a little, rude = rough, swears now and then").define("talkStyle", "auto");
         TROLLING = b.comment("Sassy / rude helpers sometimes play tricks (with Hollow Hours: when a ghost comes it may dig a hole and hide instead of helping)").define("trolling", true);
-        TROLL_CHANCE = b.comment("How often a trick happens when it can (0 - 1)").defineInRange("trollChance", 0.35, 0.0, 1.0);
-        BANTER = b.comment("Helpers near each other talk to each other now and then").define("helpersTalk", true);
+        TROLL_CHANCE = b.comment("How often a trick happens when it can (0 - 1)").defineInRange("trickChance", 0.1, 0.0, 1.0);
+        BANTER = b.comment("Helpers near each other talk to each other now and then (a few lines, every half hour or so)").define("helpersTalk", true);
         MEMORY = b.comment("Helpers remember you across every world and server on this computer (config/helperbuddy-memory.json)").define("memory", true);
         b.pop();
 
         b.comment("The helper's voice").push("voice");
-        VOICE = b.comment("off = no voice, babble = cartoon babble sounds, ai = a real voice from the AI (Gemini; uses the [ai] key, falls back to babble),",
-                "cartoon = real words in a cartoon voice (the AI voice, faster and higher; needs the Gemini key, falls back to babble)",
-                "auto = cartoon when a Gemini key is set, otherwise babble").define("voice", "auto");
+        VOICE = b.comment("auto = with a Gemini key ([ai] key) every line is read aloud by a real voice from the AI, without one: cartoon babble sounds",
+                "ai = the real AI voice only (silent without a key), cartoon = the AI voice played faster and higher,",
+                "babble = cartoon babble sounds, off = no voice").define("voiceMode", "auto");
         VOICE_MODEL = b.comment("Gemini speech model (if it is gone, the newer ones are tried by themselves)").define("speechModel", "gemini-3.8-flash-lite-tts");
         VOICE_NAME = b.comment("Gemini voice (Puck, Kore, Charon, Fenrir, Leda, Orus, Zephyr, ...); empty = one per helper").define("speechVoice", "");
         VOICE_VOLUME = b.comment("Voice loudness (also follows the game's Voice/Speech volume slider)").defineInRange("volume", 1.0, 0.0, 2.0);

@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 /**
  * A real voice for the helper's answers: Gemini's speech model reads the line (in the helper's mood), the server
- * sends it to the player as 8-bit mu-law pieces, the client plays it at the helper. Falls back to the babble.
+ * sends it to the player as 8-bit mu-law pieces, the client plays it at the helper. When it can't be made the helper stays quiet.
  */
 public final class VoiceTts {
     private VoiceTts() {}
@@ -39,7 +39,7 @@ public final class VoiceTts {
     static final Map<String, byte[]> CACHE = new LinkedHashMap<>(16, 0.75f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, byte[]> e) {
-            return size() > 40;
+            return size() > 120;
         }
     };
     static final Map<String, Integer> RATE = new java.util.HashMap<>();
@@ -77,13 +77,13 @@ public final class VoiceTts {
             default -> "Say this like a cheeky, playful cartoon character, a bit slowly and clearly";
         };
         return switch (style) {
-            case 0 -> "Say this in a friendly, cheerful voice";
-            case 2 -> "Say this in an annoyed, rude, mocking voice";
-            default -> "Say this in a cheeky, sarcastic, playful voice";
+            case 0 -> "Say this in a friendly, warm voice";
+            case 2 -> "Say this in a gruff but friendly voice";
+            default -> "Say this in a relaxed, playful voice";
         };
     }
 
-    /** @return false when the real voice can't be made now (the caller babbles instead) */
+    /** @return false when the real voice can't be made now */
     static boolean speak(ServerPlayer p, HelperEntity h, String text, int style, boolean cartoon) {
         if (System.currentTimeMillis() < pausedUntil || BUSY.contains(h.getUUID())) return false;
         String voice = voiceFor(h);
@@ -136,7 +136,7 @@ public final class VoiceTts {
                 if (err != null) HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
                 else if (r.statusCode() / 100 != 2) {
                     HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}, {}): {}", r.statusCode(), model, AiBridge.trim(r.body(), 300));
-                    // that model is gone: the next one next time; out of quota or not allowed: babble for a while
+                    // that model is gone: the next one next time; out of quota or not allowed: quiet for a while
                     if ((r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) modelTry++;
                     else if (r.statusCode() == 429 || r.statusCode() == 403) pausedUntil = System.currentTimeMillis() + 10 * 60_000L;
                 } else {
@@ -170,10 +170,7 @@ public final class VoiceTts {
                     ServerPlayer pl = server.getPlayerList().getPlayer(pid);
                     HelperEntity hh = Helpers.byUuid(server, hid);
                     if (pl == null || hh == null) return;
-                    if (clip == null) {
-                        Voice.babble(pl, hh, text, style);
-                        return;
-                    }
+                    if (clip == null) return;
                     synchronized (CACHE) {
                         CACHE.put(key, clip);
                     }

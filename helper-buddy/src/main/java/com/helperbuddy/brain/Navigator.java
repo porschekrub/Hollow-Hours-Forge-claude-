@@ -117,6 +117,20 @@ public final class Navigator {
                 if (f == null) notFound(place, why, level);
                 return f;
             }
+            case "thing" -> {
+                Found f = thing(p, h, place.ids()[0], why);
+                if (f == null && why[0] == null) {
+                    f = search(p, level, from, place.text());
+                    if (f == null) {
+                        why[0] = "ผมไม่เห็น " + place.th() + " แถวนี้เลย และไม่รู้ว่ามันอยู่ที่ไหนด้วย";
+                        why[1] = "I can't see any " + place.en() + " around here, and I don't know where it would be";
+                    }
+                }
+                return f;
+            }
+            case "mob" -> {
+                return mob(p, place, why);
+            }
             default -> {
                 Found f = search(p, level, from, place.text());
                 if (f == null) {
@@ -257,7 +271,9 @@ public final class Navigator {
         List<String> toks = new ArrayList<>();
         for (String w : words.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) if (w.length() >= 3 && !w.matches("the|and|for|nearest|closest|where")) toks.add(w);
         if (toks.isEmpty()) return null;
-        Predicate<ResourceLocation> named = id -> toks.stream().allMatch(t -> id.getPath().contains(t) || id.getNamespace().equals(t));
+        // "villages", "cows": the name without the plural counts too
+        Predicate<ResourceLocation> named = id -> toks.stream().allMatch(t -> id.getPath().contains(t) || id.getNamespace().equals(t)
+                || t.length() > 3 && t.endsWith("s") && id.getPath().contains(t.substring(0, t.length() - 1)));
         List<String> sIds = new ArrayList<>();
         for (ResourceLocation id : level.registryAccess().registryOrThrow(Registries.STRUCTURE).keySet()) if (named.test(id)) sIds.add(id.toString());
         if (!sIds.isEmpty()) {
@@ -277,6 +293,123 @@ public final class Navigator {
             if (best == null || e.distanceToSqr(p) < best.distanceToSqr(p)) best = e;
         }
         if (best != null) return new Found(best.getName().getString(), best.getName().getString(), best.blockPosition(), level.dimension());
+        return null;
+    }
+
+    /** The best height to dig for an ore (overworld; ancient debris in the Nether). */
+    static final Map<String, Integer> ORE_Y = Map.of("diamond", -59, "redstone", -59, "gold", -16, "lapis", 0, "iron", 16, "copper", 48, "coal", 96, "emerald", 232, "debris", 15, "quartz", 30);
+
+    /**
+     * Where a kind of item or block is: the nearest block of it in the part of the world that is loaded, else a chest
+     * nearby that holds some, else the biome or structure the game puts it in. Null with the reason (or what the
+     * helper knows about it) in why.
+     */
+    @Nullable
+    static Found thing(ServerPlayer p, HelperEntity h, String itemId, String[] why) {
+        net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(HelperBuddy.rl(itemId.contains(":") ? itemId : "minecraft:" + itemId));
+        if (item == net.minecraft.world.item.Items.AIR) return null;
+        ServerLevel level = p.serverLevel();
+        BlockPos from = p.blockPosition();
+        String nm = new net.minecraft.world.item.ItemStack(item).getHoverName().getString();
+        java.util.Set<net.minecraft.world.level.block.Block> natural = Sources.blocksFor(item);
+        java.util.Set<net.minecraft.world.level.block.Block> blocks = new java.util.HashSet<>(natural);
+        if (item instanceof net.minecraft.world.item.BlockItem bi) blocks.add(bi.getBlock());
+        String ore = Sources.oreOf(item);
+        BlockPos at = blocks.isEmpty() && ore == null ? null
+                : Scan.nearest(level, from, Brain.radius(), 4096, st -> blocks.contains(st.getBlock()) || ore != null && ore.equals(Jobs.oreGroup(st)), (pos, st) -> true);
+        if (at != null) return new Found(nm + (ore != null ? " (แร่)" : ""), nm + (ore != null ? " (the ore)" : ""), at, level.dimension());
+        // a chest around the player (or the helper) with some in it
+        List<BlockPos> spots = new ArrayList<>(List.of(from));
+        if (h.level() == level && h.blockPosition().distSqr(from) > 16 * 16) spots.add(h.blockPosition());
+        for (BlockPos c : spots)
+            for (Bag.Store st : Bag.containersNear(level, c, 16)) {
+                int n = 0;
+                for (int i = 0; i < st.handler().getSlots(); i++) if (st.handler().getStackInSlot(i).is(item)) n += st.handler().getStackInSlot(i).getCount();
+                if (n > 0) return new Found("หีบที่มี " + nm + " " + n + " ชิ้น", "A chest with " + n + " " + nm, st.pos(), level.dimension());
+            }
+        int have = Bag.count(h, item);
+        String mine = have > 0 ? " (ในกระเป๋าผมมีอยู่ " + have + " ชิ้นนะ)" : "", mineEn = have > 0 ? " (I have " + have + " in my bag, by the way)" : "";
+        String here = level.dimension().location().toString();
+        // where the game makes it
+        Sources.Where w = !natural.isEmpty() ? Sources.of(natural) : ore != null ? Sources.oreWhere(ore) : null;
+        Sources.Drop d = Sources.dropOf(item);
+        if (w == null && natural.isEmpty() && ore == null && d != null) {
+            // something a creature drops: the nearest one of those
+            net.minecraft.world.entity.Entity best = null;
+            for (net.minecraft.world.entity.Entity e : level.getAllEntities()) {
+                String path = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath();
+                if (!java.util.Arrays.asList(d.mobs()).contains(path) || !e.isAlive()) continue;
+                if (best == null || e.distanceToSqr(p) < best.distanceToSqr(p)) best = e;
+            }
+            String mobs = String.join(" / ", d.mobs()).replace('_', ' ');
+            if (best != null) return new Found(best.getName().getString() + " (ดรอป " + nm + ")", "A " + best.getName().getString() + " (drops " + nm + ")", best.blockPosition(), level.dimension());
+            w = d.where();
+            if (w == null || w.dim() == null || w.dim().equals(here)) {
+                why[0] = "§e" + nm + "§r ได้จากการล่า §e" + mobs + "§r แต่ตอนนี้แถวนี้ไม่มีสักตัว (สั่งผมว่า \"ไปหา " + nm + "\" ได้เลย เดี๋ยวผมออกล่าให้)" + mine;
+                why[1] = "§e" + nm + "§r drops from §e" + mobs + "§r, and there are none around right now (tell me \"get " + nm + "\" and I'll go hunting)" + mineEn;
+                if (w == null || w.biomes().length == 0 && w.structure() == null) return null;
+            }
+        }
+        if (w != null && w.dim() != null && !w.dim().equals(here)) {
+            BlockPos portal = Errands.portalWay(here, w.dim()) ? findPortal(level, from, 128) : null;
+            why[0] = "§e" + nm + "§r มีแต่ใน" + w.th() + " ไม่ใช่มิตินี้" + (portal != null ? " ประตูเนเธอร์ที่ใกล้สุดอยู่ที่ " + xyz(portal) + "§r" : "")
+                    + " (สั่งผมว่า \"ไปหา " + nm + "\" ได้เลย ถ้ามีประตูผมไปเอามาให้เอง)" + mine;
+            why[1] = "§e" + nm + "§r is only found in " + w.en() + ", not in this dimension." + (portal != null ? " The nearest nether portal is at " + xyz(portal) + "§r." : "")
+                    + " (tell me \"get " + nm + "\": with a portal around I'll fetch it myself)" + mineEn;
+            return null;
+        }
+        if (w != null && (w.biomes().length > 0 || w.structure() != null)) {
+            BlockPos near = nearest(level, from, w);
+            if (near != null) return new Found(nm + " (" + w.th() + ")", nm + " (" + w.en() + ")", near, level.dimension());
+        }
+        if (ore != null) {
+            Integer y = ORE_Y.get(ore);
+            why[0] = "ยังไม่เห็นแร่ §e" + nm + "§r โผล่ให้เห็นในระยะที่โหลดอยู่" + (y != null ? " แร่นี้เจอเยอะสุดแถว §eY " + y + "§r" : "") + " (สั่ง \"ขุด " + nm + "\" แล้วผมจะขุดหาให้เอง)" + mine;
+            why[1] = "I can't see any §e" + nm + "§r ore in the loaded area." + (y != null ? " It is most common around §eY " + y + "§r." : "") + " (tell me \"mine " + nm + "\" and I'll dig for it)" + mineEn;
+            return null;
+        }
+        if (!natural.isEmpty() || d != null) {
+            if (why[0] == null) {
+                why[0] = "ไม่เห็น §e" + nm + "§r ในระยะที่โหลดอยู่เลย" + (w != null ? " (ปกติอยู่ใน" + w.th() + ")" : "") + " สั่ง \"ไปหา " + nm + "\" แล้วผมจะออกไปหาให้" + mine;
+                why[1] = "I can't see any §e" + nm + "§r in the loaded area" + (w != null ? " (it is normally found in " + w.en() + ")" : "") + ". Tell me \"get " + nm + "\" and I'll go look for it" + mineEn;
+            }
+            return null;
+        }
+        if (Crafter.craftable(level, item)) {
+            why[0] = "§e" + nm + "§r ไม่ได้อยู่ตามธรรมชาติ ต้องคราฟต์เอา (สั่ง \"คราฟต์ " + nm + "\" ได้เลย)" + mine;
+            why[1] = "§e" + nm + "§r isn't found in the world, it is crafted (tell me \"craft " + nm + "\")" + mineEn;
+            return null;
+        }
+        if (have > 0) {
+            why[0] = "§e" + nm + "§r อยู่ในกระเป๋าผมนี่ไง " + have + " ชิ้น (สั่ง \"ขอ " + nm + "\" ได้เลย)";
+            why[1] = "I have " + have + " §e" + nm + "§r in my bag (say \"give me " + nm + "\")";
+        }
+        return null;
+    }
+
+    /** The nearest creature of a kind that is around (loaded). */
+    @Nullable
+    static Found mob(ServerPlayer p, Nlu.Place place, String[] why) {
+        ServerLevel level = p.serverLevel();
+        net.minecraft.world.entity.Entity best = null;
+        for (net.minecraft.world.entity.Entity e : level.getAllEntities()) {
+            if (e == p || !e.isAlive() || !net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString().equals(place.ids()[0])) continue;
+            if (best == null || e.distanceToSqr(p) < best.distanceToSqr(p)) best = e;
+        }
+        if (best != null) return new Found(best.getName().getString(), best.getName().getString(), best.blockPosition(), level.dimension());
+        Sources.Where w = Fetch.mobWhere(place.ids()[0]);
+        String here = level.dimension().location().toString();
+        if (w != null && w.dim() != null && !w.dim().equals(here)) {
+            why[0] = "§e" + place.th() + "§r อยู่ใน" + w.th() + " ไม่ใช่มิตินี้";
+            why[1] = "§e" + place.en() + "§r lives in " + w.en() + ", not in this dimension";
+            return null;
+        }
+        if (w != null && (w.biomes().length > 0 || w.structure() != null)) {
+            BlockPos near = nearest(level, p.blockPosition(), w);
+            if (near != null) return new Found(place.th() + " (" + w.th() + ")", place.en() + " (" + w.en() + ")", near, level.dimension());
+        }
+        why[0] = "ตอนนี้แถวนี้ไม่มี §e" + place.th() + "§r สักตัว (ในระยะที่โหลดอยู่)";
+        why[1] = "There is no §e" + place.en() + "§r around right now (in the loaded area)";
         return null;
     }
 

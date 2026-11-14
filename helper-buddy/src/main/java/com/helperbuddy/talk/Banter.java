@@ -35,10 +35,10 @@ public final class Banter {
             {{"ถ้าข้าลาออก เอ็งจะทำงานแทนไหม", "If I quit, would you do my job?"}, {"ไม่ ข้าจะลาออกด้วย", "No, I'd quit too"}},
     };
     static final String[][][] RUDE = {
-            {{"{B} มึงเห็น {P} ขุดหลุมเมื่อกี้ไหม", "{B}, did you see {P} dig that hole?"}, {"เห็น โง่ฉิบหาย", "Yeah, dumbest thing ever"}, {"เออ ไอ้ควายจริง", "A real idiot"}},
-            {{"เบื่อทำงานให้ไอ้ {P} ว่ะ", "I'm sick of working for {P}"}, {"กูก็เหมือนกัน แต่มันให้ข้าวกิน", "Me too, but they feed us"}},
-            {{"มึงว่า {P} จะรอดคืนนี้ไหม", "Think {P} survives tonight?"}, {"ไม่รอดหรอก ไอ้ห่านั่น", "No chance, that loser"}, {"55555", "LMAO"}},
-            {{"{B} มึงหลบไปดิ เกะกะ", "{B}, move, you're in the way"}, {"มึงนั่นแหละหลบ", "You move"}, {"ไอ้เวร", "Jerk"}},
+            {{"{B} มึงเห็น {P} ขุดหลุมเมื่อกี้ไหม", "{B}, did you see {P} dig that hole?"}, {"เห็น ตลกดีว่ะ", "Yeah, that was funny"}, {"เออ 555", "Ha"}},
+            {{"เหนื่อยว่ะ วันนี้งานเยอะ", "I'm beat, so much work today"}, {"กูก็เหมือนกัน แต่ {P} ให้ข้าวกินนะ", "Me too, but {P} feeds us"}},
+            {{"มึงว่า {P} จะรอดคืนนี้ไหม", "Think {P} survives tonight?"}, {"รอดสิ มีพวกเราอยู่", "Sure, we're here"}, {"เออ จริง", "True"}},
+            {{"{B} หลบหน่อยดิ เกะกะ", "{B}, move, you're in the way"}, {"มึงนั่นแหละหลบ", "You move"}},
     };
     static final String[][][] POLITE = {
             {{"{B} วันนี้เหนื่อยไหมครับ", "{B}, tired today?"}, {"นิดหน่อยครับ แต่สนุกดี", "A little, but it's fun"}},
@@ -52,8 +52,8 @@ public final class Banter {
         long now = server.getTickCount();
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
             Long last = LAST.get(p.getUUID());
-            if (last != null && now - last < 20 * 60 * 4) continue;
-            if (Persona.R.nextInt(90) != 0) continue;
+            if (last != null && now - last < 20 * 60 * 10) continue;
+            if (Persona.R.nextInt(300) != 0) continue;
             List<HelperEntity> near = new ArrayList<>();
             for (HelperEntity h : p.level().getEntitiesOfClass(HelperEntity.class, p.getBoundingBox().inflate(16))) if (!h.isKO()) near.add(h);
             if (near.size() < 2) continue;
@@ -82,10 +82,10 @@ public final class Banter {
         MinecraftServer server = p.server;
         UUID au = a.getUUID(), bu = b.getUUID();
         String who = p.getGameProfile().getName();
-        String sys = "Write a very short funny conversation (3 or 4 lines) between two Minecraft helpers, " + a.helperName() + " (" + personaShort(a) + ") and "
-                + b.helperName() + " (" + personaShort(b) + "), who work for the player " + who + ". They tease each other and the player, about what is going on: "
+        String sys = "Write a very short, light-hearted conversation (2 or 3 lines) between two Minecraft helpers, " + a.helperName() + " (" + personaShort(a) + ") and "
+                + b.helperName() + " (" + personaShort(b) + "), who work for the player " + who + ". Friendly banter about what is going on, a small joke at most, nothing mean: "
                 + Knowledge.forAi(p, a) + " Reply with JSON only: {\"lines\":[{\"who\":\"A\",\"th\":\"Thai line\",\"en\":\"English line\"}, ...]} where who is A ("
-                + a.helperName() + ") or B (" + b.helperName() + "). Each line under 15 words.";
+                + a.helperName() + ") or B (" + b.helperName() + "). Each line under 10 words.";
         AiBridge.send(sys, List.of(new AiBridge.Msg("user", "Go")), 900, 0.9).thenAccept(res -> server.execute(() -> {
             JsonObject o = AiBridge.jsonIn(res);
             List<String[]> lines = new ArrayList<>();
@@ -118,8 +118,8 @@ public final class Banter {
     static String personaShort(HelperEntity h) {
         return switch (Persona.of(h)) {
             case POLITE -> "polite and kind";
-            case SASSY -> "sassy, cheeky, teases everyone";
-            case RUDE -> "rude, swears a lot (Thai กู/มึง)";
+            case SASSY -> "cheeky, likes a small joke";
+            case RUDE -> "rough around the edges (Thai กู/มึง), but a good friend";
         };
     }
 
