@@ -55,7 +55,7 @@ public final class Banter {
             if (last != null && now - last < 20 * 60 * 10) continue;
             if (Persona.R.nextInt(300) != 0) continue;
             List<HelperEntity> near = new ArrayList<>();
-            for (HelperEntity h : p.level().getEntitiesOfClass(HelperEntity.class, p.getBoundingBox().inflate(16))) if (!h.isKO()) near.add(h);
+            for (HelperEntity h : p.level().getEntitiesOfClass(HelperEntity.class, p.getBoundingBox().inflate(16))) if (!h.isKO() && h.settings.get("chatty")) near.add(h);
             if (near.size() < 2) continue;
             java.util.Collections.shuffle(near, Persona.R);
             HelperEntity a = near.get(0), b = near.get(1);

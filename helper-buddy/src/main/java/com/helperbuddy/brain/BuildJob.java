@@ -652,7 +652,7 @@ public final class BuildJob {
                 Mover.Res r = b.mover().moveTo(new Vec3(fw.x, fw.y - 0.5, fw.z), 1.2, 1.5);
                 if (r == Mover.Res.NO_PATH || b.mover().stuck(60)) teleportNear((plan.W - 1) / 2, plan.minZ - 2);
             } else b.mover().stop();
-            int budget = 10, scans = 0;
+            int budget = (int) (10 * h.workMult()), scans = 0;
             Map<Long, Boolean> trees = new HashMap<>();
             while (budget > 0 && scans++ < 400 && clearIdx < clearList.size()) {
                 int[] c = clearList.get(clearIdx++);
@@ -681,7 +681,7 @@ public final class BuildJob {
         }
         // -------- stage 2: placing blocks
         boolean free = free();
-        acc += SPEEDS[Math.max(0, Math.min(3, speed))];
+        acc += SPEEDS[Math.max(0, Math.min(3, speed))] * h.workMult();
         int guard = 0;
         waiting = false;
         while (acc >= 1 && guard++ < 60) {

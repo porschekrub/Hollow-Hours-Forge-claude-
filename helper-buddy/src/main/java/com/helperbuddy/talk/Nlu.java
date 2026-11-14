@@ -935,6 +935,28 @@ public final class Nlu {
                 return i;
             }
         }
+        // how much it talks
+        if (test("เงียบ|หุบปาก|พูดน้อย|พูดมาก|พูดเยอะ(ไป|เกิน|จัง)|เลิกพูด|หยุดพูด|ไม่ต้องพูด|อย่าพูด|ไม่ต้องคุย|รำคาญ|\\b(be )?quiet\\b|shut up|talk less|stop talking|too chatty|talk too much|\\bsilence\\b|less talk", t)
+                && !test("ไม่ต้องเงียบ|เลิกเงียบ|don'?t be quiet", t)) {
+            Intent i = new Intent("chatty");
+            i.on = false;
+            return i;
+        }
+        if (test("พูดได้แล้ว|คุยได้แล้ว|พูดเล่นได้|คุยเล่นได้|ไม่ต้องเงียบ|เลิกเงียบ|พูดเยอะๆ|คุยเยอะๆ|you can talk|talk more|be chatty|don'?t be quiet|chat with me more", t)) {
+            Intent i = new Intent("chatty");
+            i.on = true;
+            return i;
+        }
+        if (test("พูด(ตาม|เหมือน|แบบ)(ฉัน|เรา|ผม|กู|ข้า|สไตล์)|พูดตามสไตล์|talk like me|speak like me|match my style|mirror me|copy my style", t)) {
+            Intent i = new Intent("persona");
+            i.text = "auto";
+            return i;
+        }
+        if (has(t, "ด่าน้อย", "ด่าเบา", "หยาบน้อย", "ด่าเยอะไป", "ด่ามากไป", "ด่าเกินไป", "ด่าแรงไป", "หยาบไป", "หยาบเกิน", "less rude", "swear less", "too rude", "too mean", "tone it down")) {
+            Intent i = new Intent("persona");
+            i.text = "sassy";
+            return i;
+        }
         // personality ("อย่าหยาบ" before "หยาบ")
         if (has(t, "พูดสุภาพ", "พูดดีๆ", "สุภาพหน่อย", "เลิกกวน", "อย่ากวน", "อย่าหยาบ", "เลิกหยาบ", "เลิกด่า", "อย่าด่า", "be polite", "be nice", "stop being rude", "no swearing", "stop swearing", "stop teasing")) {
             Intent i = new Intent("persona");

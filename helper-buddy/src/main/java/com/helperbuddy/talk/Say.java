@@ -96,7 +96,7 @@ public final class Say {
         if (p == null) return;
         Persona.Style st = Persona.of(h);
         boolean thai = thai(p);
-        boolean plain = serious(p, h, thai ? th : en);
+        boolean plain = !h.settings.get("chatty") || serious(p, h, thai ? th : en);
         String line = thai ? Persona.th(st, th, Persona.R, plain) : Persona.en(st, en, Persona.R, plain);
         emit(p, h, line);
     }

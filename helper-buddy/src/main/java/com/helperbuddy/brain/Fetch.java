@@ -84,6 +84,7 @@ public final class Fetch {
         // ---- an ore
         String ore = Sources.oreOf(item);
         if (ore != null) {
+            Toolsmith.prepPick(h, Toolsmith.tierFor(List.of(ore)), steps);
             Result r = travel(h, Sources.oreWhere(ore), nm, steps);
             if (r != null) return r;
             steps.add(Plan.mine(List.of(ore), full ? null : n == null ? 16 : n, full));
@@ -117,6 +118,9 @@ public final class Fetch {
         if (!done) {
             Set<Block> blocks = Sources.blocksFor(item);
             if (!blocks.isEmpty()) {
+                int tier = -1;
+                for (Block b : blocks) tier = tier < 0 ? Toolsmith.tierFor(b) : Math.min(tier, Toolsmith.tierFor(b));
+                Toolsmith.prepPick(h, tier, steps);
                 Result r = travel(h, Sources.of(blocks), nm, steps);
                 if (r != null) return r;
                 steps.add(Plan.gatherFor(Sources.ids(blocks), iid, nm, full ? null : n == null ? 64 : n, full));
@@ -125,18 +129,29 @@ public final class Fetch {
         }
         // ---- something made at a crafting table
         if (!done && Crafter.craftable(h.level(), item)) {
-            steps.add(Plan.task(Tasks.craft(iid, n == null ? 1 : n), "คราฟต์ " + nm, "craft " + nm));
+            int want = n == null ? 1 : n;
+            // what it is made of first, when the bag does not have it all (down to digging the ore and chopping the wood)
+            List<Plan.Step> pre = depth <= 3 ? ingredients(p, h, item, want, depth) : null;
+            if (pre == null && depth > 0) return no("ขาดวัตถุดิบทำ " + nm, "I lack what " + nm + " is made of");
+            if (pre != null) steps.addAll(pre);
+            if (depth > 0) {
+                steps.add(Plan.task(Tasks.keep(Tasks.craft(iid, want)), "คราฟต์ " + nm, "craft " + nm));
+                return new Result(steps, "", "");
+            }
+            steps.add(Plan.task(Tasks.craft(iid, want), "คราฟต์ " + nm + (want > 1 ? " " + want + " ชิ้น" : "") + " แล้วเอามาให้คุณ", "craft " + (want > 1 ? want + " " : "") + nm + " and bring it to you"));
             // (the crafting task hands it over itself)
             return new Result(steps, "", "");
         }
         // ---- something that comes out of a furnace: first what it is made of
-        if (!done && depth == 0) {
+        if (!done && depth <= 2) {
             for (var rec : Compat.recipesFor(p.server, item)) {
                 if (!(rec instanceof AbstractCookingRecipe) || rec.getIngredients().isEmpty()) continue;
                 for (ItemStack in : rec.getIngredients().get(0).getItems()) {
-                    Result sub = plan(p, h, id(in.getItem()), n == null ? 16 : n, false, false, 1);
+                    int raw = Math.max(0, (n == null ? 16 : n) - Bag.count(h, in.getItem()));
+                    Result sub = raw == 0 ? new Result(new ArrayList<>(), "", "") : plan(p, h, id(in.getItem()), raw, false, false, depth + 1);
                     if (!sub.ok()) continue;
                     steps.addAll(sub.steps());
+                    if (fuel(h) < 1) steps.add(Toolsmith.named(Plan.work("chop", 2, false), "ตัดไม้ 2 ท่อน (เชื้อเพลิง)", "chop 2 logs (fuel)"));
                     steps.add(Plan.task(Tasks.smelt(iid, n), "ถลุงเป็น " + nm + " (ต้องมีเชื้อเพลิงในกระเป๋าผม)", "smelt it into " + nm + " (I need fuel in my bag)"));
                     done = true;
                     break;
@@ -171,14 +186,105 @@ public final class Fetch {
         return new Result(steps, "", "");
     }
 
+    /** "Craft n of this": the steps that fetch what the bag lacks for it (empty: nothing lacking; null: it can't get it all). */
+    @Nullable
+    public static List<Plan.Step> craft(ServerPlayer p, HelperEntity h, Item item, int n) {
+        if (item == Items.AIR || !Crafter.craftable(h.level(), item)) return null;
+        return ingredients(p, h, item, n, 0);
+    }
+
+    /** Things in the bag that burn (in furnace loads, roughly). */
+    static int fuel(HelperEntity h) {
+        return Bag.count(h, st -> !Bag.isTool(st) && !st.is(Items.LAVA_BUCKET) && Compat.burnTime(st) > 0);
+    }
+
+    /**
+     * What is still needed to craft n of an item, as steps (each ingredient the bag lacks is fetched the way the item
+     * itself would be: mined, chopped, dug up, hunted for, smelted or crafted in turn). An empty list: the bag has it
+     * all. Null: no recipe whose ingredients it can get.
+     */
+    @Nullable
+    static List<Plan.Step> ingredients(ServerPlayer p, HelperEntity h, Item item, int n, int depth) {
+        List<Plan.Step> best = null;
+        for (var rec : Crafter.recipesFor(h.level(), item)) {
+            int per = Math.max(1, rec.getResultItem(h.level().registryAccess()).getCount());
+            int crafts = (n + per - 1) / per;
+            // (what is only in another dimension is fetched first, then it comes back for the rest)
+            List<Plan.Step> out = new ArrayList<>(), far = new ArrayList<>();
+            int logs = 0;
+            boolean ok = true, smelts = false;
+            for (Object[] e : Crafter.needs(rec)) {
+                var ing = (net.minecraft.world.item.crafting.Ingredient) e[0];
+                int miss = (Integer) e[1] * crafts - Crafter.have(h, ing);
+                if (miss <= 0) continue;
+                ItemStack[] opts = ing.getItems();
+                boolean planks = false, sticks = false, log = false;
+                for (ItemStack o : opts) {
+                    planks |= o.is(net.minecraft.tags.ItemTags.PLANKS);
+                    sticks |= o.is(Items.STICK);
+                    log |= o.is(net.minecraft.tags.ItemTags.LOGS);
+                }
+                // wood in any shape: logs (planks and sticks are made from them while crafting)
+                if (planks || sticks || log) {
+                    logs += log ? miss : planks ? (miss + 3) / 4 : (miss + 7) / 8;
+                    continue;
+                }
+                Result sub = null;
+                for (int i = 0; i < Math.min(opts.length, 4) && sub == null; i++) {
+                    if (opts[i].getItem() == item) continue;
+                    Result r = plan(p, h, id(opts[i].getItem()), miss, false, false, depth + 1);
+                    if (r.ok()) sub = r;
+                }
+                if (sub == null) {
+                    ok = false;
+                    break;
+                }
+                boolean trip = false;
+                for (Plan.Step st : sub.steps()) {
+                    smelts |= st.task != null && st.task.getString("kind").equals("smelt");
+                    trip |= st.task != null && st.task.getString("kind").equals("travel") || st.k.equals("come");
+                }
+                (trip ? far : out).addAll(sub.steps());
+            }
+            if (!ok) continue;
+            if (smelts && fuel(h) < 2) logs += 2;
+            int have = Bag.count(h, st -> st.is(net.minecraft.tags.ItemTags.LOGS)) + Bag.count(h, st -> st.is(net.minecraft.tags.ItemTags.PLANKS)) / 4;
+            if (logs > have) {
+                int more = logs - have;
+                out.add(0, Toolsmith.named(Plan.work("chop", more, false), "ตัดไม้ " + more + " ท่อน", "chop " + more + " logs"));
+            }
+            if (!far.isEmpty()) {
+                // one trip for everything that is over there
+                List<Plan.Step> trips = new ArrayList<>();
+                java.util.Set<String> seen = new java.util.HashSet<>();
+                for (Plan.Step st : far) {
+                    if (st.k.equals("come")) continue;
+                    if (st.task != null && st.task.getString("kind").equals("travel") && !seen.add(st.task.getString("dim"))) continue;
+                    trips.add(st);
+                }
+                trips.add(Plan.simple("come", "กลับมาหาคุณ", "come back to you"));
+                out.addAll(0, trips);
+            }
+            if (out.size() > 14) continue;
+            if (best == null || out.size() < best.size()) best = out;
+            if (best.isEmpty()) break;
+        }
+        return best;
+    }
+
     /** Mining ores that are only in the Nether, from somewhere else: the trip there first. */
     public static Result mine(HelperEntity h, List<String> ores, @Nullable Integer n, boolean full) {
         List<Plan.Step> steps = new ArrayList<>();
         boolean nether = !ores.isEmpty();
         for (String o : ores) if (Sources.oreWhere(o) == null) nether = false;
-        if (!nether || h.level().dimension().location().toString().equals(Sources.NETHER)) return new Result(steps, "", "");
-        Result r = travel(h, Sources.oreWhere(ores.get(0)), com.helperbuddy.talk.Nlu.oreName(ores.get(0), false), steps);
-        if (r != null) return r;
+        // no pickaxe (or not a good enough one)? it makes its own first
+        Toolsmith.prepPick(h, Toolsmith.tierFor(ores), steps);
+        boolean trip = nether && !h.level().dimension().location().toString().equals(Sources.NETHER);
+        if (!trip && steps.isEmpty()) return new Result(steps, "", "");
+        if (trip) {
+            Result r = travel(h, Sources.oreWhere(ores.get(0)), com.helperbuddy.talk.Nlu.oreName(ores.get(0), false), steps);
+            if (r != null) return r;
+        }
         steps.add(Plan.mine(ores, full ? null : n == null ? 16 : n, full));
         steps.add(Plan.simple("deliver", "เอาของมาให้คุณ", "bring you the items"));
         return new Result(steps, "", "");

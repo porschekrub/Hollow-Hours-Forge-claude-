@@ -171,7 +171,8 @@ public final class Talk {
         Voice.replying(p);
         // with a real AI set up, it reads every typed sentence first (orders, chat, questions); the built-in brain is the
         // fallback when the AI can't be reached. Menu buttons stay on the built-in brain (instant, exact).
-        if (typed && AiBridge.enabled() && HBConfig.AI_FOR_COMMANDS.get()) {
+        if (typed) Persona.observe(p, text);
+        if (typed && AiBridge.enabled() && HBConfig.AI_FOR_COMMANDS.get() && !instant(text)) {
             aiUnderstand(p, h, text, true);
             return;
         }
@@ -205,9 +206,9 @@ public final class Talk {
     }
 
     static final List<String> NOT_ORDERS = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "repeat", "cancel", "resume",
-            "locate", "remember", "recall", "forget", "persona", "lang", "whatis", "around", "mods", "speed", "outfit");
+            "locate", "remember", "recall", "forget", "persona", "chatty", "lang", "whatis", "around", "mods", "speed", "outfit");
     /** answered or done on the spot, also in the middle of a chain of orders */
-    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "lang", "whatis",
+    static final List<String> QUERY = List.of("help", "status", "level", "hello", "thanks", "hungry", "book", "name", "remember", "recall", "forget", "persona", "chatty", "lang", "whatis",
             "around", "mods", "speed", "outfit", "fightback");
     static final List<String> PLAN_ONLY = List.of("goto", "wait", "deposit", "eat", "cook", "guard");
 
@@ -298,6 +299,13 @@ public final class Talk {
                 int n = it.n == null ? 1 : it.n;
                 Item item = BuiltInRegistries.ITEM.get(HelperBuddy.rl(it.item));
                 String name = new ItemStack(item).getHoverName().getString();
+                // what it is made of is fetched first when the bag does not have it (ore, wood, drops ...)
+                List<Plan.Step> pre = Fetch.craft(p, h, item, n);
+                if (pre != null && !pre.isEmpty()) {
+                    pre.add(Plan.task(Tasks.craft(it.item, n), "คราฟต์ " + name + (n > 1 ? " " + n + " ชิ้น" : "") + " แล้วเอามาให้คุณ", "craft " + (n > 1 ? n + " " : "") + name + " and bring it to you"));
+                    h.brain().plan().start(pre);
+                    return;
+                }
                 say(p, h, "ได้ครับ จะคราฟต์ §e" + name + "§r " + n + " ชิ้นให้", "Sure, crafting §e" + n + " " + name);
                 h.brain().tasks().start(Tasks.craft(it.item, n));
             }
@@ -354,8 +362,17 @@ public final class Talk {
                 else say(p, h, "OK, from now on I'll talk to you in " + it.text + (AiBridge.enabled() ? " (my built-in messages stay in English)" : " when the AI is on (my built-in messages are English)"),
                         "OK, from now on I'll talk to you in " + it.text + (AiBridge.enabled() ? " (my built-in messages stay in English)" : " when the AI is on (my built-in messages are English)"));
             }
+            case "chatty" -> {
+                h.settings.set("chatty", it.on);
+                if (it.on) say(p, h, "ได้ครับ คุยเล่นได้เหมือนเดิมแล้วนะ", "Alright, small talk is back on");
+                else say(p, h, "ได้ครับ ต่อไปนี้ผมจะพูดเท่าที่จำเป็น", "Got it. I'll only say what's needed from now on");
+            }
             case "persona" -> {
                 h.setPersona(it.text);
+                if ("auto".equals(it.text)) {
+                    say(p, h, "ได้ครับ ต่อไปนี้ผมจะพูดตามสไตล์ของคุณเลย", "Sure, from now on I'll talk the way you do");
+                    return;
+                }
                 switch (Persona.of(h)) {
                     case POLITE -> say(p, h, "ได้ครับ ต่อจากนี้ผมจะพูดสุภาพนะครับ", "Of course, I'll be polite from now on");
                     case SASSY -> say(p, h, "เข้าทางข้าเลย! เตรียมโดนแซวได้", "Oh, you're gonna regret this. Sassy mode on");
@@ -991,8 +1008,14 @@ public final class Talk {
                 return Plan.fight(it.on);
             case "wait":
                 return Plan.waitStep(it.secs == null ? 10 : it.secs);
-            case "craft":
-                return Plan.task(Tasks.craft(it.item, it.n == null ? 1 : it.n), "คราฟต์ " + itemName(it.item), "craft " + itemName(it.item));
+            case "craft": {
+                int cn = it.n == null ? 1 : it.n;
+                List<Plan.Step> pre = Fetch.craft(p, h, BuiltInRegistries.ITEM.get(HelperBuddy.rl(it.item)), cn);
+                Plan.Step craft = Plan.task(Tasks.craft(it.item, cn), "คราฟต์ " + itemName(it.item), "craft " + itemName(it.item));
+                if (pre == null || pre.isEmpty()) return craft;
+                pre.add(craft);
+                return pre;
+            }
             case "smelt":
                 return Plan.task(Tasks.smelt(it.text, it.n), "ถลุงของ", "smelt");
             case "fetch":
@@ -1115,60 +1138,104 @@ public final class Talk {
     }
 
     // ------------------------------------------------------------------ AI: understanding, chatting, designing
-    static final String AI_COMMANDS = "You are the brain of a Minecraft helper: you turn the player's message into commands the helper's body understands, and you talk. "
-            + "Reply with JSON only: {\"commands\":[\"...\"],\"reply\":\"...\"}. Commands must be short English orders from this list (fill in the details): "
-            + "\"mine\", \"mine diamonds\", \"mine 10 iron\", \"chop wood\", \"chop 20 logs\", \"collect 64 sand\" (any block: sand, gravel, clay, stone, dirt, bamboo, sugar cane, cactus, flowers, leaves, snow, ice, obsidian...), "
-            + "\"find food\", \"get 64 meat\" (hunts any animal until it has 64 pieces of meat), \"get 20 beef\" (hunts cows until 20 beef), \"hunt 3 cows\" (3 animals), "
-            + "\"harvest crops\", \"farm\", \"breed cows\", \"shear sheep\", \"cook\", \"eat\", \"craft <item> <n>\", \"smelt iron\", \"get <item> from the chest\", "
-            + "\"give me <item>\", \"bring me the items\", \"put things in the chest\", \"build a mine 40 deep\", "
-            + "\"build a <house|hotel|school|hospital|prison|library|church|barn|market|castle|tower|tree house|igloo|pyramid|bunker|mansion|lighthouse|desert house|nether fort|safe house|box house|nether portal|creeper statue> [big|small] [3 floors] [with a pool] [modern|medieval|thai]\", "
-            + "\"build <anything else>\" (the helper designs it), \"come\", \"follow me\", \"stay\", \"wait 30 seconds\", \"go to x y z\", \"go home\", \"guard\", \"fight\", \"don't fight\", \"don't fight back\", "
-            + "\"place torches\", \"flatten the ground\", \"status\", \"cancel\", "
-            + "\"where is the <village|stronghold|ruined portal|shipwreck|ocean monument|mansion|desert pyramid|jungle temple|witch hut|igloo|outpost|ancient city|trail ruins|buried treasure|trial chambers|nether fortress|bastion|end city|mineshaft>\", "
-            + "\"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|flowers|lush caves>\", "
-            + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"take me to the <any of those>\" (the helper walks ahead and leads the player, any distance), "
-            + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\", "
-            + "\"speak <any language>\" / \"speak my game's language\" (the language the helper talks in from now on), \"go fishing\", \"catch 10 fish\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\", "
-            + "\"enchant <item>\" (or \"enchant this\": what the player holds), \"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "
-            + "\"put <item> in the <furnace|smoker|blast furnace|any machine name>\" (also other mods' machines), \"collect from the <machine>\", "
-            + "\"take me to the nether\" (leads to the nearest nether portal), \"go back to the overworld\", \"take me to the end\" (the stronghold), "
-            + "\"kill the dragon\" / \"fight the wither\" (shoots end crystals first), \"build an automatic door\", \"build an auto smelter\", \"build a light switch\". "
-            + "Rules: keep the player's exact numbers and items (\"64 meat\" means 64 pieces of meat, never fewer animals). Several commands run one after another. "
-            + "Questions about the game you can answer yourself go in \"reply\" (you know Minecraft and every installed mod well; use the world facts you are given). "
-            + "If the message is just chat or a question, give no commands. The reply is spoken by the helper in the reply language given below, "
-            + "one or two short sentences, in the helper's own personality.";
+    static final String AI_COMMANDS = "You are the mind of a Minecraft helper NPC. The player talks to it in any language, with slang, typos or half sentences; you work out what they "
+            + "really want and tell the helper's body what to do. Reply with JSON only: {\"commands\":[\"...\"],\"reply\":\"...\"}.\n"
+            + "COMMANDS are short English orders, exactly in these forms (n is a number and can be left out):\n"
+            + "- Getting things: \"get <n> minecraft:<item_id>\" brings the player n of ANY item or block, by its real Java id (minecraft:soul_sand, minecraft:ender_pearl, minecraft:diamond, "
+            + "minecraft:oak_log, minecraft:blaze_rod, minecraft:wheat, minecraft:iron_pickaxe; other mods: modid:item). The body works out the way by itself: it mines, chops, digs, harvests, crafts "
+            + "(collecting the ingredients first), smelts, fishes, hunts the right monster, and goes through a nether portal when the thing is in the Nether. \"get full minecraft:<id>\" = until its bag is full. "
+            + "Use this for every \"go find / get / bring / collect / I need / หา / เอา / ขอ\" request about a thing.\n"
+            + "- Open-ended work: \"mine\" (any ores), \"mine <n> <ore>\", \"chop wood\", \"chop <n> logs\", \"find food\", \"hunt <n> cows\", \"get 20 meat\", \"harvest crops\", \"farm\", \"breed cows\", "
+            + "\"shear sheep\", \"go fishing\", \"catch 10 fish\", \"cook\", \"eat\".\n"
+            + "- Fighting: \"kill <n> minecraft:<mob_id>\" (hunts that kind of creature), \"fight\" (fight monsters around), \"don't fight\", \"fight back\", \"don't fight back\", \"guard\" (guards this spot), "
+            + "\"help me\" (the player is in danger now), \"kill the dragon\", \"fight the wither\".\n"
+            + "- Making: \"craft <n> <item>\", \"smelt <item>\", \"enchant <item>\" or \"enchant this\" (what the player holds), "
+            + "\"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "
+            + "\"put <item> in the <furnace|smoker|blast furnace|machine name>\", \"collect from the <machine>\", \"trade with villagers for emeralds\", \"buy <item> from villagers\", \"sell <item> to villagers\".\n"
+            + "- Building: \"build a <house|hotel|school|hospital|prison|library|church|barn|market|castle|tower|tree house|igloo|pyramid|bunker|mansion|lighthouse|desert house|nether fort|safe house|box house|"
+            + "nether portal|creeper statue> [big|small] [3 floors] [with a pool] [modern|medieval|thai]\", \"build <anything else>\" (it designs it), \"build a mine 40 deep\", \"place torches\", \"flatten the ground\", "
+            + "\"build an automatic door\", \"build an auto smelter\", \"build a light switch\".\n"
+            + "- Moving: \"come\", \"follow me\", \"stay\", \"wait 30 seconds\", \"go to <x> <y> <z>\", \"go home\", \"go back to the overworld\", \"cancel\" (stops what it is doing), \"resume\".\n"
+            + "- Items it carries: \"give me <item>\", \"bring me the items\" (everything it collected), \"put things in the chest\", \"get <item> from the chest\", \"pick up the items\" (things lying on the ground), "
+            + "\"get my stuff back\" (what the player dropped when they died).\n"
+            + "- Where things are (the body knows the real world and tells the coordinates X Y Z, direction and distance): \"where is minecraft:<item, block or mob id>\", "
+            + "\"where is the <village|stronghold|ruined portal|shipwreck|ocean monument|mansion|desert pyramid|jungle temple|witch hut|igloo|outpost|ancient city|trail ruins|buried treasure|trial chambers|"
+            + "nether fortress|bastion|end city|mineshaft|nether portal>\", \"where is the <desert|jungle|taiga|forest|ocean|beach|river|mountains|badlands|savanna|swamp|snow|mushroom island|cherry grove|plains|lush caves>\", "
+            + "\"where is my home\", \"where did i die\", \"where is <player name>\", \"where am i\", \"where are you\". Leading the way (it walks ahead of the player, any distance): \"take me to ...\" with the same "
+            + "endings, \"take me to the nether\", \"take me to the end\", \"take me there\" (the place asked about last).\n"
+            + "- About the helper: \"status\", \"speed up\", \"speed max\" (works as fast as it can), \"speed down\", \"speed normal\", \"outfit <blue|red|green|purple|orange|black|knight|ninja|chef|pirate|astronaut|"
+            + "wizard|santa|farmer|robot|miner|doctor|police|random>\", \"your name is <name>\", \"be polite\", \"be sassy\", \"be rude\", \"talk like me\", \"be quiet\" (talks only when needed), \"you can talk\", \"speak <language>\", "
+            + "\"remember that <fact>\", \"what do you remember\", \"forget <fact>\", \"what is this\" (what the player holds or looks at), \"what's around\", \"what mods\".\n"
+            + "RULES:\n"
+            + "1. If the player wants anything done, ALWAYS give commands. Pick the most likely meaning yourself instead of asking back; never refuse something these commands can do, however it was phrased "
+            + "(\"ไปหาทรายวิญญาณหน่อย\", \"soulsand pls\", \"เอา soul sand มาดิ\" are all \"get minecraft:soul_sand\").\n"
+            + "2. A big goal becomes several commands in the right order (they run one after another, at most 8): \"get me ready for the nether\" could be "
+            + "[\"get 1 minecraft:iron_pickaxe\",\"get 16 minecraft:cooked_beef\",\"get 10 minecraft:obsidian\",\"build a nether portal\"].\n"
+            + "3. Keep the player's numbers exactly (a stack = 64, a few = 5, \"some\" = leave the number out). Use what the helper and the player already carry (listed below) and the earlier messages "
+            + "to understand \"more\", \"that one\", \"again\", \"the same\", \"yes\".\n"
+            + "4. Questions about where something is go to the \"where is ...\" commands: never invent coordinates. Coordinates you are given below may be quoted, always as X Y Z.\n"
+            + "5. \"reply\" is what the helper says aloud. When you give commands leave it empty (\"\"): the body says by itself what it is doing. Only when the player also asked something, or you must tell them "
+            + "something the body cannot know, write it. For chat and questions about the game (you know Minecraft and every installed mod well) answer in \"reply\" with no commands.\n"
+            + "6. A reply is ONE short sentence (two when really needed), plain text, no lists, no emoji, in the reply language given below. Do not repeat the question, do not add jokes or remarks nobody asked for.\n"
+            + "7. If what they want truly cannot be done with these commands, say so honestly in one sentence and name the closest thing the helper can do.";
 
     /** The helper's personality, for the AI. */
     static String personaForAi(HelperEntity h, ServerPlayer p) {
+        String auto = Persona.auto(h) ? " Mirror the player's own way of talking in this message (how formal, how short, which words for I and you)." : "";
         return switch (Persona.of(h)) {
-            case POLITE -> "Personality: polite, warm and loyal (in Thai say ผม / คุณ and end with ครับ).";
-            case SASSY -> "Personality: a cheeky, sassy smart-mouth who teases the player and calls them names (ไอ้โง่, ไอ้บ้า, noob, genius), complains about work but still does it, "
-                    + "brags, makes jokes at the player's expense (in Thai say ข้า / เอ็ง, no ครับ). Never polite, never mean-spirited for real.";
-            case RUDE -> "Personality: rude and foul-mouthed: swears at the player for real (in Thai กู / มึง, ไอ้ควาย, ไอ้เวร, ไอ้สัส; in English damn, dumbass, idiot), "
-                    + "acts annoyed by every order but still does the job, roasts the player's mistakes. The player asked for this.";
+            case POLITE -> "Personality: polite, warm and loyal (in Thai say ผม / คุณ and end with ครับ)." + auto;
+            case SASSY -> "Personality: an easy-going friend with a light sense of humour (in Thai say ข้า / เอ็ง, no ครับ). A small tease now and then is fine, never an insult, and never when the "
+                    + "player is in trouble or asks something serious." + auto;
+            case RUDE -> "Personality: talks rough like close friends do (in Thai กู / มึง; in English blunt and casual). At most a mild swear word once in a while, most replies have none; "
+                    + "never hostile, never a string of insults, and plain and helpful when the player is in trouble." + auto;
         };
     }
 
     /** Everything the AI should know about the moment. */
     static String contextForAi(HelperEntity h, ServerPlayer p) {
         String mem = Memory.forAi(p);
-        return " " + personaForAi(h, p) + " " + Knowledge.forAi(p, h) + (mem.isEmpty() ? "" : " " + mem);
+        BlockPos at = h.blockPosition();
+        String me = " The helper is at X " + at.getX() + " Y " + at.getY() + " Z " + at.getZ() + " in " + h.level().dimension().location()
+                + (h.level() == p.level() ? ", " + (int) h.distanceTo(p) + " blocks from the player" : ", another dimension than the player")
+                + ", working speed: " + HelperEntity.SPEED_NAMES[h.speedLevel()][1] + ", outfit: " + h.outfitName(false) + ".";
+        if (!h.settings.get("chatty")) me += " The player asked the helper to talk less: keep \"reply\" empty unless they asked a question.";
+        return " " + personaForAi(h, p) + me + " " + Knowledge.forAi(p, h) + (mem.isEmpty() ? "" : " " + mem);
     }
 
     /** Recent conversation per helper, so the AI understands follow-ups ("more", "the other one", "yes"). */
     static final Map<UUID, List<AiBridge.Msg>> HISTORY = new java.util.HashMap<>();
     static final java.util.Set<UUID> AI_FAIL_TOLD = new java.util.HashSet<>();
 
+    /** Short orders that need no thinking ("come", "stop", "follow me"): done at once, without asking the AI. */
+    static final String INSTANT = "^(มา|มานี่|มาหา(ฉัน|เรา|กู|ผม|ข้า)?|มาตรงนี้|กลับมา|ตามมา|ตาม(ฉัน|เรา|กู|ผม|ข้า)?มา|เดินตาม(มา)?|หยุด|รอ|รอก่อน|รอ(อยู่)?(ตรง)?นี้|อยู่(ตรง)?นี้|อยู่นิ่ง|ยกเลิก|เลิก|พอแล้ว|สถานะ"
+            + "|ทำ(อะ)?ไรอยู่|เร็ว|เร็วๆ|เร็วอีก|เร็วขึ้น|เร็วกว่านี้|เร็วสุด|เร็วที่สุด|ช้าลง|ช่วยด้วย"
+            + "|come|come here|come back|here|follow|follow me|stay|stay here|wait|wait here|stop|cancel|status|faster|hurry|hurry up|slower|slow down|help me|help)$";
+    static final String PARTICLES = "(ครับผม|ครับ|คับ|ค่ะ|คะ|จ้า|จ้ะ|นะ|หน่อย|ดิ|ดิ๊|สิ|ซิ|เลย|ด้วย|ที|เดี๋ยวนี้|ด่วน|เร็วๆ(?=.)|please|pls|plz|now|quick|!|\\.|\\s)+";
+
+    static boolean instant(String text) {
+        String whole = Nlu.norm(text).replaceAll("[!.\\s]+$", ""), t = whole.replaceAll(PARTICLES + "$", "").trim();
+        return !t.isEmpty() && (Nlu.test(INSTANT, t) || Nlu.test(INSTANT, whole));
+    }
+
     /** fallbackLocal: if the AI can't be reached, let the built-in brain handle the sentence instead. */
     static void aiUnderstand(ServerPlayer p, HelperEntity h, String text, boolean fallbackLocal) {
+        aiAsk(p, h, text, fallbackLocal, null, null);
+    }
+
+    /** before / fix: the AI's first answer and what was wrong with it (it gets one chance to put its orders right). */
+    static void aiAsk(ServerPlayer p, HelperEntity h, String text, boolean fallbackLocal, @Nullable String before, @Nullable String fix) {
         MinecraftServer server = p.server;
         UUID hid = h.getUUID();
-        say(p, h, "§7(กำลังคิด...)", "§7(thinking...)");
-        String sys = AI_COMMANDS + " Reply language: " + lang(p, text) + ". The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
-                + ", level " + h.helperLevel() + ". Use the earlier messages to understand follow-ups." + contextForAi(h, p);
+        Say.hint(p, "กำลังคิด...", "thinking...");
+        String sys = AI_COMMANDS + "\nReply language: " + lang(p, text) + ". The helper is called " + h.helperName() + ". Helper status: " + h.mode().label(false) + ", health " + (int) h.shownHp() + "/" + h.maxHp()
+                + ", level " + h.helperLevel() + "." + contextForAi(h, p);
         List<AiBridge.Msg> hist = HISTORY.computeIfAbsent(hid, k -> new ArrayList<>());
         List<AiBridge.Msg> msgs = new ArrayList<>(hist);
         msgs.add(new AiBridge.Msg("user", text));
+        if (before != null && fix != null) {
+            msgs.add(new AiBridge.Msg("assistant", before));
+            msgs.add(new AiBridge.Msg("user", fix));
+        }
         AiBridge.send(sys, msgs, 1500, 0.2).thenAccept(res -> server.execute(() -> {
             ServerPlayer pl = server.getPlayerList().getPlayer(p.getUUID());
             HelperEntity hh = Helpers.byUuid(server, hid);
@@ -1178,36 +1245,68 @@ public final class Talk {
                 if (res == null && AI_FAIL_TOLD.add(pl.getUUID()))
                     pl.sendSystemMessage(Component.literal(Say.t(pl, "§7[Helper Buddy] เชื่อมต่อ AI ไม่ได้ (เช็ก apiKey ในไฟล์ config หรือดูรายละเอียดใน logs/latest.log) ตอนนี้ใช้สมองในตัวแทน",
                             "§7[Helper Buddy] The AI could not be reached (check apiKey in the config file, details in logs/latest.log). Using the built-in brain")));
-                if (fallbackLocal) {
+                // no answer (or one that is not JSON): the built-in brain takes the player's own words
+                if (fallbackLocal || !Nlu.parse(text).k.equals("unknown")) {
                     local(pl, hh, text, false);
                     return;
                 }
-                say(pl, hh, "ขอโทษครับ ผมไม่แน่ใจว่าหมายถึงอะไร ลองพูดแบบอื่น หรือพิมพ์ \"§eช่วย§r\" ดูตัวอย่างนะ", "Sorry, I'm not sure what you mean. Try another way, or type \"§ehelp§r\"");
+                String plain = res == null ? null : AiBridge.clean(res);
+                if (plain != null && !plain.isBlank() && plain.length() < 300 && !plain.contains("{")) Say.raw(pl, hh, plain);
+                else say(pl, hh, "ขอโทษครับ ผมไม่แน่ใจว่าหมายถึงอะไร ลองพูดแบบอื่น หรือพิมพ์ \"§eช่วย§r\" ดูตัวอย่างนะ", "Sorry, I'm not sure what you mean. Try another way, or type \"§ehelp§r\"");
                 return;
             }
-            List<String> cmds = new ArrayList<>();
+            List<String> good = new ArrayList<>(), bad = new ArrayList<>();
             if (o.has("commands") && o.get("commands").isJsonArray())
-                for (JsonElement e : o.getAsJsonArray("commands")) if (e.isJsonPrimitive()) cmds.add(e.getAsString());
+                for (JsonElement e : o.getAsJsonArray("commands")) {
+                    if (!e.isJsonPrimitive()) continue;
+                    String c = e.getAsString().trim();
+                    if (c.isEmpty()) continue;
+                    boolean known = false;
+                    for (String piece : Nlu.splitChain(c).isEmpty() ? List.of(c) : Nlu.splitChain(c)) if (!Nlu.parse(piece).k.equals("unknown")) known = true;
+                    (known ? good : bad).add(c);
+                }
+            // orders the body does not know: the AI gets one chance to say them the right way
+            if (!bad.isEmpty() && fix == null) {
+                aiAsk(pl, hh, text, fallbackLocal, o.toString(), "The helper's body did not understand these commands: " + bad + ". Write the whole answer again, with every command in one of the exact "
+                        + "forms from the list (things as \"get <n> minecraft:<id>\", creatures as \"kill <n> minecraft:<id>\", places as \"where is ...\" / \"take me to ...\"). JSON only.");
+                return;
+            }
             String reply = o.has("reply") && o.get("reply").isJsonPrimitive() ? AiBridge.clean(o.get("reply").getAsString()) : null;
-            if (reply != null && !reply.isEmpty()) Say.raw(pl, hh, reply);
+            if (reply != null && reply.isBlank()) reply = null;
             hist.add(new AiBridge.Msg("user", text));
             hist.add(new AiBridge.Msg("assistant", o.toString()));
-            while (hist.size() > 10) hist.remove(0);
-            if (cmds.isEmpty()) return;
-            String joined = String.join(" then ", cmds);
-            boolean any = false;
-            for (String c : cmds) if (!Nlu.parse(c).k.equals("unknown")) any = true;
-            if (!any) {
-                // the AI answered with orders the helper doesn't know: try the player's own words with the built-in brain
-                if (reply == null || reply.isEmpty()) local(pl, hh, text, false);
+            while (hist.size() > 12) hist.remove(0);
+            if (good.isEmpty()) {
+                if (!bad.isEmpty()) {
+                    // it wanted something done but could not say it in the body's words: the player's own sentence then
+                    if (!Nlu.parse(text).k.equals("unknown") || tryPlan(pl, hh, text)) {
+                        if (!Nlu.parse(text).k.equals("unknown")) local(pl, hh, text, false);
+                        return;
+                    }
+                    if (reply != null) Say.raw(pl, hh, reply);
+                    say(pl, hh, "§cอันนี้ผมยังทำไม่เป็น:§r " + String.join(", ", bad) + " (ลองบอกเป็นขั้นๆ หรือพิมพ์ \"§eช่วย§r\" ดูว่าผมทำอะไรได้บ้าง)",
+                            "§cI don't know how to do this yet:§r " + String.join(", ", bad) + " (try telling me step by step, or type \"§ehelp§r\" to see what I can do)");
+                    return;
+                }
+                if (reply != null) Say.raw(pl, hh, reply);
+                else unknown(pl, hh, text, false);
                 return;
             }
+            // what the AI says is said aloud; what the body answers while it starts on the orders is only written
+            if (reply != null) Say.raw(pl, hh, reply);
+            String joined = String.join(" then ", good);
             LAST_ORDER.put(hid, joined);
-            if (cmds.size() == 1) {
-                Nlu.Intent it = Nlu.parse(cmds.get(0));
-                if (tryPlan(pl, hh, cmds.get(0))) return;
-                single(pl, hh, it, cmds.get(0), false);
-            } else tryPlan(pl, hh, joined, true);
+            if (reply != null) Say.quiet++;
+            try {
+                if (good.size() == 1) {
+                    Nlu.Intent it = Nlu.parse(good.get(0));
+                    if (!tryPlan(pl, hh, good.get(0))) single(pl, hh, it, good.get(0), false);
+                } else tryPlan(pl, hh, joined, true);
+            } finally {
+                if (reply != null) Say.quiet--;
+            }
+            if (!bad.isEmpty())
+                say(pl, hh, "§eส่วนนี้ผมยังทำไม่เป็น:§r " + String.join(", ", bad), "§eThis part I don't know how to do yet:§r " + String.join(", ", bad));
         }));
     }
 

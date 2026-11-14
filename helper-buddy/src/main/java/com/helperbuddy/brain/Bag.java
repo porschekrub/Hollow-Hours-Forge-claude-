@@ -246,8 +246,20 @@ public final class Bag {
             swapIntoHand(h, best);
             return true;
         }
-        return isKind(h.tool(), k);
+        if (isKind(h.tool(), k)) return true;
+        // none at all: it makes one itself when the bag has the wood (and stone) for it
+        if (!making && h.level() instanceof net.minecraft.server.level.ServerLevel) {
+            making = true;
+            try {
+                if (Toolsmith.make(h, k)) return equip(h, k);
+            } finally {
+                making = false;
+            }
+        }
+        return false;
     }
+
+    private static boolean making;
 
     public static boolean hasKind(HelperEntity h, Kind k) {
         if (isKind(h.tool(), k)) return true;
@@ -297,6 +309,22 @@ public final class Bag {
             n += c;
         }
         h.bag.setChanged();
+        return n;
+    }
+
+    /** Like giveAllTo, but only what fits in the player's inventory (nothing is thrown on the ground). */
+    public static int giveFitting(HelperEntity h, Player p, Predicate<ItemStack> filter) {
+        int n = 0;
+        for (int i = 0; i < h.bag.getContainerSize(); i++) {
+            ItemStack s = h.bag.getItem(i);
+            if (s.isEmpty() || !filter.test(s)) continue;
+            int c = s.getCount();
+            ItemStack give = s.copy();
+            p.getInventory().add(give);
+            n += c - give.getCount();
+            h.bag.setItem(i, give.isEmpty() ? ItemStack.EMPTY : give);
+        }
+        if (n > 0) h.bag.setChanged();
         return n;
     }
 

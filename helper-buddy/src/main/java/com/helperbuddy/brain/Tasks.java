@@ -77,6 +77,12 @@ public final class Tasks {
         return t;
     }
 
+    /** A crafting step in the middle of a bigger job: what is made stays in the bag, and when it can't be made the job ends there. */
+    public static CompoundTag keep(CompoundTag craft) {
+        craft.putBoolean("keep", true);
+        return craft;
+    }
+
     public static CompoundTag smelt(String text, @Nullable Integer n) {
         CompoundTag t = spec("smelt");
         t.putString("text", text == null ? "" : text);
@@ -322,6 +328,19 @@ public final class Tasks {
         }
         h.swing(InteractionHand.MAIN_HAND);
         h.level().playSound(null, h.blockPosition(), SoundEvents.VILLAGER_WORK_TOOLSMITH, SoundSource.NEUTRAL, 0.8f, 1.1f);
+        if (spec.getBoolean("keep")) {
+            // one step of a bigger job: quietly on to the next one, or the job ends here with the reason
+            if (r.made() >= Math.min(n, 1)) {
+                h.addXp(1);
+                done(false);
+            } else {
+                String miss = r.missing() == null ? "" : Crafter.missingNames(r.missing());
+                Say.owner(h, "§cทำ " + name + " ไม่ได้ ขาด:§r " + miss + " เลยต้องหยุดงานนี้ไว้ก่อน (ส่งของที่ขาดให้ผม แล้วสั่งใหม่ได้เลย)",
+                        "§cI couldn't make the " + name + ", missing:§r " + miss + ". I have to stop this job here (give me what is missing and ask again)");
+                fail();
+            }
+            return;
+        }
         if (r.made() > 0) {
             Say.owner(h, "คราฟต์ §e" + name + "§r เสร็จแล้ว " + r.made() + " ชิ้น!" + (r.made() < n ? " (ได้ไม่ครบเพราะของไม่พอ)" : ""),
                     "Crafted §e" + r.made() + " " + name + "§r!" + (r.made() < n ? " (not all of them: not enough materials)" : ""));
@@ -356,7 +375,7 @@ public final class Tasks {
     }
 
     void tickSmelt() {
-        if (h.tickCount % 10 != 0) return;
+        if (h.tickCount % Math.max(1, (int) (10 / h.workMult())) != 0) return;
         String text = spec.getString("text");
         int max = spec.contains("n") ? spec.getInt("n") : 2304;
         if (count >= max) {

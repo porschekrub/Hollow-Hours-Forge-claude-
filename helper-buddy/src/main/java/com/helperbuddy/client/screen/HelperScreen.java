@@ -326,7 +326,7 @@ public class HelperScreen extends Screen {
             {"pickup", "เก็บของที่ตก", "Pick up drops"}, {"chest", "เก็บของเข้าหีบเมื่อเต็ม", "Use chests when full"},
             {"needBlocks", "สร้างด้วยบล็อกจริง", "Build with real blocks"}, {"chestBuild", "เอาบล็อกจากหีบ", "Take blocks from chests"},
             {"keepJunk", "เก็บหิน/ดินทั้งหมด", "Keep all rubble"}, {"selfCare", "ดูแลตัวเอง (กิน/ทำอาหาร)", "Look after itself"},
-            {"torches", "ปักคบเพลิงในเหมือง", "Torches in mines"}, {"teleport", "วาร์ปตามเมื่อไกล", "Teleport when far"}, {"hitPlayers", "ตีผู้เล่นคนอื่นได้", "May hit other players"}};
+            {"torches", "ปักคบเพลิงในเหมือง", "Torches in mines"}, {"teleport", "วาร์ปตามเมื่อไกล", "Teleport when far"}, {"hitPlayers", "ตีผู้เล่นคนอื่นได้", "May hit other players"}, {"chatty", "พูดเล่น / คุยเอง", "Small talk"}};
     static final String[][] ORE_NAMES = {{"coal", "ถ่านหิน", "Coal"}, {"copper", "ทองแดง", "Copper"}, {"iron", "เหล็ก", "Iron"}, {"gold", "ทอง", "Gold"},
             {"redstone", "เรดสโตน", "Redstone"}, {"lapis", "ลาพิส", "Lapis"}, {"diamond", "เพชร", "Diamond"}, {"emerald", "มรกต", "Emerald"},
             {"nether", "แร่เนเธอร์", "Nether ores"}, {"debris", "เศษโบราณ", "Ancient debris"}};

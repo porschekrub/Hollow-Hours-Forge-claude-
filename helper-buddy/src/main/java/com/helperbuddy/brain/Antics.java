@@ -80,6 +80,7 @@ public final class Antics {
     }
 
     public void quip(String event) {
+        if (!h.settings.get("chatty")) return;
         String[] q = Persona.quip(Persona.of(h), event, Persona.R);
         ServerPlayer o = h.owner();
         if (q != null && o != null) Say.raw(o, h, Say.t(o, q[0], q[1]));

@@ -128,6 +128,18 @@ public final class Crafter {
                         miss.add(ing);
                     }
                 }
+                // (making sticks may have eaten the planks counted a moment ago: everything is counted once more)
+                if (all) for (Object[] e : need) {
+                    Ingredient ing = (Ingredient) e[0];
+                    if (have(h, ing) < (Integer) e[1] && !makeBasic(h, ing, (Integer) e[1], depth)) {
+                        all = false;
+                        miss.add(ing);
+                    }
+                }
+                if (all) for (Object[] e : need) if (have(h, (Ingredient) e[0]) < (Integer) e[1]) {
+                    all = false;
+                    miss.add((Ingredient) e[0]);
+                }
                 if (!all) {
                     if (missing == null || miss.size() < missing.size()) missing = miss;
                     continue;

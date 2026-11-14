@@ -42,6 +42,12 @@ public final class Persona {
         return Style.of(s);
     }
 
+    /** This helper talks the way its owner does (no style of its own, config talkStyle = auto). */
+    public static boolean auto(HelperEntity h) {
+        String own = h.persona();
+        return (own == null || own.isEmpty() ? HBConfig.STYLE.get() : own).trim().equalsIgnoreCase("auto");
+    }
+
     // ------------------------------------------------------------------ talking the way the player does
     /** per player: {polite, rough} (0-10), from the words they use with their helpers */
     static final java.util.Map<java.util.UUID, int[]> REGISTER = new java.util.HashMap<>();

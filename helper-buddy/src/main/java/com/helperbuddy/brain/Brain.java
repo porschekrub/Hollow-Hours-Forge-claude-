@@ -145,6 +145,7 @@ public final class Brain {
             return;
         }
         if (t % 20 == 0) updateStatus();
+        if (t % 20 == 7) watchdog();
         if (antics.tick()) return;
         care.tick();
         plan.tick();
@@ -174,6 +175,72 @@ public final class Brain {
             case FARM -> farm.tick();
             case TASK -> tasks.tick();
             case GUIDE -> Navigator.tick(this);
+        }
+    }
+
+    // ------------------------------------------------------------------ never just standing there
+    private BlockPos wdPos;
+    private int wdBag = -1, wdIdle, wdStrikes;
+
+    /**
+     * Once a second while it works: a helper that has not moved, broken or picked up anything for half a minute is
+     * stuck. First it lets go of what it was after and looks somewhere else; when that does not help either it says
+     * so and comes back to its owner instead of standing there.
+     */
+    void watchdog() {
+        Mode m = h.mode();
+        boolean watched = m == Mode.MINE || m == Mode.CHOP || m == Mode.GATHER || m == Mode.FOOD;
+        if (!watched || combat.fighting() || care.goingForFood() || antics.hiding() || h.owner() == null) {
+            wdIdle = 0;
+            wdStrikes = 0;
+            wdPos = null;
+            return;
+        }
+        int bag = 0;
+        for (int i = 0; i < h.bag.getContainerSize(); i++) bag += h.bag.getItem(i).getCount() * (i + 1);
+        boolean moved = wdPos == null || wdPos.distSqr(h.blockPosition()) > 4;
+        if (bag != wdBag) wdStrikes = 0;
+        if (moved || bag != wdBag || breaker.busy()) {
+            wdPos = h.blockPosition();
+            wdBag = bag;
+            wdIdle = 0;
+            return;
+        }
+        if (++wdIdle < 30) return;
+        wdIdle = 0;
+        if (++wdStrikes <= 2) {
+            work.unstick();
+            food.end();
+            if (wdStrikes == 2) {
+                // still there: a step to the side (the way may be blocked from where it stands)
+                BlockPos side = Mover.safeSpotNear(h.level(), h.blockPosition().offset(h.getRandom().nextInt(13) - 6, 0, h.getRandom().nextInt(13) - 6), 4);
+                if (side != null) mover.jumpTo(side);
+            }
+            return;
+        }
+        wdStrikes = 0;
+        boolean full = Bag.isFull(h);
+        if (full) Say.owner(h, "§eกระเป๋าผมเต็ม และกระเป๋าคุณก็เต็มด้วย§r ผมเลยกลับมาหาคุณก่อนนะ (เอาของออกจากกระเป๋าผม แล้วสั่งใหม่ได้เลย)",
+                "§eMy bag is full, and so is yours§r, so I'm coming back to you (take things out of my bag and ask again)");
+        else Say.owner(h, "§eผมทำงานนี้ต่อไม่ได้§r (ไปไม่ถึง หรือขาดของที่ต้องใช้) เลยกลับมาหาคุณก่อนนะ สั่งใหม่ได้เลย",
+                "§eI can't get on with this job§r (I can't reach it, or I lack something for it), so I'm coming back to you. Just ask again");
+        boolean was = planStep;
+        planStep = false;
+        leaveJob();
+        planStep = was;
+        h.setMode(Mode.FOLLOW);
+    }
+
+    /** Something inside went wrong again and again (a bug, or another mod in the way): the job is dropped, never the helper. */
+    public void recover(Throwable e) {
+        try {
+            planStep = false;
+            leaveJob();
+            h.jobs.remove("build");
+            h.setMode(Mode.FOLLOW);
+            Say.notify(h, "recover", 20 * 60, "§eงานนี้มีอะไรผิดพลาดข้างใน ผมเลยหยุดไว้แล้วกลับมาหาคุณ§r (ลองสั่งใหม่ได้ ถ้าเป็นอีกรบกวนส่งไฟล์ logs/latest.log ให้คนทำมอดนะ)",
+                    "§eSomething went wrong inside that job, so I dropped it and came back to you§r (try again; if it keeps happening, please send logs/latest.log to the mod's author)");
+        } catch (Throwable ignored) {
         }
     }
 
@@ -324,6 +391,15 @@ public final class Brain {
                     Say.notify(h, "deposit", 600, "กระเป๋าเต็ม เลยเอาของ " + moved + " ชิ้นไปเก็บในหีบใกล้ๆ ให้แล้ว", "My bag was full, so I put " + moved + " items in a chest nearby");
                     return;
                 }
+            }
+        }
+        // no chest: what fits goes straight to the owner, and the work goes on
+        ServerPlayer o = h.owner();
+        if (o != null && o.isAlive() && !o.isSpectator()) {
+            int moved = Bag.giveFitting(h, o, st -> !Bag.isTool(st) && !st.is(net.minecraft.world.item.Items.TORCH) && Care.foodValue(st) <= 0);
+            if (moved > 0) {
+                Say.notify(h, "fullsend", 600, "กระเป๋าผมเต็ม เลยส่งของ §e" + moved + "§r ชิ้นเข้ากระเป๋าคุณแล้ว ทำงานต่อนะ", "My bag was full, so I sent §e" + moved + "§r items to your inventory. Back to work");
+                if (!Bag.isFull(h)) return;
             }
         }
         Say.notify(h, "full", 1200, "§eกระเป๋าเต็มแล้ว!§r ผมหยุดพักก่อนนะ (ย่อแล้วคลิกขวาที่ตัวผมเพื่อเปิดกระเป๋า หรือวางหีบไว้ใกล้ๆ)",

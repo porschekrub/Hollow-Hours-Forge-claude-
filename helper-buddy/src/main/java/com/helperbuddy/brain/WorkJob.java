@@ -70,6 +70,8 @@ public final class WorkJob {
 
     long nextScan, lastFarScan, lastPickup;
     int roamFails;
+    /** legs walked since it last found anything (a job nobody put an end to is given up after a while of nothing) */
+    int emptyLegs;
     @Nullable
     Vec3 roam;
     long roamUntil;
@@ -129,7 +131,19 @@ public final class WorkJob {
         return false;
     }
 
+    /** The watchdog found it standing still: whatever it was after is left alone for a while, and it looks somewhere else. */
+    void unstick() {
+        if (target != null) blacklist(target, 20 * 120);
+        target = null;
+        roam = null;
+        nextScan = 0;
+        lastFarScan = 0;
+        b.mover().stop();
+        b.mover().resetProgress();
+    }
+
     void end() {
+        emptyLegs = 0;
         target = null;
         tree.clear();
         treeBase.clear();
@@ -200,7 +214,7 @@ public final class WorkJob {
             tryReplant();
         }
         if (now >= nextScan) {
-            nextScan = now + 20;
+            nextScan = now + Math.max(5, (int) (20 / h.workMult()));
             boolean found = switch (mode) {
                 case MINE -> findOre();
                 case CHOP -> findTree();
@@ -210,6 +224,7 @@ public final class WorkJob {
             if (found) {
                 roam = null;
                 roamFails = 0;
+                emptyLegs = 0;
                 b.mover().resetProgress();
                 return;
             }
@@ -556,6 +571,21 @@ public final class WorkJob {
         if (roam == null || now > roamUntil) {
             // every leg walked without finding anything counts (it has looked at everything loaded from there)
             roamFails++;
+            emptyLegs++;
+            // nothing anywhere for minutes, and nobody is counting (an order that is part of a plan runs out by itself): back to the owner
+            if (emptyLegs >= 16 && !b.plan.active() && mode != Mode.TASK) {
+                emptyLegs = 0;
+                switch (mode) {
+                    case MINE -> Say.owner(h, "§eหาแร่แถวนี้ไม่เจอแล้วจริงๆ§r ผมกลับมาหาคุณก่อนนะ (พาผมไปที่ถ้ำ หรือสั่ง \"สร้างเหมือง\" ได้เลย)",
+                            "§eI really can't find any more ore around here§r, so I'm coming back to you (take me to a cave, or tell me to \"build a mine\")");
+                    case CHOP -> Say.owner(h, "§eหาต้นไม้แถวนี้ไม่เจอแล้ว§r ผมกลับมาหาคุณก่อนนะ", "§eI can't find any more trees around here§r, so I'm coming back to you");
+                    case FOOD -> Say.owner(h, "§eหาอาหารแถวนี้ไม่เจอแล้ว§r ผมกลับมาหาคุณก่อนนะ", "§eI can't find any more food around here§r, so I'm coming back to you");
+                    default -> Say.owner(h, "§eหาของที่สั่งแถวนี้ไม่เจอเลย§r ผมกลับมาหาคุณก่อนนะ", "§eI can't find any of that around here§r, so I'm coming back to you");
+                }
+                b.leaveJob();
+                h.setMode(Mode.FOLLOW);
+                return;
+            }
             if (roamFails >= 3 && com.helperbuddy.config.HBConfig.EXPLORE.get()
                     && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD || mode == Mode.TASK)) {
                 roamFails = 0;

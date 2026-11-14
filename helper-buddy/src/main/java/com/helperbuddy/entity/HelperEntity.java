@@ -136,6 +136,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     public CompoundTag jobs = new CompoundTag();
     /** the first error of its brain is always logged, then one every 10 seconds */
     boolean errorLogged;
+    int errorStreak;
     @Nullable
     private Brain brain;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -531,9 +532,16 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         super.customServerAiStep();
         try {
             brain().tick();
+            errorStreak = 0;
         } catch (Exception e) {
             if (!errorLogged || tickCount % 200 == 0) HelperBuddy.LOG.warn("[Helper Buddy] tick error", e);
             errorLogged = true;
+            // the same thing failing every tick: it would stand there for ever. The job is dropped instead
+            if (++errorStreak >= 20) {
+                errorStreak = 0;
+                HelperBuddy.LOG.warn("[Helper Buddy] {} keeps failing in mode {}: the job is dropped", helperName(), mode(), e);
+                brain().recover(e);
+            }
         }
     }
 
