@@ -732,7 +732,7 @@ public final class Nlu {
 
     static final String WHERE = "((หา|เจอ|มี|ได้|เอา)(ได้|มา)?(ที่|จาก)ไหน|ที่ไหนมี|อยู่(ที่|ตรง)?ไหน|อยู่ทางไหน|ทางไหน|ทิศไหน|ไปยังไง|ไปไง|ไปทางไหน|บอกทาง|ใกล้สุด|ใกล้ที่สุด|หาให้หน่อย|ช่วยหา|อยู่แถวไหน|^ไป.+(ยังไง|ไง)$|(แถวนี้|ใกล้ๆ(นี้)?|รอบๆ(นี้)?)\\s*(มี)?\\s*(ไหม|มั้ย|ป่ะ|ปะ|รึเปล่า|หรือเปล่า|บ้างไหม|บ้าง)"
             + "|where('s| is| are| can i find| do i find)?\\b|which way|how (do i|can i|to) get( to)?|\\bnearest\\b|\\bclosest\\b|\\blocate\\b|direction to|way to|is there an?)";
-    static final String LEAD = "(พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|นำทาง|พาทาง|ไปด้วยกัน|take me|lead me|guide me|bring me to|show me the way|escort me|walk me to|lead the way)";
+    static final String LEAD = "(พา(ฉัน|เรา|ผม|กู|ข้า|หนู)?ไป|เดินนำ(หน้า)?(ไป)?|นำ(หน้า)?ไป|นำทาง|พาทาง|ไปด้วยกัน|take me|lead me|guide me|bring me to|show me the way|escort me|walk me to|lead the way)";
 
     /** The place named in t, or null. */
     public static Place placeIn(String t) {
@@ -1166,6 +1166,9 @@ public final class Nlu {
 
     /** The outfit named in t ("" = just the next one), or null when t is not about outfits. */
     public static String outfitIn(String t) {
+        // "be a pirate", "เป็นนินจาหน่อย": only with the name of an outfit
+        if (test("^(be|become|look like|turn into) an? \\w+$|^(เป็น|ลองเป็น)\\S+(หน่อย|ดิ|สิ|ที)?$", t))
+            for (String[] o : OUTFITS) if (o[0].length() > 6 || !o[0].matches("blue|red|green|purple|orange|black")) if (test("(" + o[1] + ")", t) || test("\\b(" + o[2] + ")\\b", t)) return o[0];
         if (!test(OUTFIT_WORDS, t)) return null;
         if (has(t, "ชุดเกราะ") && test("(คราฟ|ทำ|ขอ|craft|make|give)", t)) return null; // a suit of armour to craft, not an outfit
         if (test("(มีชุดอะไร|ชุดอะไรบ้าง|มีชุดไหน|กี่ชุด|what outfits|which outfits|list (of )?outfits|outfit list)", t)) return "?";

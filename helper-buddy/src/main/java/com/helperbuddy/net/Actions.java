@@ -101,6 +101,13 @@ public final class Actions {
                 if (!n.isEmpty()) h.setHelperName(n);
             }
             case "skin" -> h.setSkin(h.skin() + 1);
+            case "speed" -> h.setSpeedLevel((h.speedLevel() + 1) % 4);
+            case "talkstyle" -> {
+                String[] order = {"auto", "polite", "sassy", "rude"};
+                String cur = com.helperbuddy.talk.Persona.auto(h) ? "auto" : com.helperbuddy.talk.Persona.of(h).id();
+                int i = java.util.Arrays.asList(order).indexOf(cur);
+                h.setPersona(order[(i + 1) % order.length]);
+            }
             default -> {
             }
         }

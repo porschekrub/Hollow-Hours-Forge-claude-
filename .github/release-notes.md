@@ -3,15 +3,41 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.16.3.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.16.3.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.16.3.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.16.3.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.16.3.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.17.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.17.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.17.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.17.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.17.0.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
 
-**Helper Buddy 2.16.3 — no limit on how far the helper sees** (Hollow Hours stays 2.16.0)
+**Helper Buddy 2.17.0 — a much smarter helper** (Hollow Hours stays 2.16.0)
+- 🧠 **"Get me anything"**: "go find soul sand", "soulsand pls", "get 4 ender pearls", "bring me 3 blaze rods", "I need an iron pickaxe". The helper works out where the thing comes from and goes: it mines, chops, digs, harvests, fishes, hunts the right monster, smelts and crafts (fetching the ingredients first), and **walks through a nether portal by itself** when the thing is only in the Nether. When there really is no way it tells you why, instead of looking for ever.
+  **"หาอะไรก็ได้มาให้"**: "ไปหา soulsand", "หาทรายวิญญาณมาให้หน่อย", "ไปหาไข่มุกเอนเดอร์ 4", "เอาแท่งเบลซมา 3", "ทำอีเต้อเหล็กให้หน่อย" ผู้ช่วยคิดเองว่าของนั้นได้มาจากไหนแล้วไปเอา: ขุด ตัด เก็บเกี่ยว ตกปลา ล่ามอนสเตอร์ที่ดรอป ถลุง คราฟต์ (ไปหาวัตถุดิบก่อน) และ**เดินเข้าประตูเนเธอร์เอง**ถ้าของอยู่ในเนเธอร์ ถ้าทำไม่ได้จริงๆ จะบอกเหตุผล ไม่เดินหาไปเรื่อยๆ
+- 🔨 **Makes its own tools**: no pickaxe? It chops a little wood, makes a wooden one, then stone, then iron if the job needs it ("mine diamonds" with empty hands works). No more standing there asking for a pickaxe.
+  **ทำเครื่องมือเอง**: ไม่มีอีเต้อก็ไปตัดไม้ ทำอีเต้อไม้ → หิน → เหล็ก เองตามที่งานต้องใช้ (สั่ง "ขุดเพชร" ตอนมือเปล่าก็ได้) ไม่ยืนขออีเต้ออีกแล้ว
+- 📍 **"Where is ...?" with X Y Z** for anything: "where are the diamonds", "ทรายวิญญาณอยู่ไหน", "วัวอยู่ไหน", "where is the village". It tells the coordinates, the direction and the distance (the nearest block or creature it can see, a chest that holds some, or the biome it is found in), and **"take me there" / "พาไป"** makes it walk ahead of you.
+  **ถามว่า "... อยู่ไหน" ได้ทุกอย่าง พร้อมพิกัด X Y Z**: "เพชรอยู่ไหน", "ทรายวิญญาณอยู่ไหน", "วัวอยู่ไหน", "หมู่บ้านอยู่ไหน" บอกพิกัด ทิศ และระยะ (บล็อกหรือสัตว์ที่ใกล้สุด หีบที่มีของนั้น หรือไบโอมที่มี) แล้วสั่ง **"พาไป"** มันจะเดินนำหน้าไป
+- 🤖 **The AI understands much more** (with a key in `[ai]`): every sentence goes to the AI first, which now knows every order, breaks big wishes into steps, and never drops an order silently (if it answers something the helper can't do, it is asked once more, then your own words are tried, then you are told). Short orders ("come", "stop", "follow me") are done at once without waiting for the AI.
+  **AI เข้าใจมากขึ้นเยอะ** (ต้องใส่คีย์ใน `[ai]`): รู้จักคำสั่งทุกแบบ แตกงานใหญ่เป็นขั้นๆ ให้เอง และไม่ทิ้งคำสั่งเงียบๆ อีกแล้ว ส่วนคำสั่งสั้นๆ ("มานี่", "หยุด", "ตามมา") ทำทันทีไม่ต้องรอ AI คิด
+- 🗣️ **Talks less, and nicer**: far fewer jokes and remarks, helpers chat with each other much less, no teasing when it brings bad news or you are in danger. It now **talks the way you do** (polite when you are polite, casual when you are casual; `talkStyle = "auto"`), and the "rude" style is much milder. "be quiet" / "เงียบหน่อย" makes it say only what is needed; "talk like me", "be polite", "tone it down" / "ด่าน้อยลงหน่อย" work too. Tricks happen much less often.
+  **พูดน้อยลง สุภาพขึ้น**: แซวน้อยลงมาก ผู้ช่วยคุยกันเองน้อยลงมาก ไม่แซวตอนแจ้งข่าวร้ายหรือตอนคุณอันตราย และ**พูดตามสไตล์ของคุณ** (คุณสุภาพมันก็สุภาพ คุณกันเองมันก็กันเอง) โหมดหยาบเบาลงเยอะ สั่ง "เงียบหน่อย" แล้วมันจะพูดเท่าที่จำเป็น สั่ง "พูดตามสไตล์ฉัน", "พูดสุภาพ", "ด่าน้อยลงหน่อย" ได้ด้วย และแกล้งน้อยลงมาก
+- 🔊 **The normal AI voice is the default** again (with a Gemini key every line is read in a real voice; when the voice can't be made the helper stays quiet instead of babbling). `voiceMode = "cartoon"` brings the fast cartoon voice back.
+  **กลับมาใช้เสียง AI แบบปกติเป็นค่าเริ่มต้น** (มีคีย์ Gemini แล้วพูดเป็นเสียงจริงทุกประโยค ถ้าทำเสียงไม่ได้จะเงียบ ไม่ตุดๆ) อยากได้เสียงการ์ตูนแบบเดิมตั้ง `voiceMode = "cartoon"`
+- ⚡ **Works faster**: twice as fast as before by default, and "work faster" / "เร็วๆ", "as fast as you can" / "เร็วสุดๆ", "slow down" / "ช้าลง" change it (4 levels up to turbo: 10 times the work speed). Also a button in the menu.
+  **ทำงานเร็วขึ้น**: เร็วกว่าเดิม 2 เท่าเป็นค่าเริ่มต้น สั่ง "เร็วๆ", "เร็วสุดๆ", "ช้าลง" ได้ (4 ระดับ ถึงเทอร์โบ = เร็ว 10 เท่า) มีปุ่มในเมนูด้วย
+- 🧍 **Never just stands there**: a helper that is stuck lets go and tries somewhere else, then comes back to you and says so; when nothing is left to find it comes back instead of wandering; with a full bag and no chest it sends the items to your inventory and goes on; an error inside a job drops the job, not the helper. Helpers left far away (in chunks that are not loaded) can be called again from anywhere.
+  **ไม่ยืนเอ๋อ**: ถ้าติดจะเปลี่ยนที่ลองใหม่ ไม่ได้จริงๆ ก็กลับมาหาแล้วบอก ถ้าหาของไม่เจอแล้วจะกลับมา ไม่เดินวน กระเป๋าเต็มและไม่มีหีบก็ส่งของเข้ากระเป๋าคุณแล้วทำงานต่อ และผู้ช่วยที่ถูกทิ้งไว้ไกลๆ เรียกกลับได้จากทุกที่
+- 👕 **12 new outfits** (18 in all): knight, ninja, chef, pirate, astronaut, wizard, Santa, farmer, robot, miner, doctor, police. "wear the ninja outfit" / "ใส่ชุดนินจา", "be a pirate", "random outfit", or the *Look* button in the menu.
+  **ชุดใหม่ 12 ชุด** (รวม 18): อัศวิน นินจา เชฟ โจรสลัด นักบินอวกาศ พ่อมด ซานต้า ชาวนา หุ่นยนต์ คนงานเหมือง หมอ ตำรวจ สั่ง "ใส่ชุดนินจา", "สุ่มชุด" หรือกดปุ่ม *Look* ในเมนู
+- New orders: "kill 5 zombies" / "ล่าซอมบี้ 5 ตัว", "pick up the items" / "เก็บของที่ตก", "get my stuff back" / "ไปเอาของที่ฉันตาย", "get a bucket of water". Crafting fetches what is missing first.
+  คำสั่งใหม่: "ล่าซอมบี้ 5 ตัว", "เก็บของที่ตก", "ไปเอาของที่ฉันตาย", "ตักน้ำใส่ถัง" และการคราฟต์จะไปหาวัตถุดิบที่ขาดเองก่อน
+- Fixed: chains of orders that stopped after their first building or crafting step; exploring that almost never started; moving on to the Nether roof; "where is ..." in the middle of a chain being skipped; "ทำไรอยู่" understood as "wait"; many small misunderstandings.
+  แก้บั๊ก: คำสั่งต่อกันหลายขั้นที่หยุดหลังขั้นสร้าง/คราฟต์ การออกไปหาไกลๆ ที่แทบไม่ทำงาน การวาร์ปขึ้นหลังคาเนเธอร์ และการเข้าใจผิดอีกหลายจุด
+- Settings that start fresh in this version (new names, so the new defaults apply by themselves): `talkStyle`, `voiceMode`, `trickChance`.
+  ค่าที่เริ่มใหม่ในเวอร์ชันนี้ (เปลี่ยนชื่อ ค่าใหม่จึงมีผลเอง ไม่ต้องแก้ไฟล์): `talkStyle`, `voiceMode`, `trickChance`
+
+**Helper Buddy 2.16.3 — no limit on how far the helper sees**
 - The helper now sees **everything that is loaded in the world** (the whole view distance, top to bottom), not just 100 blocks; past that it walks on further by itself. Nothing to change: the setting is now `sightRadius` (0 = no limit, the default; a number limits it), so old config files get the new default by themselves.
   ผู้ช่วย**มองเห็นทุกอย่างที่โหลดอยู่ในโลก** (ทั้งระยะการมองเห็นของเซิร์ฟเวอร์ ตั้งแต่บนสุดถึงล่างสุด) ไม่ใช่แค่ 100 บล็อกแล้ว ไกลกว่านั้นมันจะเดินไปหาเอง ไม่ต้องแก้อะไร ค่านี้เปลี่ยนชื่อเป็น `sightRadius` (0 = ไม่จำกัด เป็นค่าเริ่มต้น) ไฟล์ config เก่าจึงได้ค่าใหม่เอง
 

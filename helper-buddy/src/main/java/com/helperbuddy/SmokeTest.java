@@ -55,6 +55,7 @@ public final class SmokeTest {
         server = s;
         try {
             staticChecks();
+            smartChecks();
             ServerLevel level = s.overworld();
             // no monsters to keep the helper busy fighting (the checks are about its work); the end crystal and bosses are tested on their own
             s.setDifficulty(net.minecraft.world.Difficulty.PEACEFUL, true);
@@ -174,6 +175,66 @@ public final class SmokeTest {
         check(u.length == 4 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[1]) - 1000) < 40 && Math.abs(com.helperbuddy.talk.VoiceTts.fromUlaw(u[2]) + 1000) < 40, "mu-law");
     }
 
+    /** 2.17: orders about any thing, speed, outfits, talking less; the planner that works out how to get something. */
+    static void smartChecks() {
+        Nlu.Intent g = Nlu.parse("get 3 minecraft:soul_sand");
+        check(g.k.equals("get") && "minecraft:soul_sand".equals(g.item) && Integer.valueOf(3).equals(g.n), "nlu exact get");
+        for (String say : new String[] {"ไปหา soulsand หน่อย", "find soul sand", "ไปหาทรายวิญญาณมาให้หน่อย", "soul sand pls", "เอา soul sand มา 10"}) {
+            Nlu.Intent i = Nlu.parse(say);
+            check(i.k.equals("get") && "minecraft:soul_sand".equals(i.item) || i.k.equals("gather") && i.ids != null && i.ids.length > 0 && i.ids[0].contains("soul_sand"), "nlu soul sand: " + say);
+        }
+        check(Nlu.parse("kill 5 minecraft:zombie").k.equals("slay") && Nlu.parse("ไปหาไข่มุกเอนเดอร์ 4").k.equals("get"), "nlu hunting");
+        Nlu.Intent w = Nlu.parse("ทรายวิญญาณอยู่ไหน");
+        check(w.k.equals("locate") && w.place.kind().equals("thing") && w.place.ids()[0].equals("minecraft:soul_sand"), "nlu where is a thing");
+        check(Nlu.parse("where are the cows").place.kind().equals("mob") && Nlu.parse("where is minecraft:diamond").place.kind().equals("thing")
+                && Nlu.parse("หมู่บ้านอยู่ไหน").place.kind().equals("structure"), "nlu where is");
+        check("max".equals(Nlu.parse("ทำงานเร็วสุดๆ").text) && Nlu.parse("เร็วๆหน่อย").k.equals("speed") && Nlu.parse("speed normal").k.equals("speed"), "nlu speed");
+        check(Nlu.parse("ใส่ชุดนินจา").k.equals("outfit") && Nlu.parse("outfit astronaut").k.equals("outfit"), "nlu outfit");
+        check(Nlu.parse("เงียบหน่อย").k.equals("chatty") && !Nlu.parse("shut up").on && Nlu.parse("talk like me").k.equals("persona") && Nlu.parse("ทำไรอยู่").k.equals("status"), "nlu talking less");
+        check(HelperEntity.OUTFITS.length == 18 && HelperEntity.OUTFIT_NAMES.length == 18, "18 outfits");
+        // how to get an iron pickaxe with empty hands: wood, a wooden and a stone pickaxe, iron, smelting, crafting
+        ServerLevel level = server.overworld();
+        HelperEntity x = HBRegistry.HELPER.get().create(level);
+        HelperEntity.initNew(x, null);
+        x.moveTo(0.5, 100, 0.5, 0, 0);
+        com.helperbuddy.brain.Fetch.Result r = com.helperbuddy.brain.Fetch.plan(null, x, "minecraft:iron_pickaxe", 1, false, true);
+        StringBuilder plan = new StringBuilder();
+        boolean mines = false, chops = false, smelts = false;
+        if (r.ok()) for (com.helperbuddy.brain.Plan.Step st : r.steps()) {
+            plan.append(st.k).append(st.task != null ? ":" + st.task.getString("kind") + " " + st.task.getString("item") : "").append(" | ");
+            mines |= st.k.equals("mine");
+            chops |= st.k.equals("chop");
+            smelts |= st.task != null && st.task.getString("kind").equals("smelt");
+        }
+        HelperBuddy.LOG.info("[smoke] plan for an iron pickaxe from nothing: {}", plan);
+        check(r.ok() && mines && chops && smelts && r.steps().size() >= 6, "planning an iron pickaxe from nothing");
+        com.helperbuddy.brain.Plan.Step last = r.steps().get(r.steps().size() - 1);
+        check(last.task != null && last.task.getString("item").equals("minecraft:iron_pickaxe"), "the plan ends with the pickaxe");
+        // soul sand is only in the Nether: with no portal around it says so instead of looking for ever
+        com.helperbuddy.brain.Fetch.Result far = com.helperbuddy.brain.Fetch.plan(null, x, "minecraft:soul_sand", 8, false, true);
+        HelperBuddy.LOG.info("[smoke] soul sand from the overworld: ok={} {}", far.ok(), far.en());
+        check(!far.ok() && far.en().toLowerCase().contains("nether"), "soul sand needs the nether");
+        // an ender pearl is hunted for
+        com.helperbuddy.brain.Fetch.Result pearl = com.helperbuddy.brain.Fetch.plan(null, x, "minecraft:ender_pearl", 2, false, true);
+        check(pearl.ok() && pearl.steps().get(0).task != null && pearl.steps().get(0).task.getString("kind").equals("slay"), "ender pearls are hunted for");
+        x.discard();
+    }
+
+    static HelperEntity hg, hp, hk;
+
+    /** 2.17, live: digging up a kind of block until it has enough, making its own pickaxe, a crafting step of a bigger job. */
+    static void startSmart(ServerLevel level) {
+        BlockPos gp = base.offset(14, 0, -10);
+        for (int i = 0; i < 5; i++) level.setBlockAndUpdate(gp.offset(3 + i % 3, i / 3, 2), net.minecraft.world.level.block.Blocks.SOUL_SAND.defaultBlockState());
+        hg = spawnHelper(level, gp);
+        hg.brain().plan().start(new java.util.ArrayList<>(java.util.List.of(com.helperbuddy.brain.Plan.gatherFor(new String[] {"minecraft:soul_sand"}, "minecraft:soul_sand", "Soul Sand", 3, false))));
+        // no pickaxe, two logs: it makes one the moment it needs it
+        hp = spawnHelper(level, base.offset(-14, 0, -10), new ItemStack(Items.OAK_LOG, 2));
+        check(Bag.equip(hp, Bag.Kind.PICKAXE) && hp.tool().is(Items.WOODEN_PICKAXE), "making its own pickaxe");
+        hk = spawnHelper(level, base.offset(-14, 0, 10), new ItemStack(Items.OAK_LOG, 1), new ItemStack(Items.COBBLESTONE, 3));
+        hk.brain().tasks().start(Tasks.keep(Tasks.craft("minecraft:stone_pickaxe", 1)));
+    }
+
     static void tick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || h == null) return;
         t++;
@@ -220,6 +281,7 @@ public final class SmokeTest {
                 check(Bag.count(h, Items.IRON_INGOT) > 0 || Bag.count(h, Items.CRAFTING_TABLE) > 0, "crafting / smelting produced something");
                 HelperBuddy.LOG.info("[smoke] mode {} status '{}' bag {}/36", h.mode(), h.status(), Bag.usedSlots(h));
                 startSkills(server.overworld());
+                startSmart(server.overworld());
             }
             if (t == 820) {
                 BlockPos portal = com.helperbuddy.brain.Navigator.findPortal(server.overworld(), base, 128);
@@ -245,6 +307,9 @@ public final class SmokeTest {
                 int swift = Bag.count(hb, st -> com.helperbuddy.compat.Compat.potionId(st).equals("minecraft:swiftness"));
                 HelperBuddy.LOG.info("[smoke] brewing: {} potions of swiftness, bag {}", swift, bagText(hb));
                 HelperBuddy.LOG.info("[smoke] machine: {} iron ingots from the furnace, bag {}", Bag.count(hm, Items.IRON_INGOT), bagText(hm));
+                HelperBuddy.LOG.info("[smoke] smart: soul sand {} (mode {}), stone pickaxe {}", Bag.count(hg, Items.SOUL_SAND), hg.mode(), bagText(hk));
+                check(Bag.count(hg, Items.SOUL_SAND) >= 3, "digging up 3 soul sand");
+                check(Bag.count(hk, Items.STONE_PICKAXE) > 0 || hk.tool().is(Items.STONE_PICKAXE), "a crafting step keeps what it made");
                 check(skillsOk[0], "fishing caught something");
                 check(skillsOk[1], "trading with a villager");
                 check(skillsOk[2], "enchanting a book");

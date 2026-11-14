@@ -196,7 +196,7 @@ public final class ClientSmoke {
             if (t == 0) server(sp -> {
                 clearHelpers(sp);
                 pin(sp);
-                for (int i = 0; i < HelperEntity.SKINS; i++) spawn(sp, origin.add((i - 2.5) * 1.3, 0, 5), i);
+                for (int i = 0; i < HelperEntity.SKINS; i++) spawn(sp, origin.add((i % 6 - 2.5) * 1.3, 0, 4 + (i / 6) * 1.6), i);
             });
             if (t == 5) lookAt = origin.add(0, 1.0, 5);
             if (t == 30) shot("skins");

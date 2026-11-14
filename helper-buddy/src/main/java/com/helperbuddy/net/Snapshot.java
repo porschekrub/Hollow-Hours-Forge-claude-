@@ -25,6 +25,8 @@ public final class Snapshot {
         t.putUUID("uuid", h.getUUID());
         t.putString("name", h.helperName());
         t.putInt("skin", h.skin());
+        t.putInt("speed", h.speedLevel());
+        t.putString("talk", com.helperbuddy.talk.Persona.auto(h) ? "auto" : com.helperbuddy.talk.Persona.of(h).id());
         t.putFloat("hp", h.shownHp());
         t.putInt("max", h.maxHp());
         t.putInt("level", h.helperLevel());

@@ -144,7 +144,7 @@ public final class Fetch {
         }
         // ---- something that comes out of a furnace: first what it is made of
         if (!done && depth <= 2) {
-            for (var rec : Compat.recipesFor(p.server, item)) {
+            for (var rec : Compat.recipesFor(h.getServer(), item)) {
                 if (!(rec instanceof AbstractCookingRecipe) || rec.getIngredients().isEmpty()) continue;
                 for (ItemStack in : rec.getIngredients().get(0).getItems()) {
                     int raw = Math.max(0, (n == null ? 16 : n) - Bag.count(h, in.getItem()));
@@ -251,6 +251,16 @@ public final class Fetch {
             int have = Bag.count(h, st -> st.is(net.minecraft.tags.ItemTags.LOGS)) + Bag.count(h, st -> st.is(net.minecraft.tags.ItemTags.PLANKS)) / 4;
             if (logs > have) {
                 int more = logs - have;
+                // (one trip to the trees: wood a step further down already asks for is cut in the same go)
+                Plan.Step first = null;
+                for (Plan.Step st : out) if (st.k.equals("chop") && st.n != null && !st.full) {
+                    first = st;
+                    break;
+                }
+                if (first != null) {
+                    out.remove(first);
+                    more += first.n;
+                }
                 out.add(0, Toolsmith.named(Plan.work("chop", more, false), "ตัดไม้ " + more + " ท่อน", "chop " + more + " logs"));
             }
             if (!far.isEmpty()) {

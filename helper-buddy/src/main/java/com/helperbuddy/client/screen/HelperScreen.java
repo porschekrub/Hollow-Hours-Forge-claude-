@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import com.helperbuddy.entity.HelperEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -126,7 +127,8 @@ public class HelperScreen extends Screen {
         actBtn(110, y, 98, "ทำงานต่อ", "Resume job", "resume");
         actBtn(212, y, 100, "รายงานสถานะ", "Status report", "status");
         y += 24;
-        actBtn(8, y, 98, "เปลี่ยนชุด", "Change look", "skin");
+        int skin = Math.floorMod(d.getInt("skin"), HelperEntity.OUTFIT_NAMES.length);
+        actBtn(8, y, 98, "ชุด: " + HelperEntity.OUTFITS[skin], "Look: " + HelperEntity.OUTFITS[skin], "skin");
         nameBox = new EditBox(font, left + 110, top + y, 140, 20, Component.literal("name"));
         nameBox.setMaxLength(24);
         nameBox.setValue(d.getString("name"));
@@ -136,6 +138,11 @@ public class HelperScreen extends Screen {
             a.putString("name", nameBox.getValue());
             act("rename", a);
         });
+        y += 24;
+        int sp = Math.max(0, Math.min(3, d.getInt("speed")));
+        actBtn(8, y, 150, "ความเร็ว: " + HelperEntity.SPEED_NAMES[sp][0], "Work speed: " + HelperEntity.SPEED_NAMES[sp][1], "speed");
+        String talk = d.getString("talk");
+        actBtn(162, y, 150, "การพูด: " + talk, "Talks: " + (talk.equals("auto") ? "like you do" : talk), "talkstyle");
         y += 24;
         btn(8, y, 304, "ปิด", "Close", b -> onClose());
     }

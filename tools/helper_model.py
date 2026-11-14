@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the Helper Buddy look: GeckoLib model, 6 colour skins (+ glow maps) and all animations.
+"""Generates the Helper Buddy look: GeckoLib model, 18 outfits (6 colour suits + 12 themed ones, with glow maps) and all animations.
 
     python3 tools/helper_model.py [--preview DIR]
 
@@ -27,6 +27,32 @@ SKINS = [
     dict(suit=(132, 76, 196), suit2=(88, 46, 140), helm=(52, 196, 186), helm2=(30, 136, 128), scarf=(246, 120, 180), pants=(54, 44, 70), eye=(255, 140, 230)),
     dict(suit=(236, 128, 36), suit2=(170, 84, 20), helm=(150, 156, 168), helm2=(100, 106, 118), scarf=(70, 170, 70), pants=(60, 52, 44), eye=(255, 170, 60)),
     dict(suit=(48, 50, 58), suit2=(28, 30, 36), helm=(230, 180, 40), helm2=(170, 120, 20), scarf=(40, 200, 220), pants=(30, 32, 38), eye=(90, 250, 255)),
+]
+# themed outfits: the same body, other colours, details painted on top, and parts that are left out ("hide")
+SKINS += [
+    dict(theme="knight", suit=(172, 178, 192), suit2=(112, 118, 134), helm=(190, 196, 210), helm2=(126, 132, 148), scarf=(170, 34, 44), pants=(96, 100, 112), eye=(255, 120, 70)),
+    dict(theme="ninja", suit=(36, 36, 46), suit2=(22, 22, 30), helm=(30, 30, 40), helm2=(18, 18, 26), scarf=(190, 30, 40), pants=(30, 30, 38), eye=(255, 255, 255),
+         hide=("goggles", "brim", "stalk", "lamp", "roll")),
+    dict(theme="chef", suit=(244, 244, 240), suit2=(204, 204, 200), helm=(250, 250, 248), helm2=(214, 214, 212), scarf=(214, 48, 48), pants=(70, 72, 80), eye=(255, 255, 255),
+         hide=("goggles", "brim", "pack", "roll", "stalk", "lamp")),
+    dict(theme="pirate", suit=(236, 232, 220), suit2=(92, 52, 36), helm=(34, 30, 34), helm2=(20, 18, 20), scarf=(196, 40, 40), pants=(104, 66, 40), eye=(255, 255, 255),
+         hide=("goggles", "stalk", "lamp")),
+    dict(theme="astronaut", suit=(236, 238, 244), suit2=(176, 182, 196), helm=(244, 246, 250), helm2=(186, 192, 206), scarf=(240, 130, 40), pants=(226, 228, 236), eye=(120, 220, 255),
+         hide=("brim", "roll")),
+    dict(theme="wizard", suit=(98, 58, 164), suit2=(64, 36, 116), helm=(84, 48, 150), helm2=(56, 30, 106), scarf=(240, 196, 60), pants=(84, 50, 142), eye=(255, 230, 120),
+         hide=("goggles", "pack", "roll")),
+    dict(theme="santa", suit=(204, 38, 38), suit2=(146, 22, 26), helm=(204, 38, 38), helm2=(150, 24, 28), scarf=(246, 246, 244), pants=(190, 34, 36), eye=(255, 255, 255),
+         hide=("goggles",)),
+    dict(theme="farmer", suit=(196, 60, 52), suit2=(60, 98, 170), helm=(230, 198, 112), helm2=(186, 150, 70), scarf=(204, 52, 44), pants=(62, 100, 172), eye=(255, 255, 255),
+         hide=("goggles", "stalk", "lamp", "pack", "roll")),
+    dict(theme="robot", suit=(152, 162, 176), suit2=(98, 108, 124), helm=(170, 180, 194), helm2=(110, 120, 136), scarf=(52, 56, 66), pants=(120, 130, 146), eye=(90, 240, 255),
+         hide=("brim", "roll", "tail")),
+    dict(theme="miner", suit=(96, 112, 132), suit2=(150, 96, 46), helm=(242, 198, 44), helm2=(196, 148, 22), scarf=(128, 124, 116), pants=(140, 90, 44), eye=(255, 244, 170),
+         hide=("goggles", "stalk", "lamp")),
+    dict(theme="doctor", suit=(240, 244, 248), suit2=(196, 204, 214), helm=(74, 172, 170), helm2=(46, 126, 126), scarf=(62, 66, 76), pants=(74, 164, 164), eye=(255, 255, 255),
+         hide=("goggles", "brim", "stalk", "lamp", "pack", "roll", "tail")),
+    dict(theme="police", suit=(34, 48, 98), suit2=(20, 30, 66), helm=(30, 42, 88), helm2=(16, 18, 26), scarf=(26, 36, 78), pants=(30, 40, 82), eye=(255, 255, 255),
+         hide=("pack", "roll", "tail")),
 ]
 SKIN = (246, 204, 166)
 SKIN2 = (226, 176, 140)
@@ -108,6 +134,7 @@ def noise(img, rnd, amount=0.06):
 
 def paint_face(name, face, w, h, P, rnd):
     """Returns (rgba image w x h, glow image w x h)."""
+    P0 = P
     img = Image.new("RGBA", (w, h), (0, 0, 0, 255))
     glow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     px, gp = img.load(), glow.load()
@@ -306,7 +333,776 @@ def paint_face(name, face, w, h, P, rnd):
             fill((56, 56, 64))
         if face == "up":
             fill(P["suit"])
+    P = P0
+    theme = P.get("theme")
+    if theme:
+        if name in P.get("hide", ()):
+            return Image.new("RGBA", (w, h), (0, 0, 0, 0)), Image.new("RGBA", (w, h), (0, 0, 0, 0))
+        THEMES[theme](Ctx(name, face, w, h, px, gp, P))
     return img, glow
+
+
+# ------------------------------------------------------------------------------------------- themed outfits
+BLACK = (24, 24, 28)
+RED = (210, 44, 44)
+STEEL = (150, 156, 170)
+HAIR = (96, 62, 36)
+
+
+class Ctx:
+    """One face of one cube being painted (y = 0 is the top row)."""
+
+    def __init__(self, name, face, w, h, px, gp, P):
+        self.name, self.face, self.w, self.h, self.px, self.gp, self.P = name, face, w, h, px, gp, P
+
+    def put(self, x, y, c, g=None):
+        if 0 <= x < self.w and 0 <= y < self.h:
+            self.px[x, y] = tuple(c) + (255,)
+            self.gp[x, y] = (tuple(g) + (255,)) if g else (0, 0, 0, 0)
+
+    def rect(self, x0, y0, x1, y1, c, g=None):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                self.put(x, y, c, g)
+
+    def fill(self, c, g=None):
+        self.rect(0, 0, self.w - 1, self.h - 1, c, g)
+
+    def row(self, y, c, g=None):
+        self.rect(0, y, self.w - 1, y, c, g)
+
+    def col(self, x, c, g=None):
+        self.rect(x, 0, x, self.h - 1, c, g)
+
+    def is_(self, name, face=None):
+        return self.name == name and (face is None or self.face == face)
+
+    def face_plain(self, hat_rows=4, eyes=(60, 40, 30), beard=None, mask=None):
+        """The front of the head with no goggles: forehead, two eyes, cheeks, a smile (or a beard / a mask)."""
+        self.rect(1, hat_rows, self.w - 2, self.h - 1, SKIN)
+        self.put(3, 5, eyes)
+        self.put(6, 5, eyes)
+        self.put(3, 4, shade(SKIN, 0.9))
+        self.put(6, 4, shade(SKIN, 0.9))
+        self.put(2, 7, (240, 150, 150))
+        self.put(7, 7, (240, 150, 150))
+        self.put(4, 8, (110, 60, 50))
+        self.put(5, 8, (110, 60, 50))
+        self.rect(1, self.h - 1, self.w - 2, self.h - 1, SKIN2)
+        if beard:
+            self.rect(1, 7, self.w - 2, self.h - 1, beard)
+            self.put(1, 6, beard)
+            self.put(self.w - 2, 6, beard)
+            self.put(4, 7, (150, 70, 60))
+            self.put(5, 7, (150, 70, 60))
+            self.rect(3, 6, 6, 6, shade(beard, 0.93))
+        if mask:
+            self.rect(1, 6, self.w - 2, self.h - 1, mask)
+            self.rect(2, 7, self.w - 3, 7, shade(mask, 0.9))
+
+
+def theme_knight(c):
+    P = c.P
+    if c.is_("head"):
+        c.fill(P["helm"])
+        for y in range(0, c.h, 3):
+            c.row(y, shade(P["helm"], 1.08))
+        if c.face == "north":
+            c.rect(4, 6, 5, 9, P["helm2"])          # the nose guard down the middle
+            for x in (2, 7):
+                for y in (7, 8):
+                    c.put(x, y, BLACK)                # breathing holes
+        if c.face in ("east", "west"):
+            c.rect(3, 4, 5, 6, P["helm2"])
+        if c.face == "up":
+            c.rect(4, 0, 5, c.h - 1, P["scarf"])    # the crest
+    elif c.is_("goggles"):
+        c.fill(P["helm2"])
+        if c.face == "north":
+            c.rect(1, 1, c.w - 2, 1, BLACK)          # the visor slit, with eyes glowing in it
+            for x in (2, 6):
+                c.put(x, 1, P["eye"], P["eye"])
+    elif c.is_("brim"):
+        c.fill(P["helm2"])
+    elif c.is_("stalk") or c.is_("lamp"):
+        c.fill(P["scarf"])                            # a red plume
+        if c.is_("lamp"):
+            c.put(0, 0, shade(P["scarf"], 1.3))
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            c.rect(0, 0, c.w - 1, 0, shade(P["suit"], 1.15))
+            c.rect(3, 1, 4, 7, GOLD)                 # a golden cross on the breastplate
+            c.rect(1, 3, 6, 4, GOLD)
+            c.rect(3, 3, 4, 4, shade(GOLD, 1.15))
+        else:
+            for y in range(2, c.h, 3):
+                c.row(y, P["suit2"])
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, 0, c.w - 1, 2, shade(P["suit"], 1.15))   # shoulder plates
+        c.row(3, P["suit2"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 3, shade(P["suit2"], 1.3))
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, 3, c.w - 1, 4, P["suit"])               # knee plates
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 1, shade(P["suit2"], 0.7))
+    elif c.is_("pack"):
+        c.fill(P["suit2"])
+        if c.face == "south":                             # a round shield on the back
+            c.rect(1, 1, c.w - 2, c.h - 2, P["scarf"])
+            c.rect(2, 2, c.w - 3, c.h - 3, shade(P["scarf"], 1.2))
+            c.rect(2, 3, 3, 3, GOLD)
+
+
+def theme_ninja(c):
+    P = c.P
+    if c.is_("head"):
+        c.fill(P["helm"])
+        if c.face == "north":
+            c.rect(1, 4, c.w - 2, 5, SKIN)                 # only the eyes show
+            c.put(3, 5, BLACK)
+            c.put(6, 5, BLACK)
+            c.put(2, 4, shade(SKIN, 0.85))
+            c.put(7, 4, shade(SKIN, 0.85))
+            c.rect(0, 3, c.w - 1, 3, P["scarf"])           # the headband
+        elif c.face in ("east", "west", "south"):
+            c.row(3, P["scarf"])
+        if c.face == "south":
+            c.rect(4, 4, 5, 6, P["scarf"])                 # the knot
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            for i in range(4):                             # the wrap-over front
+                c.put(2 + i, 1 + i, shade(P["suit"], 1.5))
+                c.put(5 - i + 1, 1 + i, shade(P["suit"], 1.25))
+            c.rect(0, c.h - 2, c.w - 1, c.h - 2, P["scarf"])
+    elif c.is_("belt"):
+        c.fill(P["scarf"])
+        if c.face == "north":
+            c.put(c.w // 2, 0, shade(P["scarf"], 0.7))
+    elif c.is_("pack"):
+        c.fill(P["suit2"])
+        if c.face == "south":                              # a sword across the back
+            for i in range(min(c.w, c.h)):
+                c.put(i, i, STEEL)
+            c.put(0, 0, GOLD)
+            c.put(1, 1, (70, 44, 30))
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, c.h - 4, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 4, P["scarf"])
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 4, shade(P["pants"], 1.6))
+
+
+def theme_chef(c):
+    P = c.P
+    if c.is_("head"):
+        c.fill(HAIR)
+        c.rect(0, 0, c.w - 1, 3, P["helm"])                 # the tall white hat
+        c.row(3, P["helm2"])
+        if c.face == "north":
+            c.face_plain()
+            c.rect(3, 7, 6, 7, HAIR)                        # a moustache
+            c.put(4, 8, (110, 60, 50))
+        if c.face == "up":
+            c.fill(P["helm"])
+            for x in range(1, c.w, 3):
+                c.col(x, P["helm2"])
+        if c.face == "down":
+            c.fill(SKIN2)
+    elif c.is_("stalk") or c.is_("lamp"):
+        c.fill(P["helm"])                                   # the puff on top of the hat
+        if c.is_("lamp"):
+            c.put(1, 1, P["helm2"])
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            for y in (1, 3, 5):                             # two rows of buttons
+                c.put(2, y, (60, 60, 70))
+                c.put(5, y, (60, 60, 70))
+            c.rect(0, 6, c.w - 1, c.h - 1, shade(P["suit"], 0.93))   # the apron
+        c.row(0, shade(P["suit"], 1.04))
+    elif c.is_("belt"):
+        c.fill(shade(P["suit"], 0.9))
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, SKIN)
+        c.row(c.h - 4, P["suit2"])
+    elif c.name in ("leg_r", "leg_l"):
+        for y in range(c.h):
+            for x in range(c.w):
+                c.put(x, y, P["pants"] if (x + y) % 2 else shade(P["pants"], 1.5))
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, BLACK)
+
+
+def theme_pirate(c):
+    P = c.P
+    if c.is_("head"):
+        c.fill(P["scarf"])                                  # a red bandana under the hat
+        c.rect(0, 0, c.w - 1, 2, P["helm"])
+        if c.face == "north":
+            c.face_plain()
+            c.rect(5, 4, 7, 5, BLACK)                       # the eyepatch and its strap
+            c.row(3, P["scarf"])
+            c.rect(1, 4, 4, 4, SKIN)
+            c.put(8, 4, BLACK)
+            c.rect(4, 0, 5, 1, WHITE)                       # skull on the hat
+            c.put(4, 2, WHITE)
+            c.put(5, 2, WHITE)
+            c.rect(2, 8, 7, 9, shade(HAIR, 0.8))            # stubble
+            c.put(4, 8, (110, 60, 50))
+            c.put(5, 8, (110, 60, 50))
+        if c.face in ("east", "west"):
+            c.rect(0, 6, c.w - 1, c.h - 1, SKIN)
+            c.put(4, 7, GOLD)                               # an earring
+        if c.face == "south":
+            c.rect(0, 6, c.w - 1, c.h - 1, HAIR)
+        if c.face == "up":
+            c.fill(P["helm"])
+        if c.face == "down":
+            c.fill(SKIN2)
+    elif c.is_("brim"):
+        c.fill(P["helm"])
+        if c.face in ("north", "south", "east", "west"):
+            c.fill(GOLD)                                    # gold trim round the hat
+    elif c.is_("torso"):
+        for y in range(c.h):
+            c.row(y, P["suit"] if y % 2 == 0 else RED)      # a striped shirt
+        if c.face == "north":
+            c.rect(0, 0, 1, c.h - 1, P["suit2"])            # an open vest
+            c.rect(c.w - 2, 0, c.w - 1, c.h - 1, P["suit2"])
+            c.put(1, 2, GOLD)
+            c.put(c.w - 2, 2, GOLD)
+        else:
+            c.fill(P["suit2"])
+    elif c.is_("belt"):
+        c.fill(BLACK)
+        if c.face == "north":
+            c.rect(c.w // 2 - 1, 0, c.w // 2, 1, GOLD)
+    elif c.name in ("arm_r", "arm_l"):
+        for y in range(c.h):
+            c.row(y, P["suit"] if y % 2 == 0 else RED)
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, SKIN)
+        if c.name == "arm_l":
+            c.rect(0, c.h - 3, c.w - 1, c.h - 1, STEEL)     # a hook hand
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, c.h - 4, c.w - 1, c.h - 1, BLACK)
+        c.row(c.h - 4, shade(LEATHER, 1.1))
+    elif c.is_("pack"):
+        c.fill(LEATHER)
+        if c.face == "south":
+            c.rect(1, 1, c.w - 2, c.h - 2, shade(LEATHER, 1.2))
+            c.put(c.w // 2, 2, GOLD)
+
+
+def theme_astronaut(c):
+    P = c.P
+    glass, glass2 = (28, 44, 84), (60, 100, 170)
+    if c.is_("head"):
+        c.fill(P["helm"])
+        if c.face == "north":
+            c.rect(1, 2, c.w - 2, 8, glass)                 # the big visor
+            c.rect(2, 3, 3, 3, glass2)
+            c.put(2, 4, glass2)
+            c.rect(6, 7, 7, 7, shade(glass, 1.5))
+            c.row(9, P["helm2"])
+        if c.face in ("east", "west"):
+            c.rect(3, 5, 5, 7, P["helm2"])
+            c.put(4, 6, RED)
+        if c.face == "south":
+            c.rect(3, 6, 6, 8, P["helm2"])
+    elif c.is_("goggles"):
+        c.fill(glass)                                       # the visor bulges out
+        if c.face == "north":
+            c.rect(1, 0, 2, 0, glass2)
+            c.put(6, 1, P["eye"], shade(P["eye"], 0.6))
+            c.put(7, 2, shade(glass, 1.5))
+        if c.face == "up":
+            c.fill(P["helm2"])
+    elif c.is_("stalk"):
+        c.fill(STEEL)
+    elif c.is_("lamp"):
+        c.fill((255, 70, 60), (255, 70, 60))
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            c.rect(2, 2, 5, 5, P["suit2"])                  # the control panel
+            c.put(2, 2, (255, 80, 70), (255, 80, 70))
+            c.put(3, 2, (90, 230, 120), (90, 230, 120))
+            c.put(5, 2, (90, 170, 255), (90, 170, 255))
+            c.rect(2, 4, 5, 4, BLACK)
+            c.rect(6, 1, 7, 1, RED)                         # a flag patch
+            c.put(6, 2, WHITE)
+            c.put(7, 2, (60, 90, 190))
+        c.row(c.h - 1, P["suit2"])
+    elif c.is_("belt"):
+        c.fill(P["suit2"])
+    elif c.is_("pack"):
+        c.fill(P["suit"])
+        if c.face == "south":
+            c.rect(1, 1, c.w - 2, c.h - 2, P["suit2"])
+            c.put(1, 1, (255, 80, 70), (255, 80, 70))
+            c.rect(2, 3, 3, 5, STEEL)
+        if c.face == "up":
+            c.fill(P["suit2"])
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.row(3, P["scarf"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 4, P["scarf"])
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.row(3, P["scarf"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, P["suit2"])
+        c.row(c.h - 1, shade(P["suit2"], 0.7))
+
+
+def stars(c, n, seed):
+    r = random.Random(seed)
+    for _ in range(n):
+        c.put(r.randrange(c.w), r.randrange(c.h), GOLD)
+
+
+def theme_wizard(c):
+    P = c.P
+    beard = (236, 236, 232)
+    if c.is_("head"):
+        c.fill((200, 200, 196))                             # long grey hair
+        c.rect(0, 0, c.w - 1, 3, P["helm"])
+        c.row(3, P["scarf"])                                # the hat band
+        if c.face == "north":
+            c.face_plain(beard=beard)
+            c.rect(2, 4, 3, 4, beard)                       # bushy eyebrows
+            c.rect(6, 4, 7, 4, beard)
+        if c.face == "up":
+            c.fill(P["helm"])
+        if c.face == "down":
+            c.fill(beard)
+        if c.face != "north" and c.face not in ("up", "down"):
+            stars(c, 2, hash(c.face) % 97)
+            c.row(3, P["scarf"])
+    elif c.is_("brim"):
+        c.fill(P["helm2"])
+        if c.face == "up":
+            c.fill(P["helm"])
+    elif c.is_("stalk"):
+        c.fill(P["helm"])                                   # the point of the hat
+    elif c.is_("lamp"):
+        c.fill(GOLD, GOLD)                                  # a glowing star on its tip
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        stars(c, 3, hash(c.face) % 89 + 5)
+        if c.face == "north":
+            c.rect(3, 0, 4, 4, beard)                       # the beard hangs over the robe
+            c.put(3, 5, beard)
+            c.rect(0, c.h - 1, c.w - 1, c.h - 1, P["scarf"])
+    elif c.is_("belt"):
+        c.fill(P["scarf"])
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        stars(c, 1, hash(c.face + c.name) % 83)
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, SKIN)
+        c.row(c.h - 3, P["scarf"])
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.row(c.h - 2, P["scarf"])
+        c.row(c.h - 1, P["suit2"])
+    elif c.is_("scarf") or c.is_("tail"):
+        c.fill(P["suit2"])
+        c.row(0, P["scarf"])
+
+
+def theme_santa(c):
+    P = c.P
+    fur, beard = (248, 248, 246), (240, 240, 236)
+    if c.is_("head"):
+        c.fill(beard)                                       # white hair
+        c.rect(0, 0, c.w - 1, 2, P["helm"])
+        c.row(3, fur)                                       # the fur band of the hat
+        if c.face == "north":
+            c.face_plain(beard=beard)
+            c.put(4, 6, (230, 120, 110))                    # a red nose
+            c.put(5, 6, (230, 120, 110))
+        if c.face == "up":
+            c.fill(P["helm"])
+        if c.face == "down":
+            c.fill(beard)
+    elif c.is_("brim"):
+        c.fill(fur)
+    elif c.is_("stalk"):
+        c.fill(P["helm"])
+    elif c.is_("lamp"):
+        c.fill(fur)                                         # the pom-pom
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            c.rect(3, 0, 4, c.h - 1, fur)
+            c.put(3, 2, BLACK)
+            c.put(3, 5, BLACK)
+        c.row(c.h - 1, fur)
+    elif c.is_("belt"):
+        c.fill(BLACK)
+        if c.face == "north":
+            c.rect(c.w // 2 - 1, 0, c.w // 2 + 1, 1, GOLD)
+            c.put(c.w // 2, 0, BLACK)
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, (40, 110, 60))   # green mittens
+        c.row(c.h - 3, fur)
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, BLACK)
+        c.row(c.h - 4, fur)
+    elif c.is_("pack") or c.is_("roll"):
+        c.fill((150, 100, 56))                              # the sack of presents
+        if c.face == "south" and c.is_("pack"):
+            c.rect(1, 2, 2, 3, (60, 150, 80))
+            c.rect(3, 4, 4, 5, (70, 110, 210))
+            c.put(4, 1, GOLD)
+            c.row(0, shade((150, 100, 56), 0.75))
+
+
+def theme_farmer(c):
+    P = c.P
+    denim, plaid, plaid2 = P["suit2"], P["suit"], shade(P["suit"], 0.7)
+
+    def check(x0, y0, x1, y1):
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                c.put(x, y, plaid2 if (x % 2 == 0) != (y % 2 == 0) else plaid)
+
+    if c.is_("head"):
+        c.fill(HAIR)
+        c.rect(0, 0, c.w - 1, 3, P["helm"])                 # a straw hat
+        c.row(3, LEATHER)
+        for x in range(0, c.w, 2):
+            c.put(x, 1, P["helm2"])
+        if c.face == "north":
+            c.face_plain()
+            for p in ((2, 6), (3, 7), (7, 6), (6, 7)):      # freckles
+                c.put(p[0], p[1], shade(SKIN, 0.82))
+            c.put(5, 9, (120, 180, 70))                     # a straw in the mouth
+        if c.face == "up":
+            c.fill(P["helm"])
+            for x in range(0, c.w, 2):
+                c.col(x, P["helm2"])
+        if c.face == "down":
+            c.fill(SKIN2)
+    elif c.is_("brim"):
+        c.fill(P["helm2"])
+        if c.face == "up":
+            c.fill(P["helm"])
+    elif c.is_("torso"):
+        check(0, 0, c.w - 1, c.h - 1)
+        if c.face == "north":
+            c.rect(1, 3, c.w - 2, c.h - 1, denim)            # the bib of the overalls
+            c.rect(1, 0, 1, 2, denim)
+            c.rect(c.w - 2, 0, c.w - 2, 2, denim)
+            c.put(1, 3, GOLD)
+            c.put(c.w - 2, 3, GOLD)
+            c.rect(3, 5, 4, 6, shade(denim, 1.2))
+        elif c.face == "south":
+            c.rect(1, 0, 1, c.h - 1, denim)
+            c.rect(c.w - 2, 0, c.w - 2, c.h - 1, denim)
+            c.rect(0, 5, c.w - 1, c.h - 1, denim)
+        else:
+            c.rect(0, 5, c.w - 1, c.h - 1, denim)
+    elif c.is_("belt"):
+        c.fill(denim)
+    elif c.name in ("arm_r", "arm_l"):
+        check(0, 0, c.w - 1, c.h - 1)
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, SKIN)
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, shade(LEATHER, 1.3))   # work gloves
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, LEATHER)
+        c.row(c.h - 1, LEATHER2)
+        if c.face == "north":
+            c.put(1, 3, shade(P["pants"], 1.25))             # a patch on the knee
+            c.put(2, 3, shade(P["pants"], 1.25))
+
+
+def theme_robot(c):
+    P = c.P
+    line = P["suit2"]
+    if c.is_("head"):
+        c.fill(P["helm"])
+        c.row(0, shade(P["helm"], 1.1))
+        c.row(c.h - 1, P["helm2"])
+        if c.face == "north":
+            c.rect(2, 7, 7, 8, BLACK)                        # a speaker grille for a mouth
+            for x in (3, 5, 7):
+                c.put(x, 7, STEEL)
+                c.put(x - 1, 8, STEEL)
+            for p in ((0, 0), (c.w - 1, 0), (0, c.h - 1), (c.w - 1, c.h - 1)):
+                c.put(p[0], p[1], line)                      # bolts
+        if c.face in ("east", "west"):
+            c.rect(3, 4, 5, 6, line)                         # round "ears"
+            c.put(4, 5, P["eye"], P["eye"])
+        if c.face == "south":
+            c.rect(2, 2, 7, 6, line)
+            for y in (3, 5):
+                c.rect(3, y, 6, y, BLACK)
+    elif c.is_("goggles"):
+        c.fill(BLACK)                                        # one wide visor, two bright eyes
+        if c.face == "north":
+            for x0 in (1, 5):
+                c.rect(x0, 1, x0 + 2, 1, P["eye"], P["eye"])
+                c.put(x0 + 1, 0, shade(P["eye"], 0.7), shade(P["eye"], 0.5))
+    elif c.is_("stalk"):
+        c.fill(STEEL)
+    elif c.is_("lamp"):
+        c.fill((255, 70, 60), (255, 70, 60))
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        c.row(0, shade(P["suit"], 1.1))
+        if c.face == "north":
+            c.rect(1, 1, 6, 5, line)                         # the chest panel
+            c.rect(2, 2, 5, 2, BLACK)
+            c.put(2, 4, (255, 80, 70), (255, 80, 70))
+            c.put(3, 4, (255, 210, 70), (255, 210, 70))
+            c.put(4, 4, (90, 230, 120), (90, 230, 120))
+            c.put(5, 2, P["eye"], P["eye"])
+            c.rect(1, 7, 6, 7, line)
+        if c.face == "south":
+            c.rect(2, 1, 5, 6, line)
+            for y in (2, 4):
+                c.rect(3, y, 4, y, BLACK)
+    elif c.is_("belt"):
+        c.fill(line)
+        if c.face == "north":
+            c.put(c.w // 2, 0, (255, 210, 70), (255, 210, 70))
+    elif c.is_("scarf"):
+        c.fill(P["scarf"])                                   # the neck joint
+    elif c.is_("pack"):
+        c.fill(line)
+        if c.face == "south":
+            c.rect(1, 1, c.w - 2, c.h - 2, P["suit"])
+            c.rect(2, 2, 3, 2, P["eye"], P["eye"])
+            for y in (4, 5):
+                c.rect(1, y, c.w - 2, y, BLACK if y == 4 else P["suit"])
+    elif c.name in ("arm_r", "arm_l", "leg_r", "leg_l"):
+        c.fill(P["suit"] if c.name.startswith("arm") else P["pants"])
+        for y in (2, 5):
+            c.row(y, line)                                   # joints
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, P["helm2"])
+        c.row(c.h - 1, BLACK)
+
+
+def theme_miner(c):
+    P = c.P
+    shirt, overall = P["suit"], P["suit2"]
+    soot = (70, 60, 54)
+    if c.is_("head"):
+        c.fill(HAIR)
+        c.rect(0, 0, c.w - 1, 3, P["helm"])                 # the hard hat
+        c.row(3, P["helm2"])
+        if c.face == "north":
+            c.face_plain()
+            c.rect(4, 1, 5, 2, (255, 250, 200), (255, 244, 170))    # the headlamp, lit
+            c.put(3, 1, STEEL)
+            c.put(6, 1, STEEL)
+            c.put(2, 6, soot)                                # soot on the cheeks
+            c.put(7, 8, soot)
+            c.put(1, 8, soot)
+            c.rect(3, 7, 6, 7, HAIR)                         # a moustache
+        else:
+            c.row(2, BLACK)                                  # the lamp's strap
+        if c.face == "up":
+            c.fill(P["helm"])
+            c.rect(4, 0, 5, c.h - 1, shade(P["helm"], 1.12))
+        if c.face == "down":
+            c.fill(SKIN2)
+    elif c.is_("brim"):
+        c.fill(P["helm2"])
+        if c.face == "up":
+            c.fill(P["helm"])
+    elif c.is_("torso"):
+        c.fill(shirt)
+        if c.face == "north":
+            c.rect(1, 3, c.w - 2, c.h - 1, overall)          # dungarees
+            c.rect(1, 0, 1, 2, overall)
+            c.rect(c.w - 2, 0, c.w - 2, 2, overall)
+            c.put(1, 3, STEEL)
+            c.put(c.w - 2, 3, STEEL)
+            c.put(3, 6, soot)
+            c.put(5, 4, soot)
+        else:
+            c.rect(0, 4, c.w - 1, c.h - 1, overall)
+    elif c.is_("belt"):
+        c.fill(LEATHER2)
+        if c.face == "north":
+            c.put(2, 0, STEEL)
+            c.put(6, 0, GOLD)
+    elif c.is_("pack"):
+        c.fill(LEATHER)
+        if c.face == "south":                                # a pickaxe strapped on
+            c.rect(c.w // 2, 0, c.w // 2, c.h - 1, (130, 90, 50))
+            c.rect(1, 1, c.w - 2, 1, STEEL)
+            c.put(0, 2, STEEL)
+            c.put(c.w - 1, 2, STEEL)
+        if c.face == "up":
+            c.fill(LEATHER2)
+    elif c.is_("roll"):
+        c.fill((90, 80, 70))                                 # a coil of rope
+        for x in range(0, c.w, 2):
+            c.col(x, (130, 112, 90))
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(shirt)
+        c.rect(0, 2, c.w - 1, 3, shade(shirt, 1.15))         # rolled-up sleeves
+        c.rect(0, 4, c.w - 1, c.h - 3, SKIN)
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, shade(LEATHER, 1.2))
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, (60, 60, 66))
+        c.row(c.h - 1, BLACK)
+        if c.face == "north":
+            c.put(1, 2, soot)
+
+
+def theme_doctor(c):
+    P = c.P
+    scrubs, mask = P["helm"], (150, 206, 226)
+    if c.is_("head"):
+        c.fill(HAIR)
+        c.rect(0, 0, c.w - 1, 3, scrubs)                    # the surgeon's cap
+        c.row(3, P["helm2"])
+        if c.face == "north":
+            c.face_plain(mask=mask)
+            c.rect(2, 5, 4, 5, (60, 64, 74))                 # glasses
+            c.rect(6, 5, 8, 5, (60, 64, 74))
+            c.put(5, 5, (60, 64, 74))
+            c.put(3, 5, (200, 230, 250))
+            c.put(7, 5, (200, 230, 250))
+            c.rect(4, 1, 5, 2, (220, 226, 236))              # the head mirror
+            c.put(4, 1, WHITE)
+        if c.face in ("east", "west"):
+            c.rect(0, 6, c.w - 1, 6, mask)                   # the mask's strings
+        if c.face == "up":
+            c.fill(scrubs)
+        if c.face == "down":
+            c.fill(mask)
+    elif c.is_("lamp"):
+        c.fill((220, 226, 236))
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            c.rect(3, 0, 4, 2, scrubs)                       # scrubs under the open coat
+            c.rect(3, 3, 3, c.h - 1, P["suit2"])
+            c.rect(5, 5, 6, 6, P["suit2"])                   # a pocket with a pen
+            c.put(6, 4, (60, 90, 200))
+            c.rect(1, 2, 1, 4, RED)                          # a red cross
+            c.rect(0, 3, 2, 3, RED)
+        c.row(c.h - 1, P["suit2"])
+    elif c.is_("belt"):
+        c.fill(P["suit"])
+    elif c.is_("scarf"):
+        c.fill(P["scarf"])                                   # a stethoscope round the neck
+        if c.face == "north":
+            c.fill(P["suit"])
+            c.put(1, 0, P["scarf"])
+            c.put(1, 1, P["scarf"])
+            c.put(c.w - 2, 0, P["scarf"])
+            c.put(c.w - 2, 1, STEEL)
+        if c.face == "up":
+            c.fill(P["suit"])
+            c.row(0, P["scarf"])
+            c.row(c.h - 1, P["scarf"])
+            c.col(0, P["scarf"])
+            c.col(c.w - 1, P["scarf"])
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, (170, 214, 232))    # gloves
+        c.row(c.h - 4, P["suit2"])
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.rect(0, 0, c.w - 1, 2, P["suit"])                  # the coat hangs over the legs
+        c.rect(0, c.h - 2, c.w - 1, c.h - 1, WHITE)
+        c.row(c.h - 1, (200, 204, 210))
+
+
+def theme_police(c):
+    P = c.P
+    if c.is_("head"):
+        c.fill(HAIR)
+        c.rect(0, 0, c.w - 1, 3, P["helm"])                 # the cap
+        c.row(3, BLACK)
+        if c.face == "north":
+            c.face_plain()
+            c.rect(4, 1, 5, 2, GOLD)                         # the badge on the cap
+            c.put(4, 1, shade(GOLD, 1.2))
+        if c.face == "up":
+            c.fill(P["helm"])
+        if c.face == "down":
+            c.fill(SKIN2)
+    elif c.is_("goggles"):
+        c.fill((0, 0, 0))                                    # dark glasses
+        if c.face == "north":
+            c.rect(0, 0, c.w - 1, 0, SKIN)
+            c.rect(0, 2, c.w - 1, 2, SKIN)
+            c.put(4, 1, SKIN)
+            c.rect(1, 0, 3, 1, BLACK)
+            c.rect(5, 0, 7, 1, BLACK)
+            c.put(1, 0, (90, 96, 120))
+            c.put(5, 0, (90, 96, 120))
+            c.put(0, 1, BLACK)
+            c.put(8, 1, BLACK)
+        else:
+            c.fill(BLACK)
+    elif c.is_("brim"):
+        c.fill(BLACK)                                        # the cap's peak
+    elif c.is_("stalk"):
+        c.fill(BLACK)
+    elif c.is_("lamp"):
+        c.fill((255, 60, 50), (255, 60, 50))                 # a little siren: red and blue
+        for y in range(c.h):
+            c.put(c.w - 1, y, (70, 120, 255), (70, 120, 255))
+        if c.face in ("east",):
+            c.fill((70, 120, 255), (70, 120, 255))
+    elif c.is_("torso"):
+        c.fill(P["suit"])
+        if c.face == "north":
+            c.rect(3, 0, 4, 0, (200, 210, 230))              # collar and tie
+            c.rect(3, 1, 3, 4, BLACK)
+            c.rect(5, 2, 6, 3, GOLD)                         # the badge
+            c.put(5, 2, shade(GOLD, 1.2))
+            c.put(1, 2, (200, 210, 230))                     # a name tag
+            c.put(2, 2, (200, 210, 230))
+            c.rect(1, 5, 2, 6, P["suit2"])
+            c.rect(5, 5, 6, 6, P["suit2"])
+        c.row(0, shade(P["suit"], 1.15))
+    elif c.is_("belt"):
+        c.fill(BLACK)
+        if c.face == "north":
+            c.put(c.w // 2, 0, GOLD)
+            c.put(1, 0, STEEL)
+            c.put(c.w - 2, 0, (90, 60, 40))
+    elif c.is_("scarf"):
+        c.fill(P["suit"])
+        c.row(0, (200, 210, 230))
+    elif c.name in ("arm_r", "arm_l"):
+        c.fill(P["suit"])
+        c.rect(0, 1, c.w - 1, 2, P["suit2"])
+        if c.face in ("east", "west"):
+            c.put(1, 1, GOLD)                                # the shoulder patch
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, SKIN)
+        c.row(c.h - 4, P["suit2"])
+    elif c.name in ("leg_r", "leg_l"):
+        c.fill(P["pants"])
+        c.col(0, shade(P["pants"], 1.5))
+        c.rect(0, c.h - 3, c.w - 1, c.h - 1, BLACK)
+        c.row(c.h - 3, (50, 50, 58))
+
+
+THEMES = {"knight": theme_knight, "ninja": theme_ninja, "chef": theme_chef, "pirate": theme_pirate, "astronaut": theme_astronaut, "wizard": theme_wizard,
+          "santa": theme_santa, "farmer": theme_farmer, "robot": theme_robot, "miner": theme_miner, "doctor": theme_doctor, "police": theme_police}
 
 
 # ------------------------------------------------------------------------------------------- atlas
@@ -495,11 +1291,15 @@ def main():
         import georender
         model = georender.Model(os.path.join(RES, "geo", "entity", "helper.geo.json"))
         anims_path = os.path.join(RES, "animations", "entity", "helper.animation.json")
+        cell = 260
+        sheets = {yaw: Image.new("RGBA", (cell * 6, cell * ((len(SKINS) + 5) // 6)), (58, 62, 74, 255)) for yaw in (25, 205)}
         for i in range(len(SKINS)):
             tex = Image.open(os.path.join(RES, "textures", "entity", "helper", "helper_%d.png" % i)).convert("RGBA")
-            for yaw in (0, 140):
-                img = georender.render(model, tex, size=320, yaw=yaw)
-                img.save(os.path.join(out, "skin%d_yaw%d.png" % (i, yaw)))
+            for yaw in (25, 205):
+                img = georender.render(model, tex, size=cell, yaw=yaw)
+                sheets[yaw].alpha_composite(img.convert("RGBA"), ((i % 6) * cell, (i // 6) * cell))
+        for yaw, sheet in sheets.items():
+            sheet.convert("RGB").save(os.path.join(out, "outfits_yaw%d.png" % yaw))
         tex = Image.open(os.path.join(RES, "textures", "entity", "helper", "helper_0.png")).convert("RGBA")
         for name, t in (("walk", 0.2), ("work", 0.15), ("sit", 0.5), ("ko", 0.5), ("wave", 0.4), ("cheer", 0.3), ("swim", 0.3)):
             pose = georender.load_anim(anims_path, "animation.helper." + name)

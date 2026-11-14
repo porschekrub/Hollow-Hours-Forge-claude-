@@ -93,10 +93,18 @@ A helper that does (almost) everything you ask in plain Thai or English.
 !ใส่เหล็กดิบในเตาเผา            !put raw iron in the furnace
 !หมู่บ้านอยู่ไหน  !พาไปหมู่บ้าน  !ไปเนเธอร์  !ไปเอนด์  !ฆ่ามังกร
 !สร้างประตูอัตโนมัติ            !build an auto smelter
+!ไปหา soulsand มาให้หน่อย       !get 4 ender pearls
+!ทำอีเต้อเหล็กให้หน่อย           !kill 5 zombies
+!เพชรอยู่ไหน  !วัวอยู่ไหน         !where is the soul sand   !take me there
+!เร็วๆ  !เร็วสุดๆ  !ช้าลง          !work faster   !as fast as you can
+!ใส่ชุดนินจา  !สุ่มชุด            !be a pirate   !be quiet   !talk like me
 ```
 
+**Gets anything / หาได้ทุกอย่าง**: ask for any item or block and it works out the way itself: mining, chopping, hunting, smelting, crafting (with the ingredients), and a trip through a nether portal when it has to. It makes its own pickaxe when it has none, tells you **X Y Z** when you ask where something is, and walks ahead when you say "take me there".
+ขอของอะไรก็ได้ ผู้ช่วยคิดวิธีเอง: ขุด ตัด ล่า ถลุง คราฟต์ (พร้อมหาวัตถุดิบ) และเดินเข้าประตูเนเธอร์เองถ้าจำเป็น ไม่มีอีเต้อก็ทำเอง ถามว่าอะไรอยู่ไหนจะบอกพิกัด **X Y Z** และสั่ง "พาไป" มันจะเดินนำ
+
 **🎤 Voice / สั่งด้วยเสียง**: hold **B**, speak, let go (needs the Gemini key). / กดปุ่ม **B** ค้าง พูด แล้วปล่อย (ต้องใส่คีย์ Gemini)
-With the Gemini key it answers in real words in a cartoon voice (`voice = "cartoon"`; `"babble"`, `"ai"` or `"off"` in `[voice]`). / ใส่คีย์ Gemini แล้วผู้ช่วยตอบเป็นคำพูดด้วยเสียงการ์ตูน
+With the Gemini key every line is read aloud in a real AI voice (`voiceMode` in `[voice]`: `"auto"`, `"ai"`, `"cartoon"` = faster and higher, `"babble"`, `"off"`). / ใส่คีย์ Gemini แล้วผู้ช่วยพูดเป็นเสียง AI จริงทุกประโยค (ตั้ง `voiceMode` ได้: `"cartoon"` = เสียงการ์ตูน, `"babble"`, `"off"`)
 
 - **Fights back** when attacked (setting, on by default), defends you, handles creepers by hitting and backing off (or with a bow).
   **สู้กลับ** เมื่อโดนตี (ตั้งค่าได้ เปิดไว้เป็นค่าเริ่มต้น) ปกป้องคุณ เจอครีปเปอร์จะตีแล้วถอย (หรือยิงธนู)
