@@ -145,6 +145,37 @@ public final class Tasks {
         return t;
     }
 
+    /** Going to another dimension by itself, through the nearest nether portal. */
+    public static CompoundTag travel(String dim) {
+        CompoundTag t = spec("travel");
+        t.putString("dim", dim);
+        t.putBoolean("long", true);
+        return t;
+    }
+
+    /** Hunting mobs: until it has n of `item` (what they drop), or n kills when no item is given. */
+    public static CompoundTag slay(String[] mobs, @Nullable String item, @Nullable Integer n) {
+        CompoundTag t = spec("slay");
+        t.put("mobs", Errands.list(mobs));
+        if (item != null) t.putString("item", item);
+        if (n != null) t.putInt("n", n);
+        t.putBoolean("long", true);
+        return t;
+    }
+
+    /** The task could not be done: whatever was planned after it is dropped too (the owner has been told why). */
+    void fail() {
+        end();
+        b.plan.clear();
+        h.setMode(Mode.FOLLOW);
+    }
+
+    /** Progress events of the brain (a kill, an item picked up ...). */
+    void onEvent(String ev, Object what) {
+        if (spec == null) return;
+        if (ev.equals("kill") && spec.getString("kind").equals("slay") && what instanceof net.minecraft.world.entity.LivingEntity le && Errands.types(this).contains(le.getType())) count++;
+    }
+
     public void start(CompoundTag s) {
         b.leaveJob();
         spec = s.copy();
@@ -189,6 +220,8 @@ public final class Tasks {
             case "enchant" -> th ? "ร่ายมนตร์" : "enchanting";
             case "brew" -> (th ? "ต้มยา " : "brewing ") + (spec.contains("step") ? (spec.getInt("step") + 1) + "/" + spec.getList("path", 8).size() : "");
             case "machine" -> (th ? "ใช้เครื่อง " : "machine ") + count;
+            case "travel" -> (th ? "ไป" : "going to ") + Errands.dimName(spec.getString("dim"), th);
+            case "slay" -> (th ? "ล่า " : "hunting ") + count;
             default -> k;
         };
     }
@@ -222,6 +255,8 @@ public final class Tasks {
             case "enchant" -> Skills.enchant(this);
             case "brew" -> Skills.brew(this);
             case "machine" -> Skills.machine(this);
+            case "travel" -> Errands.travel(this);
+            case "slay" -> Errands.slay(this);
             default -> done(true);
         }
     }

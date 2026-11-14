@@ -293,6 +293,7 @@ public final class Brain {
     /** Progress events for multi-step orders ("chop 20 logs"). */
     public void report(String ev, Object what) {
         plan.onProgress(ev, what);
+        tasks.onEvent(ev, what);
         if ((ev.equals("break") || ev.equals("hunt") || ev.equals("kill") || ev.equals("build")) && h.owner() != null)
             com.helperbuddy.talk.Memory.count(h.owner(), ev, 1);
     }

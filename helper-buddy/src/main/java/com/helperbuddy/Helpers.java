@@ -59,14 +59,25 @@ public final class Helpers {
     static final net.minecraft.server.level.TicketType<net.minecraft.world.level.ChunkPos> TICKET =
             net.minecraft.server.level.TicketType.create("helperbuddy", java.util.Comparator.comparingLong(net.minecraft.world.level.ChunkPos::toLong), 60);
 
+    /** Keeps the chunks around a spot loaded for the next 3 seconds (a helper is about to arrive or to be called there). */
+    public static void hold(ServerLevel level, net.minecraft.core.BlockPos at) {
+        net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(at);
+        level.getChunkSource().addRegionTicket(TICKET, cp, 3, cp);
+    }
+
     public static void keepLoaded(MinecraftServer server, long ticks) {
-        if (ticks % 20 != 0 || !com.helperbuddy.config.HBConfig.KEEP_LOADED.get()) return;
+        if (ticks % 20 != 0) return;
+        HelperIndex index = HelperIndex.get(server);
+        boolean keep = com.helperbuddy.config.HBConfig.KEEP_LOADED.get();
         for (HelperEntity h : all(server)) {
+            index.note(h);
+            if (!keep) continue;
             var m = h.mode();
-            if (!(m.working() || m == com.helperbuddy.entity.Mode.GOTO || m == com.helperbuddy.entity.Mode.BUILD || m == com.helperbuddy.entity.Mode.GUARD)) continue;
+            // a waiting helper stays where it is and sleeps with its chunk; everything else goes on while its owner plays:
+            // work, travel, and following (so it is never left behind in an unloaded chunk when its owner rides or flies off)
+            if (m == com.helperbuddy.entity.Mode.STAY) continue;
             if (h.ownerId() == null || server.getPlayerList().getPlayer(h.ownerId()) == null) continue;
-            net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(h.blockPosition());
-            ((ServerLevel) h.level()).getChunkSource().addRegionTicket(TICKET, cp, 3, cp);
+            hold((ServerLevel) h.level(), h.blockPosition());
         }
     }
 }

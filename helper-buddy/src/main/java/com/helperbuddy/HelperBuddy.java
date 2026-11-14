@@ -59,6 +59,15 @@ public class HelperBuddy {
                 ResourceLocation rl = ResourceLocation.tryParse(id);
                 return rl != null && BuiltInRegistries.ITEM.containsKey(rl);
             };
+            ItemWords.ALL = () -> {
+                java.util.List<String> all = new java.util.ArrayList<>();
+                for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) all.add(id.toString());
+                return all;
+            };
+            ItemWords.IS_BLOCK = id -> {
+                ResourceLocation rl = ResourceLocation.tryParse(id);
+                return rl != null && BuiltInRegistries.ITEM.get(rl) instanceof net.minecraft.world.item.BlockItem;
+            };
         });
     }
 

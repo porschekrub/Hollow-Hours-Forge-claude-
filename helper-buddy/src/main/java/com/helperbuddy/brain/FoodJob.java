@@ -276,6 +276,7 @@ public final class FoodJob {
                     crop = c;
                     reach.reset(c);
                     b.work.roam = null;
+                    b.work.roamFails = 0;
                     return;
                 }
             }
@@ -283,6 +284,7 @@ public final class FoodJob {
                 LivingEntity a = findAnimal(only);
                 if (a != null) {
                     b.work.roam = null;
+                    b.work.roamFails = 0;
                     b.combat().setTarget(a, false, true);
                     return;
                 }

@@ -64,6 +64,9 @@ public final class WorkJob {
     final Set<Block> gather = new LinkedHashSet<>();
     /** Only these ore groups ("mine diamonds"); empty = the settings decide. */
     final List<String> oreOnly = new ArrayList<>();
+    @Nullable
+    Item wantItem;
+    long nextBiomeJump;
 
     long nextScan, lastFarScan, lastPickup;
     int roamFails;
@@ -83,12 +86,30 @@ public final class WorkJob {
 
     // ------------------------------------------------------------------ orders
     public void setGather(String[] ids) {
+        setGather(ids, null);
+    }
+
+    /** item: what the order is really about when it is not the block itself ("wheat" from the wheat crop, "flint" from gravel). */
+    public void setGather(String[] ids, @Nullable String item) {
         gather.clear();
+        wantItem = null;
+        nextBiomeJump = 0;
         if (ids != null) for (String id : ids) {
             Block bl = BuiltInRegistries.BLOCK.get(HelperBuddy.rl(id.contains(":") ? id : "minecraft:" + id));
             if (bl != Blocks.AIR) gather.add(bl);
             if (bl == Blocks.STONE) gather.add(Blocks.COBBLESTONE);
         }
+        if (item != null && !item.isEmpty()) {
+            Item it = BuiltInRegistries.ITEM.get(HelperBuddy.rl(item.contains(":") ? item : "minecraft:" + item));
+            if (it != Items.AIR && !(it instanceof BlockItem bi && gather.contains(bi.getBlock()))) wantItem = it;
+        }
+    }
+
+    /** A crop-like block is only taken when it is fully grown. */
+    static boolean ripeEnough(BlockState st) {
+        if (FoodJob.isCrop(st)) return FoodJob.ripe(st);
+        if (st.getBlock() instanceof net.minecraft.world.level.block.NetherWartBlock) return st.getValue(net.minecraft.world.level.block.NetherWartBlock.AGE) >= 3;
+        return true;
     }
 
     public void setOreOnly(List<String> groups) {
@@ -102,6 +123,7 @@ public final class WorkJob {
 
     /** Items the current gather order is collecting (never thrown away as rubble). */
     boolean wantsItem(ItemStack st) {
+        if (wantItem != null) return st.is(wantItem);
         if (st.getItem() instanceof BlockItem bi && gather.contains(bi.getBlock())) return true;
         for (Block g : gather) if (g == Blocks.STONE && st.is(Items.COBBLESTONE)) return true;
         return false;
@@ -117,7 +139,11 @@ public final class WorkJob {
         h.setWorking(false);
     }
 
-    // ------------------------------------------------------------------ blacklist
+    long now() {
+        return h.level().getGameTime();
+    }
+
+        // ------------------------------------------------------------------ blacklist
     void blacklist(BlockPos p, int ticks) {
         blacklist.put(p.asLong(), h.level().getGameTime() + ticks);
         if (blacklist.size() > 4000) blacklist.clear();
@@ -183,6 +209,7 @@ public final class WorkJob {
             };
             if (found) {
                 roam = null;
+                roamFails = 0;
                 b.mover().resetProgress();
                 return;
             }
@@ -263,7 +290,7 @@ public final class WorkJob {
         Vec3 eye = h.getEyePosition();
         boolean dig = h.settings.get("dig");
         BlockPos p = scan(st -> gather.contains(st.getBlock()), (pos, st) -> {
-            if (blacklisted(pos) || reach.underPlayer(pos) || Jobs.touchesLava(l, pos)) return false;
+            if (blacklisted(pos) || reach.underPlayer(pos) || Jobs.touchesLava(l, pos) || !ripeEnough(st)) return false;
             Block bl = st.getBlock();
             if (keepsBase(bl)) {
                 // the second block of the stalk: everything above comes down with it, the root stays
@@ -355,8 +382,21 @@ public final class WorkJob {
         if (r != Reach.St.READY) return;
         boolean hand = !st.requiresCorrectToolForDrops();
         BlockPos p = target;
+        // crops are harvested and planted again, not ripped out
+        if (FoodJob.isCrop(st)) {
+            b.mover().stop();
+            b.mover().look(p);
+            if (!b.food.harvest(p)) blacklist(p, 20 * 60);
+            target = null;
+            nextScan = now() + 4;
+            return;
+        }
         if (!b.breaker.start(p, hand, s -> {
             nextScan = 0;
+            // nether wart goes back into the soul sand it grew on
+            if (s.getBlock() instanceof net.minecraft.world.level.block.NetherWartBlock && h.settings.get("replant") && h.level().getBlockState(p).isAir()
+                    && s.getBlock().defaultBlockState().canSurvive(h.level(), p) && Bag.take(h, Items.NETHER_WART, 1) > 0)
+                h.level().setBlock(p, s.getBlock().defaultBlockState(), 3);
         })) {
             Bag.Kind k = Jobs.toolFor(st);
             if (k != null) {
@@ -505,26 +545,22 @@ public final class WorkJob {
     double exploreTurn;
 
     void roamTick(Mode mode) {
+        roamTick(mode, null);
+    }
+
+    /** where: what a hunt is looking for (see moveOn). */
+    void roamTick(Mode mode, @Nullable Sources.Where where) {
         long now = h.level().getGameTime();
         BlockPos home = h.home() != null ? h.home() : h.blockPosition();
         int radius = Brain.radius();
         if (roam == null || now > roamUntil) {
-            if (roam != null) roamFails++;
-            if (roamFails >= 3 && com.helperbuddy.config.HBConfig.EXPLORE.get() && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD)) {
-                // nothing left here: on to a new area (no distance limit, its chunks stay loaded while it works)
-                exploreTurn += 2.39996; // the golden angle: never the same way twice
-                double step = Math.max(48, radius * 0.9);
-                BlockPos next = BlockPos.containing(home.getX() + Math.cos(exploreTurn) * step, home.getY(), home.getZ() + Math.sin(exploreTurn) * step);
-                int y = h.level().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, next.getX(), next.getZ());
-                next = new BlockPos(next.getX(), mode == Mode.MINE ? Math.min(home.getY(), y) : y, next.getZ());
-                h.setHome(next);
+            // every leg walked without finding anything counts (it has looked at everything loaded from there)
+            roamFails++;
+            if (roamFails >= 3 && com.helperbuddy.config.HBConfig.EXPLORE.get()
+                    && (mode == Mode.MINE || mode == Mode.CHOP || mode == Mode.GATHER || mode == Mode.FOOD || mode == Mode.TASK)) {
                 roamFails = 0;
                 roam = null;
-                int dist = (int) Math.hypot(next.getX() - h.getX(), next.getZ() - h.getZ());
-                Say.notify(h, "explore", 20 * 60, "แถวนี้หมดแล้ว เดี๋ยวผมไปหาที่ใหม่ไกลออกไปอีก " + dist + " บล็อก (" + next.getX() + ", " + next.getZ() + ")",
-                        "Nothing left here, I'm moving on " + dist + " blocks to a new area (" + next.getX() + ", " + next.getZ() + ")");
-                b.mover().teleportNear(next);
-                return;
+                if (moveOn(mode, where)) return;
             }
             if (roamFails >= 3) {
                 switch (mode) {
@@ -561,6 +597,55 @@ public final class WorkJob {
         } else if (r == Mover.Res.NO_PATH || b.mover().stuck(60)) roam = null;
     }
 
+    /**
+     * Nothing left around here: on to a new area, any distance (the place stays loaded while it works). When it knows
+     * where the thing it is after is found (a biome, a structure), it goes straight there; otherwise it tries a new
+     * direction every time. Always lands on safe ground, never on the roof of the Nether.
+     *
+     * @param where what a job other than gathering is looking for (hunting a mob), or null
+     */
+    boolean moveOn(Mode mode, @Nullable Sources.Where where) {
+        ServerLevel sl = b.level();
+        long now = sl.getGameTime();
+        BlockPos from = h.blockPosition();
+        int radius = Brain.radius();
+        Sources.Where w = where != null ? where : mode == Mode.GATHER ? Sources.of(gather)
+                : mode == Mode.CHOP && sl.dimension() == Level.OVERWORLD ? Sources.FOREST : null;
+        BlockPos next = null;
+        boolean known = false;
+        if (w != null) {
+            String dim = sl.dimension().location().toString();
+            if (w.dim() != null && !w.dim().equals(dim)) {
+                Say.notify(h, "wrongdim", 20 * 90, "ของที่หาอยู่มีแต่ใน" + w.th() + " ที่นี่ไม่มีหรอก (พาผมไปที่นั่น หรือสั่งใหม่ให้ผมไปเองได้)",
+                        "What I'm after is only found in " + w.en() + ", not here (take me there, or ask again and I'll go by myself)");
+            } else if (now >= nextBiomeJump) {
+                nextBiomeJump = now + 20 * 60 * 2;
+                BlockPos at = Navigator.nearest(sl, from, w);
+                if (at != null && Math.hypot(at.getX() - from.getX(), at.getZ() - from.getZ()) > 40) {
+                    next = at;
+                    known = true;
+                }
+            }
+        }
+        if (next == null) {
+            exploreTurn += 2.39996; // the golden angle: never the same way twice
+            double step = Math.max(64, Math.min(radius, 176) * 0.9);
+            next = BlockPos.containing(from.getX() + Math.cos(exploreTurn) * step, from.getY(), from.getZ() + Math.sin(exploreTurn) * step);
+        }
+        BlockPos land = Mover.landAround(sl, next.getX(), next.getZ(), known ? next.getY() : from.getY(), mode != Mode.MINE || known);
+        if (land == null) return false; // open water or lava there: another direction next time
+        h.setHome(land);
+        int dist = (int) Math.hypot(land.getX() - h.getX(), land.getZ() - h.getZ());
+        if (known) Say.notify(h, "explore", 20 * 30, "แถวนี้ไม่มี ผมรู้ว่าต้องไปที่" + w.th() + " ห่างไป " + dist + " บล็อก (X " + land.getX() + " Y " + land.getY() + " Z " + land.getZ() + ") ไปละนะ",
+                "None around here. I know where to look: " + w.en() + ", " + dist + " blocks away (X " + land.getX() + " Y " + land.getY() + " Z " + land.getZ() + "). Off I go");
+        else Say.notify(h, "explore", 20 * 120, "แถวนี้หมดแล้ว ผมไปหาที่ใหม่ไกลออกไปอีก " + dist + " บล็อก (X " + land.getX() + " Z " + land.getZ() + ")",
+                "Nothing left here, moving on " + dist + " blocks (X " + land.getX() + " Z " + land.getZ() + ")");
+        b.mover().jumpTo(land);
+        nextScan = 0;
+        lastFarScan = 0;
+        return true;
+    }
+
     // ------------------------------------------------------------------ save
     void save(CompoundTag jobs) {
         CompoundTag w = new CompoundTag();
@@ -570,6 +655,7 @@ public final class WorkJob {
         ListTag o = new ListTag();
         for (String s : oreOnly) o.add(StringTag.valueOf(s));
         w.put("ores", o);
+        if (wantItem != null) w.putString("item", BuiltInRegistries.ITEM.getKey(wantItem).toString());
         jobs.put("work", w);
     }
 
@@ -582,5 +668,10 @@ public final class WorkJob {
         }
         oreOnly.clear();
         for (Tag t : w.getList("ores", Tag.TAG_STRING)) oreOnly.add(t.getAsString());
+        wantItem = null;
+        if (w.contains("item")) {
+            Item it = BuiltInRegistries.ITEM.get(HelperBuddy.rl(w.getString("item")));
+            if (it != Items.AIR) wantItem = it;
+        }
     }
 }

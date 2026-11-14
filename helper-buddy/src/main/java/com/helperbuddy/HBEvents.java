@@ -138,11 +138,17 @@ public final class HBEvents {
         if (!bang) {
             String low = msg.toLowerCase();
             if (low.startsWith("ทุกคน") || low.startsWith("everyone") || low.startsWith("ผู้ช่วย") || low.startsWith("helper,") || low.startsWith("helper ")) named = true;
-            else for (HelperEntity h : Helpers.owned(p)) {
-                String n = h.helperName().toLowerCase();
-                if (!n.isEmpty() && low.startsWith(n) && (low.length() == n.length() || !Character.isLetterOrDigit(low.charAt(n.length())))) {
-                    named = true;
-                    break;
+            else {
+                java.util.List<String> names = new java.util.ArrayList<>();
+                for (HelperEntity h : Helpers.owned(p)) names.add(h.helperName());
+                // helpers left far away (not loaded) answer to their name too
+                for (HelperIndex.Entry x : HelperIndex.get(p.server).asleep(p.server, p.getUUID())) names.add(x.name());
+                for (String name : names) {
+                    String n = name.toLowerCase();
+                    if (!n.isEmpty() && low.startsWith(n) && (low.length() == n.length() || !Character.isLetterOrDigit(low.charAt(n.length())))) {
+                        named = true;
+                        break;
+                    }
                 }
             }
         }
@@ -171,6 +177,11 @@ public final class HBEvents {
     /** The first time a player joins they get a helper contract (config). */
     static void login(PlayerEvent.PlayerLoggedInEvent e) {
         if (e.getEntity() instanceof ServerPlayer pl) {
+            // helpers that were working (or coming after their owner) far away go on now that their owner is back
+            HelperIndex index = HelperIndex.get(pl.server);
+            java.util.List<HelperIndex.Entry> busy = new java.util.ArrayList<>();
+            for (HelperIndex.Entry x : index.asleep(pl.server, pl.getUUID())) if (!x.mode().equals("STAY")) busy.add(x);
+            if (!busy.isEmpty() && HBConfig.KEEP_LOADED.get()) index.wake(pl.server, busy);
             // a helper that remembers you (from any world)
             String[] greet = com.helperbuddy.talk.Memory.onLogin(pl);
             if (greet != null) {

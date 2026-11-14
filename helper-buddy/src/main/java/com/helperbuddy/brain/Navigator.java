@@ -183,8 +183,8 @@ public final class Navigator {
             if (at != null && (best == null || at.distSqr(from) < best.distSqr(from))) best = at;
         }
         if (best == null) return null;
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, best.getX(), best.getZ());
-        if (best.getY() == 0 || Math.abs(best.getY() - y) > 40) best = new BlockPos(best.getX(), y, best.getZ());
+        int y = surfaceY(level, best.getX(), best.getZ(), best.getY() == 0 ? from.getY() : best.getY());
+        if (best.getY() == 0 || !level.dimensionType().hasCeiling() && Math.abs(best.getY() - y) > 40) best = new BlockPos(best.getX(), y, best.getZ());
         return new Found(th, en, best, level.dimension());
     }
 
@@ -206,8 +206,49 @@ public final class Navigator {
         Pair<BlockPos, Holder<Biome>> r = level.findClosestBiome3d(b -> tests.stream().anyMatch(t -> t.test(b)), from, 6400, 32, 64);
         if (r == null) return null;
         BlockPos at = r.getFirst();
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, at.getX(), at.getZ());
-        return new Found(th, en, new BlockPos(at.getX(), y, at.getZ()), level.dimension());
+        return new Found(th, en, new BlockPos(at.getX(), surfaceY(level, at.getX(), at.getZ(), at.getY()), at.getZ()), level.dimension());
+    }
+
+    /**
+     * The height of the ground there, for a place that may be far away (its chunk is loaded for it; an unloaded chunk
+     * has no height). Under a ceiling (the Nether) the top of the world is the bedrock roof: there the nearest open
+     * ground around `nearY` counts.
+     */
+    static int surfaceY(ServerLevel level, int x, int z, int nearY) {
+        BlockPos p = Mover.landNear(level, x, z, nearY);
+        if (p != null) return p.getY();
+        if (level.dimensionType().hasCeiling()) return nearY;
+        return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+    }
+
+    /**
+     * Where to go for something that is found in a certain biome or structure (see Sources): the nearest such place,
+     * or null when the helper stands in it already or there is none within about 2,000 blocks.
+     */
+    @Nullable
+    public static BlockPos nearest(ServerLevel level, BlockPos from, Sources.Where w) {
+        try {
+            if (w.biomes().length > 0) {
+                List<Predicate<Holder<Biome>>> tests = new ArrayList<>();
+                for (String id : w.biomes()) {
+                    if (id.startsWith("#")) {
+                        TagKey<Biome> tag = TagKey.create(Registries.BIOME, HelperBuddy.rl(id.substring(1)));
+                        tests.add(b -> b.is(tag));
+                    } else {
+                        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, HelperBuddy.rl(id));
+                        tests.add(b -> b.is(key));
+                    }
+                }
+                Holder<Biome> here = level.getBiome(from);
+                for (Predicate<Holder<Biome>> t : tests) if (t.test(here)) return null;
+                Pair<BlockPos, Holder<Biome>> r = level.findClosestBiome3d(b -> tests.stream().anyMatch(t -> t.test(b)), from, 2048, 32, 64);
+                if (r != null) return r.getFirst();
+            }
+            if (w.structure() != null) return findStructure(level, from, new String[] {w.structure()});
+        } catch (Exception e) {
+            HelperBuddy.LOG.warn("[Helper Buddy] could not look for {}: {}", w.en(), e.toString());
+        }
+        return null;
     }
 
     /** Any structure, biome or creature (vanilla or modded) whose id has the words. */
@@ -270,18 +311,22 @@ public final class Navigator {
     public static String describe(ServerPlayer p, Found f, boolean th) {
         if (!p.level().dimension().equals(f.dim())) {
             String d = f.dim().location().getPath();
-            return th ? f.th() + " อยู่อีกมิติ (" + d + ") ที่ " + f.pos().getX() + " " + f.pos().getY() + " " + f.pos().getZ()
-                    : f.en() + " is in another dimension (" + d + ") at " + f.pos().getX() + " " + f.pos().getY() + " " + f.pos().getZ();
+            return th ? f.th() + " อยู่อีกมิติ (" + d + ") ที่ " + xyz(f.pos()) : f.en() + " is in another dimension (" + d + ") at " + xyz(f.pos());
         }
         double dx = f.pos().getX() + 0.5 - p.getX(), dz = f.pos().getZ() + 0.5 - p.getZ();
         int dist = (int) Math.round(Math.hypot(dx, dz));
         int dy = f.pos().getY() - p.blockPosition().getY();
-        if (dist < 6 && Math.abs(dy) < 6) return th ? f.th() + " อยู่ตรงนี้แหละ!" : f.en() + " is right here!";
+        if (dist < 6 && Math.abs(dy) < 6) return th ? f.th() + " อยู่ตรงนี้แหละ! (" + xyz(f.pos()) + "§r)" : f.en() + " is right here! (" + xyz(f.pos()) + "§r)";
         double b = bearing(dx, dz);
         String y = Math.abs(dy) < 8 ? "" : th ? (dy > 0 ? " สูงกว่าคุณ " + dy + " บล็อก" : " ต่ำกว่าคุณ " + (-dy) + " บล็อก")
                 : (dy > 0 ? ", " + dy + " blocks higher" : ", " + (-dy) + " blocks lower");
-        return th ? f.th() + " อยู่ทางทิศ§e" + compass(b, true) + "§r (" + relative(b, p.getYRot(), true) + ") ห่างไป §e" + dist + "§r บล็อก (x " + f.pos().getX() + ", z " + f.pos().getZ() + ")" + y
-                : f.en() + " is §e" + compass(b, false) + "§r (" + relative(b, p.getYRot(), false) + "), §e" + dist + "§r blocks away (x " + f.pos().getX() + ", z " + f.pos().getZ() + ")" + y;
+        return th ? f.th() + " อยู่ที่ " + xyz(f.pos()) + "§r ทางทิศ§e" + compass(b, true) + "§r (" + relative(b, p.getYRot(), true) + ") ห่างไป §e" + dist + "§r บล็อก" + y
+                : f.en() + " is at " + xyz(f.pos()) + "§r, §e" + compass(b, false) + "§r (" + relative(b, p.getYRot(), false) + "), §e" + dist + "§r blocks away" + y;
+    }
+
+    /** "X 120 Y 64 Z -340", the way coordinates are always told. */
+    public static String xyz(BlockPos p) {
+        return "§eX " + p.getX() + " Y " + p.getY() + " Z " + p.getZ();
     }
 
     // ------------------------------------------------------------------ leading the way (GUIDE mode)
@@ -354,8 +399,8 @@ public final class Navigator {
         double step = Math.min(16, toTarget);
         int wx = (int) Math.floor(h.getX() + Math.sin(br) * step), wz = (int) Math.floor(h.getZ() - Math.cos(br) * step);
         ServerLevel level = (ServerLevel) h.level();
-        int wy = toTarget <= 16 ? target.getY() : level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, wx, wz);
-        BlockPos way = new BlockPos(wx, wy, wz);
+        BlockPos way = toTarget <= 16 ? target : Mover.landNear(level, wx, wz, h.blockPosition().getY());
+        if (way == null) way = new BlockPos(wx, h.blockPosition().getY(), wz);
         Mover.Res r = b.mover().moveTo(way, ownerDist < 6 ? 1.3 : 1.15, 1.5);
         if (r == Mover.Res.NO_PATH || b.mover().stuck(60)) {
             // water, cliffs, walls: a helper knows a shortcut

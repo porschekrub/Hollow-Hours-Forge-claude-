@@ -442,6 +442,13 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
+    public void remove(RemovalReason reason) {
+        // really gone (/kill): its owner cannot call it any more
+        if (!level().isClientSide && reason.shouldDestroy() && level().getServer() != null) com.helperbuddy.HelperIndex.get(level().getServer()).forget(getUUID());
+        super.remove(reason);
+    }
+
+    @Override
     //#if MC>=12100
     //$$ public boolean canBeLeashed() {
     //#else

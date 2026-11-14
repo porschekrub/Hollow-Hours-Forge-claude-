@@ -120,9 +120,77 @@ public final class Mover {
         return null;
     }
 
+    /**
+     * Somewhere to stand in the column (x, z), as close to nearY as possible. The chunk is loaded for it. In a
+     * dimension with a ceiling (the Nether) it never picks the roof: the top of the world there is bedrock.
+     */
+    @Nullable
+    public static BlockPos landNear(ServerLevel l, int x, int z, int nearY) {
+        return landNear(l, x, z, nearY, true);
+    }
+
+    /** surface = false: stays at its depth when it can (a miner moving on underground). */
+    @Nullable
+    public static BlockPos landNear(ServerLevel l, int x, int z, int nearY, boolean surface) {
+        l.getChunk(x >> 4, z >> 4);
+        int min = l.getMinBuildHeight() + 1, max = l.getMaxBuildHeight() - 2;
+        boolean roof = l.dimensionType().hasCeiling();
+        if (roof) max = Math.min(max, l.getMinBuildHeight() + l.dimensionType().logicalHeight() - 3);
+        else if (surface) {
+            int top = l.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+            BlockPos p = new BlockPos(x, top, z);
+            if (standable(l, p)) return p;
+            // under a tree, in a cave, on a ledge: the open spot closest to where it was meant to be
+            if (Math.abs(nearY - top) > 48) nearY = top;
+        }
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (int d = 0; d <= 80; d++) {
+            for (int sign = 1; sign >= -1; sign -= 2) {
+                int y = nearY + d * sign;
+                if (y >= min && y <= max && standable(l, p.set(x, y, z))) return p.immutable();
+                if (d == 0) break;
+            }
+        }
+        return null;
+    }
+
+    /** landNear, trying the spot itself and then rings around it (water, lava and cliffs are stepped around). */
+    @Nullable
+    public static BlockPos landAround(ServerLevel l, int x, int z, int nearY) {
+        return landAround(l, x, z, nearY, true);
+    }
+
+    @Nullable
+    public static BlockPos landAround(ServerLevel l, int x, int z, int nearY, boolean surface) {
+        BlockPos p = landNear(l, x, z, nearY, surface);
+        if (p == null && !surface) p = landNear(l, x, z, nearY, true);
+        if (p != null) return p;
+        for (int r = 5; r <= 25; r += 10)
+            for (int a = 0; a < 8; a++) {
+                p = landNear(l, x + (int) Math.round(Math.cos(a * Math.PI / 4) * r), z + (int) Math.round(Math.sin(a * Math.PI / 4) * r), nearY, true);
+                if (p != null) return p;
+            }
+        return null;
+    }
+
+    /** Far away in one hop (exploring, travelling): lands on safe ground and keeps the place loaded. */
+    public boolean jumpTo(BlockPos spot) {
+        if (!(h.level() instanceof ServerLevel sl)) return false;
+        com.helperbuddy.Helpers.hold(sl, spot);
+        poof();
+        h.teleportTo(spot.getX() + 0.5, spot.getY(), spot.getZ() + 0.5);
+        h.getNavigation().stop();
+        h.fallDistance = 0;
+        resetProgress();
+        sl.playSound(null, spot, SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.4f, 1.4f);
+        return true;
+    }
+
     public boolean teleportNear(BlockPos target) {
         BlockPos p = safeSpotNear(h.level(), target, 3);
         if (p == null) return false;
+        // the chunks there stay loaded until the helper's own ticket takes over (else it could be unloaded on arrival)
+        if (h.level() instanceof ServerLevel sl) com.helperbuddy.Helpers.hold(sl, p);
         poof();
         h.teleportTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5);
         h.getNavigation().stop();
@@ -142,6 +210,7 @@ public final class Mover {
             ServerLevel dest = p.serverLevel();
             BlockPos spot = safeSpotNear(dest, p.blockPosition(), 2);
             Vec3 at = spot != null ? Vec3.atBottomCenterOf(spot) : p.position();
+            com.helperbuddy.Helpers.hold(dest, BlockPos.containing(at));
             Entity moved = Compat.toDimension(h, dest, at);
             return moved != null;
         }

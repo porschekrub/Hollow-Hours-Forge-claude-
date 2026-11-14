@@ -218,12 +218,14 @@ public final class Nlu {
     public static final String[][] ORE_WORDS = {
             {"copper", "(ทองแดง|copper)"}, {"gold", "(ทอง(?!แดง)|gold)"}, {"diamond", "(เพชร|diamond)"}, {"iron", "(เหล็ก|iron)"},
             {"coal", "(ถ่าน|coal)"}, {"redstone", "(เรดสโตน|หินแดง|redstone)"}, {"lapis", "(ลาพิส|ลาปิส|lapis)"}, {"emerald", "(มรกต|emerald)"},
-            {"nether", "(ควอตซ์|ควอทซ์|quartz)"}, {"debris", "(เศษโบราณ|debris|netherite|เนเธอร์ไรท์|นีเธอไรต์)"},
+            {"nether", "(ควอตซ์|ควอทซ์|quartz)"}, {"debris", "(เศษโบราณ|debris|netherite|เนเธอร์ไรท์|นีเธอไรต์|เนเธอไรต์|เนเธอร์ไรต์|เนเธอไรท์)"},
     };
 
     public static List<String> oresIn(String t) {
         List<String> out = new ArrayList<>();
-        for (String[] o : ORE_WORDS) if (test(o[1], t)) out.add(o[0]);
+        // words that only look like an ore: "กระบองเพชร" (cactus), "หินเหล็กไฟ" (flint), "ถ่านไม้" / charcoal
+        String s = t.replaceAll("กระบองเพชร|หินเหล็กไฟ|เหล็กไฟ|ถ่านไม้|charcoal|flint and steel", " ");
+        for (String[] o : ORE_WORDS) if (test(o[1], s)) out.add(o[0]);
         return out;
     }
 
@@ -629,7 +631,7 @@ public final class Nlu {
                     "ดอกไม้", "flowers", "(ดอกไม้|flowers?)"),
             new BlockWord(new String[] {"oak_leaves", "spruce_leaves", "birch_leaves", "jungle_leaves", "acacia_leaves", "dark_oak_leaves", "mangrove_leaves", "cherry_leaves", "azalea_leaves"},
                     "ใบไม้", "leaves", "(ใบไม้|leaves|\\bleaf\\b)"),
-            new BlockWord(new String[] {"dirt", "grass_block", "coarse_dirt", "podzol", "rooted_dirt"}, "ดิน", "dirt", "(ดิน|\\bdirt\\b|\\bsoil\\b)"),
+            new BlockWord(new String[] {"dirt", "grass_block", "coarse_dirt", "podzol", "rooted_dirt"}, "ดิน", "dirt", "((?<!เ)ดิน|\\bdirt\\b|\\bsoil\\b)"),
             new BlockWord(new String[] {"stone", "cobblestone"}, "หิน", "stone", "(หิน|\\bstones?\\b|cobblestone|cobble|\\brocks?\\b)"),
     };
 
@@ -812,7 +814,7 @@ public final class Nlu {
         // bosses
         if (has(t, "ฆ่ามังกร", "สู้มังกร", "ล่ามังกร", "สู้กับมังกร", "ฆ่าเอนเดอร์ดราก้อน", "ยิงคริสตัล", "ทำลายคริสตัล", "ฆ่าวิเธอร์", "สู้วิเธอร์", "สู้กับวิเธอร์", "สู้บอส",
                 "ฆ่าบอส", "ตีบอส", "kill the dragon", "fight the dragon", "kill the ender dragon", "fight the ender dragon", "shoot the crystals", "destroy the crystals",
-                "fight the wither", "kill the wither", "fight the boss", "kill the boss"))
+                "fight the wither", "kill the wither", "fight the boss", "kill the boss") && !has(t, "สเกเลตัน", "สเกเลตอน", "โครงกระดูก", "skeleton", "skeletons"))
             return new Intent("boss");
         // villagers
         boolean villager = has(t, "ชาวบ้าน", "villager", "พ่อค้า", "trader");
@@ -963,11 +965,23 @@ public final class Nlu {
         boolean lead = test(LEAD, t);
         boolean where = test(WHERE, t);
         // "หาหมู่บ้านให้", "find a village": finding a place is a where-question too
-        if (!lead && !where && test("^(ไป)?หา|^find\\b|^look for\\b|^search for\\b", t)) {
-            Place pl = placeIn(t);
-            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("portal"))) {
+        if (!lead && !where && test("^(ไป)?หา|^find\\b|^look for\\b|^search for\\b", t)
+                && !test("^(ไป)?หา\\s*(ไม้ไผ่|ไผ่|ดอกไม้|เห็ด|หิมะ|น้ำแข็ง)(\\s|\\d|$)|^(find|look for|search for)\\s+(me\\s+)?(some\\s+|\\d+\\s+)?(bamboo|flowers?|mushrooms?|snow|ice)(\\s+for me)?$", t)) {
+            // the place is what comes after the verb ("หาดินปืน" is gunpowder, not a beach: หาด)
+            String rest = t.replaceFirst("^(ไป)?หา\\s*|^(find|look for|search for)\\s+", "");
+            Place pl = placeIn(rest);
+            boolean mine = test("(ของ)?(ฉัน|เรา|ผม|กู|ข้า|หนู)|\\bmy\\b|\\bour\\b", rest);
+            if (pl != null && (pl.kind().equals("structure") || pl.kind().equals("biome") || pl.kind().equals("portal") || pl.kind().equals("death") || pl.kind().equals("spawn")
+                    || pl.kind().equals("bed") && mine)) {
                 Intent i = new Intent("locate");
                 i.place = pl;
+                return i;
+            }
+            // a creature: "หาเอนเดอร์แมน", "find a creeper" (the nearest one that is around)
+            String[] mob = mobIn(rest);
+            if (mob != null && !test("\\d", numify(rest))) {
+                Intent i = new Intent("locate");
+                i.place = new Place("search", new String[0], mob[0], mob[0], mob[0].replace('_', ' '), null);
                 return i;
             }
         }
@@ -1007,6 +1021,102 @@ public final class Nlu {
         return null;
     }
 
+    // ================================================================== getting things, hunting, speed, outfits
+    /** Verbs that mean "go and get it". */
+    static final String GET_VERB = "(ขุด|เก็บ|หา|เอา|ตัก|รีด|รวบรวม|สะสม|\\bdig\\b|\\bget\\b|\\bcollect\\b|\\bgather\\b|\\bmine\\b|\\bgrab\\b|\\bbring\\b|\\bpick\\b|\\bharvest\\b|\\bfind\\b"
+            + "|\\bfetch\\b|\\blook for\\b|\\bsearch for\\b|\\bobtain\\b|\\bfarm\\b|\\bi need\\b|\\bi want\\b|\\bwe need\\b)";
+
+    /** {entity id, Thai words, English words}: monsters and other creatures to hunt (the more exact names first; farm animals are food). */
+    public static final String[][] MOBS = {
+            {"wither_skeleton", "วิเธอร์สเกเลตัน|วิเธอร์สเกเลตอน|โครงกระดูกวิเธอร์|โครงกระดูกดำ", "wither skeletons?"},
+            {"cave_spider", "แมงมุมถ้ำ", "cave spiders?"},
+            {"zombified_piglin", "ซอมบี้พิกลิน|พิกลินซอมบี้|หมูซอมบี้", "zombified piglins?|zombie pigm[ae]n"},
+            {"magma_cube", "แมกม่าคิวบ์|แมกมาคิวบ์|สไลม์ลาวา", "magma cubes?"},
+            {"zombie", "ซอมบี้|ซอมบี", "zombies?"},
+            {"skeleton", "โครงกระดูก|สเกเลตัน|สเกเลตอน", "skeletons?"},
+            {"creeper", "ครีปเปอร์|ครีเปอร์|ครีพเปอร์", "creepers?"},
+            {"spider", "แมงมุม", "spiders?"},
+            {"enderman", "เอนเดอร์แมน|เอ็นเดอร์แมน|เอนเดอแมน", "enderm[ae]n"},
+            {"slime", "สไลม์", "slimes?"},
+            {"witch", "แม่มด", "witch(es)?"},
+            {"blaze", "เบลซ", "blazes?"},
+            {"ghast", "กาสต์|แกสต์|กาสท์", "ghasts?"},
+            {"phantom", "แฟนทอม", "phantoms?"},
+            {"drowned", "ซอมบี้น้ำ|ดราวน์", "drowned"},
+            {"husk", "ฮัสค์", "husks?"},
+            {"stray", "สเตรย์", "strays?"},
+            {"pillager", "พิลเลเจอร์|พวกโจร", "pillagers?"},
+            {"vindicator", "วินดิเคเตอร์", "vindicators?"},
+            {"evoker", "อีโวเกอร์", "evokers?"},
+            {"ravager", "ราเวเจอร์", "ravagers?"},
+            {"piglin", "พิกลิน", "piglins?"},
+            {"hoglin", "ฮอกลิน", "hoglins?"},
+            {"guardian", "การ์เดียน", "guardians?"},
+            {"silverfish", "ซิลเวอร์ฟิช", "silverfish"},
+            {"shulker", "ชัลเกอร์", "shulkers?"},
+            {"squid", "ปลาหมึก", "squids?"},
+            {"bat", "ค้างคาว", "\\bbats?\\b"},
+    };
+
+    /** The MOBS row named in t, or null. */
+    public static String[] mobIn(String t) {
+        for (String[] m : MOBS) if (test("(" + m[1] + ")", t) || test("\\b(" + m[2] + ")\\b", t)) return m;
+        return null;
+    }
+
+    static final String SPEED_MAX = "(เร็วสุดๆ|เร็วที่สุด|เร็วสุด|เร็วมากๆ|เร็วมาก|เร็วโคตร|โคตรเร็ว|เร็วสุดขีด|เต็มสปีด|สปีดสูงสุด|เทอร์โบ|\\bturbo\\b|max(imum)? speed|full speed|top speed"
+            + "|as fast as (you can|possible)|super ?fast|very fast|really fast|fastest|lightning fast|ไวสุดๆ|ไวที่สุด)";
+    static final String SPEED_UP = "(เร็วกว่านี้|เร็วขึ้น|เร็วอีก|เร็วๆ|เร็วหน่อย|เร็วเข้า|ไวๆ|ไวหน่อย|ไวกว่านี้|เร่งมือ|เร่งหน่อย|รีบหน่อย|รีบๆ|รีบ|เร็ว|\\bfaster\\b|hurry( up)?|speed (it )?up|\\bquick(er|ly)?\\b|\\bfast\\b"
+            + "|pick up the pace|step on it|chop chop)";
+    static final String SPEED_DOWN = "(ช้าลง|ช้าๆ|ช้าหน่อย|ไม่ต้องรีบ|ใจเย็น|ค่อยๆ ทำ|ค่อยๆทำ|\\bslower\\b|slow down|take your time|no rush|\\brelax\\b|\\bslow\\b)";
+    static final String SPEED_NORMAL = "(ความเร็วปกติ|เร็วปกติ|ทำงานปกติ|สปีดปกติ|normal speed|regular speed|usual speed)";
+    /** only words around a speed word: the sentence is about speed and nothing else */
+    static final String SPEED_FRAME = "^(?:ทำงาน|ทำ|ขุด|เดิน|วิ่ง|ไป|สร้าง|ตัด|เก็บ|ช่วย|ให้|แบบ|โหมด|ความเร็ว|สปีด|นาย|แก|เอ็ง|มึง|งาน|work|works|go|move|do it|be|you|can you|could you|speed|mode|a bit|a little|much|way|just|\\s)*"
+            + "%s(?:\\s|หน่อย|ๆ|เลย|ด้วย|ได้ไหม|ได้มั้ย|ดิ|สิ|ซิ|หน่อยดิ|หน่อยสิ|กว่านี้|อีก|ขึ้น|ที|เถอะ|now|please|pls|buddy|mode|can you|will you|!)*$";
+
+    /** "max" / "up" / "down" / "normal", when the sentence only talks about how fast to work; else null. */
+    public static String speedIn(String t) {
+        if (test(String.format(SPEED_FRAME, SPEED_NORMAL), t)) return "normal";
+        if (test(String.format(SPEED_FRAME, SPEED_MAX), t)) return "max";
+        if (test(String.format(SPEED_FRAME, SPEED_DOWN), t)) return "down";
+        if (test(String.format(SPEED_FRAME, SPEED_UP), t)) return "up";
+        return null;
+    }
+
+    /** {outfit id, Thai words, English words}; the game's list of outfits has the same ids. */
+    public static final String[][] OUTFITS = {
+            {"knight", "อัศวิน|เกราะ|นักรบ", "knight|armou?r|warrior|paladin"},
+            {"ninja", "นินจา", "ninja|shinobi"},
+            {"chef", "เชฟ|พ่อครัว|แม่ครัว|กุ๊ก", "chef|cook"},
+            {"pirate", "โจรสลัด", "pirate"},
+            {"astronaut", "นักบินอวกาศ|อวกาศ|มนุษย์อวกาศ", "astronaut|space ?suit|spaceman|space"},
+            {"wizard", "พ่อมด|จอมเวท|นักเวท|เมจ", "wizard|mage|sorcerer|witch"},
+            {"santa", "ซานต้า|ซานตา|คริสต์มาส|คริสมาส", "santa|christmas|xmas"},
+            {"farmer", "ชาวนา|ชาวไร่|ชาวสวน|เกษตรกร", "farmer|overalls"},
+            {"robot", "หุ่นยนต์|โรบอท|โรบอต", "robot|android|cyborg"},
+            {"miner", "คนงานเหมือง|นักขุด|ช่างเหมือง", "miner|hard ?hat"},
+            {"doctor", "หมอ|แพทย์|พยาบาล", "doctor|medic|nurse"},
+            {"police", "ตำรวจ", "police|cop|officer"},
+            {"blue", "สีน้ำเงิน|น้ำเงิน|สีฟ้า", "blue"},
+            {"red", "สีแดง|แดง", "red"},
+            {"green", "สีเขียว|เขียว", "green"},
+            {"purple", "สีม่วง|ม่วง", "purple|violet"},
+            {"orange", "สีส้ม|ส้ม", "orange"},
+            {"black", "สีดำ|ดำ", "black|dark"},
+    };
+    static final String OUTFIT_WORDS = "(เปลี่ยนชุด|เปลี่ยนเสื้อ|เปลี่ยนสกิน|เปลี่ยนลุค|ใส่ชุด|แต่งชุด|แต่งตัวเป็น|แต่งเป็น|แต่งตัว|ชุด|สกิน|คอสตูม|เครื่องแบบ|change (your )?(outfit|clothes|skin|look|costume|suit)"
+            + "|\\boutfits?\\b|\\bcostumes?\\b|\\bskins?\\b|\\bwear\\b|dress (up )?(as|like)|put on|\\bclothes\\b)";
+
+    /** The outfit named in t ("" = just the next one), or null when t is not about outfits. */
+    public static String outfitIn(String t) {
+        if (!test(OUTFIT_WORDS, t)) return null;
+        if (has(t, "ชุดเกราะ") && test("(คราฟ|ทำ|ขอ|craft|make|give)", t)) return null; // a suit of armour to craft, not an outfit
+        if (test("(มีชุดอะไร|ชุดอะไรบ้าง|มีชุดไหน|กี่ชุด|what outfits|which outfits|list (of )?outfits|outfit list)", t)) return "?";
+        for (String[] o : OUTFITS) if (test("(" + o[1] + ")", t) || test("\\b(" + o[2] + ")\\b", t)) return o[0];
+        if (test("(สุ่ม|random|surprise)", t)) return "random";
+        return "";
+    }
+
     // ================================================================== intents
     public static final class Intent {
         public String k = "unknown";
@@ -1019,6 +1129,8 @@ public final class Nlu {
         public boolean home, work, all, on = true, full;
         public List<String> ores = new ArrayList<>();
         public String[] ids;
+        /** hunting: entity ids */
+        public String[] mobs;
         public BlockWord block;
         public String[] animal;
         public boolean hunt = true, crops = true;
@@ -1059,6 +1171,15 @@ public final class Nlu {
         if (t.equals("?") || t.equals("ช่วย") || has(t, "help", "ทำอะไรได้", "คำสั่ง", "วิธีใช้", "สอนใช้", "ใช้ยังไง", "สั่งอะไรได้", "what can you do", "commands"))
             return new Intent("help");
         if (has(t, "ยกเลิก", "cancel", "abort", "nevermind", "never mind", "forget it")) return new Intent("cancel");
+        if (has(t, "หนังสือสั่งงาน", "หนังสือคำสั่ง", "สมุดสั่งงาน", "command book", "order book")) return new Intent("book");
+        // things lying on the ground, and what was lost when the player died
+        if (test("(เก็บของ|เอาของ|ไปเอาของ|หาของ).*(ที่|ตรงที่|ตอน)(ฉัน|เรา|ผม|กู|ข้า|หนู)?ตาย|ของที่(ฉัน|เรา|ผม|กู)?ตาย|(get|recover|fetch|bring|collect|grab|pick up|find) (back )?my (stuff|items|things|loot|gear)"
+                + "|(stuff|items|things|loot|gear) (from )?(where i died|my death|my grave)|recover my|my (stuff|items|things|gear) back|ของ(ฉัน|เรา|ผม|กู)คืน", t) && !has(t, "หีบ", "chest"))
+            return new Intent("recover");
+        if (test("^(ช่วย)?(ไป)?เก็บของ(ที่ตก|ที่หล่น|บนพื้น|ที่ดรอป|ที่พื้น|ตก|หล่น|แถวนี้|ให้หมด|ทั้งหมด|ทุกอย่าง|ด้วย)*$|เก็บไอเทม|เก็บของที่(ตก|หล่น|ดรอป)|เก็บดรอป"
+                + "|pick (it |them |everything |all )?up|pick up (the |all |my |all the )?(items?|stuff|drops?|loot|things|everything)|collect (the |all |all the )?(drops?|loot|dropped items?)|\\bloot\\b", t)
+                && !has(t, "หีบ", "chest"))
+            return new Intent("pickup");
         if (has(t, "อีกที", "อีกรอบ", "อีกครั้ง", "ซ้ำ", "ทำอีก", "again", "repeat", "one more time", "do it again")) return new Intent("repeat");
         if (has(t, "ทำต่อ", "สร้างต่อ", "ขุดต่อ", "ทำงานต่อ", "continue", "resume", "กลับไปทำงาน", "keep going", "carry on")) return new Intent("resume");
         if (has(t, "ไม่ต้องสู้กลับ", "ไม่ต้องตีกลับ", "อย่าตีกลับ", "don't fight back", "dont fight back", "never fight back")) {
@@ -1078,6 +1199,40 @@ public final class Nlu {
             return i;
         }
         if (has(t, "ไม่ต้องตาม", "อย่าตาม", "don't follow", "dont follow", "stop following")) return new Intent("stay");
+        // exact forms (what the AI writes): "get 64 minecraft:soul_sand", "kill 5 minecraft:zombie", "speed max", "outfit ninja"
+        Matcher cm = match("^get\\s+(?:(\\d+|all|full)\\s+)?([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);
+        if (cm != null) {
+            Intent i = new Intent("get");
+            i.item = cm.group(2);
+            if (cm.group(1) != null && cm.group(1).matches("\\d+")) i.n = clampN(Integer.parseInt(cm.group(1)));
+            i.full = cm.group(1) != null && !cm.group(1).matches("\\d+");
+            return i;
+        }
+        cm = match("^(?:kill|hunt|slay)\\s+(?:(\\d+)\\s+)?([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);
+        if (cm != null) {
+            Intent i = new Intent("slay");
+            i.mobs = new String[] {cm.group(2)};
+            if (cm.group(1) != null) i.n = clampN(Integer.parseInt(cm.group(1)));
+            return i;
+        }
+        cm = match("^speed\\s+(max|turbo|up|faster|fast|down|slower|slow|normal)$", t);
+        String sp = cm != null ? switch (cm.group(1)) {
+            case "max", "turbo" -> "max";
+            case "up", "faster", "fast" -> "up";
+            case "down", "slower", "slow" -> "down";
+            default -> "normal";
+        } : speedIn(t);
+        if (sp != null) {
+            Intent i = new Intent("speed");
+            i.text = sp;
+            return i;
+        }
+        String outfit = outfitIn(t);
+        if (outfit != null && !has(t, "สร้าง", "build")) {
+            Intent i = new Intent("outfit");
+            i.text = outfit;
+            return i;
+        }
         Intent extra = parseExtra(t, raw);
         if (extra != null) return extra;
         Intent skill = parseSkills(t);
@@ -1148,6 +1303,17 @@ public final class Nlu {
         boolean cropsOnly = has(t, "เก็บเกี่ยว", "เก็บผัก", "เก็บผลไม้", "เก็บข้าวสาลี", "เก็บแครอท", "เก็บมัน", "เก็บเบอร์รี่", "harvest", "berries", "crops", "pick vegetables");
         boolean huntWords = has(t, "ล่า", "ฆ่า", "จับ", "หาเนื้อ", "เอาเนื้อ", "hunt", "kill", "slaughter", "get meat", "meat", "butcher");
         boolean meatWords = has(t, "เนื้อ", "meat", "beef", "pork", "porkchop", "porkchops", "mutton", "steak", "steaks", "drumstick", "raw chicken");
+        // hunting a kind of monster: "ล่าซอมบี้ 5 ตัว", "kill 10 skeletons", "farm endermen"
+        String[] mob = mobIn(t);
+        if (mob != null && has(t, "ฆ่า", "ล่า", "กำจัด", "จัดการ", "ไล่ฆ่า", "ไล่ตี", "ฟาร์ม", "kill", "slay", "hunt", "exterminate", "get rid of", "clear out", "farm", "murder", "destroy")) {
+            Qty q = extractQty(t);
+            if (q.n() != null || has(t, "ล่า", "ไล่ฆ่า", "ฟาร์ม", "hunt", "farm", "exterminate")) {
+                Intent i = new Intent("slay");
+                i.mobs = new String[] {mob[0]};
+                i.n = q.n();
+                return i;
+            }
+        }
         // farming: plant seeds, breed, shear
         if (has(t, "ปลูก", "หว่าน", "ทำไร่", "ทำนา", "ทำสวน", "ทำฟาร์ม", "plant", "sow", "farm", "farming", "grow crops", "grow food", "make a farm")) {
             Intent i = new Intent("farm");
@@ -1160,9 +1326,11 @@ public final class Nlu {
             return i;
         }
         if (has(t, "ตัดขน", "เล็มขน", "shear", "wool")) return new Intent("shear");
-        if (has(t, "หาอาหาร", "หาของกิน", "หาอะไรกิน", "หาข้าว", "หาเสบียง", "หาเนื้อ", "ล่าสัตว์", "find food", "get food", "gather food", "look for food", "go hunting", "collect food")
+        boolean notFood = has(t, "เนื้อเน่า", "rotten flesh", "rotten meat");
+        if (!notFood && (has(t, "หาอาหาร", "หาของกิน", "หาอะไรกิน", "หาเสบียง", "หาเนื้อ", "ล่าสัตว์", "find food", "get food", "gather food", "look for food", "go hunting", "collect food")
+                || test("หาข้าว(?!สาลี|โพด)", t)
                 || cropsOnly || (animal != null && (huntWords || has(t, "หา", "เอา", "get", "find")))
-                || (meatWords && has(t, "หา", "เอา", "ล่า", "get", "find", "bring", "fetch", "collect", "gather", "hunt"))) {
+                || (meatWords && has(t, "หา", "เอา", "ล่า", "get", "find", "bring", "fetch", "collect", "gather", "hunt")))) {
             Intent i = new Intent("findFood");
             i.hunt = !cropsOnly;
             i.crops = !huntWords && animal == null;
@@ -1193,7 +1361,9 @@ public final class Nlu {
             i.text = t;
             return i;
         }
-        if (has(t, "ตัดไม้", "ตัดต้นไม้", "หาไม้", "เก็บไม้", "ไม้", "chop", "wood", "lumber", "tree", "trees", "log", "logs", "timber", "cut down"))
+        // ("ดอกไม้", "ใบไม้", "ไม้กระดาน" ... are not wood to chop)
+        if (has(t, "ตัดไม้", "ตัดต้นไม้", "chop", "wood", "lumber", "tree", "trees", "log", "logs", "timber", "cut down")
+                || test("(?<!ดอก|ใบ|ผล|แท่ง|แผ่น|ต้น|ถ่าน)ไม้(?!กระดาน|แท่ง|ไผ่|เท้า|คริมสัน|วาร์ป|ไฟ)|ต้นไม้|ท่อนไม้|ซุง", t.replace("ดอกไม้ไฟ", " ")))
             return new Intent("chop");
         // "ขอดาบเพชร" / "give me a diamond sword": a request for one item, not mining
         if (test("^(ขอ(?!บ)|เอา.+มาให้|ส่ง.+มาให้)|give me|bring me|hand me|can i have|i need|i want", t) && ItemWords.resolve(t) != null
@@ -1205,11 +1375,33 @@ public final class Nlu {
         }
         List<String> ores = oresIn(t);
         BlockWord blk = blockIn(t);
-        if (ores.isEmpty() && blk != null && has(t, "ขุด", "เก็บ", "หา", "เอา", "ตัก", "ทำ", "dig", "get", "collect", "gather", "mine", "grab", "bring", "farm", "pick", "harvest")) {
+        String named = ItemWords.resolve(t);
+        // "iron door", "golden apple", "redstone lamp": something made, not the ore (unless it says to mine)
+        if (!ores.isEmpty() && named != null && !ItemWords.ORE_ITEMS.contains(named.replace("minecraft:", "")) && !has(t, "ขุด", "แร่", "mine", "mining", "dig", "ore", "ores")) ores = new ArrayList<>();
+        // a longer item word that only contains the block word: "ดินปืน" (gunpowder) is not "ดิน" (dirt)
+        if (blk != null) {
+            String key = ItemWords.thaiKey(t);
+            Matcher bm = re(blk.re).matcher(t);
+            if (key != null && bm.find() && key.length() > bm.group().length() && key.contains(bm.group()) && named != null) blk = null;
+        }
+        if (ores.isEmpty() && blk != null && has(t, "ขุด", "เก็บ", "หา", "เอา", "ตัก", "ทำ", "dig", "get", "collect", "gather", "mine", "grab", "bring", "farm", "pick", "harvest", "find", "fetch",
+                "look for", "search for", "i need", "we need", "i want")) {
             Intent i = new Intent("gather");
             i.block = blk;
             i.ids = blk.ids;
             return i;
+        }
+        // anything else the game has, by name: "ไปหา soulsand", "find 20 glowstone", "เอา ender pearl มา 5 อัน", "i need string"
+        if (ores.isEmpty() && test(GET_VERB, t) && !test("(อยู่(ที่|ตรง)?ไหน|ที่ไหน|ยังไง|อย่างไร|\\bwhere\\b|\\bhow\\b)", t)) {
+            String id = ItemWords.resolve(t);
+            if (id != null) {
+                Intent i = new Intent("get");
+                i.item = id;
+                Qty q = extractQty(t);
+                i.n = q.n();
+                i.full = q.full();
+                return i;
+            }
         }
         if (has(t, "ขุด", "แร่", "mine", "ore", "ores", "dig", "mining") || !ores.isEmpty()) {
             Intent i = new Intent("mine");
@@ -1253,6 +1445,21 @@ public final class Nlu {
             if (!fx.equals(t)) {
                 Intent r = parse(fx, true);
                 if (!r.k.equals("unknown")) return r;
+            }
+        }
+        // just the name of a thing ("golden apple please", "ทรายวิญญาณ"): they want it
+        if (t.split("\\s+").length <= 4 && !isQuestion(raw)) {
+            String id = ItemWords.resolve(t);
+            // (a short Thai word inside a longer sentence is no order: the name has to be most of what was said)
+            if (id != null && looksThai(t) && !t.contains(":")) {
+                int letters = t.replaceAll("[^\\u0E00-\\u0E7F]", "").length();
+                if (ItemWords.thaiCover(t) * 2 < letters) id = null;
+            }
+            if (id != null) {
+                Intent i = new Intent("get");
+                i.item = id;
+                i.n = extractQty(t).n();
+                return i;
             }
         }
         Intent u = new Intent("unknown");

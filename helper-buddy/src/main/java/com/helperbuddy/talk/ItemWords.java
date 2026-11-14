@@ -24,6 +24,48 @@ public final class ItemWords {
     /** Does "minecraft:xyz" exist? Replaced by the registry lookup in game. */
     public static Predicate<String> EXISTS = id -> BASIC.contains(id.replace("minecraft:", ""));
 
+    /** Every item id of the game, mods included ("minecraft:soul_sand"); the game plugs in the registry. */
+    public static java.util.function.Supplier<java.util.Collection<String>> ALL = () -> {
+        List<String> l = new ArrayList<>();
+        for (String b : BASIC) l.add("minecraft:" + b);
+        for (String b : new String[] {"soul_sand", "soul_soil", "glowstone", "nether_wart", "ender_pearl", "blaze_rod", "netherrack", "sand", "gravel", "dirt", "basalt", "gunpowder",
+                "string", "bone", "slime_ball", "oak_planks", "obsidian", "wheat", "diamond", "raw_iron"}) l.add("minecraft:" + b);
+        return l;
+    };
+
+    /** Is it a block (something that stands in the world)? Plugged in by the game. */
+    public static Predicate<String> IS_BLOCK = id -> false;
+
+    private static Map<String, String> squashed;
+    private static int squashedFor = -1;
+
+    /** Item names without their underscores ("soulsand", "netherwart") -> id; vanilla wins over mods with the same name. */
+    static Map<String, String> squashed() {
+        java.util.Collection<String> all = ALL.get();
+        if (squashed == null || squashedFor != all.size()) {
+            Map<String, String> m = new java.util.HashMap<>();
+            for (String id : all) {
+                int c = id.indexOf(':');
+                String key = (c < 0 ? id : id.substring(c + 1)).replace("_", "");
+                if (key.isEmpty()) continue;
+                if (!m.containsKey(key) || id.startsWith("minecraft:")) m.put(key, id);
+            }
+            squashed = m;
+            squashedFor = all.size();
+        }
+        return squashed;
+    }
+
+    /** "soul_sand" / "soulsand" / "soul sand" as an item id, or null. */
+    static String lookup(String cand) {
+        if (cand.isEmpty()) return null;
+        String id = "minecraft:" + cand;
+        if (EXISTS.test(id)) return id;
+        return squashed().get(cand.replace("_", ""));
+    }
+
+    static final java.util.regex.Pattern ID = java.util.regex.Pattern.compile("([a-z0-9_.-]+):([a-z0-9_/.-]+)");
+
     static final Map<String, String> TOOLS_TH = new LinkedHashMap<>();
     static final Map<String, String> MATS_TH = new LinkedHashMap<>();
     static final Map<String, String> ITEMS_TH = new LinkedHashMap<>();
@@ -76,6 +118,30 @@ public final class ItemWords {
                 {"แท่นต้มยา", "brewing_stand"}, {"หม้อ", "cauldron"}, {"บีคอน", "beacon"}, {"กล่องชัลเกอร์", "shulker_box"}, {"เอนเดอร์เชสต์", "ender_chest"},
                 {"หีบเอนเดอร์", "ender_chest"}, {"ดอกไม้ไฟ", "firework_rocket"}, {"พลุ", "firework_rocket"}, {"หิมะ", "snowball"}, {"ก้อนหิมะ", "snowball"},
                 {"ไม้ไผ่", "bamboo"}, {"อ้อย", "sugar_cane"}, {"กระบองเพชร", "cactus"}, {"แป้ง", "wheat"}, {"ผงเรดสโตน", "redstone"}, {"กระดาน", "oak_planks"},
+                // the Nether, the End and what monsters drop
+                {"ทรายวิญญาณ", "soul_sand"}, {"ดินวิญญาณ", "soul_soil"}, {"โซลแซนด์", "soul_sand"}, {"เนเธอร์แร็ค", "netherrack"}, {"เนเธอร์แรค", "netherrack"}, {"หินเนเธอร์", "netherrack"},
+                {"กลาวสโตน", "glowstone"}, {"หินเรืองแสง", "glowstone"}, {"หูดเนเธอร์", "nether_wart"}, {"เนเธอร์วาร์ท", "nether_wart"}, {"เนเธอร์วอร์ท", "nether_wart"},
+                {"แท่งเบลซ", "blaze_rod"}, {"เบลซร็อด", "blaze_rod"}, {"ผงเบลซ", "blaze_powder"}, {"ไข่มุกเอนเดอร์", "ender_pearl"}, {"มุกเอนเดอร์", "ender_pearl"},
+                {"เอนเดอร์เพิล", "ender_pearl"}, {"สไลม์บอล", "slime_ball"}, {"ลูกสไลม์", "slime_ball"}, {"เมือกสไลม์", "slime_ball"}, {"เมือก", "slime_ball"},
+                {"ตาแมงมุม", "spider_eye"}, {"เนื้อเน่า", "rotten_flesh"}, {"น้ำตากาสต์", "ghast_tear"}, {"น้ำตาแกสต์", "ghast_tear"}, {"ครีมแมกม่า", "magma_cream"},
+                {"เยื่อแฟนทอม", "phantom_membrane"}, {"เปลือกชัลเกอร์", "shulker_shell"}, {"ถุงหมึกเรืองแสง", "glow_ink_sac"}, {"ถุงหมึก", "ink_sac"}, {"หมึก", "ink_sac"},
+                {"รวงผึ้ง", "honeycomb"}, {"หนังกระต่าย", "rabbit_hide"}, {"ตีนกระต่าย", "rabbit_foot"}, {"เศษโบราณ", "ancient_debris"}, {"บะซอลต์", "basalt"},
+                {"แบล็กสโตน", "blackstone"}, {"แบล็คสโตน", "blackstone"}, {"บล็อกแมกม่า", "magma_block"}, {"แมกม่า", "magma_block"}, {"เอนด์สโตน", "end_stone"},
+                {"หินเอนด์", "end_stone"}, {"ผลคอรัส", "chorus_fruit"}, {"คอรัส", "chorus_fruit"}, {"ไม้คริมสัน", "crimson_stem"}, {"ไม้วาร์ป", "warped_stem"},
+                {"ชรูมไลท์", "shroomlight"},
+                // the Overworld
+                {"สาหร่าย", "kelp"}, {"เคลป์", "kelp"}, {"เมล็ดโกโก้", "cocoa_beans"}, {"โกโก้", "cocoa_beans"}, {"เถาวัลย์", "vine"}, {"ใยแมงมุม", "cobweb"},
+                {"หยากไย่", "cobweb"}, {"เห็ดแดง", "red_mushroom"}, {"เห็ดน้ำตาล", "brown_mushroom"}, {"แคลไซต์", "calcite"}, {"อเมทิสต์", "amethyst_shard"},
+                {"หินย้อย", "pointed_dripstone"}, {"ดินเผา", "terracotta"}, {"เทอราคอตต้า", "terracotta"}, {"น้ำแข็งอัด", "packed_ice"}, {"น้ำแข็งสีฟ้า", "blue_ice"},
+                {"น้ำแข็ง", "ice"}, {"บล็อกหิมะ", "snow_block"}, {"โคลน", "mud"}, {"มอส", "moss_block"}, {"แกรนิต", "granite"}, {"ไดออไรต์", "diorite"},
+                {"แอนดีไซต์", "andesite"}, {"ทัฟฟ์", "tuff"}, {"ดีพสเลท", "cobbled_deepslate"}, {"หินทราย", "sandstone"}, {"ทรายแดง", "red_sand"}, {"ฟองน้ำ", "sponge"},
+                {"ปริซมารีน", "prismarine"}, {"ใบบัว", "lily_pad"}, {"ต้นกล้า", "oak_sapling"}, {"เบอร์รี่เรืองแสง", "glow_berries"}, {"เบอร์รี่", "sweet_berries"},
+                {"บีทรูท", "beetroot"}, {"หอยนอติลุส", "nautilus_shell"}, {"กระดองเต่า", "turtle_helmet"}, {"คริสตัลปริซมารีน", "prismarine_crystals"},
+                {"เศษปริซมารีน", "prismarine_shard"}, {"ดอกแดนดิไลออน", "dandelion"}, {"ดอกป๊อปปี้", "poppy"}, {"ดอกทานตะวัน", "sunflower"}, {"หญ้าทะเล", "seagrass"},
+                {"ไม้โอ๊ค", "oak_log"}, {"ไม้สน", "spruce_log"}, {"ไม้เบิร์ช", "birch_log"}, {"ไม้ป่า", "jungle_log"}, {"ไม้อะคาเซีย", "acacia_log"}, {"ไม้เชอร์รี่", "cherry_log"},
+                {"ไม้โกงกาง", "mangrove_log"}, {"เนเธอไรต์แท่ง", "netherite_ingot"}, {"เนเธอไรต์", "netherite_ingot"}, {"เนเธอร์ไรต์", "netherite_ingot"},
+                {"เนเธอร์ไรท์", "netherite_ingot"}, {"เนเธอไรท์", "netherite_ingot"}, {"นมวัว", "milk_bucket"}, {"รีดนม", "milk_bucket"}, {"นมสด", "milk_bucket"}, {"ลาวา", "lava_bucket"},
+                {"น้ำ", "water_bucket"}, {"หินเหล็กไฟ", "flint"}, {"ดอกไม้ไฟ", "firework_rocket"},
         };
         for (String[] i : items) ITEMS_TH.put(i[0], i[1]);
     }
@@ -85,7 +151,9 @@ public final class ItemWords {
             "bring", "us", "for", "few", "couple", "stack", "stacks", "more", "new", "your", "from", "chest", "out", "take", "fetch", "it", "them", "all", "into",
             "build", "create", "set", "sets", "full", "set", "of", "now", "too", "also", "just", "with", "using", "use", "go", "hand", "over", "dozen", "several",
             "bag", "inventory", "some", "any", "please", "buddy", "helper", "hey", "that", "this", "these", "those", "one", "two", "three", "four", "five", "six",
-            "seven", "eight", "nine", "ten", "twenty", "thirty", "sixty"));
+            "seven", "eight", "nine", "ten", "twenty", "thirty", "sixty", "find", "collect", "gather", "dig", "grab", "harvest", "look", "search", "obtain", "up", "lots",
+            "many", "much", "until", "is", "are", "nearby", "around", "here", "there", "back", "quickly", "fast", "then", "lot", "bunch", "pile", "load", "loads", "tons", "ton",
+            "as", "possible", "find", "locate", "where", "nearest", "closest", "kill", "hunt"));
 
     static final Map<String, String> EN_ALIAS = new LinkedHashMap<>();
 
@@ -114,8 +182,49 @@ public final class ItemWords {
                 {"grindstone", "grindstone"}, {"smithing_table", "smithing_table"}, {"cartography_table", "cartography_table"}, {"fletching_table", "fletching_table"},
                 {"cauldron", "cauldron"}, {"brewing_stand", "brewing_stand"}, {"bottle", "glass_bottle"}, {"bottles", "glass_bottle"}, {"lead", "lead"},
                 {"name_tag", "name_tag"}, {"saddle", "saddle"}, {"fishing_rod", "fishing_rod"}, {"crossbow", "crossbow"}, {"campfire", "campfire"},
-                {"raw_iron", "raw_iron"}, {"raw_gold", "raw_gold"}, {"raw_copper", "raw_copper"}};
+                {"raw_iron", "raw_iron"}, {"raw_gold", "raw_gold"}, {"raw_copper", "raw_copper"}, {"water", "water_bucket"}, {"lava", "lava_bucket"}, {"milk", "milk_bucket"},
+                {"soulsand", "soul_sand"}, {"seeds", "wheat_seeds"}, {"flowers", "poppy"}, {"sapling", "oak_sapling"}, {"saplings", "oak_sapling"}, {"dye", "white_dye"},
+                {"concrete", "white_concrete"}, {"carpet", "white_carpet"}, {"banner", "white_banner"}, {"candle", "candle"}, {"rod", "fishing_rod"}, {"pearl", "ender_pearl"},
+                {"pearls", "ender_pearl"}, {"slimeball", "slime_ball"}, {"slimeballs", "slime_ball"}, {"slime", "slime_ball"}, {"wart", "nether_wart"}, {"debris", "ancient_debris"},
+                {"fireworks", "firework_rocket"}, {"rockets", "firework_rocket"}, {"potatoes", "potato"}, {"carrots", "carrot"}, {"berries", "sweet_berries"},
+                {"mushroom", "red_mushroom"}, {"mushrooms", "red_mushroom"}, {"pumpkins", "pumpkin"}, {"melons", "melon"}, {"cobwebs", "cobweb"}, {"web", "cobweb"},
+                {"leaves", "oak_leaves"}, {"vines", "vine"}, {"ink", "ink_sac"}, {"eye_of_ender", "ender_eye"}, {"eyes_of_ender", "ender_eye"}};
         for (String[] e : a) EN_ALIAS.put(e[0], e[1]);
+    }
+
+    /** Raw materials that come out of ores: asking for those means mining (anything else with "iron" or "gold" in its name does not). */
+    public static final Set<String> ORE_ITEMS = Set.of("coal", "raw_iron", "iron_ingot", "iron_nugget", "raw_copper", "copper_ingot", "raw_gold", "gold_ingot", "gold_nugget", "redstone",
+            "lapis_lazuli", "diamond", "emerald", "quartz", "ancient_debris", "netherite_scrap", "netherite_ingot", "coal_ore", "iron_ore", "copper_ore", "gold_ore", "redstone_ore",
+            "lapis_ore", "diamond_ore", "emerald_ore", "nether_quartz_ore", "nether_gold_ore", "deepslate_coal_ore", "deepslate_iron_ore", "deepslate_copper_ore", "deepslate_gold_ore",
+            "deepslate_redstone_ore", "deepslate_lapis_ore", "deepslate_diamond_ore", "deepslate_emerald_ore");
+
+    /** Thai has no spaces: a short word can sit inside another one ("ดิน" in "เดิน" = to walk, "ปลา" in "ปลาย"). */
+    static boolean hasWord(String t, String k) {
+        int i = t.indexOf(k);
+        while (i >= 0) {
+            boolean ok = true;
+            if (k.equals("ดิน") && i > 0 && t.charAt(i - 1) == 'เ') ok = false;
+            if (k.equals("ปลา") && t.startsWith("ปลาย", i)) ok = false;
+            if (k.equals("ถัง") && t.startsWith("ถังขยะ", i)) ok = false;
+            if (ok) return true;
+            i = t.indexOf(k, i + 1);
+        }
+        return false;
+    }
+
+    /** The longest Thai item word in the sentence ("ดินปืน" in "หาดินปืน"), or null. */
+    public static String thaiKey(String t) {
+        String best = null;
+        for (String k : ITEMS_TH.keySet()) if (hasWord(t, k) && (best == null || k.length() > best.length())) best = k;
+        return best;
+    }
+
+    /** How many letters of the sentence the longest Thai item or tool word covers (0: none). */
+    public static int thaiCover(String t) {
+        int best = 0;
+        for (String k : ITEMS_TH.keySet()) if (hasWord(t, k)) best = Math.max(best, k.length());
+        for (String k : TOOLS_TH.keySet()) if (t.contains(k)) best = Math.max(best, k.length());
+        return best;
     }
 
     static String thaiLookup(String t) {
@@ -130,7 +239,7 @@ public final class ItemWords {
         }
         // "จอบ" inside "จอบขุด"? handled by length; "ดาบ" etc. A tool word wins unless a longer item word covers it (e.g. "ชั้นหนังสือ")
         String bestItem = null;
-        for (String k : ITEMS_TH.keySet()) if (t.contains(k) && (bestItem == null || k.length() > bestItem.length())) bestItem = k;
+        for (String k : ITEMS_TH.keySet()) if (hasWord(t, k) && (bestItem == null || k.length() > bestItem.length())) bestItem = k;
         if (bestTool != null && (bestItem == null || bestItem.length() <= bestTool.length() || !bestItem.contains(bestTool))) {
             String rest = t.substring(ti + bestTool.length());
             String mat = null;
@@ -147,21 +256,22 @@ public final class ItemWords {
 
     /** Item id ("minecraft:torch") talked about in the sentence, or null. */
     public static String resolve(String raw) {
-        String t = raw.trim().toLowerCase().replace("minecraft:", "");
-        if (t.isEmpty()) return null;
+        String low = raw.trim().toLowerCase();
+        if (low.isEmpty()) return null;
+        // an exact id, of any mod: "minecraft:soul_sand", "create:andesite_alloy"
+        java.util.regex.Matcher idm = ID.matcher(low);
+        while (idm.find()) if (EXISTS.test(idm.group())) return idm.group();
+        String t = low.replace("minecraft:", "");
         List<String> cands = new ArrayList<>();
         String th = thaiLookup(t);
         if (th != null) cands.add(th);
         // english words (wood type words first: "spruce planks" -> spruce_planks)
-        StringBuilder en = new StringBuilder();
-        for (String w : t.split("[^a-z_]+")) {
-            if (w.isEmpty() || EN_FILL.contains(w)) continue;
-            if (en.length() > 0) en.append('_');
-            en.append(w);
-        }
-        String e = en.toString();
+        List<String> words = new ArrayList<>();
+        for (String w : t.split("[^a-z_]+")) if (!w.isEmpty() && !EN_FILL.contains(w)) words.add(w);
+        String e = String.join("_", words);
+        String fixed = "";
         if (!e.isEmpty()) {
-            String fixed = e.replaceFirst("^gold_(?=sword|pickaxe|axe|shovel|hoe|helmet|chestplate|leggings|boots)", "golden_")
+            fixed = e.replaceFirst("^gold_(?=sword|pickaxe|axe|shovel|hoe|helmet|chestplate|leggings|boots)", "golden_")
                     .replaceFirst("^wood_(?=sword|pickaxe|axe|shovel|hoe)", "wooden_").replace("pick_axe", "pickaxe").replace("crafting_bench", "crafting_table");
             cands.add(fixed);
             if (fixed.endsWith("s") && fixed.length() > 3) cands.add(fixed.substring(0, fixed.length() - 1));
@@ -181,9 +291,20 @@ public final class ItemWords {
             if (m.find()) cands.add(0, m.group(1).replace("gold", "golden").replace("goldenen", "golden").replace("wood", "wooden").replace("woodenen", "wooden") + "_" + m.group(2));
         }
         for (String c : cands) {
-            if (c.isEmpty()) continue;
-            String id = "minecraft:" + c;
-            if (EXISTS.test(id)) return id;
+            String id = lookup(c);
+            if (id != null) return id;
+        }
+        // any run of words in the sentence, the longest first ("collect soul sand in the nether", "glow stone dust for me")
+        if (!fixed.isEmpty()) {
+            String[] parts = fixed.split("_");
+            for (int len = Math.min(4, parts.length - 1); len >= 1; len--)
+                for (int i = 0; i + len <= parts.length; i++) {
+                    String run = String.join("_", java.util.Arrays.copyOfRange(parts, i, i + len));
+                    String id = lookup(run);
+                    if (id == null && EN_ALIAS.containsKey(run)) id = lookup(EN_ALIAS.get(run));
+                    if (id == null && run.endsWith("s") && run.length() > 3) id = lookup(run.substring(0, run.length() - 1));
+                    if (id != null) return id;
+                }
         }
         return null;
     }
