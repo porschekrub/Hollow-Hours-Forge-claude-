@@ -64,8 +64,8 @@ public final class SmokeTest {
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sp.getX(), sp.getZ());
             base = new BlockPos(sp.getX(), y, sp.getZ());
             // a server without players stops ticking entities after 15 seconds unless chunks are force-loaded
-            for (int dx = -2; dx <= 2; dx++)
-                for (int dz = -2; dz <= 2; dz++) level.setChunkForced((base.getX() >> 4) + dx, (base.getZ() >> 4) + dz, true);
+            for (int dx = -4; dx <= 4; dx++)
+                for (int dz = -4; dz <= 4; dz++) level.setChunkForced((base.getX() >> 4) + dx, (base.getZ() >> 4) + dz, true);
             h = HBRegistry.HELPER.get().create(level);
             check(h != null, "create helper");
             h.moveTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5, 0, 0);
@@ -268,6 +268,12 @@ public final class SmokeTest {
                 mo.branch = 2;
                 h.brain().dig().start(mo, Direction.EAST, h.blockPosition());
                 h.setMode(Mode.DIG);
+            }
+            // (with nobody in the game only the chunks around the start are kept ticking: looking for trees and food it may
+            // have walked out of them, so it is brought back for the last part)
+            if (t == 690) {
+                h.brain().leaveJob();
+                h.teleportTo(base.getX() + 0.5, base.getY(), base.getZ() + 0.5);
             }
             if (t == 700) h.brain().tasks().start(Tasks.craft("minecraft:crafting_table", 1));
             if (t == 760) h.brain().tasks().start(Tasks.smelt("iron", 4));
