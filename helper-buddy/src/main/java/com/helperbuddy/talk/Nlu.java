@@ -758,7 +758,8 @@ public final class Nlu {
     static final String[][] CREATURES = {
             {"mooshroom", "วัวเห็ด|มูชรูม", "mooshrooms?"}, {"cow", "วัว", "cows?|cattle"}, {"pig", "หมู(?!่)", "pigs?"}, {"chicken", "ไก่", "chickens?"}, {"sheep", "แกะ", "sheep"},
             {"rabbit", "กระต่าย", "rabbits?|bunny|bunnies"}, {"horse", "ม้า", "horses?"}, {"donkey", "ตัวลา", "donkeys?"}, {"mule", "ล่อ", "mules?"}, {"llama", "ลามะ", "llamas?"},
-            {"wandering_trader", "พ่อค้าเร่|พ่อค้าพเนจร", "wandering traders?"}, {"villager", "ชาวบ้าน", "villagers?"}, {"iron_golem", "โกเลมเหล็ก|โกเลม", "iron golems?|golems?"},
+            {"wandering_trader", "พ่อค้าเร่|พ่อค้าพเนจร", "wandering traders?"}, {"villager", "ชาวบ้าน", "villagers?"}, {"iron_golem", "โกเลมเหล็ก|ไอร่อนโกเลม|ไอรอนโกเลม|ไอออนโกเลม|ไอร่อนโกเล็ม|ไอรอนโกเล็ม|โกเลม|โกเล็ม", "iron golems?|golems?"},
+            {"snow_golem", "โกเลมหิมะ|สโนว์โกเลม|มนุษย์หิมะ", "snow golems?|snowm[ae]n"}, {"warden", "วอร์เดน|วาร์เดน", "wardens?"},
             {"wolf", "หมาป่า|หมา|สุนัข", "wolf|wolves|dogs?"}, {"cat", "แมว", "cats?"}, {"ocelot", "แมวป่า|โอซีลอต", "ocelots?"}, {"fox", "จิ้งจอก|หมาจิ้งจอก", "fox(es)?"},
             {"bee", "ผึ้ง", "bees?"}, {"turtle", "เต่า", "turtles?"}, {"panda", "แพนด้า", "pandas?"}, {"parrot", "นกแก้ว", "parrots?"}, {"axolotl", "แอกโซลอเติล|อะโซลอต", "axolotls?"},
             {"frog", "กบ", "frogs?"}, {"camel", "อูฐ", "camels?"}, {"goat", "แพะ", "goats?"}, {"dolphin", "โลมา|ปลาโลมา", "dolphins?"}, {"squid", "ปลาหมึก|หมึก", "squids?"},
@@ -1115,6 +1116,18 @@ public final class Nlu {
             {"bat", "ค้างคาว", "\\bbats?\\b"},
     };
 
+    /** Any creature named in t (a monster, an animal, a villager, a golem ...): its id, or null. */
+    public static String creatureIn(String t) {
+        String[] m = mobIn(t);
+        if (m != null) return m[0];
+        for (String[] c : CREATURES) if (test("(" + c[1] + ")", t) || test("\\b(" + c[2] + ")\\b", t)) return c[0];
+        return null;
+    }
+
+    static final String ATTACK_VERB = "(ตี|ฆ่า|ล่า|โจมตี|จัดการ|ซัด|อัด|ยิง|สู้กับ|ลุย|attack|kill|hit|fight|hunt|beat( up)?|slay|shoot|take (it|him|her|them) (out|down)|take out|take down)";
+    static final String PRONOUN = "(มัน|ตัวนี้|ตัวนั้น|ตัวนู้น|ไอ้นี่|ไอ้นั่น|ไอ้นี้|ไอ้ตัวนี้|ไอ้ตัวนั้น|อันนี้|อันนั้น|เจ้านี่|เจ้านั่น|ที่ฉันตี|ที่ผมตี|ที่กูตี|ที่เราตี"
+            + "|\\bit\\b|\\bthat( one| thing| guy| mob)?\\b|\\bthis( one| thing| guy| mob)?\\b|\\bhim\\b|\\bher\\b|\\bthem\\b|what i('m| am) (hitting|fighting|attacking)|my target)";
+
     /** The MOBS row named in t, or null. */
     public static String[] mobIn(String t) {
         for (String[] m : MOBS) if (test("(" + m[1] + ")", t) || test("\\b(" + m[2] + ")\\b", t)) return m;
@@ -1259,6 +1272,29 @@ public final class Nlu {
             return i;
         }
         if (has(t, "ไม่ต้องตาม", "อย่าตาม", "don't follow", "dont follow", "stop following")) return new Intent("stay");
+        // "ไปล่ามัน", "ตีตัวนั้น", "kill it", "attack that", "help me fight": what the player is looking at or fighting
+        if (test("^(ไป|ช่วย|มา|รีบ|go |come |help me )*" + ATTACK_VERB + "\\s*" + PRONOUN, t)
+                || test("^(ช่วย(ฉัน|ผม|กู|เรา|หนู)?(สู้|ตี)(ด้วย|หน่อย|ที|ดิ|สิ|เลย)*|help me (fight|kill|attack)( it| this| that| them)?|attack!*|get (him|her|them)!*|sic (him|her|it|them|'?em))$", t)) {
+            Intent i = new Intent("attack");
+            String c = creatureIn(t);
+            if (c != null) i.mobs = new String[] {"minecraft:" + c};
+            return i;
+        }
+        // "ตีไอร่อนโกเลม", "attack the iron golem", "ฆ่าชาวบ้านตัวนั้น": the nearest one of those, right now
+        String who = creatureIn(t);
+        String[] mob0 = mobIn(t);
+        boolean food = animalIn(t) != null;
+        if (who != null && !food && test(ATTACK_VERB, t) && !has(t, "สร้าง", "build", "รูปปั้น", "statue") && extractQty(t).n() == null) {
+            Intent i = new Intent(has(t, "ล่า", "ไล่ฆ่า", "ฟาร์ม", "hunt", "farm", "exterminate") && mob0 != null ? "slay" : "attack");
+            i.mobs = new String[] {"minecraft:" + who};
+            return i;
+        }
+        if (who != null && !food && mob0 == null && test(ATTACK_VERB, t) && !has(t, "สร้าง", "build", "รูปปั้น", "statue") && extractQty(t).n() != null) {
+            Intent i = new Intent("slay");
+            i.mobs = new String[] {"minecraft:" + who};
+            i.n = extractQty(t).n();
+            return i;
+        }
         // exact forms (what the AI writes): "get 64 minecraft:soul_sand", "kill 5 minecraft:zombie", "speed max", "outfit ninja"
         Matcher cm = match("^get\\s+(?:(\\d+|all|full)\\s+)?([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);
         if (cm != null) {
@@ -1266,6 +1302,12 @@ public final class Nlu {
             i.item = cm.group(2);
             if (cm.group(1) != null && cm.group(1).matches("\\d+")) i.n = clampN(Integer.parseInt(cm.group(1)));
             i.full = cm.group(1) != null && !cm.group(1).matches("\\d+");
+            return i;
+        }
+        cm = match("^attack\\s+([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);
+        if (cm != null) {
+            Intent i = new Intent("attack");
+            i.mobs = new String[] {cm.group(1)};
             return i;
         }
         cm = match("^(?:kill|hunt|slay)\\s+(?:(\\d+)\\s+)?([a-z0-9_.-]+:[a-z0-9_/.-]+)$", t);

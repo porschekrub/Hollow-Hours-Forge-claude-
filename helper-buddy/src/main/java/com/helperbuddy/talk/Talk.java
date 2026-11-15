@@ -258,6 +258,7 @@ public final class Talk {
             case "house" -> cmdHouse(p, h, it, text);
             case "aibuild" -> aiBuild(p, h, it.text != null ? it.text : text);
             case "fight" -> cmdFight(p, h, it.on);
+            case "attack" -> cmdAttack(p, h, it.mobs);
             case "fightback" -> {
                 h.settings.set("fightBack", it.on);
                 say(p, h, it.on ? "โอเค ถ้ามีใครตีผม ผมจะสู้กลับ" : "โอเค ผมจะไม่สู้กลับแล้ว (แต่ยังหลบได้นะ)",
@@ -656,7 +657,11 @@ public final class Talk {
             return;
         }
         LivingEntity best = null;
-        if (p.level() == h.level()) {
+        // what the player is fighting right now comes first (whatever it is), then the nearest monster
+        LivingEntity last = p.getLastHurtMob(), by = p.getLastHurtByMob();
+        if (last != null && last.isAlive() && p.tickCount - p.getLastHurtMobTimestamp() < 20 * 20 && last.distanceTo(p) < 32 && h.brain().combat().canTarget(last, true)) best = last;
+        else if (by != null && by.isAlive() && by.distanceTo(p) < 32 && !(by instanceof HelperEntity) && h.brain().combat().canTarget(by, true)) best = by;
+        if (best == null && p.level() == h.level()) {
             double bd = 99;
             for (LivingEntity e : p.level().getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(16), e -> e instanceof Enemy && e.isAlive())) {
                 double d = e.distanceTo(p);
@@ -672,6 +677,56 @@ public final class Talk {
             say(p, h, "§cลุยเลย!§r จัดการ " + best.getName().getString() + " ให้เอง", "§cOn it!§r I'll deal with the " + best.getName().getString());
         } else say(p, h, "พร้อมสู้ครับ! ถ้ามีมอนสเตอร์เข้าใกล้คุณหรือผม ผมจะเข้าไปจัดการเอง (ครีปเปอร์ผมตีแล้วถอย)",
                 "Ready to fight! Any monster near you or me gets dealt with (creepers: hit and back off)");
+    }
+
+    /**
+     * "Kill it", "ตีตัวนั้น", "attack the iron golem": the creature the player looks at, else the one they hit or that
+     * hit them last, else the nearest of the kind named, else the nearest monster. Golems and villagers too, when asked.
+     */
+    static void cmdAttack(ServerPlayer p, HelperEntity h, @Nullable String[] mobs) {
+        if (h.isKO()) {
+            say(p, h, "ผมสลบอยู่ ยังสู้ไม่ได้ ให้อาหารผมก่อนนะ", "I'm knocked out, feed me first");
+            return;
+        }
+        LivingEntity best = null;
+        java.util.Set<String> kinds = new java.util.HashSet<>();
+        if (mobs != null) for (String m : mobs) kinds.add(m.contains(":") ? m : "minecraft:" + m);
+        java.util.function.Predicate<net.minecraft.world.entity.Entity> ok = e -> e instanceof LivingEntity le && le.isAlive() && e != p && !(e instanceof HelperEntity)
+                && (kinds.isEmpty() || kinds.contains(BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).toString())) && h.brain().combat().canTarget(le, true);
+        {
+            var hit = Knowledge.looked(p);
+            if (hit instanceof net.minecraft.world.phys.EntityHitResult eh && ok.test(eh.getEntity())) best = (LivingEntity) eh.getEntity();
+            if (best == null && kinds.isEmpty()) {
+                LivingEntity last = p.getLastHurtMob();
+                if (last != null && p.tickCount - p.getLastHurtMobTimestamp() < 20 * 30 && last.distanceTo(p) < 48 && ok.test(last)) best = last;
+                LivingEntity by = p.getLastHurtByMob();
+                if (best == null && by != null && by.distanceTo(p) < 48 && ok.test(by)) best = by;
+            }
+            if (best == null) {
+                double bd = Double.MAX_VALUE;
+                for (LivingEntity e : p.level().getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(48, 24, 48),
+                        e -> ok.test(e) && (!kinds.isEmpty() || e instanceof net.minecraft.world.entity.monster.Enemy))) {
+                    double d = e.distanceToSqr(p);
+                    if (d < bd) {
+                        bd = d;
+                        best = e;
+                    }
+                }
+            }
+        }
+        if (best == null) {
+            if (!kinds.isEmpty()) {
+                String nm = String.join(" / ", kinds).replace("minecraft:", "").replace('_', ' ');
+                say(p, h, "แถวนี้ (48 บล็อก) ไม่เห็น §e" + nm + "§r เลย (อยากให้ออกไปล่า สั่ง \"ล่า " + nm + " 5 ตัว\")",
+                        "I don't see any §e" + nm + "§r within 48 blocks (to go hunting for them: \"kill 5 " + nm + "\")");
+            } else say(p, h, "ไม่เห็นว่าจะให้ตีตัวไหน มองไปที่ตัวนั้นแล้วสั่งใหม่ หรือตีมันก่อนแล้วผมจะเข้าไปช่วย",
+                    "I can't tell which one. Look at it and ask again, or hit it and I'll join in");
+            return;
+        }
+        if (h.level() != p.level() || h.distanceTo(best) > 28) h.brain().mover().bringTo(p);
+        h.settings.set("fight", true);
+        h.brain().combat().setTarget(best, true, false);
+        say(p, h, "§cลุยเลย!§r จัดการ " + best.getName().getString() + " ให้", "§cOn it!§r Going after the " + best.getName().getString());
     }
 
     static void cmdGive(ServerPlayer p, HelperEntity h, Nlu.Intent it) {
@@ -1004,6 +1059,9 @@ public final class Talk {
                 return Plan.simple("cook", "ทำอาหาร", "cook");
             case "guard":
                 return Plan.simple("guard", "เฝ้าอยู่ตรงนั้น (สู้กับมอนสเตอร์)", "guard the spot (fight monsters)");
+            case "attack":
+                cmdAttack(p, h, it.mobs);
+                return null;
             case "fight":
                 return Plan.fight(it.on);
             case "wait":
@@ -1147,7 +1205,8 @@ public final class Talk {
             + "Use this for every \"go find / get / bring / collect / I need / หา / เอา / ขอ\" request about a thing.\n"
             + "- Open-ended work: \"mine\" (any ores), \"mine <n> <ore>\", \"chop wood\", \"chop <n> logs\", \"find food\", \"hunt <n> cows\", \"get 20 meat\", \"harvest crops\", \"farm\", \"breed cows\", "
             + "\"shear sheep\", \"go fishing\", \"catch 10 fish\", \"cook\", \"eat\".\n"
-            + "- Fighting: \"kill <n> minecraft:<mob_id>\" (hunts that kind of creature), \"fight\" (fight monsters around), \"don't fight\", \"fight back\", \"don't fight back\", \"guard\" (guards this spot), "
+            + "- Fighting: \"attack it\" (what the player looks at, or just hit, right now), \"attack minecraft:<mob_id>\" (the nearest one of those, now: also villagers, golems, animals), "
+            + "\"kill <n> minecraft:<mob_id>\" (goes hunting for that kind of creature), \"fight\" (fight monsters around), \"don't fight\", \"fight back\", \"don't fight back\", \"guard\" (guards this spot), "
             + "\"help me\" (the player is in danger now), \"kill the dragon\", \"fight the wither\".\n"
             + "- Making: \"craft <n> <item>\", \"smelt <item>\", \"enchant <item>\" or \"enchant this\" (what the player holds), "
             + "\"brew a potion of <swiftness|strength|healing|regeneration|fire resistance|night vision|water breathing|invisibility|leaping|slow falling|poison|harming|weakness|slowness|turtle master> [long|strong] [splash|lingering]\", "

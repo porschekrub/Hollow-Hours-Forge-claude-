@@ -1,7 +1,15 @@
-**Helper Buddy 2.18.2 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
-**Helper Buddy 2.18.2 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
+**Helper Buddy 2.18.3 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
+**Helper Buddy 2.18.3 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
 
 Other loaders and Minecraft versions: the last full release (v2.17.0). / ตัวโหลดอื่นและเวอร์ชันอื่น: ดู release เต็มล่าสุด (v2.17.0)
+
+**2.18.3 — fighting with you**
+- **It attacks what you attack**, like a tamed wolf: hit an iron golem, a villager, a wolf, an enderman ... and your helper joins in (before, it only ever fought monsters and just stood there watching). Your own pets and horses are never attacked.
+  **มันตีตัวที่คุณตี** เหมือนหมาที่เลี้ยงไว้: ตีไอร่อนโกเลม ชาวบ้าน หมาป่า เอนเดอร์แมน ... ผู้ช่วยจะเข้ามาช่วยทันที (เดิมมันสู้แค่มอนสเตอร์ เลยยืนมองเฉยๆ) แต่สัตว์เลี้ยงกับม้าของคุณเองจะไม่โดน
+- **"ไปล่ามัน", "ตีมัน", "ตีตัวนั้น", "kill it", "attack that"**: it goes for the one you are looking at, or the one you just hit, or the one that hit you (before, "ล่า" sent it off hunting animals for food).
+  **"ไปล่ามัน", "ตีมัน", "ตีตัวนั้น"**: มันไปตีตัวที่คุณมองอยู่ หรือตัวที่คุณเพิ่งตี หรือตัวที่ตีคุณ (เดิม "ล่า" ทำให้มันไปล่าสัตว์หาอาหารแทน)
+- **"ตีไอร่อนโกเลม", "attack the iron golem", "ฆ่าชาวบ้าน 2 ตัว"**: any creature by name, not only monsters. "สู้" / "fight" also goes first for whatever you are fighting.
+  **"ตีไอร่อนโกเลม", "ฆ่าชาวบ้าน 2 ตัว"**: เรียกชื่อสัตว์ตัวไหนก็ได้ ไม่ใช่แค่มอนสเตอร์ และ "สู้" จะไปช่วยตีตัวที่คุณกำลังสู้อยู่ก่อน
 
 **2.18.2 — the voice**
 - The real AI voice is now used for **its answers to what you say** (the lines it says by itself while working are written only), so a free Gemini key's small speech quota lasts much longer.

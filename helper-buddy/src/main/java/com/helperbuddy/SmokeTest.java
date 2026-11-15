@@ -225,6 +225,12 @@ public final class SmokeTest {
         x.setPersona("auto");
         check(x.styleNote().isEmpty() && com.helperbuddy.talk.Persona.auto(x), "style note cleared by a preset");
         check(com.helperbuddy.net.AiSetup.LANGUAGES[0][0].equals("en") && com.helperbuddy.net.AiSetup.PROVIDERS.length == 7, "ai setup lists");
+        // what the owner attacks, it attacks: an iron golem too (but not on its own)
+        net.minecraft.world.entity.animal.IronGolem golem = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(level);
+        check(golem != null && x.brain().combat().canTarget(golem, true) && !x.brain().combat().canTarget(golem, false), "attacking a golem only when told");
+        for (String say : new String[] {"ไปล่ามัน", "kill it", "ตีไอร่อนโกเลม", "attack the iron golem", "attack minecraft:iron_golem"})
+            check(Nlu.parse(say).k.equals("attack"), "nlu attack: " + say);
+        check(Nlu.parse("ตีไอร่อนโกเลม").mobs[0].equals("minecraft:iron_golem") && Nlu.parse("ฆ่าชาวบ้าน 2 ตัว").k.equals("slay") && Nlu.parse("ไปล่าสัตว์").k.equals("findFood"), "nlu attack kinds");
         x.discard();
     }
 

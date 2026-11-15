@@ -170,7 +170,12 @@ public final class HBEvents {
         }
         if (src instanceof ServerPlayer p && victim != p && !(victim instanceof HelperEntity) && !(victim instanceof Player)) {
             for (HelperEntity h : Helpers.owned(p))
-                if (h.level() == p.level() && h.distanceTo(p) < 24 && h.settings.get("fight")) h.brain().combat().setTarget(victim, true, false);
+                if (h.level() == p.level() && h.distanceTo(p) < 32 && h.settings.get("fight") && !h.isKO()) {
+                    // (not when the owner hits its own helper's pets, or swats something while the helper is already on a monster that is closer)
+                    var c = h.brain().combat();
+                    if (c.fighting() && c.target() != victim && c.target().distanceToSqr(h) < victim.distanceToSqr(h) && c.target() instanceof net.minecraft.world.entity.monster.Enemy) continue;
+                    c.setTarget(victim, true, false);
+                }
         }
     }
 

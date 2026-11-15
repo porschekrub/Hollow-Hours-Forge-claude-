@@ -117,17 +117,20 @@ public final class Combat {
     }
 
     // ------------------------------------------------------------------ who may be attacked
-    boolean canTarget(LivingEntity e, boolean explicit) {
+    public boolean canTarget(LivingEntity e, boolean explicit) {
         if (e == null || !e.isAlive() || e == h || e instanceof HelperEntity) return false;
         if (e instanceof Player p) {
             if (h.isOwner(p) || p.isCreative() || p.isSpectator()) return false;
             return explicit && h.settings.get("hitPlayers") && HBConfig.ALLOW_PVP_FIGHT_BACK.get() && h.getServer() != null && h.getServer().isPvpAllowed();
         }
-        if (e instanceof AbstractVillager || e instanceof IronGolem || e instanceof SnowGolem) return false;
         if (e instanceof net.minecraft.world.entity.decoration.ArmorStand) return false;
+        // the owner's own pets and horses: never
+        if (e instanceof OwnableEntity o && o.getOwnerUUID() != null && o.getOwnerUUID().equals(h.ownerId())) return false;
+        // what its owner attacks, or orders it to attack, it attacks (like a tamed wolf): villagers and golems too
+        if (explicit) return true;
+        if (e instanceof AbstractVillager || e instanceof IronGolem || e instanceof SnowGolem) return false;
         if (e instanceof TamableAnimal t && t.isTame()) return false;
         if (e instanceof OwnableEntity o && o.getOwnerUUID() != null) return false;
-        if (explicit) return true;
         if (!(e instanceof Enemy) && e.getType().getCategory() != MobCategory.MONSTER) return false;
         // neutral mobs (endermen, piglins, zombified piglins) only when they are angry at us
         if (e instanceof NeutralMob nm && e instanceof Mob m) {
