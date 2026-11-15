@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 /**
  * Mods > Verity Pal > Config: every setting of Verity Pal on one page (the story switch first), each with its
- * explanation on hover, saved right away. A button opens Verity JE's own settings (her AI, voice, microphone).
+ * explanation on hover, saved right away. Always in English, whatever language the game is in. A button opens Verity JE's own settings (her AI, voice, microphone).
  */
 public class PalConfigScreen extends Screen {
     final Screen parent;
@@ -64,7 +64,7 @@ public class PalConfigScreen extends Screen {
                         .ifPresent(f -> minecraft.setScreen(f.screenFunction().apply(minecraft, this)));
             }).bounds(width / 2 - bw - 4, height - 28, bw, 20).build());
         }
-        addRenderableWidget(Button.builder(Component.translatable("gui.done"), b -> onClose())
+        addRenderableWidget(Button.builder(Component.literal("Done"), b -> onClose())
                 .bounds(verityScreen ? width / 2 + 4 : width / 2 - bw / 2, height - 28, bw, 20).build());
     }
 

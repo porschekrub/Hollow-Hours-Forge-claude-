@@ -156,6 +156,14 @@ public final class V {
         }
     }
 
+    /** Verity JE's own "say something random" timer is held back: Verity Pal decides when she talks on her own (Life). */
+    public static void holdIdleChat() {
+        try {
+            if (VerityState.idleChatTimer < 1200) VerityState.idleChatTimer = 1200;
+        } catch (Throwable ignored) {
+        }
+    }
+
     public static boolean following() {
         try {
             return VerityState.followPlayer;

@@ -49,6 +49,17 @@ public final class Life {
         bus.addListener(EventPriority.HIGH, Life::chat);
         bus.addListener(Life::death);
         bus.addListener(Life::hurt);
+        bus.addListener(Life::login);
+    }
+
+    /** Without an AI Verity can't talk: say once (in the player's language) where to set it up. */
+    static void login(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent e) {
+        if (!(e.getEntity() instanceof ServerPlayer p) || V.aiReady()) return;
+        VerityPal.later(100, () -> p.sendSystemMessage(net.minecraft.network.chat.Component.literal(com.veritypal.talk.Lang.t(p,
+                "§e[Verity Pal]§r เวริตี้ยังคุยไม่ได้ ต้องตั้ง AI ก่อน: §fMods > Verity JE > Config > AI Settings§r เลือก §eGEMINI§r แล้วใส่ API key ฟรีจาก §baistudio.google.com§r "
+                        + "(key เดียวกันนี้ใช้ทำเสียงไทยกับฟังเสียงไทยด้วย)",
+                "§e[Verity Pal]§r Verity can't talk yet: set up her AI in §fMods > Verity JE > Config > AI Settings§r. §eGEMINI§r with a free key from §baistudio.google.com§r "
+                        + "is easiest (the same key gives her the Thai voice and ears)."))));
     }
 
     // ------------------------------------------------------------------ her name
@@ -246,6 +257,7 @@ public final class Life {
     }
 
     public static void tick(MinecraftServer server) {
+        V.holdIdleChat();
         Mob b = V.body();
         if (b == null) {
             sleepingWith = null;
