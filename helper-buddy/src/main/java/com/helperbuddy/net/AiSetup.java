@@ -64,7 +64,7 @@ public final class AiSetup {
         String lang = Say.chosen(p);
         a.putString("lang", lang.isEmpty() ? (Say.gameThai(p) ? "th" : "en") : lang);
         a.putString("style", h.styleNote());
-        t.put("ai", a);
+        t.put("aiSetup", a);
     }
 
     static void tell(ServerPlayer p, String th, String en) {

@@ -11,7 +11,7 @@
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
 
-**Helper Buddy 2.18.0 — set up the AI inside the game** (Hollow Hours stays 2.16.0)
+**Helper Buddy 2.18.1 — set up the AI inside the game** (Hollow Hours stays 2.16.0)
 - 🤖 **New "AI" page in the helper's menu** (right-click your helper → *AI*): turn the AI on, pick the provider (Gemini, OpenAI, Claude, OpenRouter, Groq, Ollama, or your own URL), paste the **API key**, pick the **model**, press *Save and test the AI*. The helper tries the AI at once and tells you in chat whether it works (and why not: wrong key, no such model, out of quota). After a save the arrows next to *Model* go through the models your key really has. No more editing the config file.
   **หน้า "AI" ใหม่ในเมนูผู้ช่วย** (คลิกขวาที่ผู้ช่วย → *AI*): เปิด AI เลือกเจ้า (Gemini, OpenAI, Claude, OpenRouter, Groq, Ollama หรือ URL ของตัวเอง) วาง **API key** เลือก**โมเดล** แล้วกด *Save and test the AI* ผู้ช่วยจะลองต่อ AI ทันทีแล้วบอกในแชตว่าใช้ได้ไหม (ถ้าไม่ได้บอกสาเหตุ: key ผิด ไม่มีโมเดลนี้ โควตาหมด) หลังบันทึก ลูกศรข้างช่อง *Model* จะไล่ดูโมเดลที่ key ของคุณใช้ได้จริง ไม่ต้องแก้ไฟล์ config อีกแล้ว
 - 🔑 The key is typed hidden (*Show* to see it), is saved in `config/helperbuddy-common.toml` like before, and is never sent back to anyone's screen: the menu only shows its last four characters. Only the **host of the world** (or a server operator) can change the AI; friends who join can still set their own language and their helper's style.

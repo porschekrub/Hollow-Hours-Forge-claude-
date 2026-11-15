@@ -419,13 +419,13 @@ public class HelperScreen extends Screen {
     }
 
     boolean aiDirty() {
-        CompoundTag ai = d.getCompound("ai");
+        CompoundTag ai = d.getCompound("aiSetup");
         return fOn != ai.getBoolean("on") || !fProvider.equals(ai.getString("provider")) || !fModel.trim().equals(ai.getString("model")) || !fKey.isBlank()
                 || needsUrl() && !fUrl.trim().equals(ai.getString("url"));
     }
 
     void initAi() {
-        CompoundTag ai = d.getCompound("ai");
+        CompoundTag ai = d.getCompound("aiSetup");
         boolean admin = ai.getBoolean("admin");
         if (fProvider == null) {
             fProvider = ai.getString("provider");
@@ -522,7 +522,7 @@ public class HelperScreen extends Screen {
     }
 
     void drawAi(GuiGraphics g) {
-        CompoundTag ai = d.getCompound("ai");
+        CompoundTag ai = d.getCompound("aiSetup");
         int x = left + 8;
         String state = !ai.getBoolean("admin") ? "§7Only the world's host can change the AI"
                 : ai.getBoolean("ready") ? "§aAI on§7: " + ai.getString("provider") + " · " + ai.getString("modelUsed")

@@ -4,7 +4,7 @@ name: Build mods
 # with server and client smoke tests. Push a tag like "v2.0.0" (or a branch release/2.0.0) to publish a GitHub Release.
 on:
   push:
-    branches: [ "**", "!export-classpath", "!gen-voice", "!voice-out", "!promo", "!promo-out", "!neoforge-test", "!neoforge-out", "!export-classpath-121", "!export-classpath-fabric", "!forge-loot-check", "!ci-classpath-*", "!ports-logs-*" ]
+    branches: [ "**", "!helper/**", "!export-classpath", "!gen-voice", "!voice-out", "!promo", "!promo-out", "!neoforge-test", "!neoforge-out", "!export-classpath-121", "!export-classpath-fabric", "!forge-loot-check", "!ci-classpath-*", "!ports-logs-*" ]
     tags: [ "v*" ]
   pull_request:
   workflow_dispatch:
