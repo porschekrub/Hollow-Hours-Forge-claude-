@@ -180,7 +180,9 @@ public class PalConfigScreen extends Screen {
             int w = 160;
             if (val instanceof Boolean b) {
                 ForgeConfigSpec.ConfigValue<Boolean> c = (ForgeConfigSpec.ConfigValue<Boolean>) cv;
-                widget = CycleButton.onOffBuilder(b).displayOnlyValue().create(0, 0, w, 20, Component.empty(), (btn, v) -> c.set(v));
+                // its own ON / OFF: the game's would follow the game's language
+                widget = CycleButton.<Boolean>builder(v -> Component.literal(v ? "ON" : "OFF").withStyle(v ? ChatFormatting.GREEN : ChatFormatting.GRAY))
+                        .withValues(true, false).withInitialValue(b).displayOnlyValue().create(0, 0, w, 20, Component.empty(), (btn, v) -> c.set(v));
             } else if (CHOICES.containsKey(key) && val instanceof String s) {
                 ForgeConfigSpec.ConfigValue<String> c = (ForgeConfigSpec.ConfigValue<String>) cv;
                 List<String> opts = CHOICES.get(key);
