@@ -141,14 +141,25 @@ public final class VoiceTts {
                     .header("content-type", "application/json").header("x-goog-api-key", HBConfig.AI_KEY.get().trim())
                     .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
             AiBridge.client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).whenComplete((r, err) -> {
+                boolean retry = false;
+                String problem = null;
                 byte[] ulaw = null;
                 int rate = 24000;
                 if (err != null) HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
                 else if (r.statusCode() / 100 != 2) {
                     HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}, {}): {}", r.statusCode(), model, AiBridge.trim(r.body(), 300));
                     // that model is gone: the next one next time; out of quota or not allowed: quiet for a while
-                    if ((r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) modelTry++;
-                    else if (r.statusCode() == 429 || r.statusCode() == 403) pausedUntil = System.currentTimeMillis() + 10 * 60_000L;
+                    if ((r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) {
+                        modelTry++;
+                        retry = model() != null;
+                        if (!retry) problem = "nomodel";
+                    } else if (r.statusCode() == 429) {
+                        pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
+                        problem = "quota";
+                    } else if (r.statusCode() == 403 || r.statusCode() == 401) {
+                        pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
+                        problem = "key";
+                    } else problem = "other";
                 } else {
                     VoiceTts.model = model;
                     try {
@@ -175,12 +186,24 @@ public final class VoiceTts {
                 }
                 byte[] clip = ulaw;
                 int clipRate = rate;
+                boolean again = retry;
+                String why = problem;
+                if (err != null) why = "net";
+                String whyF = why;
                 server.execute(() -> {
                     BUSY.remove(hid);
                     ServerPlayer pl = server.getPlayerList().getPlayer(pid);
                     HelperEntity hh = Helpers.byUuid(server, hid);
                     if (pl == null || hh == null) return;
-                    if (clip == null) return;
+                    if (clip == null) {
+                        // that speech model is gone: the same line with the next one, at once
+                        if (again) {
+                            speak(pl, hh, text, style, cartoon);
+                            return;
+                        }
+                        tell(pl, whyF);
+                        return;
+                    }
                     synchronized (CACHE) {
                         CACHE.put(key, clip);
                     }
@@ -194,6 +217,29 @@ public final class VoiceTts {
             HelperBuddy.LOG.warn("[Helper Buddy] voice request could not be sent: {}", e.toString());
             return false;
         }
+    }
+
+    static long toldAt;
+
+    /** Why the helper is quiet, in grey, now and then (not on every line). */
+    static void tell(ServerPlayer p, @javax.annotation.Nullable String why) {
+        if (why == null || System.currentTimeMillis() - toldAt < 5 * 60_000L) return;
+        toldAt = System.currentTimeMillis();
+        String th = switch (why) {
+            case "quota" -> "โควตาเสียงพูดของ Gemini หมดชั่วคราว (key ฟรีทำเสียงได้น้อยกว่าแชตมาก) ตอนนี้ตอบเป็นข้อความไปก่อน อีกสักพักจะลองใหม่เอง";
+            case "key" -> "key นี้ใช้ทำเสียงพูดของ Gemini ไม่ได้ (ไม่มีสิทธิ์) ตอบเป็นข้อความอย่างเดียว";
+            case "nomodel" -> "หาโมเดลเสียงพูดของ Gemini ที่ key นี้ใช้ได้ไม่เจอ ตอบเป็นข้อความอย่างเดียว";
+            case "net" -> "ต่อบริการเสียงพูดไม่ติด ตอบเป็นข้อความไปก่อน";
+            default -> "ทำเสียงพูดไม่สำเร็จ (รายละเอียดใน logs/latest.log) ตอบเป็นข้อความไปก่อน";
+        };
+        String en = switch (why) {
+            case "quota" -> "Gemini's speech quota is used up for now (a free key gets far less speech than chat). Text only for a while, it tries again by itself";
+            case "key" -> "This key may not use Gemini's speech. Text only";
+            case "nomodel" -> "No Gemini speech model works with this key. Text only";
+            case "net" -> "The speech service could not be reached. Text only for now";
+            default -> "The voice could not be made (details in logs/latest.log). Text only for now";
+        };
+        p.sendSystemMessage(net.minecraft.network.chat.Component.literal("§8[voice] " + com.helperbuddy.talk.Say.t(p, th, en)));
     }
 
     static void send(ServerPlayer p, HelperEntity h, byte[] ulaw, int rate) {

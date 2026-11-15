@@ -62,8 +62,10 @@ public final class Voice {
         if (text.isEmpty() || text.startsWith("(")) return; // "(thinking...)"
         int style = Persona.of(h).ordinal();
         if (aiVoice()) {
-            // the real voice or nothing: when it can't be made right now (busy with the line before, no quota) it stays quiet
-            VoiceTts.speak(sp, h, text, style, cartoon());
+            // the real voice for answers to what the player said (a free key has little speech quota: lines it says on
+            // its own while working are not spent on it). When it can't be made it stays quiet and says why, now and then.
+            boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
+            if (reply || cartoon()) VoiceTts.speak(sp, h, text, style, cartoon());
             return;
         }
         if (m.equals("ai") || m.equals("cartoon")) return;
