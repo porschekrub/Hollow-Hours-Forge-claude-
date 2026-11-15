@@ -3,15 +3,27 @@
 
 | File / ไฟล์ | For / ใช้กับ |
 |---|---|
-| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.17.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
-| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.17.0.jar` | NeoForge 1.21.1 (21.1.x) |
-| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.17.0.jar` | Forge 1.21.1 (52.x) |
-| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.17.0.jar` | Fabric 1.20.1 + **Fabric API** |
-| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.17.0.jar` | Fabric 1.21.1 + **Fabric API** |
+| `hollowhours-forge-1.20.1-2.16.0.jar` · `helperbuddy-forge-1.20.1-2.18.0.jar` | Forge 1.20.1 (47.x) **and NeoForge 1.20.1** / และ NeoForge 1.20.1 |
+| `hollowhours-neoforge-1.21.1-2.16.0.jar` · `helperbuddy-neoforge-1.21.1-2.18.0.jar` | NeoForge 1.21.1 (21.1.x) |
+| `hollowhours-forge-1.21.1-2.16.0.jar` · `helperbuddy-forge-1.21.1-2.18.0.jar` | Forge 1.21.1 (52.x) |
+| `hollowhours-fabric-1.20.1-2.16.0.jar` · `helperbuddy-fabric-1.20.1-2.18.0.jar` | Fabric 1.20.1 + **Fabric API** |
+| `hollowhours-fabric-1.21.1-2.16.0.jar` · `helperbuddy-fabric-1.21.1-2.18.0.jar` | Fabric 1.21.1 + **Fabric API** |
 
 Hollow Hours = ghost horror / ผีสยองขวัญ · Helper Buddy = helper NPC / ผู้ช่วย. Everyone on a server needs the same jars. / ทุกคนในเซิร์ฟเวอร์ต้องใช้ไฟล์ชุดเดียวกัน
 
-**Helper Buddy 2.17.0 — a much smarter helper** (Hollow Hours stays 2.16.0)
+**Helper Buddy 2.18.0 — set up the AI inside the game** (Hollow Hours stays 2.16.0)
+- 🤖 **New "AI" page in the helper's menu** (right-click your helper → *AI*): turn the AI on, pick the provider (Gemini, OpenAI, Claude, OpenRouter, Groq, Ollama, or your own URL), paste the **API key**, pick the **model**, press *Save and test the AI*. The helper tries the AI at once and tells you in chat whether it works (and why not: wrong key, no such model, out of quota). After a save the arrows next to *Model* go through the models your key really has. No more editing the config file.
+  **หน้า "AI" ใหม่ในเมนูผู้ช่วย** (คลิกขวาที่ผู้ช่วย → *AI*): เปิด AI เลือกเจ้า (Gemini, OpenAI, Claude, OpenRouter, Groq, Ollama หรือ URL ของตัวเอง) วาง **API key** เลือก**โมเดล** แล้วกด *Save and test the AI* ผู้ช่วยจะลองต่อ AI ทันทีแล้วบอกในแชตว่าใช้ได้ไหม (ถ้าไม่ได้บอกสาเหตุ: key ผิด ไม่มีโมเดลนี้ โควตาหมด) หลังบันทึก ลูกศรข้างช่อง *Model* จะไล่ดูโมเดลที่ key ของคุณใช้ได้จริง ไม่ต้องแก้ไฟล์ config อีกแล้ว
+- 🔑 The key is typed hidden (*Show* to see it), is saved in `config/helperbuddy-common.toml` like before, and is never sent back to anyone's screen: the menu only shows its last four characters. Only the **host of the world** (or a server operator) can change the AI; friends who join can still set their own language and their helper's style.
+  key ถูกซ่อนตอนพิมพ์ (กด *Show* เพื่อดู) บันทึกในไฟล์ `config/helperbuddy-common.toml` เหมือนเดิม และไม่ถูกส่งกลับไปที่หน้าจอใครเลย เมนูโชว์แค่ 4 ตัวท้าย เฉพาะ**เจ้าของโลก** (หรือแอดมินเซิร์ฟเวอร์) เท่านั้นที่ตั้งค่า AI ได้ เพื่อนที่เข้ามาเล่นยังตั้งภาษาและสไตล์ผู้ช่วยของตัวเองได้
+- 🌐 **The language it speaks**: pick it on the same page (*Speaks: English*, Thai, Japanese, ... 25 languages, or *as I type*). **English is the default** now, also when you write to it in another language (Thai if your game is set to Thai). The built-in messages know English and Thai; other languages are spoken by the AI.
+  **ภาษาที่มันพูด**: เลือกได้ในหน้าเดียวกัน (*Speaks: English*, Thai, Japanese ... 25 ภาษา หรือ *as I type* = ตอบตามภาษาที่พิมพ์) **ค่าเริ่มต้นคืออังกฤษ** แม้จะพิมพ์ภาษาอื่นหา (เป็นไทยถ้าตั้งภาษาเกมเป็นไทย) ข้อความในตัวมีอังกฤษกับไทย ภาษาอื่น AI เป็นคนพูด
+- 🗣️ **The way it talks, in your own words**: type anything in *Style* ("sweet and polite", "like a pirate", "พูดหยาบๆ กูมึง", "พูดเพราะๆ ลงท้ายว่าเจ้าค่ะ") and save; empty = its normal way. The AI follows it in everything it says (it needs the AI to be on; without it the helper uses the closest of its own styles).
+  **ลักษณะการพูด พิมพ์เองได้**: พิมพ์อะไรก็ได้ในช่อง *Style* ("พูดเพราะๆ ลงท้ายว่าเจ้าค่ะ", "พูดหยาบๆ กูมึง", "like a pirate") แล้วกดบันทึก เว้นว่าง = แบบปกติของมัน AI จะพูดตามนั้นทุกประโยค (ต้องเปิด AI ถ้าไม่เปิดจะใช้สไตล์ในตัวที่ใกล้ที่สุด)
+- 🔊 The voice (auto / ai / cartoon / babble / off) has a button there too.
+  เสียง (auto / ai / cartoon / babble / off) มีปุ่มในหน้านั้นด้วย
+
+**Helper Buddy 2.17.0 — a much smarter helper**
 - 🧠 **"Get me anything"**: "go find soul sand", "soulsand pls", "get 4 ender pearls", "bring me 3 blaze rods", "I need an iron pickaxe". The helper works out where the thing comes from and goes: it mines, chops, digs, harvests, fishes, hunts the right monster, smelts and crafts (fetching the ingredients first), and **walks through a nether portal by itself** when the thing is only in the Nether. When there really is no way it tells you why, instead of looking for ever.
   **"หาอะไรก็ได้มาให้"**: "ไปหา soulsand", "หาทรายวิญญาณมาให้หน่อย", "ไปหาไข่มุกเอนเดอร์ 4", "เอาแท่งเบลซมา 3", "ทำอีเต้อเหล็กให้หน่อย" ผู้ช่วยคิดเองว่าของนั้นได้มาจากไหนแล้วไปเอา: ขุด ตัด เก็บเกี่ยว ตกปลา ล่ามอนสเตอร์ที่ดรอป ถลุง คราฟต์ (ไปหาวัตถุดิบก่อน) และ**เดินเข้าประตูเนเธอร์เอง**ถ้าของอยู่ในเนเธอร์ ถ้าทำไม่ได้จริงๆ จะบอกเหตุผล ไม่เดินหาไปเรื่อยๆ
 - 🔨 **Makes its own tools**: no pickaxe? It chops a little wood, makes a wooden one, then stone, then iron if the job needs it ("mine diamonds" with empty hands works). No more standing there asking for a pickaxe.

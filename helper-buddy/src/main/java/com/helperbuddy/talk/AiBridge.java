@@ -110,17 +110,73 @@ public final class AiBridge {
             return client().sendAsync(rb.build(), HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
                 if (r.statusCode() / 100 != 2) {
                     HelperBuddy.LOG.warn("[Helper Buddy] AI request failed ({}): {}", r.statusCode(), trim(r.body(), 300));
+                    lastError = r.statusCode() + " " + trim(r.body(), 200);
                     return (String) null;
                 }
+                lastError = "";
                 return parse(r.body(), anth);
             }).exceptionally(e -> {
                 HelperBuddy.LOG.warn("[Helper Buddy] AI request failed: {}", e.toString());
+                lastError = String.valueOf(e.getMessage() == null ? e : e.getMessage());
                 return null;
             });
         } catch (Exception e) {
             HelperBuddy.LOG.warn("[Helper Buddy] AI request could not be sent: {}", e.toString());
             return CompletableFuture.completedFuture(null);
         }
+    }
+
+    /** Why the last request failed ("401 ...", "timed out"), empty after one that worked. For the setup screen. */
+    public static volatile String lastError = "";
+
+    public static String providerName() {
+        return provider();
+    }
+
+    public static String modelName() {
+        return model();
+    }
+
+    /** The models the configured provider offers for chatting, asked from the provider itself (empty when it can't be asked). */
+    public static CompletableFuture<List<String>> listModels() {
+        try {
+            String prov = provider(), key = HBConfig.AI_KEY.get().trim();
+            HttpRequest.Builder rb;
+            if (prov.equals("gemini") && HBConfig.AI_URL.get().isBlank()) {
+                rb = HttpRequest.newBuilder(URI.create(geminiBase.replaceAll("/+$", "") + "?pageSize=200")).header("x-goog-api-key", key);
+            } else if (prov.equals("anthropic")) {
+                rb = HttpRequest.newBuilder(URI.create(url().replaceFirst("/messages$", "/models") + "?limit=100")).header("x-api-key", key).header("anthropic-version", "2023-06-01");
+            } else {
+                rb = HttpRequest.newBuilder(URI.create(url().replaceFirst("/chat/completions$", "/models")));
+                if (!key.isEmpty()) rb.header("authorization", "Bearer " + key);
+            }
+            return client().sendAsync(rb.timeout(Duration.ofSeconds(15)).GET().build(), HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
+                List<String> out = new java.util.ArrayList<>();
+                if (r.statusCode() / 100 != 2) return out;
+                try {
+                    JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
+                    JsonArray arr = o.has("models") ? o.getAsJsonArray("models") : o.getAsJsonArray("data");
+                    for (JsonElement e : arr) {
+                        JsonObject m = e.getAsJsonObject();
+                        String id = (m.has("id") ? m.get("id").getAsString() : m.get("name").getAsString()).replaceFirst("^models/", "");
+                        if (m.has("supportedGenerationMethods") && !m.get("supportedGenerationMethods").toString().contains("generateContent")) continue;
+                        if (chatModel(id) && !out.contains(id)) out.add(id);
+                        if (out.size() >= 80) break;
+                    }
+                } catch (Exception ex) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] the list of models could not be read: {}", ex.toString());
+                }
+                return out;
+            }).exceptionally(e -> new java.util.ArrayList<>());
+        } catch (Exception e) {
+            return CompletableFuture.completedFuture(new java.util.ArrayList<>());
+        }
+    }
+
+    /** A model to talk with (not one for speech, pictures, embeddings ...). */
+    static boolean chatModel(String id) {
+        String s = id.toLowerCase(Locale.ROOT);
+        return !s.matches(".*(tts|embed|image|imagen|veo|audio|realtime|transcri|whisper|dall-e|moderation|speech|rerank|guard|aqa|robotics|computer-use|live|lyria|sora|search-preview|instruct).*");
     }
 
     /** Gemini's own endpoint (base, model is appended); tests point it at a local fake server. */
@@ -155,8 +211,10 @@ public final class AiBridge {
             return client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).thenApply(r -> {
                 if (r.statusCode() / 100 != 2) {
                     HelperBuddy.LOG.warn("[Helper Buddy] {}", "AI request failed (" + r.statusCode() + "): " + trim(r.body(), 300));
+                    lastError = r.statusCode() + " " + trim(r.body(), 200);
                     return (String) null;
                 }
+                lastError = "";
                 try {
                     JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
                     StringBuilder sb = new StringBuilder();
@@ -173,6 +231,7 @@ public final class AiBridge {
                 }
             }).exceptionally(e -> {
                 HelperBuddy.LOG.warn("[Helper Buddy] {}", "AI request failed: " + e);
+                lastError = String.valueOf(e.getMessage() == null ? e : e.getMessage());
                 return null;
             });
         } catch (Exception e) {

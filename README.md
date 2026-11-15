@@ -114,8 +114,8 @@ With the Gemini key every line is read aloud in a real AI voice (`voiceMode` in 
   **ทำงาน** ได้ไม่จำกัดระยะ (หาแถวนี้ก่อน หมดแล้วไปไกลขึ้นเรื่อยๆ): ขุดแร่ (ขุดทางไปเอง) ตัดไม้ทั้งต้นและปลูกคืน เก็บบล็อกทุกชนิด ล่าสัตว์/เก็บผัก (ไม่ต้องเหลือสัตว์ไว้ผสมพันธุ์) ทำฟาร์ม ทำอาหาร คราฟต์และถลุงด้วยสูตรจริง หยิบของจากหีบ
 - **Menu**: right-click the helper (sneak + right-click = its bag). The *Command Book* orders your helpers from anywhere.
   **เมนู**: คลิกขวาที่ผู้ช่วย (ย่อ + คลิกขวา = กระเป๋า) *หนังสือสั่งงาน* สั่งผู้ช่วยได้จากทุกที่
-- **AI (optional)**: put a key in `config/helperbuddy-common.toml` (Gemini free key, OpenAI, Claude, or a local Ollama) and the helper understands any sentence, chats, and designs anything you ask it to build ("build a red car").
-  **AI (ไม่บังคับ)**: ใส่ key ในไฟล์ `config/helperbuddy-common.toml` แล้วผู้ช่วยจะเข้าใจทุกประโยค คุยได้ และออกแบบสิ่งก่อสร้างอะไรก็ได้
+- **AI (optional)**: right-click the helper → **AI** page: pick the provider (Gemini free key, OpenAI, Claude, OpenRouter, Groq, a local Ollama), paste the API key, pick a model, *Save and test*. The helper then understands any sentence, chats, and designs anything you ask it to build. On the same page: the language it speaks (English by default) and its way of talking in your own words.
+  **AI (ไม่บังคับ)**: คลิกขวาที่ผู้ช่วย → หน้า **AI**: เลือกเจ้า (Gemini มี key ฟรี, OpenAI, Claude, OpenRouter, Groq, Ollama ในเครื่อง) วาง API key เลือกโมเดล กด *Save and test* แล้วผู้ช่วยจะเข้าใจทุกประโยค คุยได้ และออกแบบสิ่งก่อสร้างอะไรก็ได้ หน้าเดียวกันตั้งภาษาที่มันพูด (เริ่มต้นอังกฤษ) และลักษณะการพูดแบบพิมพ์เองได้
 
 ---
 

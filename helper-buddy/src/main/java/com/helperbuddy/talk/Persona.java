@@ -35,7 +35,14 @@ public final class Persona {
 
     public static final Random R = new Random();
 
+    static final Pattern NOTE_RUDE = Pattern.compile("(หยาบ|กูมึง|ด่า|ปากหมา|ปากร้าย|กวนตีน|rude|swear|rough|vulgar|foul|insult|mean|savage|toxic)", Pattern.CASE_INSENSITIVE);
+    static final Pattern NOTE_SASSY = Pattern.compile("(กวน|แซว|ขี้เล่น|ตลก|ทะเล้น|sass|cheek|tease|funny|joke|playful|sarcas)", Pattern.CASE_INSENSITIVE);
+
     public static Style of(HelperEntity h) {
+        // a way of talking in the owner's own words: the AI follows it; the built-in lines take the closest of the three
+        String note = h.styleNote();
+        if (!note.isEmpty()) return NOTE_RUDE.matcher(note).find() && !note.matches(".*(ไม่|อย่า|ห้าม|no |not |never |don'?t ).{0,12}(หยาบ|ด่า|rude|swear).*") ? Style.RUDE
+                : NOTE_SASSY.matcher(note).find() ? Style.SASSY : Style.POLITE;
         String own = h.persona();
         String s = own == null || own.isEmpty() ? HBConfig.STYLE.get() : own;
         if (s.trim().equalsIgnoreCase("auto")) return mirror(h.owner());
@@ -44,6 +51,7 @@ public final class Persona {
 
     /** This helper talks the way its owner does (no style of its own, config talkStyle = auto). */
     public static boolean auto(HelperEntity h) {
+        if (!h.styleNote().isEmpty()) return false;
         String own = h.persona();
         return (own == null || own.isEmpty() ? HBConfig.STYLE.get() : own).trim().equalsIgnoreCase("auto");
     }

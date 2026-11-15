@@ -25,7 +25,7 @@ import java.util.UUID;
 
 /** The helper's menu: status, quick orders, jobs, the building designer, settings and a talk box. */
 public class HelperScreen extends Screen {
-    public static final String[] TABS = {"main", "jobs", "build", "settings", "talk"};
+    public static final String[] TABS = {"main", "jobs", "build", "settings", "talk", "ai"};
     CompoundTag d;
     String tab;
     int left, top;
@@ -93,7 +93,7 @@ public class HelperScreen extends Screen {
     protected void init() {
         left = (width - W) / 2;
         top = (height - H) / 2;
-        String[][] names = {{"หลัก", "Main"}, {"งาน", "Jobs"}, {"สร้าง", "Build"}, {"ตั้งค่า", "Settings"}, {"คุย", "Talk"}};
+        String[][] names = {{"หลัก", "Main"}, {"งาน", "Jobs"}, {"สร้าง", "Build"}, {"ตั้งค่า", "Settings"}, {"คุย", "Talk"}, {"AI", "AI"}};
         int tw = W / TABS.length;
         for (int i = 0; i < TABS.length; i++) {
             final String tb = TABS[i];
@@ -108,6 +108,7 @@ public class HelperScreen extends Screen {
             case "build" -> initBuild();
             case "settings" -> initSettings();
             case "talk" -> initTalk();
+            case "ai" -> initAi();
             default -> initMain();
         }
     }
@@ -389,6 +390,152 @@ public class HelperScreen extends Screen {
         }
     }
 
+    // ------------------------------------------------------------------ AI: which one, its key, the language and the way of talking
+    static final String[][] PROVIDER_NAMES = {{"gemini", "Gemini (Google)"}, {"openai", "OpenAI (ChatGPT)"}, {"anthropic", "Claude (Anthropic)"}, {"openrouter", "OpenRouter"},
+            {"groq", "Groq"}, {"ollama", "Ollama (on this PC)"}, {"custom", "Custom URL"}};
+    /** what is typed on the AI page (kept while the page is rebuilt; sent with "Save") */
+    String fProvider, fModel, fKey = "", fUrl, fStyle;
+    boolean fOn, showKey;
+    EditBox modelBox, keyBox, urlBox, styleBox;
+
+    static String providerName(String id) {
+        for (String[] p : PROVIDER_NAMES) if (p[0].equals(id)) return p[1];
+        return id;
+    }
+
+    boolean needsUrl() {
+        return "ollama".equals(fProvider) || "custom".equals(fProvider);
+    }
+
+    EditBox box(int x, int y, int w, String value, int max, String hint, java.util.function.Consumer<String> to, boolean editable) {
+        EditBox b = new EditBox(font, left + x, top + y, w, 20, Component.literal(hint));
+        b.setMaxLength(max);
+        b.setValue(value == null ? "" : value);
+        b.setHint(Component.literal("§8" + hint));
+        b.setResponder(to);
+        b.setEditable(editable);
+        addRenderableWidget(b);
+        return b;
+    }
+
+    boolean aiDirty() {
+        CompoundTag ai = d.getCompound("ai");
+        return fOn != ai.getBoolean("on") || !fProvider.equals(ai.getString("provider")) || !fModel.trim().equals(ai.getString("model")) || !fKey.isBlank()
+                || needsUrl() && !fUrl.trim().equals(ai.getString("url"));
+    }
+
+    void initAi() {
+        CompoundTag ai = d.getCompound("ai");
+        boolean admin = ai.getBoolean("admin");
+        if (fProvider == null) {
+            fProvider = ai.getString("provider");
+            fModel = ai.getString("model");
+            fUrl = ai.getString("url");
+            fOn = ai.getBoolean("on");
+            fStyle = ai.getString("style");
+        }
+        int y = 18;
+        btn(8, y, 98, "AI: " + (fOn ? "§aON" : "§7OFF"), "AI: " + (fOn ? "§aON" : "§7OFF"), b -> {
+            fOn = !fOn;
+            rebuildWidgets();
+        }).active = admin;
+        btn(110, y, 202, "Provider: §b" + providerName(fProvider), "Provider: §b" + providerName(fProvider), b -> {
+            int i = 0;
+            for (int k = 0; k < PROVIDER_NAMES.length; k++) if (PROVIDER_NAMES[k][0].equals(fProvider)) i = k;
+            fProvider = PROVIDER_NAMES[(i + 1) % PROVIDER_NAMES.length][0];
+            // another provider: its own models and its own key
+            fModel = "";
+            fKey = "";
+            fOn = true;
+            rebuildWidgets();
+        }).active = admin;
+        y += 24;
+        boolean same = fProvider.equals(ai.getString("provider"));
+        modelBox = box(52, y, 196, fModel, 120, same ? "default: " + ai.getString("modelUsed") : "empty = the provider's default", s -> fModel = s, admin);
+        List<String> models = new ArrayList<>();
+        if (same) for (net.minecraft.nbt.Tag m : ai.getList("models", 8)) models.add(m.getAsString());
+        for (int dir = -1; dir <= 1; dir += 2) {
+            final int step = dir;
+            btn(dir < 0 ? 252 : 284, y, 28, dir < 0 ? "<" : ">", dir < 0 ? "<" : ">", b -> {
+                if (models.isEmpty()) return;
+                int i = models.indexOf(fModel.trim());
+                fModel = models.get(Math.floorMod(i < 0 ? (step > 0 ? 0 : -1) : i + step, models.size()));
+                rebuildWidgets();
+            }).active = admin && !models.isEmpty();
+        }
+        y += 24;
+        String tail = ai.getString("keyTail");
+        keyBox = box(52, y, 196, fKey, 400, "ollama".equals(fProvider) ? "no key needed" : same && !tail.isEmpty() ? "saved .." + tail + " - type a new one" : "paste your API key here", s -> fKey = s, admin);
+        if (!showKey) keyBox.setFormatter((text, pos) -> net.minecraft.util.FormattedCharSequence.forward("*".repeat(text.length()), net.minecraft.network.chat.Style.EMPTY));
+        btn(252, y, 60, showKey ? "Hide" : "Show", showKey ? "Hide" : "Show", b -> {
+            showKey = !showKey;
+            rebuildWidgets();
+        });
+        y += 24;
+        urlBox = null;
+        if (needsUrl()) urlBox = box(52, y, 260, fUrl, 300, "ollama".equals(fProvider) ? "http://localhost:11434" : "https://.../v1", s -> fUrl = s, admin);
+        y += 24;
+        btn(8, y, 304, (aiDirty() ? "§e● " : "") + "Save and test the AI", (aiDirty() ? "§e● " : "") + "Save and test the AI", b -> {
+            CompoundTag a = new CompoundTag();
+            a.putBoolean("on", fOn);
+            a.putString("provider", fProvider);
+            a.putString("model", fModel.trim());
+            a.putString("url", fUrl == null ? "" : fUrl.trim());
+            if (!fKey.isBlank()) a.putString("key", fKey.trim());
+            fKey = "";
+            act("ai_save", a);
+        }).active = admin;
+        y += 26;
+        // the language it speaks to you, and its voice
+        String lang = ai.getString("lang");
+        int li = 0;
+        for (int k = 0; k < com.helperbuddy.net.AiSetup.LANGUAGES.length; k++) if (com.helperbuddy.net.AiSetup.LANGUAGES[k][0].equals(lang)) li = k;
+        final int cur = li;
+        for (int dir = -1; dir <= 1; dir += 2) {
+            final int step = dir;
+            btn(dir < 0 ? 8 : 138, y, 20, dir < 0 ? "<" : ">", dir < 0 ? "<" : ">", b -> {
+                CompoundTag a = new CompoundTag();
+                a.putString("code", com.helperbuddy.net.AiSetup.LANGUAGES[Math.floorMod(cur + step, com.helperbuddy.net.AiSetup.LANGUAGES.length)][0]);
+                act("ai_lang", a);
+            });
+        }
+        btn(30, y, 106, "Speaks: §b" + com.helperbuddy.net.AiSetup.LANGUAGES[li][1], "Speaks: §b" + com.helperbuddy.net.AiSetup.LANGUAGES[li][1], b -> {
+            CompoundTag a = new CompoundTag();
+            a.putString("code", com.helperbuddy.net.AiSetup.LANGUAGES[(cur + 1) % com.helperbuddy.net.AiSetup.LANGUAGES.length][0]);
+            act("ai_lang", a);
+        });
+        actBtn(162, y, 150, "Voice: §b" + ai.getString("voice"), "Voice: §b" + ai.getString("voice"), "ai_voice").active = admin;
+        y += 24;
+        styleBox = box(52, y, 260, fStyle, 200, "normal - or type e.g. \"sweet and polite\"", s -> fStyle = s, true);
+        y += 24;
+        btn(8, y, 150, "Save the way it talks", "Save the way it talks", b -> {
+            CompoundTag a = new CompoundTag();
+            a.putString("text", fStyle == null ? "" : fStyle.trim());
+            act("ai_style", a);
+        });
+        btn(162, y, 150, "Back to its normal way", "Back to its normal way", b -> {
+            fStyle = "";
+            CompoundTag a = new CompoundTag();
+            a.putString("text", "");
+            act("ai_style", a);
+        });
+    }
+
+    void drawAi(GuiGraphics g) {
+        CompoundTag ai = d.getCompound("ai");
+        int x = left + 8;
+        String state = !ai.getBoolean("admin") ? "§7Only the world's host can change the AI"
+                : ai.getBoolean("ready") ? "§aAI on§7: " + ai.getString("provider") + " · " + ai.getString("modelUsed")
+                : ai.getBoolean("on") ? "§eThe AI is on but has no API key yet" : "§7The AI is off (built-in brain: English and Thai)";
+        g.drawString(font, state, x, top + 5, 0xFFFFFF);
+        g.drawString(font, "§7Model", x, top + 48, 0xFFFFFF);
+        g.drawString(font, "§7API key", x, top + 72, 0xFFFFFF);
+        if (needsUrl()) g.drawString(font, "§7URL", x, top + 96, 0xFFFFFF);
+        else g.drawString(font, "gemini".equals(fProvider) ? "§8A free Gemini key: §7aistudio.google.com/apikey" : "§8Get the key from your account on the provider's website", x, top + 96, 0xFFFFFF);
+        g.drawString(font, "§7Style", x, top + 170, 0xFFFFFF);
+        g.drawString(font, "§8A style of your own needs the AI to be on.", x, top + 212, 0xFFFFFF);
+    }
+
     void sendTalk() {
         if (talkBox == null || talkBox.getValue().isBlank()) return;
         HBNet.toServer(new C2STalk(helperId(), helperUuid(), talkBox.getValue()));
@@ -424,6 +571,7 @@ public class HelperScreen extends Screen {
             case "main" -> drawMain(g);
             case "build" -> drawBuild(g);
             case "talk" -> drawTalk(g);
+            case "ai" -> drawAi(g);
             case "settings" -> {
             }
             default -> {

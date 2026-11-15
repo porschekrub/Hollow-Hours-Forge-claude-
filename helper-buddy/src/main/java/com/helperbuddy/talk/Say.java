@@ -21,14 +21,26 @@ public final class Say {
     /** The language a player told the helpers to speak ("th" / "en"), kept even when the memory is off. */
     static final Map<UUID, String> SPEAK = new HashMap<>();
 
-    /** "th", "en" or "" (the game's language). */
-    public static String speak(@Nullable Player p) {
+    /** What the player picked: "th", "en", a language's English name, "auto" (whatever they write in) or "" (nothing picked). */
+    public static String chosen(@Nullable Player p) {
         if (!(p instanceof ServerPlayer sp)) return "";
         String s = SPEAK.get(sp.getUUID());
         if (s == null) {
             s = Memory.on() && Memory.of(sp).lang != null ? Memory.of(sp).lang : "";
             SPEAK.put(sp.getUUID(), s);
         }
+        return s;
+    }
+
+    /**
+     * The language the helpers speak to this player: "th", "en", a language's English name, or "" = whatever language
+     * the player writes in. Nothing picked: the game's language (English, unless the game is set to Thai).
+     */
+    public static String speak(@Nullable Player p) {
+        if (!(p instanceof ServerPlayer)) return "";
+        String s = chosen(p);
+        if (s.equals("auto")) return "";
+        if (s.isEmpty()) return gameThai(p) ? "th" : "en";
         return s;
     }
 

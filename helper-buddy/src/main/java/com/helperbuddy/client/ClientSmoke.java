@@ -249,7 +249,7 @@ public final class ClientSmoke {
             if (t == 30) shot("menu_main");
             return t >= 32;
         });
-        for (String tab : new String[] {"jobs", "build", "settings", "talk"}) {
+        for (String tab : new String[] {"jobs", "build", "settings", "talk", "ai"}) {
             STEPS.add(t -> {
                 if (t == 0 && mc.screen instanceof HelperScreen hs) mc.setScreen(new HelperScreen(hs.data(), tab));
                 if (t == 12) shot("menu_" + tab);

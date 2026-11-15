@@ -102,9 +102,16 @@ public final class Actions {
             }
             case "skin" -> h.setSkin(h.skin() + 1);
             case "speed" -> h.setSpeedLevel((h.speedLevel() + 1) % 4);
+            case "ai_save" -> {
+                AiSetup.save(p, h, a);
+                return;
+            }
+            case "ai_voice" -> AiSetup.voice(p, h);
+            case "ai_lang" -> AiSetup.language(p, h, a.getString("code"));
+            case "ai_style" -> AiSetup.style(p, h, a.getString("text"));
             case "talkstyle" -> {
                 String[] order = {"auto", "polite", "sassy", "rude"};
-                String cur = com.helperbuddy.talk.Persona.auto(h) ? "auto" : com.helperbuddy.talk.Persona.of(h).id();
+                String cur = !h.styleNote().isEmpty() ? "rude" : com.helperbuddy.talk.Persona.auto(h) ? "auto" : com.helperbuddy.talk.Persona.of(h).id();
                 int i = java.util.Arrays.asList(order).indexOf(cur);
                 h.setPersona(order[(i + 1) % order.length]);
             }

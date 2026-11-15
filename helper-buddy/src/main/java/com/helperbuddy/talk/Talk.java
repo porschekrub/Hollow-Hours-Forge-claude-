@@ -1181,6 +1181,11 @@ public final class Talk {
 
     /** The helper's personality, for the AI. */
     static String personaForAi(HelperEntity h, ServerPlayer p) {
+        // the player wrote how it should talk: that is its whole personality, and every answer is said that way
+        if (!h.styleNote().isEmpty())
+            return "Personality and way of talking, set by the player, follow it closely in the reply language: \"" + h.styleNote().replace("\"", "'") + "\". "
+                    + "Because of this ALWAYS write a short \"reply\" in that way of talking, also when you give commands (one short sentence about what the helper is going to do). "
+                    + "Stay kind underneath: plain and helpful when the player is in trouble.";
         String auto = Persona.auto(h) ? " Mirror the player's own way of talking in this message (how formal, how short, which words for I and you)." : "";
         return switch (Persona.of(h)) {
             case POLITE -> "Personality: polite, warm and loyal (in Thai say ผม / คุณ and end with ครับ)." + auto;
@@ -1200,6 +1205,13 @@ public final class Talk {
                 + ", working speed: " + HelperEntity.SPEED_NAMES[h.speedLevel()][1] + ", outfit: " + h.outfitName(false) + ".";
         if (!h.settings.get("chatty")) me += " The player asked the helper to talk less: keep \"reply\" empty unless they asked a question.";
         return " " + personaForAi(h, p) + me + " " + Knowledge.forAi(p, h) + (mem.isEmpty() ? "" : " " + mem);
+    }
+
+    /** The AI was set up anew in the game: forget what failed with the old settings. */
+    public static void aiChanged() {
+        AI_FAIL_TOLD.clear();
+        HISTORY.clear();
+        VoiceTts.reset();
     }
 
     /** Recent conversation per helper, so the AI understands follow-ups ("more", "the other one", "yes"). */

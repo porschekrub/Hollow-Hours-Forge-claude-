@@ -127,6 +127,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     private String ownerName = "";
     /** "polite" / "sassy" / "rude", or "" = the config's style. */
     private String persona = "";
+    private String styleNote = "";
     public final Settings settings = new Settings();
     public final SimpleContainer bag = new SimpleContainer(36);
     private float xp;
@@ -209,6 +210,16 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
 
     public void setPersona(String p) {
         persona = p == null ? "" : p;
+        styleNote = "";
+    }
+
+    /** How it talks, in its owner's own words ("like a pirate", "พูดเพราะๆ ลงท้ายว่าเจ้าค่ะ"); empty = its normal way. */
+    public String styleNote() {
+        return styleNote;
+    }
+
+    public void setStyleNote(String s) {
+        styleNote = s == null ? "" : s.trim();
     }
 
     public String ownerName() {
@@ -630,6 +641,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         if (ownerId != null) t.putUUID("Owner", ownerId);
         t.putString("OwnerName", ownerName);
         t.putString("Persona", persona);
+        t.putString("StyleNote", styleNote);
         t.putString("HName", rawName());
         t.putString("Mode", mode().name());
         t.put("Settings", settings.save());
@@ -655,6 +667,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         if (t.hasUUID("Owner")) ownerId = t.getUUID("Owner");
         ownerName = t.getString("OwnerName");
         persona = t.getString("Persona");
+        styleNote = t.getString("StyleNote");
         setHelperName(t.getString("HName"));
         entityData.set(MODE, Mode.of(t.getString("Mode")).name());
         settings.load(t.getCompound("Settings"));

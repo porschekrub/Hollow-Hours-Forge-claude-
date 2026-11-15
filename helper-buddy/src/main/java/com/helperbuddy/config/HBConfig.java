@@ -58,6 +58,7 @@ public final class HBConfig {
         b.pop();
 
         b.comment("Optional real AI (understands any sentence, chats, designs custom buildings).",
+                "Easier: set all of this in the game, on the AI page of the helper's menu (right-click your helper).",
                 "Without it the built-in Thai/English brain is used. Providers: gemini (free key: aistudio.google.com), openai, anthropic, openrouter, groq, ollama, custom",
                 "custom = any OpenAI-compatible endpoint (set url).").push("ai");
         AI_ENABLED = b.comment("Turn the AI on (needs a key, except for ollama)").define("enabled", false);

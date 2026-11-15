@@ -51,6 +51,16 @@ public final class VoiceTts {
     static String model;
     static int modelTry;
 
+    /** New AI settings: the speech model is looked for again, a pause after a refused key is over. */
+    static void reset() {
+        model = null;
+        modelTry = 0;
+        pausedUntil = 0;
+        synchronized (CACHE) {
+            CACHE.clear();
+        }
+    }
+
     static String model() {
         if (model != null) return model;
         String m = HBConfig.VOICE_MODEL.get().trim().replaceFirst("^models/", "");

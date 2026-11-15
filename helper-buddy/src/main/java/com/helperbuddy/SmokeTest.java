@@ -217,6 +217,14 @@ public final class SmokeTest {
         // an ender pearl is hunted for
         com.helperbuddy.brain.Fetch.Result pearl = com.helperbuddy.brain.Fetch.plan(null, x, "minecraft:ender_pearl", 2, false, true);
         check(pearl.ok() && pearl.steps().get(0).task != null && pearl.steps().get(0).task.getString("kind").equals("slay"), "ender pearls are hunted for");
+        // a way of talking in the player's own words: the built-in lines take the closest style, a preset puts it back to normal
+        x.setStyleNote("พูดหยาบๆ กูมึง");
+        check(com.helperbuddy.talk.Persona.of(x) == com.helperbuddy.talk.Persona.Style.RUDE && !com.helperbuddy.talk.Persona.auto(x), "style note: rough");
+        x.setStyleNote("talk like a sweet old pirate");
+        check(com.helperbuddy.talk.Persona.of(x) == com.helperbuddy.talk.Persona.Style.POLITE, "style note: plain lines");
+        x.setPersona("auto");
+        check(x.styleNote().isEmpty() && com.helperbuddy.talk.Persona.auto(x), "style note cleared by a preset");
+        check(com.helperbuddy.net.AiSetup.LANGUAGES[0][0].equals("en") && com.helperbuddy.net.AiSetup.PROVIDERS.length == 7, "ai setup lists");
         x.discard();
     }
 
