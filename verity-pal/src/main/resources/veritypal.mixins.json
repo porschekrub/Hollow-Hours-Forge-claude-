@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.veritypal.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AiApiMixin",
+    "ConfigValueMixin",
+    "StoryToolsMixin",
+    "StoryVerityMixin",
+    "TtsPayloadMixin"
+  ],
+  "client": [
+    "TtsHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

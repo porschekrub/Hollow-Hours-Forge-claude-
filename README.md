@@ -119,6 +119,22 @@ With the Gemini key every line is read aloud in a real AI voice (`voiceMode` in 
 
 ---
 
+## 🙂 Verity Pal (add-on for Verity JE)
+An add-on for the **Verity JE** mod (CurseForge). Install Verity JE as usual (with GeckoLib and YetAnotherConfigLib), then add the
+`veritypal-forge-1.20.1-*.jar` from the Releases (tag `veritypal-v...`). Verity Pal changes nothing in Verity JE's files.
+แอดออนของมอด **Verity JE** ลง Verity JE ตามปกติก่อน แล้วใส่ไฟล์ `veritypal-forge-1.20.1-*.jar` จากหน้า Releases เพิ่ม ไม่ได้แก้ไฟล์ของ Verity JE เลย
+
+- เนื้อเรื่องสยองขวัญของ Verity JE **ปิดไว้ตั้งแต่แรก** (ไม่นับถอยหลัง ไม่กลายร่าง สัตว์ไม่หาย ไม่มืดสนิท ไม่มีวิดีโอ ไม่เตะออก) เปิดได้ที่ **Mods > Verity Pal > Config**
+- คุยไทย ฟังไทย พูดเป็นเสียงไทย (ใช้ Gemini: ใส่ key ฟรีจาก aistudio.google.com ในหน้า Config หรือใช้ Gemini เป็น AI ของ Verity JE)
+- นิสัยกวนตีนปรับได้ 0-3 มีอารมณ์ ไม่ช่วยบ้าง แกล้งบ้าง ดื้อ
+- ถามว่าอะไรอยู่ไหน บอกทิศ/ระยะ แล้วกลิ้งนำทางไป (สิ่งก่อสร้าง ไบโอม ของมอดอื่นด้วย)
+- รู้จักมอดอื่น ผีมาก็มุดดินหนี สร้างบ้านให้ นอนข้างเตียง เบื่อแล้วไปเดินเล่น เรียกชื่อแล้วโผล่มา
+- จำเราได้ทุกโลก (`config/veritypal-memory.json`) ชอบแต่ละคนไม่เท่ากัน เป็นเพื่อนกับผู้ช่วยของ Helper Buddy
+
+Push a branch `veritypal/x.y.z` to build, test (with the real Verity JE, downloaded from CurseForge in the workflow) and release it.
+
+---
+
 ## Building from source
 ```
 cd hollow-hours   # or helper-buddy

@@ -1,0 +1,86 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-forge-${minecraft_version}"
+}
+
+// -PanyJdk: build with whatever Java runs Gradle (17 or newer), still for Java 17
+if (project.hasProperty('anyJdk')) {
+    tasks.withType(JavaCompile).configureEach { options.release = 17 }
+} else {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+// Stand-ins for the few Verity JE classes this add-on calls (names and signatures only, no code of Verity's).
+// They are only compiled against and are never put in the jar: the real Verity JE mod is needed to play.
+sourceSets {
+    stubs {
+        java.srcDir 'src/stubs/java'
+    }
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+    // Verity Pal is tested on a real Forge install (the workflow), with the real Verity JE: no dev runs here.
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    // The AI library Verity JE ships inside its jar (@Tool / @P for the new things Verity can do)
+    compileOnly "dev.langchain4j:langchain4j-core:${langchain4j_version}"
+    compileOnly sourceSets.stubs.output
+}
+
+// the stubs see Minecraft and Forge the same way the mod does
+configurations {
+    stubsCompileClasspath.extendsFrom minecraft
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description, verity_version_range: verity_version_range
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'            : 'veritypal.mixins.json'
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xmaxerrs' << '2000'
+}

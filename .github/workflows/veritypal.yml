@@ -1,0 +1,209 @@
+name: Verity Pal (Forge 1.20.1, add-on for Verity JE)
+
+# Verity Pal on its own. Push a branch "veritypal/1.0.1" to build it, test it on a real Forge server and a real game
+# together with the real Verity JE (downloaded from CurseForge, never stored here), and publish a release
+# "veritypal-v1.0.1" with just Verity Pal's jar.
+on:
+  push:
+    branches: [ "veritypal/**" ]
+  workflow_dispatch:
+
+concurrency:
+  group: veritypal-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORGE: 1.20.1-47.4.8
+  # Verity JE 6.0.0 on CurseForge (file 9300987)
+  VERITY_FILE: "9300/987/verity-6.0.0.jar"
+  GECKOLIB: 4.8.4
+  YACL: 3.6.6+1.20.1-forge
+
+jobs:
+  build:
+    name: Build and test Verity Pal
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle (with cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        working-directory: verity-pal
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          for try in 1 2 3 4; do
+            ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log && break
+            grep -q "Server returned HTTP response code: 5\|Connection reset\|Read timed out\|timeout (\|Could not GET\|Could not HEAD\|Failed to provision\|sha256 Invalid\|Could not resolve\|Could not find" build.log && [ $try -lt 4 ] || exit 1
+            echo "download failed, trying again"; sleep 45
+          done
+          ls -la build/libs
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: veritypal-jar
+          path: verity-pal/build/libs/*.jar
+          if-no-files-found: error
+
+      - name: The other mods (cached)
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: veritypal-deps-${{ env.VERITY_FILE }}-${{ env.GECKOLIB }}-${{ env.YACL }}
+
+      - name: Download Verity JE, GeckoLib and YACL
+        run: |
+          mkdir -p deps
+          get() { [ -s "deps/$1" ] && return 0; for try in 1 2 3 4; do curl -sfL --retry 3 -o "deps/$1" "$2" && return 0; sleep 20; done; return 1; }
+          get verity.jar "https://mediafilez.forgecdn.net/files/$VERITY_FILE" || get verity.jar "https://edge.forgecdn.net/files/$VERITY_FILE"
+          get geckolib.jar "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/software/bernie/geckolib/geckolib-forge-1.20.1/$GECKOLIB/geckolib-forge-1.20.1-$GECKOLIB.jar"
+          get yacl.jar "https://maven.isxander.dev/releases/dev/isxander/yet-another-config-lib/$YACL/yet-another-config-lib-$YACL.jar"
+          ls -la deps
+          unzip -p deps/verity.jar META-INF/mods.toml | grep -m2 'version\|modId'
+
+      - name: Server test (real Forge server, real Verity JE, a fake AI)
+        run: |
+          python3 tools/veritypal/fake_ai.py 18787 $PWD/ai-requests.jsonl &
+          mkdir -p srv && cd srv
+          curl -sfL --retry 4 -o installer.jar "https://maven.minecraftforge.net/net/minecraftforge/forge/$FORGE/forge-$FORGE-installer.jar"
+          java -jar installer.jar --installServer > install.log 2>&1 || (tail -30 install.log; exit 1)
+          mkdir -p mods && cp ../deps/verity.jar ../deps/geckolib.jar mods/
+          cp ../verity-pal/build/libs/veritypal-*.jar mods/ && rm -f mods/*-sources.jar
+          ls mods
+          echo eula=true > eula.txt
+          printf "online-mode=false\nspawn-protection=0\ndifficulty=normal\nlevel-seed=veritypal\n" > server.properties
+          echo "-Xmx3G -Dveritypal.smoketest=true -Dveritypal.fakeai=http://127.0.0.1:18787/v1 -Dveritypal.testscary=minecraft:husk" > user_jvm_args.txt
+          timeout 1500 ./run.sh nogui > server-console.log 2>&1 || true
+          grep -a "Verity Pal\|VERITY PAL" logs/latest.log | grep -v "PROMPT" | tail -n 60 || true
+          grep -aq "VERITY PAL SMOKE OK" logs/latest.log || (tail -n 150 logs/latest.log; exit 1)
+
+      - name: What her AI was given
+        if: always()
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          try:
+              reqs = [json.loads(l) for l in open("ai-requests.jsonl", encoding="utf-8")]
+          except FileNotFoundError:
+              print("no AI requests"); sys.exit(0)
+          chats = [r for r in reqs if r["path"].endswith("/chat/completions")]
+          print(len(reqs), "requests,", len(chats), "chats")
+          if not chats:
+              sys.exit(0)
+          body = chats[0]["body"]
+          tools = [t["function"]["name"] for t in body.get("tools", [])]
+          print("tools:", tools)
+          system = next((m["content"] for m in body["messages"] if m["role"] == "system"), "")
+          print("system prompt:", len(system), "characters; verity_pal:", "<verity_pal>" in system, "; ThatMob:", "ThatMob" in system)
+          bad = [t for t in ["where_is", "guide_me_to", "build_house", "hide", "look_around", "remember_forever"] if t not in tools]
+          if bad or "<verity_pal>" not in system or "ThatMob" in system:
+              print("::error::Verity's AI did not get what Verity Pal gives her:", bad); sys.exit(1)
+          EOF
+
+      - name: Client test (real game, real Verity JE, screenshots)
+        if: always()
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1-mesa-dri mesa-utils > /dev/null
+          pgrep -f fake_ai.py > /dev/null || (python3 tools/veritypal/fake_ai.py 18787 $PWD/ai-requests.jsonl &)
+          curl -s -H "Authorization: Bearer ${{ github.token }}" https://api.github.com/repos/theorzr/portablemc/releases/latest > pmc-release.json
+          U=$(python3 -c "
+          import json; a=json.load(open('pmc-release.json')).get('assets', [])
+          ok=[x['browser_download_url'] for x in a if 'linux' in x['name'].lower() and 'x86_64' in x['name'] and x['name'].endswith('.tar.gz')]
+          print(ok[0] if ok else '')")
+          mkdir -p pmc && for try in 1 2 3 4; do curl -sL "$U" | tar xz -C pmc && break; sleep 20; done
+          PMC=$(find $PWD/pmc -type f -name portablemc | head -1); chmod +x $PMC
+          M=$PWD/mc; rm -rf $M; mkdir -p $M/mods $M/saves $M/config
+          cp deps/verity.jar deps/geckolib.jar deps/yacl.jar $M/mods/
+          cp verity-pal/build/libs/veritypal-*.jar $M/mods/ && rm -f $M/mods/*-sources.jar
+          cp -r srv/world $M/saves/smoke && rm -f $M/saves/smoke/session.lock
+          printf "onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:6\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nnarrator:0\nguiScale:2\nlang:th_th\n" > $M/options.txt
+          printf "earlyWindowControl = false\n" > $M/config/fml.toml
+          export LIBGL_ALWAYS_SOFTWARE=1
+          P="-Dveritypal.clientsmoke=true,-Dveritypal.geminibase=http://127.0.0.1:18787/v1beta/models/,-Dveritypal.geminikey=test,-Dveritypal.testscary=minecraft:husk,-Xmx3G"
+          for try in 1 2 3; do
+            rm -f $M/logs/latest.log
+            timeout 2400 xvfb-run -a -s "-screen 0 1280x800x24" $PMC --main-dir $PWD/pmc-main start --mc-dir $M forge::$FORGE -u Dev --join-world smoke --resolution 960x540 \
+                --jvm-arg=$P > prod-client.log 2>&1 || true
+            [ -f $M/logs/latest.log ] && break
+            echo "the game did not start (downloads?), trying again"; sleep 30
+          done
+          grep -a "Loading version\|forge" prod-client.log | head -3
+          cp $M/logs/latest.log client-latest.log || true
+          mkdir -p screenshots && cp $M/screenshots/*.png screenshots/ 2>/dev/null || true
+          grep -a "Verity Pal" client-latest.log | tail -n 40 || tail -n 80 prod-client.log
+          grep -aq "CLIENT SMOKE OK" client-latest.log || (tail -n 120 client-latest.log; exit 1)
+
+      - name: Publish logs to the ci-logs-veritypal branch (readable without downloading artifacts)
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          set +e
+          D=/tmp/ci-logs/veritypal
+          mkdir -p $D
+          cp verity-pal/build.log $D/ 2>/dev/null
+          cp srv/logs/latest.log $D/server.log 2>/dev/null
+          cp srv/server-console.log srv/install.log $D/ 2>/dev/null
+          cp client-latest.log prod-client.log ai-requests.jsonl $D/ 2>/dev/null
+          cp -r srv/crash-reports $D/ 2>/dev/null
+          cp -r mc/crash-reports $D/client-crash-reports 2>/dev/null
+          pip install --quiet --break-system-packages pillow 2>/dev/null
+          python3 tools/shots.py screenshots $D/screenshots
+          echo "${{ github.sha }} ${{ job.status }}" > $D/STATUS
+          cd $D
+          git init -q
+          git checkout -q -b ci-logs-veritypal
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "logs for ${{ github.sha }}"
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs-veritypal && break
+            sleep $((i * 10))
+          done
+          exit 0
+
+  release:
+    name: Publish the Verity Pal release
+    if: needs.build.result == 'success' && startsWith(github.ref, 'refs/heads/veritypal/')
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download jar
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          name: veritypal-jar
+
+      - name: Release name
+        id: tag
+        run: |
+          echo "tag=veritypal-v${GITHUB_REF_NAME#veritypal/}" >> "$GITHUB_OUTPUT"
+          rm -f dist/*-sources.jar
+          ls -la dist
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Verity Pal ${{ steps.tag.outputs.tag }} (Forge 1.20.1, needs Verity JE)
+          body_path: .github/veritypal-release-notes.md
+          files: dist/*.jar
+          fail_on_unmatched_files: true
