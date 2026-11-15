@@ -1,0 +1,44 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Java: 17.0.21, JVM: 17.0.21+9 (Eclipse Adoptium), Arch: amd64
+
+> Task :compileStubsJava
+> Task :processStubsResources NO-SOURCE
+> Task :stubsClasses
+
+> Task :compileJava
+/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/verity-pal/src/main/java/com/veritypal/client/ClientSetup.java:14: warning: [removal] get() in ModLoadingContext has been deprecated and marked for removal
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                         ^
+/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/verity-pal/src/main/java/com/veritypal/VerityPal.java:139: warning: [removal] ResourceLocation(String) in ResourceLocation has been deprecated and marked for removal
+        return new ResourceLocation(id);
+               ^
+/home/runner/work/Hollow-Hours-Forge-claude-/Hollow-Hours-Forge-claude-/verity-pal/src/main/java/com/veritypal/VerityPal.java:143: warning: [removal] ResourceLocation(String,String) in ResourceLocation has been deprecated and marked for removal
+        return new ResourceLocation(ns, path);
+               ^
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+3 warnings
+
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :downloadMcpConfig
+> Task :extractSrg
+> Task :createMcpToSrg
+> Task :reobfJar
+> Task :jarJar SKIPPED
+> Task :reobfJarJar SKIPPED
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1794742699252.json
+
+BUILD SUCCESSFUL in 21s
+8 actionable tasks: 8 executed
