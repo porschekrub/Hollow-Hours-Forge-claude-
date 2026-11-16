@@ -9,15 +9,32 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-java@v4
         with:
-          python-version: '3.11'
+          distribution: temurin
+          java-version: 17
       - run: |
           sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
-          pip install -q sherpa-onnx numpy
+          V=1.13.7
+          for j in sherpa-onnx-jvm sherpa-onnx-native-lib-linux-x64; do curl -sL -o $j.jar https://github.com/k2-fsa/sherpa-onnx/releases/download/v$V/$j-$V.jar; done
           curl -sL -o k.tar.bz2 https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2
           tar xjf k.tar.bz2
-      - run: mkdir -p out && SID=0 python tools/gen_narration_hb.py out kitten-nano-en-v0_8-int8 2>&1 | tee out/log.txt
+          javac -cp sherpa-onnx-jvm.jar -d cls tools/Narrate.java
+      - run: |
+          mkdir -p out
+          java -cp "cls:sherpa-onnx-jvm.jar:sherpa-onnx-native-lib-linux-x64.jar" Narrate kitten-nano-en-v0_8-int8 out 0 tools/narration_hb.txt 2>&1 | tee out/log.txt
+          python3 - <<'PY'
+          import json, subprocess
+          lines = open("tools/narration_hb.txt").read().strip().split("\n")
+          meta = []
+          for i, t in enumerate(lines):
+              raw, out = f"out/raw_{i}.wav", f"out/n_{i}.wav"
+              subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", "aresample=44100,highpass=f=60,acompressor=threshold=-18dB:ratio=3,volume=1.4,alimiter=limit=0.95", "-ac", "1", out], check=True)
+              d = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out]))
+              meta.append({"text": t, "seconds": round(d, 2)})
+          json.dump(meta, open("out/lines.json", "w"), indent=1)
+          print(meta)
+          PY
       - run: |
           cd out && git init -q && git checkout -q -b narration-hb-out && git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm narration
