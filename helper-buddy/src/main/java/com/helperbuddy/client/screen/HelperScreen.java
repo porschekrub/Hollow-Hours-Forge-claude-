@@ -25,7 +25,7 @@ import java.util.UUID;
 
 /** The helper's menu: status, quick orders, jobs, the building designer, settings and a talk box. */
 public class HelperScreen extends Screen {
-    public static final String[] TABS = {"main", "jobs", "build", "settings", "talk", "ai"};
+    public static final String[] TABS = {"main", "jobs", "build", "settings", "talk", "ai", "voice"};
     CompoundTag d;
     String tab;
     int left, top;
@@ -93,7 +93,7 @@ public class HelperScreen extends Screen {
     protected void init() {
         left = (width - W) / 2;
         top = (height - H) / 2;
-        String[][] names = {{"หลัก", "Main"}, {"งาน", "Jobs"}, {"สร้าง", "Build"}, {"ตั้งค่า", "Settings"}, {"คุย", "Talk"}, {"AI", "AI"}};
+        String[][] names = {{"หลัก", "Main"}, {"งาน", "Jobs"}, {"สร้าง", "Build"}, {"ตั้งค่า", "Settings"}, {"คุย", "Talk"}, {"AI", "AI"}, {"เสียง", "Voice"}};
         int tw = W / TABS.length;
         for (int i = 0; i < TABS.length; i++) {
             final String tb = TABS[i];
@@ -109,6 +109,8 @@ public class HelperScreen extends Screen {
             case "settings" -> initSettings();
             case "talk" -> initTalk();
             case "ai" -> initAi();
+            case "voice" -> initVoice();
+            case "ollama" -> initOllama();
             default -> initMain();
         }
     }
@@ -404,7 +406,7 @@ public class HelperScreen extends Screen {
     }
 
     boolean needsUrl() {
-        return "ollama".equals(fProvider) || "custom".equals(fProvider);
+        return "custom".equals(fProvider);
     }
 
     EditBox box(int x, int y, int w, String value, int max, String hint, java.util.function.Consumer<String> to, boolean editable) {
@@ -465,12 +467,22 @@ public class HelperScreen extends Screen {
         }
         y += 24;
         String tail = ai.getString("keyTail");
-        keyBox = box(52, y, 196, fKey, 400, "ollama".equals(fProvider) ? "no key needed" : same && !tail.isEmpty() ? "saved .." + tail + " - type a new one" : "paste your API key here", s -> fKey = s, admin);
-        if (!showKey) keyBox.setFormatter((text, pos) -> net.minecraft.util.FormattedCharSequence.forward("*".repeat(text.length()), net.minecraft.network.chat.Style.EMPTY));
-        btn(252, y, 60, showKey ? "Hide" : "Show", showKey ? "Hide" : "Show", b -> {
-            showKey = !showKey;
-            rebuildWidgets();
-        });
+        keyBox = null;
+        if ("ollama".equals(fProvider)) {
+            // a local AI: no key, but it has to be installed and have a model
+            btn(8, y, 304, "§bLocal AI setup§r: install Ollama, download a model >", "§bLocal AI setup§r: install Ollama, download a model >", b -> {
+                tab = "ollama";
+                act("ollama", tagOf("what", "refresh"));
+                rebuildWidgets();
+            }).active = admin;
+        } else {
+            keyBox = box(52, y, 196, fKey, 400, "ollama".equals(fProvider) ? "no key needed" : same && !tail.isEmpty() ? "saved .." + tail + " - type a new one" : "paste your API key here", s -> fKey = s, admin);
+            if (!showKey) keyBox.setFormatter((text, pos) -> net.minecraft.util.FormattedCharSequence.forward("*".repeat(text.length()), net.minecraft.network.chat.Style.EMPTY));
+            btn(252, y, 60, showKey ? "Hide" : "Show", showKey ? "Hide" : "Show", b -> {
+                showKey = !showKey;
+                rebuildWidgets();
+            });
+        }
         y += 24;
         urlBox = null;
         if (needsUrl()) urlBox = box(52, y, 260, fUrl, 300, "ollama".equals(fProvider) ? "http://localhost:11434" : "https://.../v1", s -> fUrl = s, admin);
@@ -504,7 +516,10 @@ public class HelperScreen extends Screen {
             a.putString("code", com.helperbuddy.net.AiSetup.LANGUAGES[(cur + 1) % com.helperbuddy.net.AiSetup.LANGUAGES.length][0]);
             act("ai_lang", a);
         });
-        actBtn(162, y, 150, "Voice: §b" + ai.getString("voice"), "Voice: §b" + ai.getString("voice"), "ai_voice").active = admin;
+        btn(162, y, 150, "Voice: §b" + nameOf(SOURCE_NAMES, ai.getString("voice")).replace(" (free, on this PC)", "") + " §7>", "Voice: §b" + nameOf(SOURCE_NAMES, ai.getString("voice")).replace(" (free, on this PC)", "") + " §7>", b -> {
+            tab = "voice";
+            rebuildWidgets();
+        });
         y += 24;
         styleBox = box(52, y, 260, fStyle, 200, "normal - or type e.g. \"sweet and polite\"", s -> fStyle = s, true);
         y += 24;
@@ -529,11 +544,212 @@ public class HelperScreen extends Screen {
                 : ai.getBoolean("on") ? "§eThe AI is on but has no API key yet" : "§7The AI is off (built-in brain: English and Thai)";
         g.drawString(font, state, x, top + 5, 0xFFFFFF);
         g.drawString(font, "§7Model", x, top + 48, 0xFFFFFF);
-        g.drawString(font, "§7API key", x, top + 72, 0xFFFFFF);
+        if (!"ollama".equals(fProvider)) g.drawString(font, "§7API key", x, top + 72, 0xFFFFFF);
         if (needsUrl()) g.drawString(font, "§7URL", x, top + 96, 0xFFFFFF);
         else g.drawString(font, "gemini".equals(fProvider) ? "§8A free Gemini key: §7aistudio.google.com/apikey" : "§8Get the key from your account on the provider's website", x, top + 96, 0xFFFFFF);
         g.drawString(font, "§7Style", x, top + 170, 0xFFFFFF);
         g.drawString(font, "§8A style of your own needs the AI to be on.", x, top + 212, 0xFFFFFF);
+    }
+
+    static CompoundTag tagOf(String... kv) {
+        CompoundTag t = new CompoundTag();
+        for (int i = 0; i + 1 < kv.length; i += 2) t.putString(kv[i], kv[i + 1]);
+        return t;
+    }
+
+    int ticks;
+
+    @Override
+    public void tick() {
+        super.tick();
+        ticks++;
+        // the local AI page follows what Ollama is doing
+        if ("ollama".equals(tab) && ticks % (d.getCompound("ollama").getBoolean("busy") ? 10 : 40) == 0) act("ollama", tagOf("what", "refresh"));
+    }
+
+    // ------------------------------------------------------------------ voice: where it comes from, this helper's voice, the AI voice
+    static final String[][] SOURCE_NAMES = {{"mod", "Mod voice (free, on this PC)"}, {"ai", "AI voice for answers"}, {"cartoon", "AI voice, cartoon"},
+            {"babble", "Babble sounds"}, {"off", "No voice"}};
+    static final String[][] VOICE_PROVIDERS = {{"same", "Same as the AI"}, {"gemini", "Gemini"}, {"openai", "OpenAI"}, {"openrouter", "OpenRouter"},
+            {"groq", "Groq (English)"}, {"ollama", "Ollama (Mac)"}, {"custom", "Custom URL"}};
+    String vProvider, vKey = "", vModel, vName;
+    boolean vShow;
+
+    static String nameOf(String[][] list, String id) {
+        for (String[] r : list) if (r[0].equals(id)) return r[1];
+        return id;
+    }
+
+    void initVoice() {
+        CompoundTag v = d.getCompound("voiceSetup");
+        boolean admin = v.getBoolean("admin");
+        if (vProvider == null) {
+            vProvider = v.getString("provider").isEmpty() ? "same" : v.getString("provider");
+            vModel = v.getString("model");
+            vName = v.getString("name");
+        }
+        int y = 16;
+        btn(8, y, 304, "Voice: §b" + nameOf(SOURCE_NAMES, v.getString("source")), "Voice: §b" + nameOf(SOURCE_NAMES, v.getString("source")), b -> act("voice_source")).active = admin;
+        y += 24;
+        for (int dir = -1; dir <= 1; dir += 2) {
+            final int step = dir;
+            btn(dir < 0 ? 8 : 182, y, 20, dir < 0 ? "<" : ">", dir < 0 ? "<" : ">", b -> {
+                CompoundTag a = new CompoundTag();
+                a.putInt("step", step);
+                act("voice_pick", a);
+            });
+        }
+        btn(30, y, 150, "This helper: §b" + v.getString("modVoiceName"), "This helper: §b" + v.getString("modVoiceName"), b -> {
+            CompoundTag a = new CompoundTag();
+            a.putInt("step", 1);
+            act("voice_pick", a);
+        });
+        btn(206, y, 106, "Listen", "Listen", b -> act("voice_test", new CompoundTag()));
+        y += 24;
+        boolean thaiReady = com.helperbuddy.client.LocalVoice.thaiReady();
+        btn(8, y, 304, thaiReady ? "§aThai voice: ready" : "Thai voice: download now (108 MB, once)", thaiReady ? "§aThai voice: ready" : "Thai voice: download now (108 MB, once)", b -> {
+            com.helperbuddy.client.LocalVoice.startThaiDownload();
+            rebuildWidgets();
+        }).active = !thaiReady;
+        y += 30;
+        // the AI voice
+        btn(52, y, 260, "§b" + nameOf(VOICE_PROVIDERS, vProvider) + ("same".equals(vProvider) ? "§7 (" + v.getString("brain") + ")" : ""),
+                "§b" + nameOf(VOICE_PROVIDERS, vProvider) + ("same".equals(vProvider) ? "§7 (" + v.getString("brain") + ")" : ""), b -> {
+                    int i = 0;
+                    for (int k = 0; k < VOICE_PROVIDERS.length; k++) if (VOICE_PROVIDERS[k][0].equals(vProvider)) i = k;
+                    vProvider = VOICE_PROVIDERS[(i + 1) % VOICE_PROVIDERS.length][0];
+                    vKey = "";
+                    vModel = "";
+                    vName = "";
+                    rebuildWidgets();
+                }).active = admin;
+        y += 24;
+        boolean sameP = vProvider.equals(v.getString("provider").isEmpty() ? "same" : v.getString("provider"));
+        String tail = v.getString("keyTail");
+        EditBox kb = box(52, y, 196, vKey, 400, sameP && !tail.isEmpty() ? "saved .." + tail + " - type a new one" : "empty = the AI's key", s -> vKey = s, admin);
+        if (!vShow) kb.setFormatter((text, pos) -> net.minecraft.util.FormattedCharSequence.forward("*".repeat(text.length()), net.minecraft.network.chat.Style.EMPTY));
+        btn(252, y, 60, vShow ? "Hide" : "Show", vShow ? "Hide" : "Show", b -> {
+            vShow = !vShow;
+            rebuildWidgets();
+        });
+        y += 24;
+        box(52, y, 126, vModel, 120, "model: default", s -> vModel = s, admin);
+        box(186, y, 126, vName, 60, "voice: one per helper", s -> vName = s, admin);
+        y += 24;
+        btn(8, y, 304, "Save and try the AI voice", "Save and try the AI voice", b -> {
+            CompoundTag a = new CompoundTag();
+            a.putString("provider", vProvider);
+            a.putString("key", vKey.trim());
+            a.putString("model", vModel.trim());
+            a.putString("name", vName.trim());
+            vKey = "";
+            act("voice_save", a);
+        }).active = admin;
+    }
+
+    void drawVoice(GuiGraphics g) {
+        CompoundTag v = d.getCompound("voiceSetup");
+        int x = left + 8;
+        String src = v.getString("source");
+        String state = switch (src) {
+            case "mod" -> "§aIts own voice§7: made on this computer, free, no key";
+            case "ai", "cartoon" -> v.getBoolean("ready") ? "§aAI voice§7 (" + v.getString("used") + ") for answers, the rest in its own voice" : "§eAI voice picked, but not set up§7: it uses its own voice";
+            case "babble" -> "§7Babble sounds";
+            default -> "§7No voice";
+        };
+        g.drawString(font, state, x, top + 4, 0xFFFFFF);
+        g.drawString(font, "§7AI voice (needs a key; for answers when Voice is an AI voice)", x, top + 104, 0xFFFFFF);
+        g.drawString(font, "§7Service", x, top + 120, 0xFFFFFF);
+        g.drawString(font, "§7Key", x, top + 144, 0xFFFFFF);
+        g.drawString(font, "§7Model", x, top + 168, 0xFFFFFF);
+        String last = v.getString("last");
+        g.drawString(font, last.isEmpty() ? "§8Claude and Mistral have no voice. Groq / Ollama speak no Thai." : last.equals("ok") ? "§8Last try: it spoke" : "§8Last try: " + last,
+                x, top + 214, 0xFFFFFF);
+    }
+
+    // ------------------------------------------------------------------ local AI (Ollama)
+    int recPage;
+
+    void initOllama() {
+        CompoundTag o = d.getCompound("ollama");
+        boolean admin = d.getCompound("aiSetup").getBoolean("admin");
+        boolean busy = o.getBoolean("busy"), running = o.getBoolean("running"), installed = !o.getString("exe").isEmpty();
+        int y = 16;
+        if (!installed) btn(8, y, 110, "Install Ollama", "Install Ollama", b -> act("ollama", tagOf("what", "install"))).active = admin && !busy && o.getBoolean("canInstall");
+        else if (!running) btn(8, y, 110, "Start Ollama", "Start Ollama", b -> act("ollama", tagOf("what", "start"))).active = admin && !busy;
+        else btn(8, y, 110, "Stop Ollama", "Stop Ollama", b -> act("ollama", tagOf("what", "stop"))).active = admin && !busy;
+        btn(122, y, 110, "Remove Ollama", "Remove Ollama", b -> act("ollama", tagOf("what", "remove"))).active = admin && !busy && o.getBoolean("ours");
+        btn(236, y, 76, "< Back", "< Back", b -> {
+            tab = "ai";
+            rebuildWidgets();
+        });
+        if (busy) btn(252, 36, 60, "Cancel", "Cancel", b -> act("ollama", tagOf("what", "cancel")));
+        // the models it has
+        net.minecraft.nbt.ListTag ms = o.getList("models", 10);
+        String using = o.getString("using");
+        int yy = 66;
+        for (int i = 0; i < Math.min(3, ms.size()); i++) {
+            CompoundTag m = ms.getCompound(i);
+            String name = m.getString("name");
+            boolean on = name.equals(using);
+            btn(178, yy, 66, on ? "§aIn use" : "Use", on ? "§aIn use" : "Use", b -> act("ollama", tagOf("what", "use", "model", name))).active = admin && !on && !busy;
+            btn(248, yy, 64, "Delete", "Delete", b -> act("ollama", tagOf("what", "delete", "model", name))).active = admin && !busy;
+            yy += 20;
+        }
+        // models to download
+        int per = 3, pages = (Ollama_RECOMMENDED.length + per - 1) / per;
+        recPage = Math.floorMod(recPage, pages);
+        yy = 142;
+        for (int i = recPage * per; i < Math.min(Ollama_RECOMMENDED.length, recPage * per + per); i++) {
+            String name = Ollama_RECOMMENDED[i][0];
+            boolean have = false;
+            for (int k = 0; k < ms.size(); k++) if (ms.getCompound(k).getString("name").equals(name) || ms.getCompound(k).getString("name").equals(name + ":latest")) have = true;
+            btn(232, yy, 80, have ? "§aDownloaded" : "Download", have ? "§aDownloaded" : "Download", b -> act("ollama", tagOf("what", "pull", "model", name))).active = admin && !busy && !have;
+            yy += 22;
+        }
+        btn(8, 208, 40, "<", "<", b -> {
+            recPage--;
+            rebuildWidgets();
+        });
+        btn(52, 208, 40, ">", ">", b -> {
+            recPage++;
+            rebuildWidgets();
+        });
+    }
+
+    static final String[][] Ollama_RECOMMENDED = com.helperbuddy.ai.Ollama.RECOMMENDED;
+
+    void drawOllama(GuiGraphics g) {
+        CompoundTag o = d.getCompound("ollama");
+        int x = left + 8;
+        boolean running = o.getBoolean("running"), installed = !o.getString("exe").isEmpty();
+        String state = running ? "§aOllama is running§7 " + o.getString("version") + (o.getBoolean("ours") ? " (installed by Helper Buddy)" : "")
+                : installed ? "§eOllama is installed but not running" : o.getBoolean("canInstall") ? "§7Ollama is not installed (about 1.5 GB on Windows)" : "§7Linux: install Ollama from ollama.com/download, then come back";
+        g.drawString(font, state, x, top + 4, 0xFFFFFF);
+        String job = o.getString("job"), err = o.getString("error"), done = o.getString("done");
+        float pr = o.getFloat("progress");
+        if (!job.isEmpty()) {
+            g.drawString(font, "§e" + job, x, top + 40, 0xFFFFFF);
+            if (pr >= 0) {
+                g.fill(x, top + 51, x + 236, top + 55, 0xFF303840);
+                g.fill(x, top + 51, x + (int) (236 * Math.min(1f, pr)), top + 55, 0xFF40C060);
+            }
+        } else if (!err.isEmpty()) g.drawString(font, "§c" + (err.length() > 52 ? err.substring(0, 52) + "..." : err), x, top + 40, 0xFFFFFF);
+        else if (!done.isEmpty()) g.drawString(font, "§a" + done, x, top + 40, 0xFFFFFF);
+        net.minecraft.nbt.ListTag ms = o.getList("models", 10);
+        g.drawString(font, "§7Your models" + (ms.isEmpty() ? (running ? ": none yet, download one below" : "") : ""), x, top + 58, 0xFFFFFF);
+        for (int i = 0; i < Math.min(3, ms.size()); i++) {
+            CompoundTag m = ms.getCompound(i);
+            g.drawString(font, "§f" + m.getString("name") + " §8" + m.getString("size"), x, top + 72 + i * 20, 0xFFFFFF);
+        }
+        g.drawString(font, "§7Download a model (small ones answer faster, big ones are smarter)", x, top + 132, 0xFFFFFF);
+        int per = 3;
+        for (int i = recPage * per, row = 0; i < Math.min(Ollama_RECOMMENDED.length, recPage * per + per); i++, row++) {
+            String note = Ollama_RECOMMENDED[i][1];
+            g.drawString(font, "§f" + Ollama_RECOMMENDED[i][0], x, top + 144 + row * 22, 0xFFFFFF);
+            g.drawString(font, "§8" + font.plainSubstrByWidth(note, 222), x, top + 154 + row * 22, 0xFFFFFF);
+        }
+        g.drawString(font, "§8Runs on this computer: no key, no limits, needs a good graphics card", x + 92, top + 214, 0xFFFFFF);
     }
 
     void sendTalk() {
@@ -572,6 +788,8 @@ public class HelperScreen extends Screen {
             case "build" -> drawBuild(g);
             case "talk" -> drawTalk(g);
             case "ai" -> drawAi(g);
+            case "voice" -> drawVoice(g);
+            case "ollama" -> drawOllama(g);
             case "settings" -> {
             }
             default -> {

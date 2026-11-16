@@ -11,7 +11,8 @@ public final class HBConfig {
     public static final ForgeConfigSpec.DoubleValue WORK_SPEED, DAMAGE_MULT;
 
     public static final ForgeConfigSpec.BooleanValue AI_ENABLED, AI_FOR_COMMANDS, AI_FOR_CHAT, AI_FOR_BUILDING;
-    public static final ForgeConfigSpec.ConfigValue<String> STYLE, VOICE, VOICE_MODEL, VOICE_NAME;
+    public static final ForgeConfigSpec.ConfigValue<String> STYLE, VOICE, VOICE_MODEL, VOICE_NAME, VOICE_PROVIDER, VOICE_KEY;
+    public static final ForgeConfigSpec.BooleanValue THAI_VOICE_DOWNLOAD;
     public static final ForgeConfigSpec.BooleanValue TROLLING, BANTER, MEMORY, KEEP_LOADED, EXPLORE, LISTEN;
     public static final ForgeConfigSpec.DoubleValue TROLL_CHANCE, VOICE_VOLUME;
     public static final ForgeConfigSpec.ConfigValue<String> AI_PROVIDER, AI_KEY, AI_MODEL, AI_URL;
@@ -47,11 +48,16 @@ public final class HBConfig {
         b.pop();
 
         b.comment("The helper's voice").push("voice");
-        VOICE = b.comment("auto = with a Gemini key ([ai] key) every line is read aloud by a real voice from the AI, without one: cartoon babble sounds",
-                "ai = the real AI voice only (silent without a key), cartoon = the AI voice played faster and higher,",
-                "babble = cartoon babble sounds, off = no voice").define("voiceMode", "auto");
-        VOICE_MODEL = b.comment("Gemini speech model (if it is gone, the newer ones are tried by themselves)").define("speechModel", "gemini-3.8-flash-lite-tts");
-        VOICE_NAME = b.comment("Gemini voice (Puck, Kore, Charon, Fenrir, Leda, Orus, Zephyr, ...); empty = one per helper").define("speechVoice", "");
+        VOICE = b.comment("Where the helper's voice comes from:",
+                "mod = its own voice, made on your computer: free, no key, no internet (English voices are in the mod; the Thai voice is downloaded once, 108 MB),",
+                "ai = a real voice from an AI service for its answers (see speechProvider; the rest, and anything the service can't do, in its own voice),",
+                "cartoon = the AI voice played faster and higher, babble = cartoon babble sounds, off = no voice").define("voiceSource", "mod");
+        VOICE_PROVIDER = b.comment("The AI service for the voice: same (the one in [ai], when it can speak), gemini, openai, openrouter, groq (English only), ollama (Mac only), custom ([ai] url)")
+                .define("speechProvider", "same");
+        VOICE_KEY = b.comment("API key for the voice service; empty = the [ai] key (keep this file private)").define("speechKey", "");
+        VOICE_MODEL = b.comment("Speech model; empty = the service's default (Gemini: the newest one that works)").define("speechModelName", "");
+        VOICE_NAME = b.comment("Voice of the service (Gemini: Puck, Kore, ...; OpenAI: marin, cedar, coral, ...); empty = one per helper").define("speechVoice", "");
+        THAI_VOICE_DOWNLOAD = b.comment("The mod's own Thai voice (Meta MMS-TTS, licence CC-BY-NC 4.0) may be downloaded the first time a helper speaks Thai").define("thaiVoiceDownload", true);
         VOICE_VOLUME = b.comment("Voice loudness (also follows the game's Voice/Speech volume slider)").defineInRange("volume", 1.0, 0.0, 2.0);
         LISTEN = b.comment("Talking to helpers with your voice: hold the key (B, see Controls) and speak. Needs the Gemini AI ([ai] key):",
                 "the recording is sent to Google to be written down, then the helper does what you said").define("listen", true);

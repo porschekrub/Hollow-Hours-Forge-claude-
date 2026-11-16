@@ -13,8 +13,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * The helper's voice. With a Gemini key every line it says is read aloud by a real voice from the AI (see VoiceTts);
- * without one it babbles like a cartoon (made on the client from short syllables, pitched per helper). Config [voice].
+ * The helper's voice (config voiceSource): its own voice made on the player's computer ("mod", the default: free, no
+ * key), a real voice from an AI service for its answers ("ai", "cartoon": everything else, and whatever the service
+ * can't say, in its own voice), cartoon babble ("babble"), or nothing ("off").
  */
 public final class Voice {
     private Voice() {}
@@ -27,19 +28,16 @@ public final class Voice {
     }
 
     static String mode() {
-        return HBConfig.VOICE.get().trim().toLowerCase(Locale.ROOT);
+        String m = HBConfig.VOICE.get().trim().toLowerCase(Locale.ROOT);
+        return m.equals("auto") ? "mod" : m;
     }
 
-    /** Real words in a cartoon voice: the AI voice, sped up and pitched up per helper (voiceMode = cartoon). */
+    public static String source() {
+        return mode();
+    }
+
     static boolean cartoon() {
         return mode().equals("cartoon");
-    }
-
-    /** A real voice is possible (Gemini with a key). */
-    static boolean aiVoice() {
-        String m = mode();
-        if (!m.equals("ai") && !m.equals("auto") && !m.equals("cartoon")) return false;
-        return AiBridge.provider().equals("gemini") && !HBConfig.AI_KEY.get().isBlank() && HBConfig.AI_URL.get().isBlank();
     }
 
     /** What is said aloud: the first line only, without colours, cut at a pause when it is long. */
@@ -61,15 +59,21 @@ public final class Voice {
         String text = clean(line);
         if (text.isEmpty() || text.startsWith("(")) return; // "(thinking...)"
         int style = Persona.of(h).ordinal();
-        if (aiVoice()) {
-            // the real voice for answers to what the player said (a free key has little speech quota: lines it says on
-            // its own while working are not spent on it). When it can't be made it stays quiet and says why, now and then.
-            boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
-            if (reply || cartoon()) VoiceTts.speak(sp, h, text, style, cartoon());
+        if (m.equals("babble")) {
+            babble(sp, h, text, style);
             return;
         }
-        if (m.equals("ai") || m.equals("cartoon")) return;
-        HBNet.toPlayer(sp, new S2CSpeak(h.getId(), text, h.getUUID().hashCode(), style));
+        if (m.equals("ai") || m.equals("cartoon")) {
+            // the AI voice for answers to what the player said (a service's speech quota is small); the rest in its own voice
+            boolean reply = REPLY_UNTIL.getOrDefault(sp.getUUID(), 0L) > System.currentTimeMillis();
+            if ((reply || cartoon()) && VoiceTts.speak(sp, h, text, style, cartoon())) return;
+        }
+        local(sp, h, text, style, cartoon());
+    }
+
+    /** The mod's own voice: the player's computer makes it (babbling when it can't). */
+    public static void local(ServerPlayer p, HelperEntity h, String text, int style, boolean cartoon) {
+        HBNet.toPlayer(p, new S2CSpeak(h.getId(), text, h.getUUID().hashCode(), style, 1, h.modVoice(), cartoon));
     }
 
     /** The babble (also when the real voice could not be made). */

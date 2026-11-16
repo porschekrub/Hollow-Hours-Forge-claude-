@@ -137,6 +137,14 @@ public final class VoiceClient {
         ClipPlayer.play(entity, pcm, rate, volume());
     }
 
+    /** A line in the mod's own voice (made on this computer), 16-bit samples. */
+    public static void local(int entity, short[] pcm, int rate) {
+        played++;
+        QUEUE.removeIf(s -> s.entity == entity);
+        BUSY_UNTIL.put(entity, tick + (long) (pcm.length * 20L / Math.max(1, rate)) + 5);
+        ClipPlayer.play(entity, pcm, rate, volume());
+    }
+
     /** OpenAL playback of a clip at an entity (Minecraft's own sound system only plays files). */
     static final class ClipPlayer {
         record Clip(int source, int buffer, int entity) {}

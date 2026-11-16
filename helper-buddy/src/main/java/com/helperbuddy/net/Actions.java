@@ -109,6 +109,14 @@ public final class Actions {
             case "ai_voice" -> AiSetup.voice(p, h);
             case "ai_lang" -> AiSetup.language(p, h, a.getString("code"));
             case "ai_style" -> AiSetup.style(p, h, a.getString("text"));
+            case "voice_source" -> AiSetup.voiceSource(p, h);
+            case "voice_pick" -> AiSetup.voicePick(p, h, a.contains("step") ? a.getInt("step") : 1);
+            case "voice_test" -> AiSetup.voiceTest(p, h, a.getBoolean("ai"));
+            case "voice_save" -> AiSetup.voiceSave(p, h, a);
+            case "ollama" -> {
+                AiSetup.ollama(p, h, a.getString("what"), a);
+                return;
+            }
             case "talkstyle" -> {
                 String[] order = {"auto", "polite", "sassy", "rude"};
                 String cur = !h.styleNote().isEmpty() ? "rude" : com.helperbuddy.talk.Persona.auto(h) ? "auto" : com.helperbuddy.talk.Persona.of(h).id();

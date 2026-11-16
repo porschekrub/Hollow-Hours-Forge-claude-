@@ -91,6 +91,7 @@ public final class HBEvents {
     }
 
     static void stopping(net.minecraftforge.event.server.ServerStoppingEvent e) {
+        com.helperbuddy.ai.Ollama.shutdown();
         com.helperbuddy.talk.Memory.save();
         LATER.clear();
     }
@@ -215,6 +216,12 @@ public final class HBEvents {
     }
 
     static void started(ServerStartedEvent e) {
+        // the helpers think with a local Ollama: start it quietly (in the background)
+        if (com.helperbuddy.ai.AiUse.isOllama()) {
+            Thread t = new Thread(com.helperbuddy.ai.Ollama::ensureRunning, "HelperBuddy-OllamaStart");
+            t.setDaemon(true);
+            t.start();
+        }
         if (Boolean.getBoolean("helperbuddy.smoketest")) SmokeTest.start(e.getServer());
     }
 }

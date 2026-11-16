@@ -128,6 +128,8 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     /** "polite" / "sassy" / "rude", or "" = the config's style. */
     private String persona = "";
     private String styleNote = "";
+    /** the mod's own voice it speaks with (VoiceCatalog id; "" = one picked by its id) */
+    private String modVoice = "";
     public final Settings settings = new Settings();
     public final SimpleContainer bag = new SimpleContainer(36);
     private float xp;
@@ -216,6 +218,14 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
     /** How it talks, in its owner's own words ("like a pirate", "พูดเพราะๆ ลงท้ายว่าเจ้าค่ะ"); empty = its normal way. */
     public String styleNote() {
         return styleNote;
+    }
+
+    public String modVoice() {
+        return modVoice;
+    }
+
+    public void setModVoice(String v) {
+        modVoice = v == null ? "" : v;
     }
 
     public void setStyleNote(String s) {
@@ -642,6 +652,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         t.putString("OwnerName", ownerName);
         t.putString("Persona", persona);
         t.putString("StyleNote", styleNote);
+        t.putString("ModVoice", modVoice);
         t.putString("HName", rawName());
         t.putString("Mode", mode().name());
         t.put("Settings", settings.save());
@@ -668,6 +679,7 @@ public class HelperEntity extends PathfinderMob implements GeoEntity {
         ownerName = t.getString("OwnerName");
         persona = t.getString("Persona");
         styleNote = t.getString("StyleNote");
+        modVoice = t.getString("ModVoice");
         setHelperName(t.getString("HName"));
         entityData.set(MODE, Mode.of(t.getString("Mode")).name());
         settings.load(t.getCompound("Settings"));

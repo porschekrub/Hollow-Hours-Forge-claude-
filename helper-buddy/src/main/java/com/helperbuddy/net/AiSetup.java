@@ -4,6 +4,8 @@ import com.helperbuddy.config.HBConfig;
 import com.helperbuddy.entity.HelperEntity;
 import com.helperbuddy.talk.AiBridge;
 import com.helperbuddy.talk.Say;
+import com.helperbuddy.talk.Voice;
+import com.helperbuddy.talk.VoiceTts;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -26,7 +28,7 @@ public final class AiSetup {
     private AiSetup() {}
 
     public static final String[] PROVIDERS = {"gemini", "openai", "anthropic", "openrouter", "groq", "ollama", "custom"};
-    public static final String[] VOICES = {"auto", "ai", "cartoon", "babble", "off"};
+    public static final String[] VOICES = {"mod", "ai", "cartoon", "babble", "off"};
     /** {code, name}: "" = the game's language, "auto" = whatever language the player writes in */
     public static final String[][] LANGUAGES = {{"en", "English"}, {"th", "Thai"}, {"auto", "as I type"}, {"Japanese", "Japanese"}, {"Chinese", "Chinese"}, {"Korean", "Korean"},
             {"Vietnamese", "Vietnamese"}, {"Lao", "Lao"}, {"Indonesian", "Indonesian"}, {"Malay", "Malay"}, {"Filipino", "Filipino"}, {"Burmese", "Burmese"}, {"Khmer", "Khmer"},
@@ -65,6 +67,125 @@ public final class AiSetup {
         a.putString("lang", lang.isEmpty() ? (Say.gameThai(p) ? "th" : "en") : lang);
         a.putString("style", h.styleNote());
         t.put("aiSetup", a);
+        CompoundTag v = new CompoundTag();
+        v.putBoolean("admin", admin(p));
+        v.putString("source", Voice.source());
+        v.putString("provider", HBConfig.VOICE_PROVIDER.get().trim().toLowerCase(Locale.ROOT));
+        String used = VoiceTts.provider();
+        v.putString("used", used == null ? "" : used);
+        v.putBoolean("ready", VoiceTts.available());
+        v.putString("keyTail", tail(HBConfig.VOICE_KEY.get()));
+        v.putString("model", HBConfig.VOICE_MODEL.get().trim());
+        v.putString("name", HBConfig.VOICE_NAME.get().trim());
+        v.putString("brain", AiBridge.providerName());
+        v.putString("modVoice", h.modVoice());
+        v.putString("modVoiceName", com.helperbuddy.talk.VoiceCatalog.name(h.modVoice(), h.getUUID().hashCode()));
+        v.putString("last", VoiceTts.lastResult);
+        t.put("voiceSetup", v);
+        com.helperbuddy.ai.Ollama.fill(t);
+    }
+
+    // ------------------------------------------------------------------ the voice page
+    static final String[] SOURCES = {"mod", "ai", "cartoon", "babble", "off"};
+
+    public static void voiceSource(ServerPlayer p, HelperEntity h) {
+        if (!admin(p)) {
+            tell(p, "§cเฉพาะเจ้าของโลกหรือแอดมินเท่านั้นที่เปลี่ยนเสียงได้", "§cOnly the host of this world (or a server operator) can change where the voice comes from");
+            return;
+        }
+        int i = java.util.Arrays.asList(SOURCES).indexOf(Voice.source());
+        HBConfig.VOICE.set(SOURCES[(i + 1) % SOURCES.length]);
+        HBConfig.SPEC.save();
+    }
+
+    public static void voicePick(ServerPlayer p, HelperEntity h, int step) {
+        h.setModVoice(com.helperbuddy.talk.VoiceCatalog.next(h.modVoice(), step));
+        voiceTest(p, h, false);
+    }
+
+    /** A sample line in this helper's voice (the AI voice too when that is what it uses). */
+    public static void voiceTest(ServerPlayer p, HelperEntity h, boolean ai) {
+        boolean th = Say.thai(p);
+        String line = th ? "สวัสดีครับ ผมชื่อ " + h.helperName() + " มีอะไรให้ช่วยไหม" : "Hi, I'm " + h.helperName() + ". What can I do for you?";
+        int style = com.helperbuddy.talk.Persona.of(h).ordinal();
+        if (ai) {
+            VoiceTts.toldAt = 0;
+            if (!VoiceTts.available()) {
+                String brain = AiBridge.providerName();
+                tell(p, VoiceTts.provider() == null ? "เจ้าที่เลือก (" + brain + ") ไม่มีเสียงพูด เลือก Voice provider เป็น Gemini, OpenAI, OpenRouter, Groq หรือ Ollama" : "ยังไม่มี key สำหรับเสียง ใส่ key แล้วกดบันทึก",
+                        VoiceTts.provider() == null ? "The service picked (" + brain + ") has no voice: pick Gemini, OpenAI, OpenRouter, Groq or Ollama as the voice provider" : "There is no key for the voice yet: type one and save");
+                Voice.local(p, h, line, style, false);
+                return;
+            }
+            if (VoiceTts.speak(p, h, line, style, Voice.source().equals("cartoon"))) return;
+            tell(p, "AI voice พูดประโยคนี้ไม่ได้ (เช่น Groq/Ollama พูดไทยไม่ได้) ใช้เสียงของมอดแทน", "The AI voice can't say this line (Groq and Ollama speak no Thai, for one): the mod's own voice says it");
+        }
+        Voice.local(p, h, line, style, Voice.source().equals("cartoon"));
+    }
+
+    public static void voiceSave(ServerPlayer p, HelperEntity h, CompoundTag a) {
+        if (!admin(p)) {
+            tell(p, "§cเฉพาะเจ้าของโลกหรือแอดมินเท่านั้นที่ตั้งค่าเสียง AI ได้", "§cOnly the host of this world (or a server operator) can set up the AI voice");
+            return;
+        }
+        String prov = a.getString("provider").trim().toLowerCase(Locale.ROOT);
+        if (!java.util.Arrays.asList(VoiceTts.PROVIDERS).contains(prov)) prov = "same";
+        boolean changed = !prov.equals(HBConfig.VOICE_PROVIDER.get().trim().toLowerCase(Locale.ROOT));
+        HBConfig.VOICE_PROVIDER.set(prov);
+        String key = clip(a.getString("key"), 400).replaceAll("^[\"'\\s]+|[\"'\\s]+$", "");
+        if (!key.isEmpty()) HBConfig.VOICE_KEY.set(key);
+        else if (changed) HBConfig.VOICE_KEY.set("");
+        HBConfig.VOICE_MODEL.set(clip(a.getString("model"), 120));
+        HBConfig.VOICE_NAME.set(clip(a.getString("name"), 60));
+        // saving the AI voice means using it
+        if (Voice.source().equals("mod") || Voice.source().equals("babble") || Voice.source().equals("off")) HBConfig.VOICE.set("ai");
+        HBConfig.SPEC.save();
+        VoiceTts.reset();
+        tell(p, "บันทึกแล้ว §7กำลังลองเสียง AI...", "Saved. §7Trying the AI voice...");
+        voiceTest(p, h, true);
+    }
+
+    // ------------------------------------------------------------------ the local AI page (Ollama)
+    public static void ollama(ServerPlayer p, HelperEntity h, String what, CompoundTag a) {
+        if (!what.equals("refresh") && !admin(p)) {
+            tell(p, "§cเฉพาะเจ้าของโลกหรือแอดมินเท่านั้นที่ตั้งค่า Ollama ได้", "§cOnly the host of this world (or a server operator) can set up Ollama");
+            return;
+        }
+        boolean ok = switch (what) {
+            case "install" -> com.helperbuddy.ai.Ollama.install();
+            case "start" -> com.helperbuddy.ai.Ollama.startServer();
+            case "stop" -> {
+                com.helperbuddy.ai.Ollama.stopServer();
+                yield true;
+            }
+            case "remove" -> com.helperbuddy.ai.Ollama.remove();
+            case "cancel" -> {
+                com.helperbuddy.ai.Ollama.cancel();
+                yield true;
+            }
+            case "pull" -> com.helperbuddy.ai.Ollama.pull(a.getString("model"));
+            case "delete" -> com.helperbuddy.ai.Ollama.delete(a.getString("model"));
+            case "use" -> {
+                com.helperbuddy.ai.AiUse.ollama(a.getString("model"));
+                tell(p, "ผู้ช่วยใช้ " + a.getString("model") + " คิดแล้ว", "The helpers think with " + a.getString("model") + " now");
+                yield true;
+            }
+            default -> true;
+        };
+        if (!ok) tell(p, "§eรอให้งานที่ทำอยู่เสร็จก่อนนะ", "§eWait for the job that is running to finish first");
+        // look again in the background, then show it
+        net.minecraft.server.MinecraftServer server = p.server;
+        UUID pid = p.getUUID(), hid = h.getUUID();
+        Thread t = new Thread(() -> {
+            com.helperbuddy.ai.Ollama.check();
+            server.execute(() -> {
+                ServerPlayer pl = server.getPlayerList().getPlayer(pid);
+                HelperEntity hh = com.helperbuddy.Helpers.byUuid(server, hid);
+                if (pl != null && hh != null) Menus.refresh(pl, hh);
+            });
+        }, "HelperBuddy-OllamaCheck");
+        t.setDaemon(true);
+        t.start();
     }
 
     static void tell(ServerPlayer p, String th, String en) {

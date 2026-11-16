@@ -27,13 +27,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A real voice for the helper's answers: Gemini's speech model reads the line (in the helper's mood), the server
- * sends it to the player as 8-bit mu-law pieces, the client plays it at the helper. When it can't be made the helper stays quiet.
+ * A real voice from an AI service for the helper's answers: Gemini (its own speech API), or any service with an
+ * OpenAI-style /audio/speech (OpenAI, OpenRouter, Groq, Ollama, a custom URL). The server sends the clip to the player
+ * as 8-bit mu-law pieces and the client plays it at the helper. When a line can't be made this way (another language
+ * than the service speaks, no quota, no key ...) the helper says it in the mod's own voice instead.
  */
 public final class VoiceTts {
     private VoiceTts() {}
 
     static final String[] VOICES = {"Puck", "Fenrir", "Charon", "Kore", "Leda", "Orus", "Zephyr", "Aoede"};
+    static final String[] OPENAI_VOICES = {"marin", "cedar", "coral", "sage", "ash", "verse", "ballad", "nova"};
+    static final String[] GROQ_VOICES = {"troy", "hannah", "austin", "diana", "daniel", "autumn"};
     static final Set<UUID> BUSY = new HashSet<>();
     /** recent clips (text + voice -> mu-law), so a repeated line costs nothing */
     static final Map<String, byte[]> CACHE = new LinkedHashMap<>(16, 0.75f, true) {
@@ -45,23 +49,62 @@ public final class VoiceTts {
     static final Map<String, Integer> RATE = new java.util.HashMap<>();
     static long pausedUntil;
     static int clipIds;
-    /** speech models to try when the configured one is gone (newest first) */
+    /** Gemini speech models to try (newest first) when none is set */
     static final String[] FALLBACK = {"gemini-3.8-flash-lite-tts", "gemini-3.8-flash-tts", "gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts", "gemini-2.5-pro-preview-tts"};
-    /** the model that works (found by trying) */
+    /** the Gemini model that works (found by trying) */
     static String model;
     static int modelTry;
+    /** (the setup screen) how the last try went */
+    public static volatile String lastResult = "";
 
-    /** New AI settings: the speech model is looked for again, a pause after a refused key is over. */
-    static void reset() {
+    /** New settings: the speech model is looked for again, a pause after a refused key is over. */
+    public static void reset() {
         model = null;
         modelTry = 0;
         pausedUntil = 0;
+        toldAt = 0;
         synchronized (CACHE) {
             CACHE.clear();
         }
     }
 
-    static String model() {
+    public static final String[] PROVIDERS = {"same", "gemini", "openai", "openrouter", "groq", "ollama", "custom"};
+
+    /** The service that speaks, or null (none set up that can speak). */
+    @javax.annotation.Nullable
+    public static String provider() {
+        String p = HBConfig.VOICE_PROVIDER.get().trim().toLowerCase(java.util.Locale.ROOT);
+        if (p.isEmpty() || p.equals("same")) p = AiBridge.provider();
+        if (p.equals("google")) p = "gemini";
+        if (p.equals("chatgpt")) p = "openai";
+        return switch (p) {
+            case "gemini", "openai", "openrouter", "groq", "ollama", "custom" -> p;
+            default -> null; // Claude, Mistral ...: no speech
+        };
+    }
+
+    static String key(String prov) {
+        String k = HBConfig.VOICE_KEY.get().trim();
+        if (!k.isEmpty()) return k;
+        return prov.equals(AiBridge.provider()) ? HBConfig.AI_KEY.get().trim() : "";
+    }
+
+    /** A voice service is set up (with a key where it needs one). */
+    public static boolean available() {
+        String p = provider();
+        if (p == null) return false;
+        return p.equals("ollama") || p.equals("custom") || !key(p).isEmpty();
+    }
+
+    /** Groq's and Ollama's voices speak English (and a few European languages), not Thai. */
+    static boolean speaks(String prov, String text) {
+        if (prov.equals("groq") || prov.equals("ollama")) {
+            for (int i = 0; i < text.length(); i++) if (text.charAt(i) > 0x2FF && Character.isLetter(text.charAt(i))) return false;
+        }
+        return true;
+    }
+
+    static String geminiModel() {
         if (model != null) return model;
         String m = HBConfig.VOICE_MODEL.get().trim().replaceFirst("^models/", "");
         if (modelTry == 0 && !m.isEmpty()) return m;
@@ -69,10 +112,41 @@ public final class VoiceTts {
         return i < FALLBACK.length ? FALLBACK[i] : null;
     }
 
-    static String voiceFor(HelperEntity h) {
+    static String modelFor(String prov) {
+        String m = HBConfig.VOICE_MODEL.get().trim();
+        if (prov.equals("gemini")) return geminiModel();
+        if (!m.isEmpty()) return m;
+        return switch (prov) {
+            case "openai" -> "gpt-4o-mini-tts";
+            case "openrouter" -> "google/gemini-3.8-flash-lite-tts";
+            case "groq" -> "canopylabs/orpheus-v1-english";
+            case "ollama" -> "phonon";
+            default -> "tts-1";
+        };
+    }
+
+    static String voiceFor(HelperEntity h, String prov) {
         String v = HBConfig.VOICE_NAME.get().trim();
         if (!v.isEmpty()) return v;
-        return VOICES[Math.floorMod(h.getUUID().hashCode(), VOICES.length)];
+        String[] list = switch (prov) {
+            case "openai", "custom" -> OPENAI_VOICES;
+            case "groq" -> GROQ_VOICES;
+            case "ollama" -> new String[] {"default"};
+            case "openrouter" -> modelFor(prov).contains("gemini") ? VOICES : OPENAI_VOICES;
+            default -> VOICES;
+        };
+        return list[Math.floorMod(h.getUUID().hashCode(), list.length)];
+    }
+
+    static String speechUrl(String prov) {
+        String u = HBConfig.AI_URL.get().trim().replaceAll("/+$", "");
+        return switch (prov) {
+            case "openai" -> "https://api.openai.com/v1/audio/speech";
+            case "openrouter" -> "https://openrouter.ai/api/v1/audio/speech";
+            case "groq" -> "https://api.groq.com/openai/v1/audio/speech";
+            case "ollama" -> (u.isEmpty() || !AiBridge.provider().equals("ollama") ? "http://127.0.0.1:11434" : u.replaceAll("/v1(/chat/completions)?$", "")) + "/v1/audio/speech";
+            default -> u.endsWith("/chat/completions") ? u.replaceFirst("/chat/completions$", "/audio/speech") : (u.endsWith("/v1") ? u : u + "/v1") + "/audio/speech";
+        };
     }
 
     /** How much faster and higher a helper's cartoon voice is played (its own, 1.28 - 1.46). */
@@ -80,24 +154,15 @@ public final class VoiceTts {
         return 1.28f + Math.floorMod(h.getUUID().hashCode() >> 4, 7) * 0.03f;
     }
 
-    static String how(int style, boolean cartoon) {
-        if (cartoon) return switch (style) {
-            case 0 -> "Say this like a happy, bouncy cartoon character, a bit slowly and clearly";
-            case 2 -> "Say this like a grumpy, mocking cartoon character, a bit slowly and clearly";
-            default -> "Say this like a cheeky, playful cartoon character, a bit slowly and clearly";
-        };
-        return switch (style) {
-            case 0 -> "Say this in a friendly, warm voice";
-            case 2 -> "Say this in a gruff but friendly voice";
-            default -> "Say this in a relaxed, playful voice";
-        };
-    }
-
-    /** @return false when the real voice can't be made now */
-    static boolean speak(ServerPlayer p, HelperEntity h, String text, int style, boolean cartoon) {
+    /** @return false when the AI voice can't take this line (the caller uses the mod's own voice) */
+    public static boolean speak(ServerPlayer p, HelperEntity h, String text, int style, boolean cartoon) {
+        String prov = provider();
+        if (prov == null || !available() || !speaks(prov, text)) return false;
         if (System.currentTimeMillis() < pausedUntil || BUSY.contains(h.getUUID())) return false;
-        String voice = voiceFor(h);
-        String key = voice + "|" + style + "|" + cartoon + "|" + text;
+        String mdl = modelFor(prov);
+        if (mdl == null) return false;
+        String voice = voiceFor(h, prov);
+        String key = prov + "|" + mdl + "|" + voice + "|" + cartoon + "|" + text;
         float pitch = cartoon ? cartoonPitch(h) : 1f;
         byte[] cached;
         synchronized (CACHE) {
@@ -107,63 +172,87 @@ public final class VoiceTts {
             send(p, h, cached, Math.round(RATE.getOrDefault(key, 24000) * pitch));
             return true;
         }
+        HttpRequest rq;
+        boolean gemini = prov.equals("gemini");
+        try {
+            if (gemini) {
+                JsonObject body = new JsonObject();
+                JsonArray contents = new JsonArray();
+                JsonObject c = new JsonObject();
+                JsonArray parts = new JsonArray();
+                JsonObject part = new JsonObject();
+                // only the line itself: a "say this like ..." in front of it was sometimes read out loud too
+                part.addProperty("text", text);
+                parts.add(part);
+                c.add("parts", parts);
+                contents.add(c);
+                body.add("contents", contents);
+                JsonObject gen = new JsonObject();
+                JsonArray mods = new JsonArray();
+                mods.add("AUDIO");
+                gen.add("responseModalities", mods);
+                JsonObject speech = new JsonObject(), vc = new JsonObject(), pre = new JsonObject();
+                pre.addProperty("voiceName", voice);
+                vc.add("prebuiltVoiceConfig", pre);
+                speech.add("voiceConfig", vc);
+                gen.add("speechConfig", speech);
+                body.add("generationConfig", gen);
+                rq = HttpRequest.newBuilder(URI.create(AiBridge.geminiBase + mdl + ":generateContent"))
+                        .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
+                        .header("content-type", "application/json").header("x-goog-api-key", key(prov))
+                        .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
+            } else {
+                JsonObject body = new JsonObject();
+                body.addProperty("model", mdl);
+                body.addProperty("input", text);
+                body.addProperty("voice", voice);
+                body.addProperty("response_format", prov.equals("groq") ? "wav" : "pcm");
+                HttpRequest.Builder rb = HttpRequest.newBuilder(URI.create(speechUrl(prov)))
+                        .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
+                        .header("content-type", "application/json").POST(HttpRequest.BodyPublishers.ofString(body.toString()));
+                if (!key(prov).isEmpty()) rb.header("authorization", "Bearer " + key(prov));
+                rq = rb.build();
+            }
+        } catch (Exception e) {
+            HelperBuddy.LOG.warn("[Helper Buddy] voice request could not be made: {}", e.toString());
+            return false;
+        }
         BUSY.add(h.getUUID());
         MinecraftServer server = p.server;
         UUID pid = p.getUUID(), hid = h.getUUID();
-        try {
-            JsonObject body = new JsonObject();
-            JsonArray contents = new JsonArray();
-            JsonObject c = new JsonObject();
-            JsonArray parts = new JsonArray();
-            JsonObject part = new JsonObject();
-            part.addProperty("text", how(style, cartoon) + ": " + text);
-            parts.add(part);
-            c.add("parts", parts);
-            contents.add(c);
-            body.add("contents", contents);
-            JsonObject gen = new JsonObject();
-            JsonArray mods = new JsonArray();
-            mods.add("AUDIO");
-            gen.add("responseModalities", mods);
-            JsonObject speech = new JsonObject(), vc = new JsonObject(), pre = new JsonObject();
-            pre.addProperty("voiceName", voice);
-            vc.add("prebuiltVoiceConfig", pre);
-            speech.add("voiceConfig", vc);
-            gen.add("speechConfig", speech);
-            body.add("generationConfig", gen);
-            String model = model();
-            if (model == null) {
-                BUSY.remove(hid);
-                return false;
-            }
-            HttpRequest rq = HttpRequest.newBuilder(URI.create(AiBridge.geminiBase + model + ":generateContent"))
-                    .timeout(Duration.ofSeconds(Math.max(10, HBConfig.AI_TIMEOUT.get())))
-                    .header("content-type", "application/json").header("x-goog-api-key", HBConfig.AI_KEY.get().trim())
-                    .POST(HttpRequest.BodyPublishers.ofString(body.toString())).build();
-            AiBridge.client().sendAsync(rq, HttpResponse.BodyHandlers.ofString()).whenComplete((r, err) -> {
-                boolean retry = false;
-                String problem = null;
-                byte[] ulaw = null;
-                int rate = 24000;
-                if (err != null) HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
-                else if (r.statusCode() / 100 != 2) {
-                    HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}, {}): {}", r.statusCode(), model, AiBridge.trim(r.body(), 300));
-                    // that model is gone: the next one next time; out of quota or not allowed: quiet for a while
-                    if ((r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) {
-                        modelTry++;
-                        retry = model() != null;
-                        if (!retry) problem = "nomodel";
-                    } else if (r.statusCode() == 429) {
-                        pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
-                        problem = "quota";
-                    } else if (r.statusCode() == 403 || r.statusCode() == 401) {
-                        pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
-                        problem = "key";
-                    } else problem = "other";
-                } else {
-                    VoiceTts.model = model;
-                    try {
-                        JsonObject o = JsonParser.parseString(r.body()).getAsJsonObject();
+        String secret = key(prov);
+        AiBridge.client().sendAsync(rq, HttpResponse.BodyHandlers.ofByteArray()).whenComplete((r, err) -> {
+            boolean retry = false;
+            String problem = null;
+            byte[] ulaw = null;
+            int rate = 24000;
+            if (err != null) {
+                HelperBuddy.LOG.warn("[Helper Buddy] voice request failed: {}", err.toString());
+                problem = "net";
+            } else if (r.statusCode() / 100 != 2) {
+                String msg = AiBridge.trim(new String(r.body(), java.nio.charset.StandardCharsets.UTF_8), 300);
+                if (!secret.isEmpty()) msg = msg.replace(secret, "***");
+                HelperBuddy.LOG.warn("[Helper Buddy] voice request failed ({}, {} {}): {}", r.statusCode(), prov, mdl, msg);
+                lastResult = r.statusCode() + " " + AiBridge.trim(msg, 120);
+                if (gemini && (r.statusCode() == 404 || r.statusCode() == 400) && VoiceTts.model == null) {
+                    modelTry++;
+                    retry = geminiModel() != null;
+                    if (!retry) problem = "nomodel";
+                } else if (r.statusCode() == 404 || r.statusCode() == 400) problem = "nomodel";
+                else if (r.statusCode() == 429 || r.statusCode() == 402) {
+                    pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
+                    problem = "quota";
+                } else if (r.statusCode() == 403 || r.statusCode() == 401) {
+                    pausedUntil = System.currentTimeMillis() + 5 * 60_000L;
+                    problem = "key";
+                } else problem = "other";
+            } else {
+                try {
+                    byte[] pcm;
+                    if (gemini) {
+                        if (VoiceTts.model == null) VoiceTts.model = mdl;
+                        pcm = null;
+                        JsonObject o = JsonParser.parseString(new String(r.body(), java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
                         for (JsonElement cand : o.getAsJsonArray("candidates")) {
                             for (JsonElement pe : cand.getAsJsonObject().getAsJsonObject("content").getAsJsonArray("parts")) {
                                 JsonObject po = pe.getAsJsonObject();
@@ -171,73 +260,70 @@ public final class VoiceTts {
                                 JsonObject d = po.getAsJsonObject("inlineData");
                                 Matcher m = Pattern.compile("rate=(\\d+)").matcher(d.has("mimeType") ? d.get("mimeType").getAsString() : "");
                                 if (m.find()) rate = Integer.parseInt(m.group(1));
-                                byte[] raw = Base64.getDecoder().decode(d.get("data").getAsString());
-                                int[] wavRate = new int[1];
-                                raw = stripWav(raw, wavRate);
-                                if (wavRate[0] > 0) rate = wavRate[0];
-                                ulaw = toUlaw(raw);
+                                pcm = Base64.getDecoder().decode(d.get("data").getAsString());
                                 break;
                             }
-                            if (ulaw != null) break;
+                            if (pcm != null) break;
                         }
-                    } catch (Exception e) {
-                        HelperBuddy.LOG.warn("[Helper Buddy] voice answer could not be read: {}", e.toString());
-                    }
+                    } else pcm = r.body();
+                    if (pcm != null && pcm.length > 100) {
+                        int[] wavRate = new int[1];
+                        pcm = stripWav(pcm, wavRate);
+                        if (wavRate[0] > 0) rate = wavRate[0];
+                        ulaw = toUlaw(pcm);
+                        lastResult = "ok";
+                    } else problem = "other";
+                } catch (Exception e) {
+                    HelperBuddy.LOG.warn("[Helper Buddy] voice answer could not be read: {}", e.toString());
+                    problem = "other";
                 }
-                byte[] clip = ulaw;
-                int clipRate = rate;
-                boolean again = retry;
-                String why = problem;
-                if (err != null) why = "net";
-                String whyF = why;
-                server.execute(() -> {
-                    BUSY.remove(hid);
-                    ServerPlayer pl = server.getPlayerList().getPlayer(pid);
-                    HelperEntity hh = Helpers.byUuid(server, hid);
-                    if (pl == null || hh == null) return;
-                    if (clip == null) {
-                        // that speech model is gone: the same line with the next one, at once
-                        if (again) {
-                            speak(pl, hh, text, style, cartoon);
-                            return;
-                        }
-                        tell(pl, whyF);
-                        return;
-                    }
-                    synchronized (CACHE) {
-                        CACHE.put(key, clip);
-                    }
-                    RATE.put(key, clipRate);
-                    send(pl, hh, clip, Math.round(clipRate * pitch));
-                });
+            }
+            byte[] clip = ulaw;
+            int clipRate = rate;
+            boolean again = retry;
+            String why = problem;
+            server.execute(() -> {
+                BUSY.remove(hid);
+                ServerPlayer pl = server.getPlayerList().getPlayer(pid);
+                HelperEntity hh = Helpers.byUuid(server, hid);
+                if (pl == null || hh == null) return;
+                if (clip == null) {
+                    // that Gemini model is gone: the same line with the next one, at once
+                    if (again && speak(pl, hh, text, style, cartoon)) return;
+                    tell(pl, why);
+                    // the line is still said, in the mod's own voice
+                    Voice.local(pl, hh, text, style, cartoon);
+                    return;
+                }
+                synchronized (CACHE) {
+                    CACHE.put(key, clip);
+                }
+                RATE.put(key, clipRate);
+                send(pl, hh, clip, Math.round(clipRate * pitch));
             });
-            return true;
-        } catch (Exception e) {
-            BUSY.remove(hid);
-            HelperBuddy.LOG.warn("[Helper Buddy] voice request could not be sent: {}", e.toString());
-            return false;
-        }
+        });
+        return true;
     }
 
-    static long toldAt;
+    public static long toldAt;
 
-    /** Why the helper is quiet, in grey, now and then (not on every line). */
+    /** Why the AI voice did not speak, in grey, now and then (not on every line). */
     static void tell(ServerPlayer p, @javax.annotation.Nullable String why) {
         if (why == null || System.currentTimeMillis() - toldAt < 5 * 60_000L) return;
         toldAt = System.currentTimeMillis();
         String th = switch (why) {
-            case "quota" -> "โควตาเสียงพูดของ Gemini หมดชั่วคราว (key ฟรีทำเสียงได้น้อยกว่าแชตมาก) ตอนนี้ตอบเป็นข้อความไปก่อน อีกสักพักจะลองใหม่เอง";
-            case "key" -> "key นี้ใช้ทำเสียงพูดของ Gemini ไม่ได้ (ไม่มีสิทธิ์) ตอบเป็นข้อความอย่างเดียว";
-            case "nomodel" -> "หาโมเดลเสียงพูดของ Gemini ที่ key นี้ใช้ได้ไม่เจอ ตอบเป็นข้อความอย่างเดียว";
-            case "net" -> "ต่อบริการเสียงพูดไม่ติด ตอบเป็นข้อความไปก่อน";
-            default -> "ทำเสียงพูดไม่สำเร็จ (รายละเอียดใน logs/latest.log) ตอบเป็นข้อความไปก่อน";
+            case "quota" -> "โควตาเสียงพูดของ AI หมดชั่วคราว ตอนนี้ใช้เสียงของมอดแทน อีกสักพักจะลองใหม่เอง";
+            case "key" -> "key นี้ใช้ทำเสียงพูดไม่ได้ (ไม่มีสิทธิ์) ใช้เสียงของมอดแทน";
+            case "nomodel" -> "หาโมเดลเสียงพูดที่ใช้ได้ไม่เจอ ใช้เสียงของมอดแทน";
+            case "net" -> "ต่อบริการเสียงพูดไม่ติด ใช้เสียงของมอดแทน";
+            default -> "ทำเสียงพูดของ AI ไม่สำเร็จ (รายละเอียดใน logs/latest.log) ใช้เสียงของมอดแทน";
         };
         String en = switch (why) {
-            case "quota" -> "Gemini's speech quota is used up for now (a free key gets far less speech than chat). Text only for a while, it tries again by itself";
-            case "key" -> "This key may not use Gemini's speech. Text only";
-            case "nomodel" -> "No Gemini speech model works with this key. Text only";
-            case "net" -> "The speech service could not be reached. Text only for now";
-            default -> "The voice could not be made (details in logs/latest.log). Text only for now";
+            case "quota" -> "The AI voice is out of quota for now: the helper uses its own voice, and tries again later";
+            case "key" -> "This key may not use the AI voice: the helper uses its own voice";
+            case "nomodel" -> "No speech model works with these settings: the helper uses its own voice";
+            case "net" -> "The voice service could not be reached: the helper uses its own voice";
+            default -> "The AI voice could not be made (details in logs/latest.log): the helper uses its own voice";
         };
         p.sendSystemMessage(net.minecraft.network.chat.Component.literal("§8[voice] " + com.helperbuddy.talk.Say.t(p, th, en)));
     }

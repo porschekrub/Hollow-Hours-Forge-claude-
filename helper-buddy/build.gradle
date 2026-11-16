@@ -52,7 +52,70 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// ---------------------------------------------------------------- the helper's own voice (made on the player's computer)
+// sherpa-onnx (Apache-2.0) runs the speech model; it is not on Maven Central, so its jars are fetched from its GitHub
+// release into a little local repository under build/. The coordinates are the ones Verity JE uses too: with both mods
+// installed Forge loads one copy (the newest) instead of two that would clash.
+def sherpaVersion = '1.13.7'
+def sherpaRepo = layout.buildDirectory.dir('sherpa-repo').get().asFile
+def sherpaJars = ['sherpa-onnx': 'sherpa-onnx-jvm', 'sherpa-onnx-native-lib-win-x64': 'sherpa-onnx-native-lib-win-x64',
+                  'sherpa-onnx-native-lib-osx-aarch64': 'sherpa-onnx-native-lib-osx-aarch64', 'sherpa-onnx-native-lib-osx-x64': 'sherpa-onnx-native-lib-osx-x64',
+                  'sherpa-onnx-native-lib-linux-x64': 'sherpa-onnx-native-lib-linux-x64']
+void fetch(String url, File to) {
+    if (to.exists() && to.length() > 0) return
+    to.parentFile.mkdirs()
+    File part = new File(to.path + '.part')
+    for (int attempt = 1; ; attempt++) {
+        try {
+            new URL(url).withInputStream { i -> part.withOutputStream { it << i } }
+            part.renameTo(to)
+            return
+        } catch (Exception e) {
+            if (attempt >= 4) throw new GradleException("could not download " + url, e)
+            println "download failed (" + e + "), trying again"
+            sleep(5000L * attempt)
+        }
+    }
+}
+sherpaJars.each { art, file ->
+    File dir = new File(sherpaRepo, "com/k2fsa/sherpa/onnx/${art}/${sherpaVersion}")
+    fetch("https://github.com/k2-fsa/sherpa-onnx/releases/download/v${sherpaVersion}/${file}-${sherpaVersion}.jar", new File(dir, "${art}-${sherpaVersion}.jar"))
+    new File(dir, "${art}-${sherpaVersion}.pom").text = """<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion><groupId>com.k2fsa.sherpa.onnx</groupId><artifactId>${art}</artifactId><version>${sherpaVersion}</version></project>
+"""
+}
+
+// the English voices (KittenTTS nano 0.8, Apache-2.0) go into the jar; the Thai one is fetched by the game when first needed
+def voicesDir = layout.buildDirectory.dir('generated/voices').get().asFile
+def kittenTar = layout.buildDirectory.file('downloads/kitten-nano-en-v0_8-int8.tar.bz2').get().asFile
+fetch('https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2', kittenTar)
+File kittenOut = new File(voicesDir, 'helperbuddy/voices/kitten-en')
+if (!new File(kittenOut, 'files.txt').exists()) {
+    def unpacked = layout.buildDirectory.dir('tmp/kitten').get().asFile
+    ant.untar(src: kittenTar, dest: unpacked, compression: 'bzip2')
+    File src = new File(unpacked, 'kitten-nano-en-v0_8-int8')
+    List<String> names = []
+    // only what English needs from espeak-ng's data (the phoneme tables, the English dictionary and voice)
+    src.eachFileRecurse { f ->
+        if (f.isDirectory()) return
+        String rel = src.toPath().relativize(f.toPath()).toString().replace('\\', '/')
+        if (rel.startsWith('espeak-ng-data/') && rel.endsWith('_dict') && rel != 'espeak-ng-data/en_dict') return
+        if (rel.startsWith('espeak-ng-data/lang/') && !rel.startsWith('espeak-ng-data/lang/gmw/en')) return
+        File to = new File(kittenOut, rel)
+        to.parentFile.mkdirs()
+        to.bytes = f.bytes
+        names << rel
+    }
+    new File(kittenOut, 'files.txt').text = names.join('\n') + '\n'
+}
+sourceSets.main.resources { srcDir voicesDir }
+
 repositories {
+    maven {
+        name = 'sherpa-onnx (local copy)'
+        url = sherpaRepo.toURI()
+        content { includeGroup('com.k2fsa.sherpa.onnx') }
+    }
     maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
@@ -73,6 +136,14 @@ dependencies {
     // GeckoLib is bundled inside our jar (jar-in-jar), so players only need to install this mod.
     jarJar(group: 'software.bernie.geckolib', name: "geckolib-forge-${minecraft_version}", version: "[${geckolib_version},)") {
         jarJar.pin(it, geckolib_version)
+    }
+    sherpaJars.keySet().each { art ->
+        // (on the classpath for compiling and for the test runs, and packed inside the jar)
+        if (art == 'sherpa-onnx') implementation "com.k2fsa.sherpa.onnx:${art}:${sherpaVersion}"
+        minecraftLibrary "com.k2fsa.sherpa.onnx:${art}:${sherpaVersion}"
+        jarJar(group: 'com.k2fsa.sherpa.onnx', name: art, version: "[1.13.3,)") {
+            jarJar.pin(it, sherpaVersion)
+        }
     }
 }
 

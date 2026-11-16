@@ -1,7 +1,21 @@
-**Helper Buddy 2.18.3 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
-**Helper Buddy 2.18.3 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
+**Helper Buddy 2.19.0 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
+**Helper Buddy 2.19.0 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
 
 Other loaders and Minecraft versions: the last full release (v2.17.0). / ตัวโหลดอื่นและเวอร์ชันอื่น: ดู release เต็มล่าสุด (v2.17.0)
+
+**2.19.0 — its own voice, any AI voice, and a local AI you set up in the game**
+- 🔊 **The helper has its own voice now, made on your computer**: free, no key, no internet, no quota, with any AI (also Ollama, Claude ...) and without one. This is the default. English voices are in the mod (KittenTTS, 8 speakers); the **Thai voice** (Meta MMS-TTS) is downloaded once by itself (108 MB) the first time a helper speaks Thai, or with the button on the *Voice* page. It can't be packed into the mod: its licence (CC-BY-NC 4.0) does not allow it everywhere.
+  **ผู้ช่วยมีเสียงของตัวเองแล้ว ทำในคอมของคุณเอง**: ฟรี ไม่ต้องใช้ key ไม่ต้องต่อเน็ต ไม่มีโควตา ใช้ได้กับ AI ทุกเจ้า (รวม Ollama, Claude) และตอนไม่ใช้ AI ด้วย เป็นค่าเริ่มต้น เสียงอังกฤษอยู่ในมอด (8 เสียง) **เสียงไทย** จะโหลดเองครั้งเดียว (108 MB) ตอนผู้ช่วยพูดไทยครั้งแรก หรือกดปุ่มในหน้า *Voice* (ใส่ในมอดไม่ได้เพราะสัญญาอนุญาต CC-BY-NC 4.0)
+- 🎚️ **New *Voice* page** in the helper's menu: where the voice comes from (*Mod voice*, *AI voice for answers*, *AI voice cartoon*, *Babble*, *No voice*), **this helper's voice** (14 to pick from: 8 voices plus Tiny, Kid, Deep, Giant, Fast talker, Calm) with *Listen*, and the **AI voice** with its own service, key, model and voice: Gemini, OpenAI, OpenRouter, Groq (English), Ollama (Mac) or a custom URL. So the brain can be Groq or Claude and the voice Gemini. When the AI voice can't say a line (no quota, a language it doesn't speak) the helper says it in its own voice instead of going quiet.
+  **หน้า *Voice* ใหม่**: เลือกแหล่งเสียง (เสียงของมอด / เสียง AI ตอนตอบ / เสียง AI แบบการ์ตูน / ตุดๆ / ปิด) **เลือกเสียงของผู้ช่วยแต่ละตัว** (14 แบบ) พร้อมปุ่มฟัง และตั้ง **เสียง AI** แยกจากสมองได้ (เจ้า key โมเดล เสียง) เช่น สมองใช้ Groq หรือ Claude เสียงใช้ Gemini ถ้าเสียง AI พูดประโยคไหนไม่ได้ จะใช้เสียงของมอดแทน ไม่เงียบ
+- 🖥️ **Local AI setup (Ollama) in the game**: pick *Ollama* on the AI page and press *Local AI setup*: **Install Ollama** downloads the official release from github.com/ollama (Windows and Mac, no installer, no admin rights), starts it, and **downloads a model** from a list with what each one needs (with progress, cancel, delete, use). It starts with the world and stops when you leave. Free and private, but small local models are less clever than Gemini (Thai especially) and need a good graphics card. On Linux install Ollama yourself; the page finds it.
+  **ตั้งค่า AI ในเครื่อง (Ollama) ในเกม**: เลือก *Ollama* ในหน้า AI แล้วกด *Local AI setup*: **Install Ollama** โหลดตัวทางการจาก github.com/ollama (Windows และ Mac ไม่ต้องติดตั้ง ไม่ต้องใช้สิทธิ์แอดมิน) เปิดให้เอง แล้ว**โหลดโมเดล**จากรายการพร้อมบอกว่าแต่ละตัวต้องใช้การ์ดจอแค่ไหน (มีแถบความคืบหน้า ยกเลิก ลบ เลือกใช้) เปิดพร้อมโลกและปิดตอนออก ฟรีและเป็นส่วนตัว แต่โมเดลเล็กฉลาดน้อยกว่า Gemini (โดยเฉพาะภาษาไทย) และต้องมีการ์ดจอดีพอ บน Linux ให้ติดตั้ง Ollama เองแล้วหน้านี้จะหาเจอ
+- Fixed: the AI voice sometimes read out "say this like ..." before the line.
+  แก้บั๊ก: เสียง AI บางทีอ่านคำสั่ง "say this like ..." ออกมาด้วย
+- Works next to Verity JE: both use the same speech library, and Forge loads one copy of it.
+  ใช้คู่กับ Verity JE ได้: ใช้ไลบรารีเสียงตัวเดียวกัน Forge โหลดแค่ชุดเดียว
+- The jar is bigger now (about 60 MB): the speech engine for Windows, Mac and Linux and the English voices are inside.
+  ไฟล์มอดใหญ่ขึ้น (ราว 60 MB) เพราะมีตัวทำเสียงสำหรับ Windows, Mac, Linux และเสียงอังกฤษอยู่ข้างใน
 
 **2.18.3 — fighting with you**
 - **It attacks what you attack**, like a tamed wolf: hit an iron golem, a villager, a wolf, an enderman ... and your helper joins in (before, it only ever fought monsters and just stood there watching). Your own pets and horses are never attacked.

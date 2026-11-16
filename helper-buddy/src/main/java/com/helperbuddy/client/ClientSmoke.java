@@ -249,7 +249,7 @@ public final class ClientSmoke {
             if (t == 30) shot("menu_main");
             return t >= 32;
         });
-        for (String tab : new String[] {"jobs", "build", "settings", "talk", "ai"}) {
+        for (String tab : new String[] {"jobs", "build", "settings", "talk", "ai", "voice", "ollama"}) {
             STEPS.add(t -> {
                 if (t == 0 && mc.screen instanceof HelperScreen hs) mc.setScreen(new HelperScreen(hs.data(), tab));
                 if (t == 12) shot("menu_" + tab);
@@ -344,6 +344,26 @@ public final class ClientSmoke {
                 if (VoiceClient.played == 0) HelperBuddy.LOG.error("[client smoke] the helper's voice never played (com.helperbuddy)");
             }
             return t >= 182;
+        });
+        // the mod's own voice, made on this computer: English from the jar, Thai downloaded once
+        STEPS.add(t -> {
+            if (t == 0) {
+                float sec = LocalVoice.makeNow("Hello! I found some diamonds at X 120 Y 12 Z -40, follow me.", "c");
+                HelperBuddy.LOG.info("[client smoke] own voice, English: {} s of speech, made in {} ms, rms {}", sec, LocalVoice.lastMillis, LocalVoice.lastRms);
+                if (sec < 1f || LocalVoice.lastRms < 0.01f) HelperBuddy.LOG.error("[client smoke] the helper's own English voice made no speech (com.helperbuddy)");
+                LocalVoice.startThaiDownload();
+            }
+            if (t > 0 && t % 40 == 0 && LocalVoice.thaiReady()) {
+                float sec = LocalVoice.makeNow("สวัสดีครับ ผมเจอเพชร 21 ก้อน ตามผมมาเลย", "tiny");
+                HelperBuddy.LOG.info("[client smoke] own voice, Thai: {} s of speech, made in {} ms, rms {}", sec, LocalVoice.lastMillis, LocalVoice.lastRms);
+                if (sec < 1f) HelperBuddy.LOG.error("[client smoke] the helper's own Thai voice made no speech (com.helperbuddy)");
+                return true;
+            }
+            if (t >= 2400) {
+                HelperBuddy.LOG.warn("[client smoke] the Thai voice was not downloaded in time (network?)");
+                return true;
+            }
+            return false;
         });
         // talking by voice: a recording (a hum here, no microphone in CI) goes to the server
         STEPS.add(t -> {

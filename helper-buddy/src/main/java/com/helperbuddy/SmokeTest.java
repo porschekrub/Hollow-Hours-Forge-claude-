@@ -225,6 +225,12 @@ public final class SmokeTest {
         x.setPersona("auto");
         check(x.styleNote().isEmpty() && com.helperbuddy.talk.Persona.auto(x), "style note cleared by a preset");
         check(com.helperbuddy.net.AiSetup.LANGUAGES[0][0].equals("en") && com.helperbuddy.net.AiSetup.PROVIDERS.length == 7, "ai setup lists");
+        // the voice: its own voice by default; an AI voice only from services that speak; voices to pick from
+        check(com.helperbuddy.talk.Voice.source().equals("mod"), "the mod's own voice is the default");
+        check(com.helperbuddy.talk.VoiceCatalog.ALL.length >= 10 && com.helperbuddy.talk.VoiceCatalog.next("", 1).equals("a")
+                && com.helperbuddy.talk.VoiceCatalog.next("a", -1).isEmpty(), "voice catalog");
+        check(com.helperbuddy.client.ThaiText.numbers("21").contains("ยี่สิบเอ็ด") && com.helperbuddy.client.ThaiText.number(101).equals("หนึ่งร้อยเอ็ด"), "thai numbers");
+        HelperBuddy.LOG.info("[smoke] {}", com.helperbuddy.ai.Ollama.describe());
         // what the owner attacks, it attacks: an iron golem too (but not on its own)
         net.minecraft.world.entity.animal.IronGolem golem = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(level);
         check(golem != null && x.brain().combat().canTarget(golem, true) && !x.brain().combat().canTarget(golem, false), "attacking a golem only when told");
