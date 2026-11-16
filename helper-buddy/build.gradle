@@ -105,6 +105,8 @@ if (!new File(kittenOut, 'files.txt').exists()) {
         String rel = src.toPath().relativize(f.toPath()).toString().replace('\\', '/')
         if (rel.startsWith('espeak-ng-data/') && rel.endsWith('_dict') && rel != 'espeak-ng-data/en_dict') return
         if (rel.startsWith('espeak-ng-data/lang/') && !rel.startsWith('espeak-ng-data/lang/gmw/en')) return
+        // (voice variants: not used, and a "!" in a name can't be read back out of a jar)
+        if (rel.contains('!') || rel.startsWith('espeak-ng-data/voices/')) return
         File to = new File(kittenOut, rel)
         to.parentFile.mkdirs()
         to.bytes = f.bytes

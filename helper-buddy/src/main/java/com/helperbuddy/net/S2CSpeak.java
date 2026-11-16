@@ -26,7 +26,7 @@ public record S2CSpeak(int entity, String text, int seed, int style, int kind, S
     }
 
     public static void handle(S2CSpeak m) {
-        if (m.kind == 1 && com.helperbuddy.client.LocalVoice.say(m.entity, m.text, m.voice, m.cartoon, m.seed)) return;
+        if (m.kind == 1 && com.helperbuddy.client.LocalVoice.say(m.entity, m.text, m.voice, m.cartoon, m.seed, m.style)) return;
         com.helperbuddy.client.VoiceClient.babble(m.entity, m.text, m.seed, m.style);
     }
 }

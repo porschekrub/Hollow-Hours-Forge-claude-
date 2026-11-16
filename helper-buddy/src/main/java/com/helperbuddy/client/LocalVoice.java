@@ -38,7 +38,7 @@ public final class LocalVoice {
     static final AtomicInteger PENDING = new AtomicInteger();
     /** this computer can't run it (no native library for it, or it failed): babble from now on */
     static volatile boolean broken;
-    static volatile boolean thaiDownloading, thaiFailed, told;
+    static volatile boolean thaiDownloading, thaiFailed, told, englishFailed;
     /** (tests) lines made, and the last one */
     public static volatile int made;
     public static volatile float lastSeconds, lastRms;
@@ -78,12 +78,13 @@ public final class LocalVoice {
      * Speaks a line at the helper. False when it can't (another language, no model yet, not possible on this
      * computer): the caller babbles instead.
      */
-    public static boolean say(int entity, String raw, String voiceId, boolean cartoon, int seed) {
+    public static boolean say(int entity, String raw, String voiceId, boolean cartoon, int seed, int style) {
         if (broken) return false;
         String text = clean(raw);
         if (text.isEmpty()) return true;
         boolean th = thai(text);
         if (!th && !english(text)) return false;
+        if (!th && englishFailed) return false;
         if (th && !thaiReady()) {
             startThaiDownload();
             return false;
@@ -94,11 +95,17 @@ public final class LocalVoice {
         WORKER.execute(() -> {
             try {
                 Engine.Out out = Engine.make(text, th, v);
-                if (out == null) return;
+                if (out == null) {
+                    Minecraft.getInstance().execute(() -> VoiceClient.babble(entity, text, seed, style));
+                    return;
+                }
                 int rate = Math.round(out.rate() * v.pitch() * (cartoon ? 1.3f : 1f));
                 Minecraft.getInstance().execute(() -> VoiceClient.local(entity, out.pcm(), rate));
             } catch (Throwable t) {
+                if (!th) englishFailed = true;
                 failed(t);
+                // this line is still heard, as babble
+                Minecraft.getInstance().execute(() -> VoiceClient.babble(entity, text, seed, style));
             } finally {
                 PENDING.decrementAndGet();
             }
@@ -156,7 +163,12 @@ public final class LocalVoice {
             Path f = to.resolve(rel.trim());
             Files.createDirectories(f.getParent());
             try (InputStream in = LocalVoice.class.getResourceAsStream(base + rel.trim())) {
-                if (in == null) throw new java.io.FileNotFoundException(rel);
+                if (in == null) {
+                    // only the model files must be there; a missing extra of espeak's data is skipped
+                    if (!rel.contains("espeak-ng-data/") || rel.trim().matches("espeak-ng-data/(phontab|phonindex|phondata|intonations|en_dict)")) throw new java.io.FileNotFoundException(rel);
+                    HelperBuddy.LOG.warn("[Helper Buddy] voice file {} is missing, skipped", rel);
+                    continue;
+                }
                 Files.copy(in, f, StandardCopyOption.REPLACE_EXISTING);
             }
         }
