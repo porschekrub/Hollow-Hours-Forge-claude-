@@ -611,7 +611,7 @@ public class HelperScreen extends Screen {
             com.helperbuddy.client.LocalVoice.startThaiDownload();
             rebuildWidgets();
         }).active = !thaiReady;
-        y += 30;
+        y += 34;
         // the AI voice
         btn(52, y, 260, "§b" + nameOf(VOICE_PROVIDERS, vProvider) + ("same".equals(vProvider) ? "§7 (" + v.getString("brain") + ")" : ""),
                 "§b" + nameOf(VOICE_PROVIDERS, vProvider) + ("same".equals(vProvider) ? "§7 (" + v.getString("brain") + ")" : ""), b -> {
@@ -658,10 +658,10 @@ public class HelperScreen extends Screen {
             default -> "§7No voice";
         };
         g.drawString(font, state, x, top + 4, 0xFFFFFF);
-        g.drawString(font, "§7AI voice (needs a key; for answers when Voice is an AI voice)", x, top + 104, 0xFFFFFF);
-        g.drawString(font, "§7Service", x, top + 120, 0xFFFFFF);
-        g.drawString(font, "§7Key", x, top + 144, 0xFFFFFF);
-        g.drawString(font, "§7Model", x, top + 168, 0xFFFFFF);
+        g.drawString(font, "§7AI voice: needs a key, used for answers when Voice is an AI voice", x, top + 88, 0xFFFFFF);
+        g.drawString(font, "§7Service", x, top + 104, 0xFFFFFF);
+        g.drawString(font, "§7Key", x, top + 128, 0xFFFFFF);
+        g.drawString(font, "§7Model", x, top + 152, 0xFFFFFF);
         String last = v.getString("last");
         g.drawString(font, last.isEmpty() ? "§8Claude and Mistral have no voice. Groq / Ollama speak no Thai." : last.equals("ok") ? "§8Last try: it spoke" : "§8Last try: " + last,
                 x, top + 214, 0xFFFFFF);
@@ -749,7 +749,7 @@ public class HelperScreen extends Screen {
             g.drawString(font, "§f" + Ollama_RECOMMENDED[i][0], x, top + 144 + row * 22, 0xFFFFFF);
             g.drawString(font, "§8" + font.plainSubstrByWidth(note, 222), x, top + 154 + row * 22, 0xFFFFFF);
         }
-        g.drawString(font, "§8Runs on this computer: no key, no limits, needs a good graphics card", x + 92, top + 214, 0xFFFFFF);
+        g.drawString(font, "§8On this computer: no key, no limits", x + 100, top + 214, 0xFFFFFF);
     }
 
     void sendTalk() {

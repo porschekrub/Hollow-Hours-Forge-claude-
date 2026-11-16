@@ -1,5 +1,5 @@
-**Helper Buddy 2.19.0 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
-**Helper Buddy 2.19.0 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
+**Helper Buddy 2.19.1 — Minecraft Java 1.20.1, Forge 47.x** (put the jar in your `mods` folder; GeckoLib is inside)
+**Helper Buddy 2.19.1 — Minecraft Java 1.20.1, Forge 47.x** (ใส่ไฟล์ในโฟลเดอร์ `mods` ได้เลย GeckoLib อยู่ในไฟล์แล้ว)
 
 Other loaders and Minecraft versions: the last full release (v2.17.0). / ตัวโหลดอื่นและเวอร์ชันอื่น: ดู release เต็มล่าสุด (v2.17.0)
 
@@ -12,8 +12,6 @@ Other loaders and Minecraft versions: the last full release (v2.17.0). / ตั�
   **ตั้งค่า AI ในเครื่อง (Ollama) ในเกม**: เลือก *Ollama* ในหน้า AI แล้วกด *Local AI setup*: **Install Ollama** โหลดตัวทางการจาก github.com/ollama (Windows และ Mac ไม่ต้องติดตั้ง ไม่ต้องใช้สิทธิ์แอดมิน) เปิดให้เอง แล้ว**โหลดโมเดล**จากรายการพร้อมบอกว่าแต่ละตัวต้องใช้การ์ดจอแค่ไหน (มีแถบความคืบหน้า ยกเลิก ลบ เลือกใช้) เปิดพร้อมโลกและปิดตอนออก ฟรีและเป็นส่วนตัว แต่โมเดลเล็กฉลาดน้อยกว่า Gemini (โดยเฉพาะภาษาไทย) และต้องมีการ์ดจอดีพอ บน Linux ให้ติดตั้ง Ollama เองแล้วหน้านี้จะหาเจอ
 - Fixed: the AI voice sometimes read out "say this like ..." before the line.
   แก้บั๊ก: เสียง AI บางทีอ่านคำสั่ง "say this like ..." ออกมาด้วย
-- Works next to Verity JE: both use the same speech library, and Forge loads one copy of it.
-  ใช้คู่กับ Verity JE ได้: ใช้ไลบรารีเสียงตัวเดียวกัน Forge โหลดแค่ชุดเดียว
 - The jar is bigger now (about 60 MB): the speech engine for Windows, Mac and Linux and the English voices are inside.
   ไฟล์มอดใหญ่ขึ้น (ราว 60 MB) เพราะมีตัวทำเสียงสำหรับ Windows, Mac, Linux และเสียงอังกฤษอยู่ข้างใน
 
