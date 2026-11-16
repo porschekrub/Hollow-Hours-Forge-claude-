@@ -36,6 +36,6 @@ jobs:
           print(meta)
           PY
       - run: |
-          cd out && git init -q && git checkout -q -b narration-hb-out && git add -A
+          cd out && git init -q && git checkout -q -b narration-hh300-out && git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm narration
-          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" narration-hb-out
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" narration-hh300-out
