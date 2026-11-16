@@ -80,6 +80,10 @@ void fetch(String url, File to) {
 sherpaJars.each { art, file ->
     File dir = new File(sherpaRepo, "com/k2fsa/sherpa/onnx/${art}/${sherpaVersion}")
     fetch("https://github.com/k2-fsa/sherpa-onnx/releases/download/v${sherpaVersion}/${file}-${sherpaVersion}.jar", new File(dir, "${art}-${sherpaVersion}.jar"))
+    // (a version range like [1.13.3,) is resolved through this list)
+    new File(dir.parentFile, 'maven-metadata.xml').text = """<?xml version="1.0" encoding="UTF-8"?>
+<metadata><groupId>com.k2fsa.sherpa.onnx</groupId><artifactId>${art}</artifactId><versioning><latest>${sherpaVersion}</latest><release>${sherpaVersion}</release><versions><version>${sherpaVersion}</version></versions></versioning></metadata>
+"""
     new File(dir, "${art}-${sherpaVersion}.pom").text = """<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion><groupId>com.k2fsa.sherpa.onnx</groupId><artifactId>${art}</artifactId><version>${sherpaVersion}</version></project>
 """
