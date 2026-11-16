@@ -1,0 +1,24 @@
+name: Generate Helper Buddy narration
+on:
+  push:
+    branches: [gen-narration-hb]
+jobs:
+  narr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+          pip install -q sherpa-onnx numpy
+          curl -sL -o k.tar.bz2 https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/kitten-nano-en-v0_8-int8.tar.bz2
+          tar xjf k.tar.bz2
+      - run: mkdir -p out && SID=0 python tools/gen_narration_hb.py out kitten-nano-en-v0_8-int8 2>&1 | tee out/log.txt
+      - run: |
+          cd out && git init -q && git checkout -q -b narration-hb-out && git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm narration
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" narration-hb-out
