@@ -1,0 +1,22 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:item": {
+    "description": {
+      "identifier": "ghost:repair_copper",
+      "menu_category": {
+        "category": "items"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "ghost_repair_copper"
+        }
+      },
+      "minecraft:max_stack_size": 16,
+      "minecraft:display_name": {
+        "value": "item.ghost:repair_copper.name"
+      }
+    }
+  }
+}

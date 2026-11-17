@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "ghost:closet",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/ghost_closet"
+      },
+      "geometry": {
+        "default": "geometry.ghost_closet"
+      },
+      "animations": {
+        "doors": "controller.animation.ghost_closet.doors",
+        "shut": "animation.ghost_closet.shut",
+        "open": "animation.ghost_closet.open",
+        "yank": "animation.ghost_closet.yank",
+        "rattle": "animation.ghost_closet.rattle"
+      },
+      "scripts": {
+        "animate": [
+          "doors"
+        ]
+      },
+      "render_controllers": [
+        "controller.render.ghost_closet"
+      ]
+    }
+  }
+}

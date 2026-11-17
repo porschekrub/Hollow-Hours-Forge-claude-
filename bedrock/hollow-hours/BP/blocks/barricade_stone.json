@@ -1,0 +1,151 @@
+{
+  "format_version": "1.20.80",
+  "minecraft:block": {
+    "description": {
+      "identifier": "ghost:barricade_stone",
+      "menu_category": {
+        "category": "none"
+      },
+      "states": {
+        "ghost:dmg": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "traits": {
+        "minecraft:placement_direction": {
+          "enabled_states": [
+            "minecraft:cardinal_direction"
+          ]
+        }
+      }
+    },
+    "components": {
+      "minecraft:geometry": "geometry.ghost_barricade_stone",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "ghost_barricade_stone_0",
+          "render_method": "alpha_test"
+        }
+      },
+      "minecraft:collision_box": {
+        "origin": [
+          -8,
+          0,
+          -3
+        ],
+        "size": [
+          16,
+          16,
+          6
+        ]
+      },
+      "minecraft:selection_box": {
+        "origin": [
+          -8,
+          0,
+          -3
+        ],
+        "size": [
+          16,
+          16,
+          6
+        ]
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 4.0
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 12.0
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:display_name": "tile.ghost:barricade_stone.name",
+      "minecraft:map_color": "#6f6e6b"
+    },
+    "permutations": [
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              180,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              -90,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
+        "components": {
+          "minecraft:transformation": {
+            "rotation": [
+              0,
+              90,
+              0
+            ]
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('ghost:dmg') == 1",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "ghost_barricade_stone_1",
+              "render_method": "alpha_test"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('ghost:dmg') == 2",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "ghost_barricade_stone_2",
+              "render_method": "alpha_test"
+            }
+          }
+        }
+      },
+      {
+        "condition": "q.block_state('ghost:dmg') == 3",
+        "components": {
+          "minecraft:material_instances": {
+            "*": {
+              "texture": "ghost_barricade_stone_3",
+              "render_method": "alpha_test"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "ghost:hide_seat",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/ghost_seat"
+      },
+      "geometry": {
+        "default": "geometry.ghost_seat"
+      },
+      "render_controllers": [
+        "controller.render.ghost_closet"
+      ]
+    }
+  }
+}

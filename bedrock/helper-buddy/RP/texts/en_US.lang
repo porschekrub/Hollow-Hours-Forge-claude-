@@ -1,0 +1,9 @@
+entity.helper:helper.name=Helper
+item.spawn_egg.entity.helper:helper.name=Spawn Helper
+item.helper_contract.name=Helper Contract
+item.helper:contract.name=Helper Contract
+item.helper:contract=Helper Contract
+action.interact.helper=Open Menu
+item.helper_command_book.name=Helper Command Book
+item.helper:command_book.name=Helper Command Book
+item.helper:command_book=Helper Command Book

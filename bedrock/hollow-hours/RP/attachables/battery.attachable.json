@@ -1,0 +1,42 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:attachable": {
+  "description": {
+   "identifier": "ghost:battery",
+   "materials": {
+    "default": "entity_alphatest",
+    "enchanted": "entity_alphatest_glint"
+   },
+   "textures": {
+    "default": "textures/attachable/battery",
+    "enchanted": "textures/misc/enchanted_item_glint"
+   },
+   "geometry": {
+    "default": "geometry.ghost_battery"
+   },
+   "animations": {
+    "hold_first_person": "animation.ghost.battery.hold_first_person",
+    "hold_third_person": "animation.ghost.battery.hold_third_person",
+    "sway": "animation.ghost.battery.sway",
+    "equip": "animation.ghost.battery.equip"
+   },
+   "scripts": {
+    "animate": [
+     {
+      "hold_first_person": "c.is_first_person"
+     },
+     {
+      "hold_third_person": "!c.is_first_person"
+     },
+     "sway",
+     {
+      "equip": "c.is_first_person"
+     }
+    ]
+   },
+   "render_controllers": [
+    "controller.render.item_default"
+   ]
+  }
+ }
+}

@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "§4§lHollow Hours §r§8[RP]",
+    "description": "pack.description",
+    "uuid": "2587df03-e7b6-4bd8-88b3-86f4a7b407c3",
+    "version": [
+      1,
+      9,
+      5
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      40
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "46126d15-37ae-4101-bd16-4456556f6cf6",
+      "version": [
+        1,
+        9,
+        5
+      ]
+    }
+  ]
+}

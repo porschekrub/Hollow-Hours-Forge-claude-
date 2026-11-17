@@ -1,0 +1,81 @@
+{
+  "format_version": "1.20.80",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "ghost:closet",
+      "is_spawnable": false,
+      "is_summonable": true,
+      "is_experimental": false,
+      "properties": {
+        "ghost:door": {
+          "type": "int",
+          "range": [
+            0,
+            3
+          ],
+          "default": 0,
+          "client_sync": true
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "ghost_closet",
+          "inanimate"
+        ]
+      },
+      "minecraft:collision_box": {
+        "width": 0.98,
+        "height": 2.15
+      },
+      "minecraft:is_collidable": {},
+      "minecraft:health": {
+        "value": 30,
+        "max": 30
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": false
+          }
+        ]
+      },
+      "minecraft:physics": {
+        "has_gravity": true,
+        "has_collision": true
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      },
+      "minecraft:persistent": {},
+      "minecraft:fire_immune": {},
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "family_types": [
+          "player"
+        ],
+        "interact_text": "action.interact.ghost_hide",
+        "pull_in_entities": false,
+        "crouching_skip_interact": true,
+        "seats": [
+          {
+            "position": [
+              0.0,
+              0.05,
+              -0.18
+            ],
+            "lock_rider_rotation": 55
+          }
+        ]
+      },
+      "minecraft:conditional_bandwidth_optimization": {}
+    },
+    "events": {}
+  }
+}

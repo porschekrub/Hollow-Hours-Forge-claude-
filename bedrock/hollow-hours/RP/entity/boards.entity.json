@@ -1,0 +1,32 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:boards",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "textures": {
+    "t0": "textures/entity/boards/boards_0",
+    "t1": "textures/entity/boards/boards_1",
+    "t2": "textures/entity/boards/boards_2",
+    "t3": "textures/entity/boards/boards_3"
+   },
+   "geometry": {
+    "default": "geometry.ghost_boards"
+   },
+   "animations": {
+    "nail": "animation.ghost_boards.nail",
+    "ctrl": "controller.animation.ghost_boards"
+   },
+   "scripts": {
+    "animate": [
+     "ctrl"
+    ]
+   },
+   "render_controllers": [
+    "controller.render.ghost_boards"
+   ]
+  }
+ }
+}

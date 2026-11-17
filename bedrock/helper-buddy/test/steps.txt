@@ -1,0 +1,8 @@
+# baseline: the add-on must load and tick with a player in the world
+tickingarea add circle 0 -60 0 4 hh
+wait 2
+scriptevent hhtest:spawn Steve
+expect 20 \[hhtest\] spawned Steve
+wait 45
+scriptevent hhtest:where Steve
+expect 10 Steve at

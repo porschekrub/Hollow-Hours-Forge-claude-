@@ -1,0 +1,68 @@
+{
+ "format_version": "1.10.0",
+ "particle_effect": {
+  "description": {
+   "identifier": "ghost:spark",
+   "basic_render_parameters": {
+    "material": "particles_add",
+    "texture": "textures/particle/ghost_particles"
+   }
+  },
+  "components": {
+   "minecraft:emitter_rate_instant": {
+    "num_particles": 22
+   },
+   "minecraft:emitter_lifetime_once": {
+    "active_time": 0.05
+   },
+   "minecraft:particle_initial_speed": "math.random(3.0, 8.0)",
+   "minecraft:particle_lifetime_expression": {
+    "max_lifetime": "math.random(0.25, 0.6)"
+   },
+   "minecraft:particle_motion_dynamic": {
+    "linear_acceleration": [
+     0,
+     -12,
+     0
+    ],
+    "linear_drag_coefficient": 2.0
+   },
+   "minecraft:particle_appearance_billboard": {
+    "size": [
+     0.06,
+     0.06
+    ],
+    "facing_camera_mode": "rotate_xyz",
+    "uv": {
+     "texture_width": 32,
+     "texture_height": 32,
+     "uv": [
+      16,
+      0
+     ],
+     "uv_size": [
+      8,
+      8
+     ]
+    }
+   },
+   "minecraft:emitter_shape_box": {
+    "half_dimensions": [
+     0.45,
+     0.7,
+     0.15
+    ],
+    "direction": [
+     "variable.dx * 1.2 + math.random(-0.7, 0.7)",
+     "math.random(0.1, 1.1)",
+     "variable.dz * 1.2 + math.random(-0.7, 0.7)"
+    ]
+   },
+   "minecraft:particle_motion_collision": {
+    "collision_drag": 5,
+    "coefficient_of_restitution": 0.25,
+    "collision_radius": 0.05
+   }
+  }
+ }
+}

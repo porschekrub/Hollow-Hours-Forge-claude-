@@ -1,0 +1,12 @@
+{
+  "format_version": 2,
+  "header": { "name": "CI test driver", "description": "Spawns simulated players for the automatic tests. Not part of the add-ons.", "uuid": "5b1c8e6e-0f0a-4a53-9a8e-2f3d0c4b7a11", "version": [1, 0, 0], "min_engine_version": [1, 21, 100] },
+  "modules": [
+    { "type": "data", "uuid": "0d3f6a0c-7f1d-4a44-8c53-5a0f6f2d9b12", "version": [1, 0, 0] },
+    { "type": "script", "language": "javascript", "uuid": "c2a3b7de-55c1-4a0e-9f0e-7d6c1b2a3f13", "version": [1, 0, 0], "entry": "scripts/main.js" }
+  ],
+  "dependencies": [
+    { "module_name": "@minecraft/server", "version": "2.0.0" },
+    { "module_name": "@minecraft/server-gametest", "version": "1.0.0-beta" }
+  ]
+}

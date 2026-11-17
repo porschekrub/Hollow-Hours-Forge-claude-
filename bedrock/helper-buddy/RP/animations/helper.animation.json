@@ -1,0 +1,166 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.helper.look_at_target": {
+      "loop": true,
+      "bones": {
+        "head": {
+          "relative_to": {
+            "rotation": "entity"
+          },
+          "rotation": [
+            "q.target_x_rotation",
+            "q.target_y_rotation",
+            0.0
+          ]
+        }
+      }
+    },
+    "animation.helper.walk": {
+      "loop": true,
+      "bones": {
+        "leftArm": {
+          "rotation": [
+            "v.tcos0",
+            0.0,
+            0.0
+          ]
+        },
+        "rightArm": {
+          "rotation": [
+            "-v.tcos0",
+            0.0,
+            0.0
+          ]
+        },
+        "leftLeg": {
+          "rotation": [
+            "v.tcos0 * -1.4",
+            0.0,
+            0.0
+          ]
+        },
+        "rightLeg": {
+          "rotation": [
+            "v.tcos0 * 1.4",
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "animation.helper.bob": {
+      "loop": true,
+      "bones": {
+        "leftArm": {
+          "rotation": [
+            0.0,
+            0.0,
+            "-((math.cos(q.life_time * 103.2) * 2.865) + 2.865)"
+          ]
+        },
+        "rightArm": {
+          "rotation": [
+            0.0,
+            0.0,
+            "(math.cos(q.life_time * 103.2) * 2.865) + 2.865"
+          ]
+        }
+      }
+    },
+    "animation.helper.hold": {
+      "loop": true,
+      "bones": {
+        "rightArm": {
+          "rotation": [
+            -12.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "animation.helper.ko": {
+      "loop": true,
+      "bones": {
+        "root": {
+          "rotation": [
+            -90.0,
+            0.0,
+            0.0
+          ],
+          "position": [
+            0.0,
+            2.0,
+            0.0
+          ]
+        },
+        "head": {
+          "rotation": [
+            0.0,
+            "math.sin(q.life_time * 60) * 6",
+            0.0
+          ]
+        },
+        "rightArm": {
+          "rotation": [
+            0.0,
+            0.0,
+            20.0
+          ]
+        },
+        "leftArm": {
+          "rotation": [
+            0.0,
+            0.0,
+            -20.0
+          ]
+        }
+      }
+    },
+    "animation.helper.work": {
+      "loop": true,
+      "animation_length": 0.4,
+      "bones": {
+        "rightArm": {
+          "rotation": {
+            "0.0": [
+              -115.0,
+              8.0,
+              0.0
+            ],
+            "0.2": [
+              -20.0,
+              -4.0,
+              0.0
+            ],
+            "0.4": [
+              -115.0,
+              8.0,
+              0.0
+            ]
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.0": [
+              0.0,
+              -8.0,
+              0.0
+            ],
+            "0.2": [
+              0.0,
+              6.0,
+              0.0
+            ],
+            "0.4": [
+              0.0,
+              -8.0,
+              0.0
+            ]
+          }
+        }
+      }
+    }
+  }
+}

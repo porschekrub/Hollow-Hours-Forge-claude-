@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "helper_buddy",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "helper_contract": {
+      "textures": "textures/items/helper_contract"
+    },
+    "helper_command_book": {
+      "textures": "textures/items/helper_command_book"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "animation.ghost.battery.hold_first_person": {
+   "loop": true,
+   "bones": {
+    "root": {
+     "scale": 1.6
+    }
+   }
+  },
+  "animation.ghost.battery.hold_third_person": {
+   "loop": true,
+   "bones": {
+    "root": {
+     "position": [
+      0.5,
+      2.5,
+      -1.5
+     ],
+     "rotation": [
+      -20,
+      25,
+      0
+     ],
+     "scale": 1.4
+    }
+   }
+  },
+  "animation.ghost.battery.sway": {
+   "loop": true,
+   "animation_length": 3.0,
+   "bones": {
+    "root": {
+     "rotation": {
+      "0.0": [
+       0,
+       0,
+       0
+      ],
+      "1.5": [
+       0,
+       0,
+       2.5
+      ],
+      "3.0": [
+       0,
+       0,
+       0
+      ]
+     },
+     "position": {
+      "0.0": [
+       0,
+       0,
+       0
+      ],
+      "1.5": [
+       0,
+       0.15,
+       0
+      ],
+      "3.0": [
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   }
+  },
+  "animation.ghost.battery.equip": {
+   "loop": false,
+   "animation_length": 0.4,
+   "bones": {
+    "root": {
+     "rotation": {
+      "0.0": [
+       40,
+       0,
+       0
+      ],
+      "0.4": [
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   }
+  }
+ }
+}

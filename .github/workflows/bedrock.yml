@@ -1,0 +1,98 @@
+name: Bedrock add-ons
+
+# The Bedrock add-ons (bedrock/): run each one on a real Bedrock Dedicated Server, with simulated players,
+# and pack the .mcaddon files. Push a branch "bedrock/hollow-2.0.0" or "bedrock/helper-2.0.0" to publish a release.
+on:
+  push:
+    branches: [ "bedrock/**" ]
+  workflow_dispatch:
+
+concurrency:
+  group: bedrock-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.addon }} on Bedrock server
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: [ hollow-hours, helper-buddy ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pack
+        run: python3 bedrock/tools/pack.py ${{ matrix.addon }} dist
+
+      - name: Run on the Bedrock server
+        run: |
+          sudo apt-get install -y -qq libcurl4 > /dev/null || true
+          python3 bedrock/tools/bds_test.py bedrock/${{ matrix.addon }} bedrock/${{ matrix.addon }}/test/steps.txt --out /tmp/bds-out
+
+      - name: Upload add-on
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.addon }}-mcaddon
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Publish logs to the ci-logs branch
+        if: always()
+        run: |
+          set +e
+          D=/tmp/ci-logs/b
+          mkdir -p $D
+          cp -r /tmp/bds-out/* $D/ 2>/dev/null
+          echo "${{ github.sha }} ${{ job.status }}" > $D/STATUS
+          cd $D
+          git init -q
+          git checkout -q -b ci-logs-bedrock-${{ matrix.addon }}
+          git config user.name "ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git commit -qm "logs for ${{ github.sha }}"
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs-bedrock-${{ matrix.addon }} && break
+            sleep $((i * 10))
+          done
+          exit 0
+
+  release:
+    name: Publish Bedrock release
+    if: needs.test.result == 'success' && (startsWith(github.ref, 'refs/heads/bedrock/hollow-') || startsWith(github.ref, 'refs/heads/bedrock/helper-'))
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download add-ons
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Release name
+        id: tag
+        run: |
+          B="${GITHUB_REF_NAME#bedrock/}"
+          case "$B" in
+            hollow-*) echo "tag=bedrock-hollow-v${B#hollow-}" >> "$GITHUB_OUTPUT"; echo "files=dist/HollowHours*" >> "$GITHUB_OUTPUT"; echo "title=Hollow Hours ${B#hollow-} (Bedrock)" >> "$GITHUB_OUTPUT"; echo "notes=bedrock/hollow-hours/RELEASE.md" >> "$GITHUB_OUTPUT" ;;
+            helper-*) echo "tag=bedrock-helper-v${B#helper-}" >> "$GITHUB_OUTPUT"; echo "files=dist/HelperBuddy*" >> "$GITHUB_OUTPUT"; echo "title=Helper Buddy ${B#helper-} (Bedrock)" >> "$GITHUB_OUTPUT"; echo "notes=bedrock/helper-buddy/RELEASE.md" >> "$GITHUB_OUTPUT" ;;
+          esac
+          ls -la dist
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ${{ steps.tag.outputs.title }}
+          body_path: ${{ steps.tag.outputs.notes }}
+          files: ${{ steps.tag.outputs.files }}
+          fail_on_unmatched_files: true

@@ -1,0 +1,51 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.helper.work": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "working": "q.property('helper:working')"
+            }
+          ]
+        },
+        "working": {
+          "animations": [
+            "work"
+          ],
+          "transitions": [
+            {
+              "default": "!q.property('helper:working')"
+            }
+          ],
+          "blend_transition": 0.2
+        }
+      }
+    },
+    "controller.animation.helper.ko": {
+      "initial_state": "default",
+      "states": {
+        "default": {
+          "transitions": [
+            {
+              "ko": "q.property('helper:ko')"
+            }
+          ]
+        },
+        "ko": {
+          "animations": [
+            "ko"
+          ],
+          "transitions": [
+            {
+              "default": "!q.property('helper:ko')"
+            }
+          ],
+          "blend_transition": 0.3
+        }
+      }
+    }
+  }
+}

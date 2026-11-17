@@ -1,0 +1,16 @@
+{
+  "format_version": [
+    1,
+    1,
+    0
+  ],
+  "ghost:barricade_wood": {
+    "sound": "wood"
+  },
+  "ghost:barricade_stone": {
+    "sound": "stone"
+  },
+  "ghost:barricade_iron": {
+    "sound": "metal"
+  }
+}

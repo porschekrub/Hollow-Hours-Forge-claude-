@@ -1,0 +1,33 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "ghost:closet"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "unlock": [
+      {
+        "context": "AlwaysUnlocked"
+      }
+    ],
+    "pattern": [
+      "PPP",
+      "PCP",
+      "PPP"
+    ],
+    "key": {
+      "P": {
+        "tag": "minecraft:planks"
+      },
+      "C": {
+        "item": "minecraft:chest"
+      }
+    },
+    "result": {
+      "item": "ghost:closet_item",
+      "count": 1
+    }
+  }
+}

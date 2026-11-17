@@ -1,0 +1,918 @@
+{
+  "format_version": "1.20.80",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "ghost:ghost_3",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false,
+      "properties": {
+        "ghost:state": {
+          "type": "int",
+          "range": [
+            0,
+            13
+          ],
+          "default": 0,
+          "client_sync": true
+        },
+        "ghost:rage": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        }
+      }
+    },
+    "component_groups": {
+      "ghost:spawning": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:timer": {
+          "time": 3.0,
+          "looping": false,
+          "time_down_event": {
+            "event": "ghost:ready",
+            "target": "self"
+          }
+        }
+      },
+      "ghost:stalk": {
+        "minecraft:movement": {
+          "value": 0.0
+        }
+      },
+      "ghost:snapping": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:timer": {
+          "time": 1.7,
+          "looping": false,
+          "time_down_event": {
+            "event": "ghost:chase_on",
+            "target": "self"
+          }
+        }
+      },
+      "ghost:chase": {
+        "minecraft:movement": {
+          "value": 0.44
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.3
+        },
+        "minecraft:attack": {
+          "damage": 8
+        }
+      },
+      "ghost:chase_rage": {
+        "minecraft:movement": {
+          "value": 0.88
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.6
+        },
+        "minecraft:attack": {
+          "damage": 16
+        }
+      },
+      "ghost:farewell": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.0
+        },
+        "minecraft:attack": {
+          "damage": 0
+        }
+      },
+      "ghost:appeased": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.0
+        },
+        "minecraft:attack": {
+          "damage": 0
+        }
+      },
+      "ghost:size_stand": {
+        "minecraft:collision_box": {
+          "width": 1.6,
+          "height": 3.2
+        }
+      },
+      "ghost:size_crawl": {
+        "minecraft:collision_box": {
+          "width": 0.9,
+          "height": 1.2
+        }
+      },
+      "ghost:frozen": {
+        "minecraft:movement": {
+          "value": 0.0
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.0
+        }
+      },
+      "ghost:crawl_move": {
+        "minecraft:movement": {
+          "value": 0.36
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.3
+        },
+        "minecraft:attack": {
+          "damage": 8
+        }
+      },
+      "ghost:crawl_move_rage": {
+        "minecraft:movement": {
+          "value": 0.62
+        },
+        "minecraft:underwater_movement": {
+          "value": 0.5
+        },
+        "minecraft:attack": {
+          "damage": 16
+        }
+      },
+      "ghost:harmless": {
+        "minecraft:attack": {
+          "damage": 0
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "ghost",
+          "monster"
+        ]
+      },
+      "minecraft:health": {
+        "value": 1000,
+        "max": 1000
+      },
+      "minecraft:attack": {
+        "damage": 8
+      },
+      "minecraft:follow_range": {
+        "value": 128,
+        "max": 128
+      },
+      "minecraft:movement": {
+        "value": 0.16
+      },
+      "minecraft:underwater_movement": {
+        "value": 0.2
+      },
+      "minecraft:movement.amphibious": {
+        "max_turn": 30
+      },
+      "minecraft:navigation.generic": {
+        "is_amphibious": true,
+        "can_path_over_water": true,
+        "can_swim": true,
+        "can_walk": true,
+        "can_pass_doors": true,
+        "can_break_doors": false,
+        "avoid_water": false,
+        "can_open_doors": false
+      },
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0,
+        "breathes_air": true,
+        "breathes_water": true
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:persistent": {},
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:nameable": {},
+      "minecraft:behavior.melee_attack": {
+        "priority": 2,
+        "speed_multiplier": 1.0,
+        "track_target": true,
+        "reach_multiplier": 1.5
+      },
+      "minecraft:behavior.hurt_by_target": {
+        "priority": 1
+      },
+      "minecraft:behavior.nearest_attackable_target": {
+        "priority": 2,
+        "must_see": true,
+        "must_see_forget_duration": 6,
+        "reselect_targets": true,
+        "entity_types": [
+          {
+            "filters": {
+              "all_of": [
+                {
+                  "test": "is_family",
+                  "subject": "other",
+                  "value": "player"
+                },
+                {
+                  "test": "has_tag",
+                  "subject": "other",
+                  "operator": "!=",
+                  "value": "ghost_hidden"
+                }
+              ]
+            },
+            "max_dist": 128
+          }
+        ]
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 6,
+        "speed_multiplier": 0.8
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 7,
+        "look_distance": 48
+      },
+      "minecraft:behavior.random_look_around": {
+        "priority": 8
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "cause": "all",
+            "deals_damage": false
+          }
+        ]
+      },
+      "minecraft:knockback_resistance": {
+        "value": 1.0
+      }
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 0
+        }
+      },
+      "ghost:ready": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:stalk",
+            "ghost:size_stand"
+          ]
+        }
+      },
+      "ghost:start_snap": {
+        "remove": {
+          "component_groups": [
+            "ghost:stalk",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:snapping",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 1
+        }
+      },
+      "ghost:chase_on": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "ghost:spawning",
+                "ghost:stalk",
+                "ghost:snapping",
+                "ghost:farewell",
+                "ghost:appeased",
+                "ghost:frozen",
+                "ghost:crawl_move",
+                "ghost:crawl_move_rage",
+                "ghost:harmless",
+                "ghost:size_crawl"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "ghost:size_stand"
+              ]
+            },
+            "set_property": {
+              "ghost:state": 2
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": true
+            },
+            "add": {
+              "component_groups": [
+                "ghost:chase_rage"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": false
+            },
+            "add": {
+              "component_groups": [
+                "ghost:chase"
+              ]
+            }
+          }
+        ]
+      },
+      "ghost:chase_off": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:frozen",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 0
+        }
+      },
+      "ghost:enrage": {
+        "sequence": [
+          {
+            "set_property": {
+              "ghost:rage": true
+            }
+          },
+          {
+            "filters": {
+              "test": "int_property",
+              "domain": "ghost:state",
+              "operator": "==",
+              "value": 2
+            },
+            "remove": {
+              "component_groups": [
+                "ghost:chase"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "ghost:chase_rage"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "int_property",
+              "domain": "ghost:state",
+              "operator": "==",
+              "value": 7
+            },
+            "remove": {
+              "component_groups": [
+                "ghost:crawl_move"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "ghost:crawl_move_rage"
+              ]
+            }
+          }
+        ]
+      },
+      "ghost:farewell": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:appeased",
+            "ghost:frozen",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:farewell",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 0
+        }
+      },
+      "ghost:appease": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:frozen",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:appeased",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 0
+        }
+      },
+      "ghost:resume": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:frozen",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:snapping",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 1
+        }
+      },
+      "ghost:hold": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless"
+          ]
+        }
+      },
+      "ghost:bash": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 3
+        }
+      },
+      "ghost:squeeze": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 4
+        }
+      },
+      "ghost:knock": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 5
+        }
+      },
+      "ghost:stuck": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 6
+        }
+      },
+      "ghost:search": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 8
+        }
+      },
+      "ghost:crawl_search": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 9
+        }
+      },
+      "ghost:inspect": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 10
+        }
+      },
+      "ghost:peek": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 11
+        }
+      },
+      "ghost:follow_run": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_crawl"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_stand"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 12
+        }
+      },
+      "ghost:follow_crawl": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 7
+        }
+      },
+      "ghost:climb": {
+        "remove": {
+          "component_groups": [
+            "ghost:spawning",
+            "ghost:stalk",
+            "ghost:snapping",
+            "ghost:chase",
+            "ghost:chase_rage",
+            "ghost:farewell",
+            "ghost:appeased",
+            "ghost:crawl_move",
+            "ghost:crawl_move_rage",
+            "ghost:size_stand"
+          ]
+        },
+        "add": {
+          "component_groups": [
+            "ghost:frozen",
+            "ghost:harmless",
+            "ghost:size_crawl"
+          ]
+        },
+        "set_property": {
+          "ghost:state": 13
+        }
+      },
+      "ghost:crawl_chase": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "ghost:spawning",
+                "ghost:stalk",
+                "ghost:snapping",
+                "ghost:chase",
+                "ghost:chase_rage",
+                "ghost:farewell",
+                "ghost:appeased",
+                "ghost:frozen",
+                "ghost:crawl_move",
+                "ghost:crawl_move_rage",
+                "ghost:harmless",
+                "ghost:size_stand"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "ghost:size_crawl"
+              ]
+            },
+            "set_property": {
+              "ghost:state": 7
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": true
+            },
+            "add": {
+              "component_groups": [
+                "ghost:crawl_move_rage"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": false
+            },
+            "add": {
+              "component_groups": [
+                "ghost:crawl_move"
+              ]
+            }
+          }
+        ]
+      },
+      "ghost:stand_chase": {
+        "sequence": [
+          {
+            "remove": {
+              "component_groups": [
+                "ghost:spawning",
+                "ghost:stalk",
+                "ghost:snapping",
+                "ghost:chase",
+                "ghost:chase_rage",
+                "ghost:farewell",
+                "ghost:appeased",
+                "ghost:frozen",
+                "ghost:crawl_move",
+                "ghost:crawl_move_rage",
+                "ghost:harmless",
+                "ghost:size_crawl"
+              ]
+            },
+            "add": {
+              "component_groups": [
+                "ghost:size_stand"
+              ]
+            },
+            "set_property": {
+              "ghost:state": 2
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": true
+            },
+            "add": {
+              "component_groups": [
+                "ghost:chase_rage"
+              ]
+            }
+          },
+          {
+            "filters": {
+              "test": "bool_property",
+              "domain": "ghost:rage",
+              "value": false
+            },
+            "add": {
+              "component_groups": [
+                "ghost:chase"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

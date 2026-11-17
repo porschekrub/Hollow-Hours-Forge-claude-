@@ -1,0 +1,35 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": {
+      "identifier": "helper:contract"
+    },
+    "tags": [
+      "crafting_table"
+    ],
+    "pattern": [
+      " G ",
+      "PIP",
+      " P "
+    ],
+    "key": {
+      "G": {
+        "item": "minecraft:gold_ingot"
+      },
+      "P": {
+        "item": "minecraft:paper"
+      },
+      "I": {
+        "item": "minecraft:iron_ingot"
+      }
+    },
+    "unlock": [
+      {
+        "item": "minecraft:paper"
+      }
+    ],
+    "result": {
+      "item": "helper:contract"
+    }
+  }
+}

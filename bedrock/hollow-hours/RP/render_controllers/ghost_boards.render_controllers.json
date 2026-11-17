@@ -1,0 +1,256 @@
+{
+ "format_version": "1.8.0",
+ "render_controllers": {
+  "controller.render.ghost_boards": {
+   "arrays": {
+    "textures": {
+     "Array.tex": [
+      "Texture.t0",
+      "Texture.t1",
+      "Texture.t2",
+      "Texture.t3"
+     ]
+    }
+   },
+   "geometry": "Geometry.default",
+   "materials": [
+    {
+     "*": "Material.default"
+    }
+   ],
+   "textures": [
+    "Array.tex[math.clamp(query.property('ghost:dmg'), 0, 3)]"
+   ],
+   "part_visibility": [
+    {
+     "*": false
+    },
+    {
+     "root": true
+    },
+    {
+     "zb1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zb1w": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 0"
+    },
+    {
+     "zb1s": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 1"
+    },
+    {
+     "zb1i": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 2"
+    },
+    {
+     "zb1n1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zb1n2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zb1n3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zb2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "zb2w": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 0"
+    },
+    {
+     "zb2s": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 1"
+    },
+    {
+     "zb2i": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 2"
+    },
+    {
+     "zb2n1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "zb2n2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "zb2n3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "zb3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "zb3w": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 0"
+    },
+    {
+     "zb3s": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 1"
+    },
+    {
+     "zb3i": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 2"
+    },
+    {
+     "zb3n1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "zb3n2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "zb3n3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "zb4": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "zb4w": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 0"
+    },
+    {
+     "zb4s": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 1"
+    },
+    {
+     "zb4i": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 2"
+    },
+    {
+     "zb4n1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "zb4n2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "zb4n3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "zg": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zgw": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 0"
+    },
+    {
+     "zgs": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 1"
+    },
+    {
+     "zgi": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 2"
+    },
+    {
+     "zgn1": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zgn2": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zgn3": "query.property('ghost:axis') == 0 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "zhp": "query.property('ghost:axis') == 0 && query.property('ghost:fx') == 1 && query.property('ghost:side') == 0"
+    },
+    {
+     "zhn": "query.property('ghost:axis') == 0 && query.property('ghost:fx') == 1 && query.property('ghost:side') == 1"
+    },
+    {
+     "xb1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xb1w": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 0"
+    },
+    {
+     "xb1s": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 1"
+    },
+    {
+     "xb1i": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 2"
+    },
+    {
+     "xb1n1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xb1n2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xb1n3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xb2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "xb2w": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 0"
+    },
+    {
+     "xb2s": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 1"
+    },
+    {
+     "xb2i": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2 && query.property('ghost:m2') == 2"
+    },
+    {
+     "xb2n1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "xb2n2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "xb2n3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 2"
+    },
+    {
+     "xb3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "xb3w": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 0"
+    },
+    {
+     "xb3s": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 1"
+    },
+    {
+     "xb3i": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3 && query.property('ghost:m3') == 2"
+    },
+    {
+     "xb3n1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "xb3n2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "xb3n3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 3"
+    },
+    {
+     "xb4": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "xb4w": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 0"
+    },
+    {
+     "xb4s": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 1"
+    },
+    {
+     "xb4i": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4 && query.property('ghost:m4') == 2"
+    },
+    {
+     "xb4n1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "xb4n2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "xb4n3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 0 && query.property('ghost:n') >= 4"
+    },
+    {
+     "xg": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xgw": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 0"
+    },
+    {
+     "xgs": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 1"
+    },
+    {
+     "xgi": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1 && query.property('ghost:m1') == 2"
+    },
+    {
+     "xgn1": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xgn2": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xgn3": "query.property('ghost:axis') == 1 && query.property('ghost:kind') == 1 && query.property('ghost:n') >= 1"
+    },
+    {
+     "xhp": "query.property('ghost:axis') == 1 && query.property('ghost:fx') == 1 && query.property('ghost:side') == 1"
+    },
+    {
+     "xhn": "query.property('ghost:axis') == 1 && query.property('ghost:fx') == 1 && query.property('ghost:side') == 0"
+    }
+   ]
+  }
+ }
+}

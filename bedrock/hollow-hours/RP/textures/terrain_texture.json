@@ -1,0 +1,44 @@
+{
+  "resource_pack_name": "ghost",
+  "texture_name": "atlas.terrain",
+  "padding": 8,
+  "num_mip_levels": 4,
+  "texture_data": {
+    "ghost_barricade_wood_0": {
+      "textures": "textures/blocks/barricade_wood_0"
+    },
+    "ghost_barricade_wood_1": {
+      "textures": "textures/blocks/barricade_wood_1"
+    },
+    "ghost_barricade_wood_2": {
+      "textures": "textures/blocks/barricade_wood_2"
+    },
+    "ghost_barricade_wood_3": {
+      "textures": "textures/blocks/barricade_wood_3"
+    },
+    "ghost_barricade_stone_0": {
+      "textures": "textures/blocks/barricade_stone_0"
+    },
+    "ghost_barricade_stone_1": {
+      "textures": "textures/blocks/barricade_stone_1"
+    },
+    "ghost_barricade_stone_2": {
+      "textures": "textures/blocks/barricade_stone_2"
+    },
+    "ghost_barricade_stone_3": {
+      "textures": "textures/blocks/barricade_stone_3"
+    },
+    "ghost_barricade_iron_0": {
+      "textures": "textures/blocks/barricade_iron_0"
+    },
+    "ghost_barricade_iron_1": {
+      "textures": "textures/blocks/barricade_iron_1"
+    },
+    "ghost_barricade_iron_2": {
+      "textures": "textures/blocks/barricade_iron_2"
+    },
+    "ghost_barricade_iron_3": {
+      "textures": "textures/blocks/barricade_iron_3"
+    }
+  }
+}

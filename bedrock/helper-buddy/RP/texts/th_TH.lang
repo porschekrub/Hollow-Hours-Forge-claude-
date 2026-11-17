@@ -1,0 +1,9 @@
+entity.helper:helper.name=ผู้ช่วย
+item.spawn_egg.entity.helper:helper.name=เรียกผู้ช่วย
+item.helper_contract.name=สัญญาจ้างผู้ช่วย
+item.helper:contract.name=สัญญาจ้างผู้ช่วย
+item.helper:contract=สัญญาจ้างผู้ช่วย
+action.interact.helper=เปิดเมนูผู้ช่วย
+item.helper_command_book.name=หนังสือสั่งงานผู้ช่วย
+item.helper:command_book.name=หนังสือสั่งงานผู้ช่วย
+item.helper:command_book=หนังสือสั่งงานผู้ช่วย

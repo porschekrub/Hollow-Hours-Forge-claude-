@@ -1,0 +1,32 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:item": {
+    "description": {
+      "identifier": "ghost:flashlight",
+      "menu_category": {
+        "category": "equipment"
+      }
+    },
+    "components": {
+      "minecraft:icon": {
+        "textures": {
+          "default": "ghost_flashlight"
+        }
+      },
+      "minecraft:max_stack_size": 1,
+      "minecraft:allow_off_hand": {
+        "value": true
+      },
+      "minecraft:display_name": {
+        "value": "item.ghost:flashlight.name"
+      },
+      "minecraft:durability": {
+        "max_durability": 1000,
+        "damage_chance": {
+          "min": 0,
+          "max": 0
+        }
+      }
+    }
+  }
+}

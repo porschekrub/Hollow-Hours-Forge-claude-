@@ -1,0 +1,77 @@
+{
+ "format_version": "1.10.0",
+ "render_controllers": {
+  "controller.render.ghost": {
+   "arrays": {},
+   "geometry": "Geometry.default",
+   "materials": [
+    {
+     "*": "Material.default"
+    }
+   ],
+   "textures": [
+    "Texture.default"
+   ]
+  },
+  "controller.render.ghost_crack": {
+   "arrays": {
+    "textures": {
+     "Array.crk": [
+      "Texture.d1",
+      "Texture.d2",
+      "Texture.d3",
+      "Texture.d4",
+      "Texture.g1",
+      "Texture.g2",
+      "Texture.g3",
+      "Texture.g4"
+     ]
+    }
+   },
+   "geometry": "Geometry.default",
+   "materials": [
+    {
+     "*": "Material.default"
+    }
+   ],
+   "textures": [
+    "Array.crk[math.clamp(query.property('ghost:stage') - 1, 0, 3) + query.property('ghost:style') * 4]"
+   ],
+   "part_visibility": [
+    {
+     "*": false
+    },
+    {
+     "cube": "query.property('ghost:shape') == 0"
+    },
+    {
+     "pane_x": "query.property('ghost:shape') == 1"
+    },
+    {
+     "pane_z": "query.property('ghost:shape') == 2"
+    },
+    {
+     "door_x": "query.property('ghost:shape') == 3"
+    },
+    {
+     "door_z": "query.property('ghost:shape') == 4"
+    },
+    {
+     "trap_y": "query.property('ghost:shape') == 5"
+    },
+    {
+     "trap_x": "query.property('ghost:shape') == 6"
+    },
+    {
+     "trap_z": "query.property('ghost:shape') == 7"
+    },
+    {
+     "gate_x": "query.property('ghost:shape') == 8"
+    },
+    {
+     "gate_z": "query.property('ghost:shape') == 9"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,48 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "helper:helper",
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "textures": {
+        "default": "textures/entity/helper"
+      },
+      "geometry": {
+        "default": "geometry.helper"
+      },
+      "render_controllers": [
+        "controller.render.helper"
+      ],
+      "spawn_egg": {
+        "base_color": "#f2b632",
+        "overlay_color": "#2f5aa8"
+      },
+      "enable_attachables": true,
+      "scripts": {
+        "pre_animation": [
+          "v.tcos0 = math.cos(q.modified_distance_moved * 38.17) * math.min(q.modified_move_speed, 1.0) * 57.3;"
+        ],
+        "animate": [
+          "look_at_target",
+          "walk",
+          "bob",
+          "hold",
+          "work_controller",
+          "ko_controller"
+        ]
+      },
+      "animations": {
+        "look_at_target": "animation.helper.look_at_target",
+        "walk": "animation.helper.walk",
+        "bob": "animation.helper.bob",
+        "hold": "animation.helper.hold",
+        "work": "animation.helper.work",
+        "work_controller": "controller.animation.helper.work",
+        "ko": "animation.helper.ko",
+        "ko_controller": "controller.animation.helper.ko"
+      }
+    }
+  }
+}

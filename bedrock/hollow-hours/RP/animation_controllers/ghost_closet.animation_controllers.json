@@ -1,0 +1,78 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.ghost_closet.doors": {
+      "initial_state": "closed",
+      "states": {
+        "closed": {
+          "animations": [
+            "shut"
+          ],
+          "transitions": [
+            {
+              "opened": "query.property('ghost:door') == 1"
+            },
+            {
+              "yanked": "query.property('ghost:door') == 2"
+            },
+            {
+              "rattling": "query.property('ghost:door') == 3"
+            }
+          ],
+          "blend_transition": 0.35
+        },
+        "opened": {
+          "animations": [
+            "open"
+          ],
+          "transitions": [
+            {
+              "closed": "query.property('ghost:door') == 0"
+            },
+            {
+              "yanked": "query.property('ghost:door') == 2"
+            },
+            {
+              "rattling": "query.property('ghost:door') == 3"
+            }
+          ],
+          "blend_transition": 0.3
+        },
+        "yanked": {
+          "animations": [
+            "yank"
+          ],
+          "transitions": [
+            {
+              "closed": "query.property('ghost:door') == 0"
+            },
+            {
+              "opened": "query.property('ghost:door') == 1"
+            },
+            {
+              "rattling": "query.property('ghost:door') == 3"
+            }
+          ],
+          "blend_transition": 0.4
+        },
+        "rattling": {
+          "animations": [
+            "rattle"
+          ],
+          "transitions": [
+            {
+              "closed": "query.property('ghost:door') == 0"
+            },
+            {
+              "opened": "query.property('ghost:door') == 1"
+            },
+            {
+              "yanked": "query.property('ghost:door') == 2"
+            }
+          ],
+          "blend_transition": 0.1
+        }
+      }
+    }
+  }
+}

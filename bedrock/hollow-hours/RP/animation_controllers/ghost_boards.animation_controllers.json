@@ -1,0 +1,27 @@
+{
+ "format_version": "1.10.0",
+ "animation_controllers": {
+  "controller.animation.ghost_boards": {
+   "initial_state": "rest",
+   "states": {
+    "rest": {
+     "transitions": [
+      {
+       "nail": "query.property('ghost:fx') >= 1"
+      }
+     ]
+    },
+    "nail": {
+     "animations": [
+      "nail"
+     ],
+     "transitions": [
+      {
+       "rest": "query.property('ghost:fx') == 0"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,17 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "ghost:crack",
+      "materials": { "default": "entity_alphatest" },
+      "textures": {
+        "d1": "textures/entity/crack/dark_1", "d2": "textures/entity/crack/dark_2",
+        "d3": "textures/entity/crack/dark_3", "d4": "textures/entity/crack/dark_4",
+        "g1": "textures/entity/crack/glass_1", "g2": "textures/entity/crack/glass_2",
+        "g3": "textures/entity/crack/glass_3", "g4": "textures/entity/crack/glass_4"
+      },
+      "geometry": { "default": "geometry.ghost_crack" },
+      "render_controllers": [ "controller.render.ghost_crack" ]
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "ghost:ghost_5",
+      "materials": {
+        "default": "entity_emissive_alpha"
+      },
+      "textures": {
+        "default": "textures/entity/ghost_5"
+      },
+      "geometry": {
+        "default": "geometry.ghost_5"
+      },
+      "scripts": {
+        "initialize": [
+          "variable.crawl_drop = 13.60; variable.fold = 4.00; variable.lift = 10.00; variable.crawl_head = -20.00; variable.peek_drop = 22.00; variable.peek_body = 92.00; variable.peek_hp = 25.00; variable.crawl_sq = 0.85; variable.crawl_ea = 0.00; variable.knock_drop = 5.81; variable.knock_bend = 24.00; variable.knock_arm = -100.00; variable.knock_fore = -145.00; variable.insp_drop = 13.28; variable.insp_bend = 24.00; variable.insp_arm = -106.00; variable.insp_fore = -98.00;"
+        ],
+        "pre_animation": [
+          "variable.cph = query.modified_distance_moved * 45.0 + query.life_time * 90.0;"
+        ],
+        "scale": "1.15",
+        "animate": [
+          "main"
+        ]
+      },
+      "animations": {
+        "main": "controller.animation.ghost.main",
+        "look": "animation.ghost.look",
+        "idle": "animation.ghost.idle",
+        "walk": "animation.ghost.walk",
+        "run": "animation.ghost.run_g5",
+        "spawn": "animation.ghost.spawn",
+        "snap": "animation.ghost.snap",
+        "chase_music": "animation.ghost.chase_music",
+        "deform": "animation.ghost.deform_5",
+        "twitch": "animation.ghost.twitch",
+        "spasm": "animation.ghost.spasm",
+        "bash": "animation.ghost.bash",
+        "crawl": "animation.ghost.crawl",
+        "knock": "animation.ghost.knock",
+        "stuck": "animation.ghost.stuck",
+        "search": "animation.ghost.search",
+        "search_head": "animation.ghost.search_head",
+        "inspect": "animation.ghost.inspect",
+        "peek": "animation.ghost.peek",
+        "run_t": "animation.ghost.run_g5_t",
+        "climb": "animation.ghost.climb"
+      },
+      "sound_effects": {
+        "spawn_music": "ghost.g5.spawn",
+        "chase_music": "ghost.g5.chase",
+        "snap": "ghost.snap",
+        "creak": "ghost.creak",
+        "growl": "ghost.growl"
+      },
+      "render_controllers": [
+        "controller.render.ghost"
+      ],
+      "spawn_egg": {
+        "base_color": "#1a0000",
+        "overlay_color": "#8b0000"
+      }
+    }
+  }
+}

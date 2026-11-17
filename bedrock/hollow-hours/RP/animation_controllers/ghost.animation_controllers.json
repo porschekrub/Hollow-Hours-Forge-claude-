@@ -1,0 +1,749 @@
+{
+ "format_version": "1.10.0",
+ "animation_controllers": {
+  "controller.animation.ghost.main": {
+   "initial_state": "spawning",
+   "states": {
+    "spawning": {
+     "animations": [
+      "look",
+      "spawn",
+      "deform",
+      "twitch"
+     ],
+     "transitions": [
+      {
+       "default": "query.life_time >= 3.0 && query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ]
+    },
+    "default": {
+     "animations": [
+      "look",
+      "idle",
+      {
+       "walk": "query.ground_speed > 0.3"
+      },
+      "deform",
+      "twitch"
+     ],
+     "transitions": [
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "snap": {
+     "animations": [
+      "look",
+      "snap",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "chase": {
+     "animations": [
+      "look",
+      "run",
+      "chase_music",
+      "deform",
+      "spasm"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "bash": {
+     "animations": [
+      "bash",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "crawl": {
+     "animations": [
+      "crawl",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "knock": {
+     "animations": [
+      "knock",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "stuck": {
+     "animations": [
+      "stuck",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "crawlchase": {
+     "animations": [
+      "crawl",
+      "chase_music",
+      "deform",
+      "spasm"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "search": {
+     "animations": [
+      "search",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "crawlsearch": {
+     "animations": [
+      "crawl",
+      "search_head",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "inspect": {
+     "animations": [
+      "inspect",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "peek": {
+     "animations": [
+      "peek",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "followrun": {
+     "animations": [
+      "look",
+      "run_t",
+      "chase_music",
+      "deform",
+      "spasm"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "climb": "query.property('ghost:state') == 13"
+      }
+     ],
+     "blend_transition": 0.25
+    },
+    "climb": {
+     "animations": [
+      "climb",
+      "deform"
+     ],
+     "transitions": [
+      {
+       "default": "query.property('ghost:state') == 0"
+      },
+      {
+       "snap": "query.property('ghost:state') == 1"
+      },
+      {
+       "chase": "query.property('ghost:state') == 2"
+      },
+      {
+       "bash": "query.property('ghost:state') == 3"
+      },
+      {
+       "crawl": "query.property('ghost:state') == 4"
+      },
+      {
+       "knock": "query.property('ghost:state') == 5"
+      },
+      {
+       "stuck": "query.property('ghost:state') == 6"
+      },
+      {
+       "crawlchase": "query.property('ghost:state') == 7"
+      },
+      {
+       "search": "query.property('ghost:state') == 8"
+      },
+      {
+       "crawlsearch": "query.property('ghost:state') == 9"
+      },
+      {
+       "inspect": "query.property('ghost:state') == 10"
+      },
+      {
+       "peek": "query.property('ghost:state') == 11"
+      },
+      {
+       "followrun": "query.property('ghost:state') == 12"
+      }
+     ],
+     "blend_transition": 0.25
+    }
+   }
+  }
+ }
+}

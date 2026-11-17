@@ -1,0 +1,261 @@
+{
+  "format_version": "1.21.90",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "helper:helper",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "properties": {
+        "helper:working": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        },
+        "helper:moving": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        },
+        "helper:ko": {
+          "type": "bool",
+          "default": false,
+          "client_sync": true
+        }
+      }
+    },
+    "component_groups": {
+      "helper:follow": {
+        "minecraft:behavior.follow_owner": {
+          "priority": 2,
+          "speed_multiplier": 1.15,
+          "start_distance": 5,
+          "stop_distance": 2.5
+        },
+        "minecraft:behavior.look_at_player": {
+          "priority": 7,
+          "look_distance": 8,
+          "probability": 0.03
+        },
+        "minecraft:behavior.random_look_around": {
+          "priority": 8
+        }
+      },
+      "helper:stay": {
+        "minecraft:behavior.look_at_player": {
+          "priority": 7,
+          "look_distance": 8,
+          "probability": 0.03
+        },
+        "minecraft:behavior.random_look_around": {
+          "priority": 8
+        }
+      },
+      "helper:work": {},
+      "helper:ko": {
+        "minecraft:damage_sensor": {
+          "triggers": [
+            {
+              "cause": "all",
+              "deals_damage": "no"
+            }
+          ]
+        },
+        "minecraft:movement": {
+          "value": 0.0
+        }
+      }
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": [
+          "helper",
+          "irongolem",
+          "mob"
+        ]
+      },
+      "minecraft:health": {
+        "value": 1000,
+        "max": 1000
+      },
+      "minecraft:collision_box": {
+        "width": 0.6,
+        "height": 1.8
+      },
+      "minecraft:movement": {
+        "value": 0.3
+      },
+      "minecraft:navigation.walk": {
+        "can_path_over_water": true,
+        "avoid_water": true,
+        "avoid_damage_blocks": true,
+        "can_open_doors": true,
+        "can_pass_doors": true,
+        "can_walk": true
+      },
+      "minecraft:movement.basic": {},
+      "minecraft:jump.static": {},
+      "minecraft:can_climb": {},
+      "minecraft:annotation.open_door": {},
+      "minecraft:physics": {},
+      "minecraft:pushable": {
+        "is_pushable": true,
+        "is_pushable_by_piston": true
+      },
+      "minecraft:persistent": {},
+      "minecraft:tick_world": {
+        "radius": 2,
+        "never_despawn": true
+      },
+      "minecraft:nameable": {
+        "always_show": true,
+        "allow_name_tag_renaming": true
+      },
+      "minecraft:inventory": {
+        "inventory_size": 37,
+        "container_type": "inventory",
+        "private": true
+      },
+      "minecraft:equipment": {
+        "slot_drop_chance": [
+          {
+            "slot": "slot.weapon.mainhand",
+            "drop_chance": 0
+          }
+        ]
+      },
+      "minecraft:damage_sensor": {
+        "triggers": [
+          {
+            "on_damage": {
+              "filters": {
+                "test": "is_family",
+                "subject": "other",
+                "value": "player"
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "on_damage": {
+              "filters": {
+                "test": "is_family",
+                "subject": "other",
+                "value": "helper"
+              }
+            },
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fall",
+            "deals_damage": "no"
+          },
+          {
+            "cause": "suffocation",
+            "deals_damage": "no"
+          },
+          {
+            "cause": "fly_into_wall",
+            "deals_damage": "no"
+          },
+          {
+            "cause": "drowning",
+            "deals_damage": "no"
+          },
+          {
+            "cause": "contact",
+            "deals_damage": "no"
+          }
+        ]
+      },
+      "minecraft:fire_immune": {},
+      "minecraft:breathable": {
+        "total_supply": 15,
+        "suffocate_time": 0,
+        "breathes_air": true,
+        "breathes_water": true
+      },
+      "minecraft:tameable": {
+        "probability": 0.0,
+        "tame_items": "minecraft:barrier"
+      },
+      "minecraft:interact": {
+        "interactions": [
+          {
+            "interact_text": "action.interact.helper",
+            "on_interact": {
+              "event": "helper:interact",
+              "target": "self"
+            }
+          }
+        ]
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:conditional_bandwidth_optimization": {}
+    },
+    "events": {
+      "minecraft:entity_spawned": {
+        "add": {
+          "component_groups": [
+            "helper:follow"
+          ]
+        }
+      },
+      "helper:ai_follow": {
+        "add": {
+          "component_groups": [
+            "helper:follow"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "helper:stay",
+            "helper:work"
+          ]
+        }
+      },
+      "helper:ai_stay": {
+        "add": {
+          "component_groups": [
+            "helper:stay"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "helper:follow",
+            "helper:work"
+          ]
+        }
+      },
+      "helper:ai_work": {
+        "add": {
+          "component_groups": [
+            "helper:work"
+          ]
+        },
+        "remove": {
+          "component_groups": [
+            "helper:follow",
+            "helper:stay"
+          ]
+        }
+      },
+      "helper:interact": {},
+      "helper:ko": {
+        "add": {
+          "component_groups": [
+            "helper:ko"
+          ]
+        }
+      },
+      "helper:wake": {
+        "remove": {
+          "component_groups": [
+            "helper:ko"
+          ]
+        }
+      }
+    }
+  }
+}
