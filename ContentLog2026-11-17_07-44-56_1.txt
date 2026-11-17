@@ -1,0 +1,10 @@
+07:44:57[Scripting][warning]-[hhtest] driver ready
+
+07:44:57[Scripting][inform]-[helper] Helper Buddy v1.6.0 loaded
+
+07:44:59[Scripting][warning]-[hhtest] spawned Steve id=-8589934591 at {"z":0,"y":-60,"x":0}
+
+07:45:45[Scripting][warning]-[hhtest] Steve at {"z":0,"y":-60,"x":0} hp=20
+
+07:45:45[Scripting][warning]-[hhtest] where ok
+
