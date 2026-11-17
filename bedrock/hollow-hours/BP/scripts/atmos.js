@@ -12,8 +12,8 @@ const rand = (a, b) => a + Math.random() * (b - a);
 let raining = false;
 let blood = false, force = 0, fogUntil = 0, fogStrength = 0, nextFogCheck = 0;
 const riseHooks = [];
-/** how much crueller everything is (the rescue raises it): { ghosts, blood } */
-let cruelty = () => ({ ghosts: 1, blood: 1 });
+/** how much crueller the ghosts are (the rescue raises it): (player or null for "the worst of everyone", blood moon?) => 1.. */
+let cruelty = () => 1;
 /** players the haunting leaves alone (the haven, before it is found) */
 let calmFor = () => false;
 export function setCruelty(fn) { cruelty = fn; }
@@ -33,9 +33,11 @@ export function fogNow() {
   return f;
 }
 /** How the ghosts change tonight. */
-export function mods() {
-  const c = cruelty();
-  return { gap: (blood ? 1 / 3 : 1) / c.ghosts, damage: (blood ? 3 : 1) * c.ghosts, speed: blood ? 1.15 : 1, maxAlive: blood ? 2 : 1 };
+export function mods(p) {
+  const b = blood ? 3 : 1;
+  let all = 1, mine = 1;
+  try { all = cruelty(null, blood); if (p) mine = cruelty(p, blood); } catch (_) { oops(_); }
+  return { gap: 1 / Math.max(b, all), damage: Math.max(b, mine), speed: blood ? 1.15 : 1, maxAlive: blood ? 2 : 1 };
 }
 
 function announce() {
@@ -56,7 +58,7 @@ function tick() {
   const random = force === 0 && storyActive();
   if (night && wget("hh:rolled_night", -1) !== nightNo) {
     wset("hh:rolled_night", nightNo);
-    blood = force > 0 || (random && Math.random() < Math.min(0.9, CFG.BLOOD_CHANCE * cruelty().blood));
+    blood = force > 0 || (random && Math.random() < CFG.BLOOD_CHANCE);
     wset("hh:blood", blood);
     if (blood) announce();
   } else if (!night && blood) {

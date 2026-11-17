@@ -112,23 +112,25 @@ def _face_tile(face, textures):
 
 
 def convert(identifier, parts, geo_out, png_out, visible=(2, 2.5, 0), inflate=0):
-    """parts: [(bone name, java model path under models/, pivot [x,y,z] in Bedrock space, parent bone or None)]"""
+    """parts: [(bone name, java model path under models/, pivot [x,y,z] in Bedrock space, parent bone or None, offset)]"""
     atlas = Atlas()
     bones = []
     for part in parts:
         name, model, pivot = part[0], part[1], part[2]
         parent = part[3] if len(part) > 3 else None
+        off = part[4] if len(part) > 4 else (0, 0, 0)   # moves the Java model (in its own pixels) before converting
         els, tex = _load(model)
         cubes = []
         for el in els:
-            f, t = el["from"], el["to"]
+            f = [el["from"][i] + off[i] for i in range(3)]
+            t = [el["to"][i] + off[i] for i in range(3)]
             size = [t[0] - f[0], t[1] - f[1], t[2] - f[2]]
             cube = {"origin": [-((f[0] - 8) + size[0]), f[1], f[2] - 8], "size": size, "uv": {}}
             if inflate:
                 cube["inflate"] = inflate
             r = el.get("rotation")
             if r and r.get("angle"):
-                o = r["origin"]
+                o = [r["origin"][i] + off[i] for i in range(3)]
                 cube["pivot"] = [-(o[0] - 8), o[1], o[2] - 8]
                 a = r["angle"]
                 cube["rotation"] = {"x": [-a, 0, 0], "y": [0, -a, 0], "z": [0, 0, a]}[r["axis"]]

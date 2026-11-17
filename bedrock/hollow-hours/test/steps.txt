@@ -37,7 +37,14 @@ scriptevent hollow:test betray2
 expect 60 \[test\] PASS betray2
 scriptevent hhtest:respawn Steve
 wait 3
+scriptevent hollow:test phone
+expect 60 \[test\] PASS phone
+scriptevent hollow:test rescue1
+expect 150 \[test\] PASS rescue1
+scriptevent hollow:test rescue2
+expect 90 \[test\] PASS rescue2
 scriptevent hollow:status
+scriptevent hollow:rescue status
 # and a quiet minute with everything running
 scriptevent hollow:story start
 wait 40

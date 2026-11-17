@@ -1,0 +1,115 @@
+{
+ "format_version": "1.20.80",
+ "minecraft:entity": {
+  "description": {
+   "identifier": "ghost:helicopter",
+   "is_spawnable": false,
+   "is_summonable": true,
+   "is_experimental": false
+  },
+  "components": {
+   "minecraft:type_family": {
+    "family": [
+     "ghost_helicopter",
+     "inanimate"
+    ]
+   },
+   "minecraft:collision_box": {
+    "width": 3.2,
+    "height": 3.4
+   },
+   "minecraft:health": {
+    "value": 100,
+    "max": 100
+   },
+   "minecraft:damage_sensor": {
+    "triggers": [
+     {
+      "cause": "all",
+      "deals_damage": false
+     }
+    ]
+   },
+   "minecraft:physics": {
+    "has_gravity": false,
+    "has_collision": false
+   },
+   "minecraft:pushable": {
+    "is_pushable": false,
+    "is_pushable_by_piston": false
+   },
+   "minecraft:knockback_resistance": {
+    "value": 1.0
+   },
+   "minecraft:persistent": {},
+   "minecraft:fire_immune": {},
+   "minecraft:rideable": {
+    "seat_count": 6,
+    "family_types": [
+     "player"
+    ],
+    "interact_text": "action.interact.ghost_board",
+    "pull_in_entities": false,
+    "crouching_skip_interact": false,
+    "seats": [
+     {
+      "position": [
+       0,
+       0.75,
+       -0.44
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     },
+     {
+      "position": [
+       -0.85,
+       0.75,
+       -1.75
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     },
+     {
+      "position": [
+       0.85,
+       0.75,
+       -1.75
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     },
+     {
+      "position": [
+       0,
+       0.75,
+       -1.75
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     },
+     {
+      "position": [
+       -0.69,
+       0.75,
+       1.69
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     },
+     {
+      "position": [
+       0.69,
+       0.75,
+       1.69
+      ],
+      "min_rider_count": 0,
+      "max_rider_count": 6
+     }
+    ]
+   },
+   "minecraft:conditional_bandwidth_optimization": {}
+  },
+  "events": {}
+ }
+}

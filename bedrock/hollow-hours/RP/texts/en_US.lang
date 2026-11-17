@@ -58,3 +58,7 @@ item.ghost:grave_compass.name=§eGrave Compass
 item.ghost:restorer.name=§dGrave Restorer
 entity.ghost:grave.name=Grave
 action.interact.ghost_grave=Open grave
+item.ghost:phone.name=§bPhone
+item.ghost:charger.name=§aPower Bank
+entity.ghost:helicopter.name=Rescue Helicopter
+action.interact.ghost_board=Board

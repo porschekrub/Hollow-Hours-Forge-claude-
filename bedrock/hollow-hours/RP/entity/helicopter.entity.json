@@ -1,0 +1,29 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:helicopter",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "textures": {
+    "default": "textures/entity/ghost_helicopter"
+   },
+   "geometry": {
+    "default": "geometry.ghost_helicopter"
+   },
+   "animations": {
+    "spin": "animation.ghost_helicopter.spin"
+   },
+   "scripts": {
+    "scale": "4.0",
+    "animate": [
+     "spin"
+    ]
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ]
+  }
+ }
+}

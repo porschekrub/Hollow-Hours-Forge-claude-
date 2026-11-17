@@ -9,6 +9,10 @@ import { _grave } from "./grave.js";
 import { offer, inDeal, _betray } from "./betray.js";
 import { spray } from "./blood.js";
 import { T } from "./texts.js";
+import { battery, setBattery, notify, send, openPhone, hasPhone, storyMessages, _phone } from "./phone.js";
+import { navigate, navOf, stopNav } from "./nav.js";
+import { phase, inHaven, invaded, harshness, havenSpot, rescueCommand, safe, _rescue, IN_HAVEN, HOME, WAITING } from "./rescue.js";
+import { pget } from "./store.js";
 
 let api = {};
 const log = (s) => console.warn("[test] " + s);
@@ -156,6 +160,81 @@ const TESTS = {
     const st = g.getProperty("ghost:state");
     log("hunt: ghost state " + st + ", player health " + p.getComponent("minecraft:health").currentValue.toFixed(1));
     g.remove();
+  },
+  async phone(p) {
+    const f = players().find((x) => x.id !== p.id);
+    need(hasPhone(p), "no phone given on first join");
+    need(battery(p) >= 30 && battery(p) <= 100, "battery " + battery(p));
+    const n0 = _phone.inbox(p).length;
+    notify(p, "Test", "hello", false);
+    need(_phone.inbox(p).length === n0 + 1, "inbox");
+    forceStory(-1);
+    send(p, "mom", false, "hi mom"); await wait(130);
+    const mom = _phone.chatLog(p).mom;
+    need(mom.length >= 3 && mom[mom.length - 1][0] === "them", "mom did not answer: " + JSON.stringify(mom.slice(-2)));
+    need(mom[mom.length - 1][2].includes("calm.greet"), "wrong kind of answer: " + mom[mom.length - 1][2]);
+    need(_phone.lineText(mom[mom.length - 1]).length > 5, "line text");
+    send(p, "p:" + f.id, false, "run");
+    send(p, "p:" + f.id, true, "");
+    const got = _phone.chatLog(f)["p:" + p.id];
+    need(got && got.length === 2 && got[1][1] === "l", "friend did not get it: " + JSON.stringify(got));
+    setBattery(p, 20); need(_phone.charge(p) && battery(p) === 100, "charging");
+    storyMessages(p, 1); await wait(230);
+    need(_phone.chatLog(p).dad.some((l) => l[2] === "chat.dad.story1"), "story message");
+    navigate(p, "x", { x: p.location.x + 50, y: p.location.y, z: p.location.z, dim: "overworld" });
+    need(navOf(p), "navigation"); stopNav(p);
+    await openPhone(p);
+    forceStory(0);
+  },
+  // the helicopter comes, both board, it flies them to the haven
+  async rescue1(p) {
+    const f = players().find((x) => x.id !== p.id);
+    rescueCommand("reset", null, () => {});
+    const home = { x: p.location.x, z: p.location.z };
+    rescueCommand("now", null, () => {}); await wait(50);
+    let hs = _rescue.liveHelis(_rescue.PICKUP);
+    need(hs.length === 1, "helicopters: " + hs.length);
+    const h = hs[0];
+    need(Math.hypot(h.pad.x - home.x, h.pad.z - home.z) < 40, "pad too far");
+    await wait(230);
+    need(h.state === _rescue.LANDED, "not landed: state " + h.state);
+    need(Math.abs(h.e.location.y - h.pad.y) < 1.5, "not on the ground: " + h.e.location.y + " vs " + h.pad.y);
+    const ride = h.e.getComponent("minecraft:rideable");
+    need(ride.addRider(p) && ride.addRider(f), "could not board");
+    await wait(10);
+    need(_rescue.riders(h).length === 2 && safe(p), "riders: " + _rescue.riders(h).length);
+    for (let i = 0; i < 60 && phase(p) !== IN_HAVEN; i++) await wait(20);
+    need(phase(p) === IN_HAVEN && phase(f) === IN_HAVEN, "not flown to the haven: " + phase(p) + " " + phase(f));
+    const spot = havenSpot();
+    need(spot, "no haven");
+    await wait(40);
+    need(Math.hypot(p.location.x - spot.x, p.location.z - spot.z) < 12, "not at the haven: " + JSON.stringify(p.location) + " " + JSON.stringify(spot));
+    need(Math.hypot(spot.x - home.x, spot.z - home.z) > 20000, "the haven is too close");
+    need(inHaven(p) && !invaded(p) && safe(p), "not safe in the haven");
+    log("haven at " + JSON.stringify(spot) + ", player at " + JSON.stringify(p.location) + " hp " + p.getComponent("minecraft:health").currentValue);
+    need(p.getComponent("minecraft:health").currentValue > 0, "died on arrival");
+  },
+  // the haven is found: the helicopter waits, flies them back, the ghosts are crueller
+  async rescue2(p) {
+    const f = players().find((x) => x.id !== p.id);
+    need(phase(p) === IN_HAVEN, "run rescue1 first");
+    rescueCommand("invade", null, () => {}); await wait(50);
+    need(invaded(p) && !safe(p), "not invaded");
+    let hs = _rescue.liveHelis(_rescue.EXTRACT);
+    need(hs.length >= 1, "no helicopter to get out");
+    const h = hs[0];
+    for (let i = 0; i < 20 && h.state !== _rescue.LANDED; i++) await wait(20);
+    need(h.state === _rescue.LANDED, "extraction did not land");
+    const ride = h.e.getComponent("minecraft:rideable");
+    need(ride.addRider(p) && ride.addRider(f), "could not board");
+    for (let i = 0; i < 30 && phase(p) !== HOME; i++) await wait(20);
+    need(phase(p) === HOME && phase(f) === HOME, "not flown home: " + phase(p));
+    await wait(40);
+    need(Math.hypot(p.location.x, p.location.z) < 200, "not home: " + JSON.stringify(p.location));
+    need(harshness(p, false) === 3 && harshness(p, true) === 6 && mods(p).damage === 3, "cruelty " + harshness(p, false) + " " + JSON.stringify(mods(p)));
+    need(p.getComponent("minecraft:health").currentValue > 0, "died on the way home");
+    for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
+    rescueCommand("reset", null, () => {});
   },
   async canteen(p) {
     const inv = invOf(p);

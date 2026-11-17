@@ -58,3 +58,7 @@ item.ghost:grave_compass.name=§eเข็มทิศหลุมศพ
 item.ghost:restorer.name=§dตะเกียงกู้ของ
 entity.ghost:grave.name=หลุมศพ
 action.interact.ghost_grave=เปิดหลุมศพ
+item.ghost:phone.name=§bโทรศัพท์
+item.ghost:charger.name=§aพาวเวอร์แบงก์
+entity.ghost:helicopter.name=เฮลิคอปเตอร์กู้ภัย
+action.interact.ghost_board=ขึ้นเฮลิคอปเตอร์

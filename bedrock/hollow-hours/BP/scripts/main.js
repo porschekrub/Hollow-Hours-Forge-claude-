@@ -20,6 +20,9 @@ import { initGraves } from "./grave.js";
 import { initBetray, inDeal } from "./betray.js";
 import { initPhysics } from "./physics.js";
 import { initBlood } from "./blood.js";
+import { initNav } from "./nav.js";
+import { initPhone } from "./phone.js";
+import { initRescue, rescueCommand } from "./rescue.js";
 import { initSelfTest } from "./selftest.js";
 
 // ===== ตั้งค่า (หน่วย tick: 20 tick = 1 วินาที, 1200 tick = 1 นาที) =====
@@ -434,7 +437,7 @@ function spawnTick(now) {
     try {
       const t = world.getTimeOfDay(), night = t >= 13000 && t <= 23000;
       for (const pl of world.getDimension("overworld").getPlayers()) {
-        if (isHidden(pl) || !isSheltered(pl)) continue;
+        if (isHidden(pl) || !isSheltered(pl) || isCalm(pl)) continue;
         if (!indoorNext.has(pl.id)) { indoorNext.set(pl.id, now + rand(CFG.INDOOR_FIRST_MIN, CFG.INDOOR_FIRST_MAX)); continue; }
         if (now < indoorNext.get(pl.id)) continue;
         if (nextSpawnAt - now < 2 * MIN) { indoorNext.set(pl.id, now + rand(1 * MIN, 2 * MIN)); continue; }   // ผีตัวจริงใกล้มาแล้ว อย่าแย่งคิว
@@ -619,6 +622,7 @@ function ghostTick(now) {
         // เป้าหมาย = ผู้เล่นที่ใกล้สุดที่ "ไม่ได้ซ่อน" (คนในตู้/ใต้เตียง ผีต้องหาเอง)
         let best = null, bestD = Infinity, hid = null, hidD = Infinity;
         for (const p of players) {
+          if (isCalm(p)) continue;   // aboard the helicopter, or in the haven before they find it
           const dx = p.location.x - g.location.x, dy = p.location.y - g.location.y, dz = p.location.z - g.location.z;
           const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
           if (isHidden(p)) { if (d < hidD) { hidD = d; hid = p; } continue; }
@@ -767,6 +771,7 @@ function ensureMeta(g, now) {
 const PAPI = { playAt, rand, findSpot };
 function ghostBusy() {
   if (omen || !storyActive()) return true;
+  try { const all = world.getAllPlayers(); if (all.length && all.every((q) => isCalm(q))) return true; } catch (e) {}
   for (const d of dims()) { try { if (d.getEntities({ families: ["ghost"] }).length > 0) return true; } catch (e) {} }
   return false;
 }
@@ -783,6 +788,9 @@ initGraves();
 initBetray({ ensureMeta, findSpot, jumpscare, isHidden });
 initPhysics();
 initBlood();
+initNav();
+initPhone();
+initRescue({ huntNow });
 onBloodRise(() => { nextSpawnAt = Math.min(nextSpawnAt, system.currentTick + rand(40 * 20, 90 * 20)); });
 // blood moon / the rescue you missed: ghosts hit harder (the extra is dealt on top of the hit that landed)
 let extraHit = false;
@@ -791,7 +799,7 @@ world.afterEvents.entityHurt.subscribe((ev) => {
     if (extraHit) return;
     const p = ev.hurtEntity, g = ev.damageSource && ev.damageSource.damagingEntity;
     if (!p || p.typeId !== "minecraft:player" || !g || !String(g.typeId).startsWith("ghost:ghost_")) return;
-    const k = nightMods().damage;
+    const k = nightMods(p).damage;
     if (k <= 1 || inDeal(p)) return;
     extraHit = true;
     try { p.applyDamage(ev.damage * (k - 1), { cause: "entityAttack", damagingEntity: g }); } catch (e) {}
@@ -846,6 +854,7 @@ try {
 // ===== v2.0 test commands (cheats on), the same as the Java edition's /hollow ... =====
 //   /scriptevent hollow:story start|hold|auto|alert      /scriptevent hollow:bloodmoon on|off|random
 //   /scriptevent hollow:fog on|off                       /scriptevent hollow:thirst <0-20>      /scriptevent hollow:sanity <0-100>
+//   /scriptevent hollow:rescue now|invade|reset|status
 //   /scriptevent hollow:status
 function hollowCommand(ev) {
   const p = ev.sourceEntity && ev.sourceEntity.typeId === "minecraft:player" ? ev.sourceEntity : null;
@@ -863,8 +872,19 @@ function hollowCommand(ev) {
     tell("fog: " + (a === "off" ? "off" : "on"));
   } else if (what === "thirst") { for (const q of who) setThirst(q, Number(a)); tell("thirst " + a); }
   else if (what === "sanity") { for (const q of who) setSanity(q, Number(a)); tell("sanity " + a); }
+  else if (what === "rescue") rescueCommand(a, p, tell);
   else if (what === "status") {
     tell(`day ${day()} · haunting ${storyActive() ? "on" : "off"} · blood moon ${bloodMoon() ? "yes" : "no"}` + (p ? ` · thirst ${getThirst(p).toFixed(1)} · sanity ${getSanity(p).toFixed(0)}` : ""));
   }
 }
-initSelfTest({ ensureMeta, findSpot, jumpscare, hollowCommand });
+/** A ghost comes out of the dark behind this player, already running (the haven, once it is found). */
+function huntNow(p, type) {
+  const spot = findSpot(p, false, 18, 30);
+  if (!spot) return null;
+  const g = p.dimension.spawnEntity(`ghost:ghost_${type || 1 + Math.floor(Math.random() * 5)}`, spot);
+  const m = ensureMeta(g, system.currentTick);
+  m.stalking = false; m.born = system.currentTick - 200;
+  system.runTimeout(() => { try { g.triggerEvent("ghost:ready"); g.triggerEvent("ghost:start_snap"); } catch (e) {} }, 4);
+  return g;
+}
+initSelfTest({ ensureMeta, findSpot, jumpscare, hollowCommand, huntNow });
