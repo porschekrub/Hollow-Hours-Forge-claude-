@@ -2,6 +2,7 @@
 //   scriptevent hhtest:spawn <name> [x y z]      scriptevent hhtest:chat <name> <text>
 //   scriptevent hhtest:leave <name>              scriptevent hhtest:look <name> <x> <y> <z>
 //   scriptevent hhtest:use <name>                scriptevent hhtest:move <name> <x> <y> <z>
+//   scriptevent hhtest:respawn|jump|where <name>  scriptevent hhtest:break <name> <x> <y> <z>
 import { world, system, GameMode } from "@minecraft/server";
 import { spawnSimulatedPlayer } from "@minecraft/server-gametest";
 
@@ -28,6 +29,10 @@ system.afterEvents.scriptEventReceive.subscribe((ev) => {
     else if (op === "move") p.navigateToLocation({ x: num(1, 0), y: num(2, 0), z: num(3, 0) });
     else if (op === "use") p.useItemInSlot(num(1, 0));
     else if (op === "jump") p.jump();
+    else if (op === "respawn") p.respawn();
+    else if (op === "break") p.breakBlock({ x: num(1, 0), y: num(2, 0), z: num(3, 0) });
+    else if (op === "stopuse") p.stopUsingItem();
+    else if (op === "tp") p.teleport({ x: num(1, 0), y: num(2, 0), z: num(3, 0) });
     else if (op === "where") log(name + " at " + JSON.stringify(p.location) + " hp=" + p.getComponent("health")?.currentValue);
     log(op + " ok");
   } catch (e) { console.error("[hhtest] " + e + " " + (e && e.stack)); }

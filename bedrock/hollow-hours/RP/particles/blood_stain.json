@@ -1,0 +1,63 @@
+{
+ "format_version": "1.10.0",
+ "particle_effect": {
+  "description": {
+   "identifier": "ghost:blood_stain",
+   "basic_render_parameters": {
+    "material": "particles_blend",
+    "texture": "textures/particle/ghost_blood"
+   }
+  },
+  "components": {
+   "minecraft:emitter_rate_instant": {
+    "num_particles": 1
+   },
+   "minecraft:emitter_lifetime_once": {
+    "active_time": 0.05
+   },
+   "minecraft:emitter_shape_point": {
+    "direction": [
+     0,
+     1,
+     0
+    ]
+   },
+   "minecraft:particle_initial_speed": 0,
+   "minecraft:particle_lifetime_expression": {
+    "max_lifetime": "math.random(9, 14)"
+   },
+   "minecraft:particle_initial_spin": {
+    "rotation": "math.random(0, 360)",
+    "rotation_rate": 0
+   },
+   "minecraft:particle_appearance_billboard": {
+    "size": [
+     "0.18 + variable.particle_random_1 * 0.2",
+     "0.18 + variable.particle_random_1 * 0.2"
+    ],
+    "facing_camera_mode": "emitter_transform_xz",
+    "uv": {
+     "texture_width": 16,
+     "texture_height": 8,
+     "uv": [
+      8,
+      0
+     ],
+     "uv_size": [
+      8,
+      8
+     ]
+    }
+   },
+   "minecraft:particle_appearance_tinting": {
+    "color": [
+     "variable.r",
+     "variable.g",
+     "variable.b",
+     "math.clamp((variable.particle_lifetime - variable.particle_age) / 3, 0, 0.85)"
+    ]
+   },
+   "minecraft:particle_appearance_lighting": {}
+  }
+ }
+}

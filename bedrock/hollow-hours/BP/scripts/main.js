@@ -12,6 +12,15 @@ import { initHide, isHidden, chaseCheck, startSearch, afterIntrusion, searchFoll
 import { initBookName } from "./bookname.js";
 import { PROFILE, CREEP_BY, PERSONA, rollMod, effectiveBuff, moodGap, moodEv, initVariety } from "./variety.js";
 import { initStalker, stalkerIndoor, stalkerOutdoor } from "./stalker.js";
+// ---- v2.0: brought over from the Java edition
+import { initStory, storyActive, forceStory, sendAlert, day } from "./story.js";
+import { initAtmos, bloodMoon, forceBlood, startFog, stopFog, mods as nightMods, onBloodRise, isCalm } from "./atmos.js";
+import { initSurvival, shock, setThirst, setSanity, getThirst, getSanity } from "./survival.js";
+import { initGraves } from "./grave.js";
+import { initBetray, inDeal } from "./betray.js";
+import { initPhysics } from "./physics.js";
+import { initBlood } from "./blood.js";
+import { initSelfTest } from "./selftest.js";
 
 // ===== ตั้งค่า (หน่วย tick: 20 tick = 1 วินาที, 1200 tick = 1 นาที) =====
 const MIN = 60 * 20;
@@ -76,6 +85,7 @@ const GLITCH = [["§4§l§kIIII§r §c§lวิ่ง §4§l§kIIII", "§8มั
 // ===== v1.9.5 jumpscare สไตล์หนังผี: ชอต (กระแทกหลายชั้น+จอดำ/แดงวูบ+กล้องสั่น) → ช็อกค้าง → หัวใจเต้น/เสียงกระซิบข้างหู =====
 function jumpscare(p, strong) {
   const l = p.location;
+  try { shock(p, strong ? 10 : 5); } catch (e) {}
   // 1) ชอต: เสียงสายไวโอลินกรีดแหลม + คอรัสกรีด + เสียงคำรามทุ้ม ซ้อนกันพร้อมกัน
   playAt(p, "ghost.horror.sting", l.x, l.y, l.z, 3, rand(0.95, 1.05));
   playAt(p, "ghost.horror.choir", l.x, l.y, l.z, strong ? 3 : 2, rand(0.92, 1.05));
@@ -226,6 +236,7 @@ function musicTick(now) {
         if (want) { musicPlay(p, want, now); continue; }
         if (s && s.pri >= 2 && now - s.wantedAt > CFG.MUSIC_GRACE) { musicStop(p); continue; }   // ผีหมดแล้ว หยุดเพลงผี
         // เพลงหลอนสุ่มตอนเล่นปกติ (ผีไม่ได้เกิด)
+        if (!storyActive() || isCalm(p)) continue;
         if (!ambientNext.has(p.id)) ambientNext.set(p.id, now + rand(CFG.AMBIENT_FIRST_MIN, CFG.AMBIENT_FIRST_MAX));
         if (now >= ambientNext.get(p.id) && !(s && now < s.until) && !omen) {
           const k = randomAmbient();
@@ -297,7 +308,7 @@ function vanish(g) {
 
 function nextGap() {
   const g = Math.random() < CFG.QUICK_CHANCE ? rand(CFG.QUICK_MIN, CFG.QUICK_MAX) : rand(CFG.GAP_MIN, CFG.GAP_MAX);
-  return g * moodGap();
+  return g * moodGap() * nightMods().gap;   // blood moon: three times as often
 }
 
 function playAt(p, id, x, y, z, vol, pitch) {
@@ -389,6 +400,8 @@ function omenSound(p, progress) {
 }
 
 function spawnTick(now) {
+  // v2.0: the first nights are quiet - nothing haunts anyone until the story starts
+  if (!storyActive()) { started = false; omen = null; return; }
   if (!started) {
     started = true;
     nextSpawnAt = now + rand(CFG.FIRST_SPAWN_MIN, CFG.FIRST_SPAWN_MAX);
@@ -437,7 +450,7 @@ function spawnTick(now) {
     const p = omen.player;
     let ok = true;
     try { p.location.x; } catch (e) { ok = false; }
-    if (!ok || total > 0) { omen = null; nextSpawnAt = now + nextGap(); return; }
+    if (!ok || total >= Math.max(1, nightMods().maxAlive)) { omen = null; nextSpawnAt = now + nextGap(); return; }
     const progress = Math.min(1, (now - omen.start) / (omen.end - omen.start));
     if (Math.random() < 0.7) { try { omenSound(p, progress); } catch (e) {} }
     if (now < omen.end) return;
@@ -465,9 +478,9 @@ function spawnTick(now) {
   }
 
   // ----- ถึงเวลา (สุ่ม) ที่จะเริ่มลางร้ายหรือยัง -----
-  if (total >= CFG.MAX_ALIVE || now < nextSpawnAt) return;
+  if (total >= Math.max(CFG.MAX_ALIVE, nightMods().maxAlive) || now < nextSpawnAt) return;
   let players = [];
-  try { players = world.getDimension("overworld").getPlayers(); } catch (e) {}
+  try { players = world.getDimension("overworld").getPlayers().filter((q) => !isCalm(q)); } catch (e) {}
   if (players.length === 0) { nextSpawnAt = now + 2 * MIN; return; }
   const p = players[Math.floor(Math.random() * players.length)];
   const len = rand(CFG.OMEN_MIN, CFG.OMEN_MAX);
@@ -699,7 +712,7 @@ function ghostTick(now) {
           }
           if (now - m.chaseStart > CFG.CHASE_MAX_TICKS * bf.dur) { vanish(g); continue; }
           if (state === 2) { try { (PERSONA[n] || (() => {}))({ g, best, bestD, state, now, m, dim, api: PAPI }); } catch (e) {} }
-          const sp = bf.spd * (m.spdMul ?? 1);
+          const sp = bf.spd * (m.spdMul ?? 1) * nightMods().speed;
           if (state === 2 && (sp !== 1 || m.spApplied)) { setSpeed(g, sp, g.getProperty("ghost:rage") === true); m.spApplied = sp !== 1; }
           // ไม่ทุบทุกอย่างที่ขวางแล้ว: ติดอยู่ -> คลาน / ทุบประตู-หน้าต่าง-ไม้กั้น / มุดเข้ามา / ค่อย ๆ ทุบออก
           try { chaseHook(g, m, best, bestD, now, state); } catch (e) {}
@@ -753,7 +766,7 @@ function ensureMeta(g, now) {
 
 const PAPI = { playAt, rand, findSpot };
 function ghostBusy() {
-  if (omen) return true;
+  if (omen || !storyActive()) return true;
   for (const d of dims()) { try { if (d.getEntities({ families: ["ghost"] }).length > 0) return true; } catch (e) {} }
   return false;
 }
@@ -763,6 +776,28 @@ system.runInterval(() => { try { musicTick(system.currentTick); } catch (e) {} }
 system.runInterval(() => { try { spawnTick(system.currentTick); } catch (e) {} }, 40);
 
 initLang();
+initStory();
+initAtmos();
+initSurvival({ whisper, jumpscare });
+initGraves();
+initBetray({ ensureMeta, findSpot, jumpscare, isHidden });
+initPhysics();
+initBlood();
+onBloodRise(() => { nextSpawnAt = Math.min(nextSpawnAt, system.currentTick + rand(40 * 20, 90 * 20)); });
+// blood moon / the rescue you missed: ghosts hit harder (the extra is dealt on top of the hit that landed)
+let extraHit = false;
+world.afterEvents.entityHurt.subscribe((ev) => {
+  try {
+    if (extraHit) return;
+    const p = ev.hurtEntity, g = ev.damageSource && ev.damageSource.damagingEntity;
+    if (!p || p.typeId !== "minecraft:player" || !g || !String(g.typeId).startsWith("ghost:ghost_")) return;
+    const k = nightMods().damage;
+    if (k <= 1 || inDeal(p)) return;
+    extraHit = true;
+    try { p.applyDamage(ev.damage * (k - 1), { cause: "entityAttack", damagingEntity: g }); } catch (e) {}
+    extraHit = false;
+  } catch (e) { extraHit = false; }
+});
 initTalk({ meta, leaving, talkLock, dims, playAt, puff, rand, openAsk, askLabel, tryAsk });
 initCurse({ meta, glimpse, leaving, dims, playAt, puff, jumpscare, findSpot, summonGhost });
 initBreach();
@@ -783,6 +818,7 @@ initVariety({ playAt, rand, findSpot, ghostBusy, glimpseGhost, isHidden, fakeLea
 try {
   system.afterEvents.scriptEventReceive.subscribe((ev) => {
     try {
+      if (ev.id.startsWith("hollow:")) { hollowCommand(ev); return; }
       const p = ev.sourceEntity;
       if (!p || p.typeId !== "minecraft:player") return;
       if (ev.id === "ghost:doordebug") { p.sendMessage("§7" + doorDebug(p)); return; }
@@ -806,3 +842,29 @@ try {
     } catch (e) {}
   });
 } catch (e) {}
+
+// ===== v2.0 test commands (cheats on), the same as the Java edition's /hollow ... =====
+//   /scriptevent hollow:story start|hold|auto|alert      /scriptevent hollow:bloodmoon on|off|random
+//   /scriptevent hollow:fog on|off                       /scriptevent hollow:thirst <0-20>      /scriptevent hollow:sanity <0-100>
+//   /scriptevent hollow:status
+function hollowCommand(ev) {
+  const p = ev.sourceEntity && ev.sourceEntity.typeId === "minecraft:player" ? ev.sourceEntity : null;
+  const a = String(ev.message || "").trim().toLowerCase(), what = ev.id.slice(7);
+  const tell = (t) => { try { if (p) p.sendMessage("§7" + t); else console.warn("[hollow] " + t); } catch (e) {} };
+  const who = p ? [p] : world.getAllPlayers();
+  if (what === "story") {
+    if (a === "alert") { for (const q of who) sendAlert(q); return; }
+    forceStory(a === "start" ? 1 : a === "hold" ? -1 : 0);
+    tell("story: " + (a || "auto") + " (day " + day() + ", haunting " + (storyActive() ? "on" : "off") + ")");
+  } else if (what === "bloodmoon") {
+    forceBlood(a === "on" ? 1 : a === "off" ? -1 : 0); tell("blood moon: " + (a || "random"));
+  } else if (what === "fog") {
+    if (a === "off") stopFog(); else startFog(240 * 20, 0.9);
+    tell("fog: " + (a === "off" ? "off" : "on"));
+  } else if (what === "thirst") { for (const q of who) setThirst(q, Number(a)); tell("thirst " + a); }
+  else if (what === "sanity") { for (const q of who) setSanity(q, Number(a)); tell("sanity " + a); }
+  else if (what === "status") {
+    tell(`day ${day()} · haunting ${storyActive() ? "on" : "off"} · blood moon ${bloodMoon() ? "yes" : "no"}` + (p ? ` · thirst ${getThirst(p).toFixed(1)} · sanity ${getSanity(p).toFixed(0)}` : ""));
+  }
+}
+initSelfTest({ ensureMeta, findSpot, jumpscare, hollowCommand });

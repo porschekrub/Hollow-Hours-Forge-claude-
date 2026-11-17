@@ -1,0 +1,37 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:restorer"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "pattern": [
+   " A ",
+   "GLG",
+   " S "
+  ],
+  "key": {
+   "A": {
+    "item": "minecraft:amethyst_shard"
+   },
+   "G": {
+    "item": "minecraft:gold_ingot"
+   },
+   "L": {
+    "item": "minecraft:soul_lantern"
+   },
+   "S": {
+    "item": "minecraft:soul_sand"
+   }
+  },
+  "result": {
+   "item": "ghost:restorer",
+   "count": 1
+  }
+ }
+}

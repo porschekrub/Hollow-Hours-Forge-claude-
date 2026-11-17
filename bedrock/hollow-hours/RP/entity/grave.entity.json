@@ -1,0 +1,20 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:grave",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "textures": {
+    "default": "textures/entity/ghost_grave"
+   },
+   "geometry": {
+    "default": "geometry.ghost_grave"
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ]
+  }
+ }
+}

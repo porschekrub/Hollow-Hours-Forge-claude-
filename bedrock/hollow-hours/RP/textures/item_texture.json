@@ -37,6 +37,21 @@
     },
     "ghost_battery": {
       "textures": "textures/items/battery"
+    },
+    "ghost_canteen": {
+      "textures": "textures/items/canteen"
+    },
+    "ghost_canteen_empty": {
+      "textures": "textures/items/canteen_empty"
+    },
+    "ghost_restorer": {
+      "textures": "textures/items/restorer"
+    },
+    "ghost_phone": {
+      "textures": "textures/items/phone"
+    },
+    "ghost_charger": {
+      "textures": "textures/items/charger"
     }
   }
 }

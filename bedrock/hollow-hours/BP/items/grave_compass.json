@@ -1,0 +1,22 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:grave_compass",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "compass_item"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:grave_compass.name"
+   }
+  }
+ }
+}

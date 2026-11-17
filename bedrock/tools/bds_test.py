@@ -184,9 +184,11 @@ def main():
         shutil.copy(f, out)
     second = "\n".join(s.lines)
     allow = [re.compile(x) for x in open(os.path.join(os.path.dirname(steps), "allowed_errors.txt"), encoding="utf8").read().splitlines() if x.strip() and not x.startswith("#")] if os.path.exists(os.path.join(os.path.dirname(steps), "allowed_errors.txt")) else []
-    errs = [ln for ln in s.lines if re.search(r"\bERROR\]|\[error\]|Unhandled promise|SyntaxError|ReferenceError|TypeError", ln) and not any(r.search(ln) for r in allow)]
-    warns = [ln for ln in s.lines if re.search(r"\bWARN\]", ln) and "[hhtest]" not in ln and "[test]" not in ln]
-    rep = [f"errors: {len(errs)}", *errs[:200], "", f"warnings: {len(warns)}", *warns[:200], "", "failed steps:", *failed]
+    bad = r"\bERROR\]|\[error\]|Unhandled promise|SyntaxError|ReferenceError|TypeError|\[test\] FAIL|\] error:"
+    errs = [ln for ln in s.lines if re.search(bad, ln) and not any(r.search(ln) for r in allow)]
+    warns = [ln for ln in s.lines if re.search(r"\bWARN\]", ln) and "[hhtest]" not in ln and "[test]" not in ln and ln not in errs]
+    tests = [ln for ln in s.lines if "[test]" in ln]
+    rep = [f"errors: {len(errs)}", *errs[:200], "", f"warnings: {len(warns)}", *warns[:200], "", "failed steps:", *failed, "", "tests:", *tests]
     open(os.path.join(out, "report.txt"), "w").write("\n".join(rep) + "\n")
     print("\n".join(rep[:120]))
     if errs or failed or "crash" in second.lower():

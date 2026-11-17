@@ -111,7 +111,7 @@ export function isCreative(p) {
   try { return p.matches({ gameMode: "creative" }); } catch (_) {}
   return false;
 }
-export function actionbar(p, text) { try { p.onScreenDisplay.setActionBar(text); } catch (_) {} }
+export function actionbar(p, text) { try { p.onScreenDisplay.setActionBar(text); } catch (_) {} }   // (store.js sees every action bar text: the survival HUD waits)
 export function now() { return system.currentTick; }
 
 // ผู้เล่นอยู่ใต้หลังคาและมีผนังล้อมไหม (อยู่ในบ้าน/ฐาน)

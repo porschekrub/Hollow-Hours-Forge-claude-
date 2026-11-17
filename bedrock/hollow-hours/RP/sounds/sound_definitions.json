@@ -1257,6 +1257,892 @@
      "is3D": false
     }
    ]
+  },
+  "ghost.scream.g1": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_g1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.g2": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_g2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.g3": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_g3",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.g4": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_g4",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.g5": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_g5",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.stalker1": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_stalker1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.stalker2": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_stalker2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.scream.stalker3": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/scream_stalker3",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.jumpscare.hit": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/jumpscare_hit",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.jumpscare.static": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/jumpscare_static",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.jumpscare.ring": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/jumpscare_ring",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.jumpscare.boom": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/jumpscare_boom",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.grab": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_grab1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_grab2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.punch": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_punch1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_punch2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.crunch": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_crunch1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_crunch2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.slam": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_slam1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_slam2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.tear": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_tear1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_tear2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.choke": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_choke1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_choke2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.bite": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_bite1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_bite2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.burn": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_burn1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_burn2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.drown": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_drown1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_drown2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.neck": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_neck1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_neck2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.stab": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_stab1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_stab2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.stomp": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_stomp1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_stomp2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.splat": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_splat1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_splat2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.kill.final": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/kill_final1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    },
+    {
+     "name": "sounds/ghost/new/kill_final2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.betray.whisper": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/betray_whisper",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.betray.tick": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/betray_tick",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.betray.laugh": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/betray_laugh",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.betray.sold": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/betray_sold",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.heart.slow": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/heart_slow",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.flatline": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/ghost/new/flatline",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.notify": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/notify",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.eas": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/eas",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.click": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/click",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.charge": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/charge",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.siren": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/siren",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.game": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/game",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.0": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_0",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.1": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.2": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.3": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_3",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.4": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_4",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.th.5": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_th_5",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.0": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_0",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.1": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_1",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.2": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_2",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.3": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_3",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.4": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_4",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "phone.voice.en.5": {
+   "category": "ui",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/phone/alert_en_5",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "rescue.rotor": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/rescue/rotor",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.pistol": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/pistol",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.rifle": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/rifle",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.shotgun": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/shotgun",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.sniper": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/sniper",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.grenade": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/grenade",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.reload": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/reload",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.cock": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/cock",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "gun.empty": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/combat/empty",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.cry": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_cry",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.scream": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_scream",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.slam": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_slam",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.rise": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_rise",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.defeat": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_defeat",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.release": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_release",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.windup": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_windup",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.sweep": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_sweep",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.grab": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_grab",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.tear": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_tear",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "boss.hurt": {
+   "category": "hostile",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/boss_hurt",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "rift.hum": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/rift_hum",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ending.boom": {
+   "category": "player",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/ending_boom",
+     "volume": 1.0,
+     "load_on_low_memory": true
+    }
+   ]
+  },
+  "ghost.music.boss": {
+   "category": "music",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/music_boss",
+     "volume": 1.0,
+     "load_on_low_memory": true,
+     "stream": true
+    }
+   ]
+  },
+  "ghost.music.credits": {
+   "category": "music",
+   "max_distance": 48,
+   "sounds": [
+    {
+     "name": "sounds/endgame/music_credits",
+     "volume": 1.0,
+     "load_on_low_memory": true,
+     "stream": true
+    }
+   ]
   }
  }
 }

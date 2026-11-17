@@ -1,8 +1,43 @@
-# baseline: the add-on must load and tick with a player in the world
+# Hollow Hours on a real Bedrock server, with two simulated players
 tickingarea add circle 0 -60 0 4 hh
+gamerule domobspawning false
 wait 2
-scriptevent hhtest:spawn Steve
+scriptevent hhtest:spawn Steve 0.5 -60 0.5
 expect 20 \[hhtest\] spawned Steve
-wait 45
+scriptevent hhtest:spawn Alex 4.5 -60 2.5
+expect 20 \[hhtest\] spawned Alex
+wait 8
+scriptevent hollow:test texts
+expect 15 \[test\] PASS texts
+scriptevent hollow:test story
+expect 30 \[test\] PASS story
+scriptevent hollow:test bloodmoon
+expect 40 \[test\] PASS bloodmoon
+scriptevent hollow:test fog
+expect 30 \[test\] PASS fog
+scriptevent hollow:test thirst
+expect 30 \[test\] PASS thirst
+scriptevent hollow:test sanity
+expect 40 \[test\] PASS sanity
+scriptevent hollow:test blood
+expect 20 \[test\] PASS blood
+scriptevent hollow:test grave1
+expect 30 \[test\] PASS grave1
+scriptevent hhtest:respawn Steve
+wait 3
+scriptevent hollow:test grave2
+expect 40 \[test\] PASS grave2
+scriptevent hollow:test hunt
+expect 60 \[test\] PASS hunt
+scriptevent hollow:test betray1
+expect 40 \[test\] PASS betray1
+scriptevent hollow:test betray2
+expect 60 \[test\] PASS betray2
+scriptevent hhtest:respawn Steve
+wait 3
+scriptevent hollow:status
+# and a quiet minute with everything running
+scriptevent hollow:story start
+wait 40
 scriptevent hhtest:where Steve
 expect 10 Steve at
