@@ -119,7 +119,7 @@ def main():
     logpath = os.path.join(out, "server.log")
     open(logpath, "w").close()
     download(server)
-    props(server, level_name="test", level_type="FLAT", gamemode="survival", difficulty="normal", online_mode="false", allow_cheats="true",
+    props(server, level_name="test", level_type="FLAT", gamemode="survival", difficulty="normal", online_mode="false", allow_list="false", allow_cheats="true",
           content_log_file_enabled="true", content_log_console_output_enabled="true", default_player_permission_level="operator",
           server_port="19132", server_portv6="19133", max_players="10", view_distance="8", tick_distance="4")
     world = os.path.join(server, "worlds", "test")
