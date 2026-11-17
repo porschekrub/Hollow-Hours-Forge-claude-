@@ -1,0 +1,54 @@
+07:44:56[Scripting][warning]-[hhtest] driver ready
+
+07:44:59[Scripting][warning]-[hhtest] spawned Steve id=-8589934591 at {"z":0,"y":-60,"x":0}
+
+07:44:59[Scripting][warning]-[hhtest] spawned Alex id=-8589934590 at {"z":2,"y":-60,"x":4}
+
+07:45:08[Scripting][warning]-[test] PASS texts
+
+07:45:14[Scripting][warning]-[test] PASS story
+
+07:45:19[Scripting][warning]-[test] PASS bloodmoon
+
+07:45:22[Scripting][warning]-[test] PASS fog
+
+07:45:27[Scripting][warning]-[test] PASS thirst
+
+07:45:33[Scripting][warning]-[test] PASS sanity
+
+07:45:34[Scripting][warning]-[test] PASS blood
+
+07:45:38[Scripting][warning]-[test] PASS grave1
+
+07:45:38[Scripting][warning]-[hhtest] respawn ok
+
+07:45:44[Scripting][warning]-[test] PASS grave2
+
+07:45:55[Scripting][warning]-[test] hunt: ghost state 2, player health 0.0
+
+07:45:55[Scripting][warning]-[test] PASS hunt
+
+07:45:55[Scripting][warning]-[hhtest] respawn ok
+
+07:46:02[Scripting][warning]-[test] PASS betray1
+
+07:46:15[Scripting][warning]-[test] PASS betray2
+
+07:46:15[Scripting][warning]-[hhtest] respawn ok
+
+07:46:19[Scripting][warning]-[test] FAIL phone: Error: no phone given on first join     at need (selftest.js:20) |     at phone (selftest.js:166) |     at <anonymous> (selftest.js:256)
+
+07:47:21[Scripting][warning]-[test] FAIL rescue1: Error: helicopters: 0     at need (selftest.js:20) |     at rescue1 (selftest.js:196) | 
+
+07:49:49[Scripting][warning]-[test] FAIL rescue2: Error: run rescue1 first     at need (selftest.js:20) |     at rescue2 (selftest.js:220) |     at <anonymous> (selftest.js:256)
+
+07:51:20[Scripting][warning]-[hollow] day 3 · haunting on · blood moon no
+
+07:51:20[Scripting][warning]-[hollow] rescue: day 51 at 07:15 · helicopters 0 · haven not found yet
+
+07:51:20[Scripting][warning]-[hollow] story: start (day 3, haunting on)
+
+07:52:00[Scripting][warning]-[hhtest] Steve at {"z":0.29190292954444885,"y":-60,"x":-0.27016910910606384} hp=0
+
+07:52:00[Scripting][warning]-[hhtest] where ok
+
