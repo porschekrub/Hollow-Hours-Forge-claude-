@@ -3,7 +3,7 @@
 import { world, system, ItemStack } from "@minecraft/server";
 import { players, invOf, mainHand, ok } from "./store.js";
 import { storyActive, forceStory, sendAlert, alerted, resetAlert, day } from "./story.js";
-import { bloodMoon, forceBlood, startFog, stopFog, fogOf, mods } from "./atmos.js";
+import { bloodMoon, forceBlood, startFog, stopFog, fogOf, mods, CFG as ATMOS } from "./atmos.js";
 import { getThirst, setThirst, getSanity, setSanity, drink, exhaust, hallucinate, shock } from "./survival.js";
 import { _grave } from "./grave.js";
 import { offer, inDeal, _betray } from "./betray.js";
@@ -32,6 +32,8 @@ const TESTS = {
     await wait(60);
   },
   async bloodmoon(p) {
+    ATMOS.FOG_CHANCE = 0;   // no fog rolling in by chance while the sky is being checked
+    stopFog();
     forceStory(1);
     world.setTimeOfDay(14000); await wait(10);
     forceBlood(1); await wait(45);
@@ -41,7 +43,7 @@ const TESTS = {
     forceBlood(-1); await wait(45);
     need(!bloodMoon(), "still a blood moon");
     need(fogOf(p) === "", "sky after: " + fogOf(p));
-    forceBlood(0);
+    forceBlood(0); world.setTimeOfDay(1000);
   },
   async fog(p) {
     forceStory(1);

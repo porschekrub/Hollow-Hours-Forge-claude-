@@ -29,6 +29,8 @@ scriptevent hollow:test grave2
 expect 40 \[test\] PASS grave2
 scriptevent hollow:test hunt
 expect 60 \[test\] PASS hunt
+scriptevent hhtest:respawn Steve
+wait 3
 scriptevent hollow:test betray1
 expect 40 \[test\] PASS betray1
 scriptevent hollow:test betray2
