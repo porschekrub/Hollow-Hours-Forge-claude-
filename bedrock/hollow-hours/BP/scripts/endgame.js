@@ -84,7 +84,7 @@ function knockedDown(g) {
 }
 
 // ---------------------------------------------------------------- the map
-let fadedAt = -1e9;
+let fadedAt = -1e9, mapAt = 0;
 function pickSite() {
   let cx = 0, cz = 0, n = 0;
   for (const p of over().getPlayers()) { cx += p.location.x; cz += p.location.z; n++; }
@@ -109,6 +109,7 @@ export function toMap() {
       try { g.remove(); } catch (_) { oops(_); }
     });
   }
+  mapAt = system.currentTick + 40 + i * 50 + 80;
   later(40 + i * 50 + 80, () => {
     for (const p of players()) { giveMap(p); title(p, "§6" + T("endgame.map.title"), "§7" + T("endgame.map.sub"), 100); msg(p, T("endgame.msg.map"), false); }
   });
@@ -512,7 +513,7 @@ function tick() {
     case COUNTDOWN: countdownTick(); break;
     case HUNT: huntTick(); break;
     case MAP: {
-      for (const p of players()) giveMap(p);
+      if (system.currentTick >= mapAt) for (const p of players()) giveMap(p);
       // no ghost walks the world any more (one that was far away fades as soon as it is seen again)
       if (system.currentTick - fadedAt > 400) {
         for (const d of ["overworld", "nether", "the_end"]) { try { for (const g of world.getDimension(d).getEntities({ families: ["ghost"] })) { try { g.dimension.spawnParticle("minecraft:soul_particle", g.location); } catch (_) { oops(_); } g.remove(); } } catch (_) { oops(_); } }

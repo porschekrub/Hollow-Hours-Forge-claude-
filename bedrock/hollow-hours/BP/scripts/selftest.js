@@ -327,7 +327,11 @@ const TESTS = {
     need(_combat.ammoOf(mainHand(p)) === 5, "ammo after reload: " + _combat.ammoOf(mainHand(p)));
     g.teleport({ x: p.location.x + 8, y: p.location.y, z: p.location.z });
     await wait(5);
-    p.teleport(p.location, { facingLocation: { x: g.location.x, y: g.location.y + 1.2, z: g.location.z } }); await wait(5);
+    // (a simulated player turns its head through the test driver)
+    p.dimension.runCommand(`scriptevent hhtest:look ${p.name} ${g.location.x.toFixed(2)} ${(g.location.y + 1.2).toFixed(2)} ${g.location.z.toFixed(2)}`);
+    await wait(10);
+    const vd = p.getViewDirection();
+    log("aim " + JSON.stringify(vd) + " ghost " + JSON.stringify(g.location) + " me " + JSON.stringify(p.getHeadLocation()));
     const before = _combat.poise.get(g.id);
     const hits = shoot(p);
     need(_combat.ammoOf(mainHand(p)) === 4, "a shot did not use a round");
@@ -351,7 +355,7 @@ const TESTS = {
     need(gs.length >= 5, "only " + gs.length + " ghosts came");
     for (const g of gs) { let n = 0; while (!knockedOut(g) && n < 40) { poiseHit(g, p, 25, false); n++; } }
     for (let n = 1; n <= 5; n++) need(_end.isDown(n), "ghost " + n + " not down for good");
-    for (let i = 0; i < 25 && count(p, "ghost:old_map") === 0; i++) await wait(20);
+    for (let i = 0; i < 25 && (count(p, "ghost:old_map") === 0 || p.dimension.getEntities({ families: ["ghost"] }).length); i++) await wait(20);
     need(_end.stage() === 3, "no map stage: " + _end.stage());
     need(count(p, "ghost:old_map") === 1, "no map");
     need(!storyActive(), "the haunting goes on after the five are free");
