@@ -1,0 +1,10 @@
+errors: 0
+
+warnings: 0
+
+failed steps:
+
+tests:
+[2026-11-22 06:09:21:907 WARN] [Scripting] [test] PASS words
+[2026-11-22 06:09:24:201 WARN] [Scripting] [test] PASS helper
+[2026-11-22 06:09:25:301 WARN] [Scripting] [test] PASS golem

@@ -1,0 +1,116 @@
+NO LOG FILE! - setting up server logging...
+[2026-11-22 06:09:10:472 INFO] Starting Server
+[2026-11-22 06:09:10:472 INFO] Version: 1.26.66.1
+[2026-11-22 06:09:10:472 INFO] Session ID: 0e8b95c8-341a-436a-8803-0c4e08aaf2da
+[2026-11-22 06:09:10:472 INFO] Build ID: 53696239
+[2026-11-22 06:09:10:472 INFO] Branch: r/26_u6
+[2026-11-22 06:09:10:472 INFO] Commit ID: cb39b93aee4586408851619d83ed05780bbd842b
+[2026-11-22 06:09:10:472 INFO] Configuration: Publish
+[2026-11-22 06:09:10:472 INFO] Contents of server.properties: {"allow-cheats":"true","allow-inbound-script-debugging":"false","allow-list":"false","allow-outbound-script-debugging":"false","block-network-ids-are-hashes":"true","chat-restriction":"None","client-side-chunk-generation-enabled":"true","compression-algorithm":"zlib","compression-threshold":"1","content-log-console-output-enabled":"true","content-log-file-enabled":"true","content-log-level":"info","default-player-permission-level":"operator","difficulty":"normal","disable-custom-skins":"false","disable-persona":"false","disable-player-interaction":"false","enable-lan-visibility":"true","force-gamemode":"false","gamemode":"survival","level-name":"test","level-type":"FLAT","max-players":"10","max-threads":"8","online-mode":"false","persistent-ticking-area-max-chunks":"100","persistent-ticking-area-max-count":"10","player-idle-timeout":"30","player-movement-action-direction-threshold":"0.85","player-position-acceptance-threshold":"0.5","script-debugger-auto-attach":"disabled","server-authoritative-block-breaking-pick-range-scalar":"1.5","server-authoritative-dismount-strict":"false","server-authoritative-entity-attack-range-tolerance":"0.5","server-authoritative-entity-attack-range-validation":"disabled","server-authoritative-entity-attack-request-validation":"disabled","server-authoritative-entity-interactions-strict":"false","server-authoritative-movement-strict":"false","server-build-radius-ratio":"Disabled","server-name":"Dedicated Server","server-port":"19132","server-portv6":"19133","server-udp-ports":"19132","texturepack-required":"false","tick-distance":"4","transient-ticking-area-max-chunks":"300","transport":"nethernet","view-distance":"8"}
+[2026-11-22 06:09:10:472 INFO] Level Name: test
+[2026-11-22 06:09:10:472 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-11-22 06:09:10:473 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-11-22 06:09:10:473 INFO] Game mode: 0 Survival
+[2026-11-22 06:09:10:473 INFO] Difficulty: 2 NORMAL
+[2026-11-22 06:09:10:475 INFO] Content logging to console is enabled.
+[2026-11-22 06:09:10:476 INFO] 
+
+#####################################################
+#                                                   #
+#              CREATING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-11-22 06:09:10:836 INFO] Content logging to disk is enabled. Writing log to: ./ContentLog2026-11-22_06-09-10.txt
+[2026-11-22 06:09:10:836 INFO] Opening level 'worlds/test/db'
+[2026-11-22 06:09:10:837 INFO] Accepting clients on [::]:19132
+[2026-11-22 06:09:10:870 INFO] Pack Stack - None
+[2026-11-22 06:09:11:046 INFO] Signed in to signaling service successfully
+[2026-11-22 06:09:11:627 INFO] Server started.
+[2026-11-22 06:09:11:627 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-11-22 06:09:11:627 INFO] Server Telemetry is currently not enabled. 
+[2026-11-22 06:09:11:627 INFO] Enabling this telemetry helps us improve the game.
+[2026-11-22 06:09:11:627 INFO] 
+[2026-11-22 06:09:11:627 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-11-22 06:09:11:627 INFO] to the server.properties file in the handheld/src-server directory
+[2026-11-22 06:09:11:627 INFO] ======================================================
+> stop
+[2026-11-22 06:09:11:783 INFO] Server stop requested.
+[2026-11-22 06:09:11:827 INFO] Stopping server...
+Quit correctly
+
+===== second start: with the packs =====
+NO LOG FILE! - setting up server logging...
+[2026-11-22 06:09:12:039 INFO] Starting Server
+[2026-11-22 06:09:12:039 INFO] Version: 1.26.66.1
+[2026-11-22 06:09:12:039 INFO] Session ID: 50231b17-8275-4e2f-82b1-af2917cacabe
+[2026-11-22 06:09:12:039 INFO] Build ID: 53696239
+[2026-11-22 06:09:12:039 INFO] Branch: r/26_u6
+[2026-11-22 06:09:12:039 INFO] Commit ID: cb39b93aee4586408851619d83ed05780bbd842b
+[2026-11-22 06:09:12:039 INFO] Configuration: Publish
+[2026-11-22 06:09:12:039 INFO] Contents of server.properties: {"allow-cheats":"true","allow-inbound-script-debugging":"false","allow-list":"false","allow-outbound-script-debugging":"false","block-network-ids-are-hashes":"true","chat-restriction":"None","client-side-chunk-generation-enabled":"true","compression-algorithm":"zlib","compression-threshold":"1","content-log-console-output-enabled":"true","content-log-file-enabled":"true","content-log-level":"info","default-player-permission-level":"operator","difficulty":"normal","disable-custom-skins":"false","disable-persona":"false","disable-player-interaction":"false","enable-lan-visibility":"true","force-gamemode":"false","gamemode":"survival","level-name":"test","level-type":"FLAT","max-players":"10","max-threads":"8","online-mode":"false","persistent-ticking-area-max-chunks":"100","persistent-ticking-area-max-count":"10","player-idle-timeout":"30","player-movement-action-direction-threshold":"0.85","player-position-acceptance-threshold":"0.5","script-debugger-auto-attach":"disabled","server-authoritative-block-breaking-pick-range-scalar":"1.5","server-authoritative-dismount-strict":"false","server-authoritative-entity-attack-range-tolerance":"0.5","server-authoritative-entity-attack-range-validation":"disabled","server-authoritative-entity-attack-request-validation":"disabled","server-authoritative-entity-interactions-strict":"false","server-authoritative-movement-strict":"false","server-build-radius-ratio":"Disabled","server-name":"Dedicated Server","server-port":"19132","server-portv6":"19133","server-udp-ports":"19132","texturepack-required":"false","tick-distance":"4","transient-ticking-area-max-chunks":"300","transport":"nethernet","view-distance":"8"}
+[2026-11-22 06:09:12:039 INFO] Level Name: test
+[2026-11-22 06:09:12:039 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-11-22 06:09:12:040 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-11-22 06:09:12:040 INFO] Game mode: 0 Survival
+[2026-11-22 06:09:12:040 INFO] Difficulty: 2 NORMAL
+[2026-11-22 06:09:12:042 INFO] Content logging to console is enabled.
+[2026-11-22 06:09:12:043 INFO] 
+
+#####################################################
+#                                                   #
+#               LOADING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-11-22 06:09:12:414 INFO] Content logging to disk is enabled. Writing log to: ./ContentLog2026-11-22_06-09-12.txt
+[2026-11-22 06:09:12:414 INFO] Experiment(s) active: gtst
+[2026-11-22 06:09:12:414 INFO] Opening level 'worlds/test/db'
+[2026-11-22 06:09:12:415 INFO] Accepting clients on [::]:19132
+[2026-11-22 06:09:12:447 INFO] Pack Stack - [00] Helper Buddy v2.0.0 - ผู้ช่วยขุด ตัด สร้างบ้าน (BP) (id: ca46cd25-6887-4ba7-9d37-e86fb0a6a349, version: 2.0.0) @ development_behavior_packs/helper-buddy_BP
+[2026-11-22 06:09:12:447 INFO] Pack Stack - [01] CI test driver (id: 5b1c8e6e-0f0a-4a53-9a8e-2f3d0c4b7a11, version: 1.0.0) @ development_behavior_packs/testpack_BP
+[2026-11-22 06:09:12:699 INFO] Signed in to signaling service successfully
+[2026-11-22 06:09:13:440 INFO] Server started.
+[2026-11-22 06:09:13:440 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-11-22 06:09:13:440 INFO] Server Telemetry is currently not enabled. 
+[2026-11-22 06:09:13:440 INFO] Enabling this telemetry helps us improve the game.
+[2026-11-22 06:09:13:440 INFO] 
+[2026-11-22 06:09:13:440 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-11-22 06:09:13:440 INFO] to the server.properties file in the handheld/src-server directory
+[2026-11-22 06:09:13:440 INFO] ======================================================
+[2026-11-22 06:09:13:450 WARN] [Scripting] [hhtest] driver ready
+
+[2026-11-22 06:09:13:450 INFO] [Scripting] [helper] Helper Buddy v2.0.0 loaded
+
+> tickingarea add circle 0 -60 0 4 hb
+[2026-11-22 06:09:13:744 INFO] Added ticking area centered at 8, 0, 8 with a radius of 4 chunks.
+1/10 ticking areas in use.
+> gamerule domobspawning false
+[2026-11-22 06:09:13:944 INFO] Game rule domobspawning has been updated to false
+> scriptevent hhtest:spawn Steve 0.5 -60 0.5
+[2026-11-22 06:09:16:250 INFO] Script event hhtest:spawn has been sent
+[2026-11-22 06:09:16:303 INFO] Player Spawned: Steve xuid: , pfid: 
+[2026-11-22 06:09:16:303 WARN] [Scripting] [hhtest] spawned Steve id=-8589934591 at {"z":0,"y":-60,"x":0}
+
+> effect Steve resistance 99999 4 true
+[2026-11-22 06:09:16:550 INFO] Gave Resistance * 4 to Steve for 99999 seconds
+> scriptevent helper:test words
+[2026-11-22 06:09:21:859 INFO] Script event helper:test has been sent
+[2026-11-22 06:09:21:907 WARN] [Scripting] [test] PASS words
+
+> scriptevent helper:test helper
+[2026-11-22 06:09:22:159 INFO] Script event helper:test has been sent
+[2026-11-22 06:09:24:201 WARN] [Scripting] [test] PASS helper
+
+> scriptevent helper:test golem
+[2026-11-22 06:09:24:269 INFO] Script event helper:test has been sent
+[2026-11-22 06:09:25:301 WARN] [Scripting] [test] PASS golem
+
+> scriptevent hhtest:where Steve
+[2026-11-22 06:09:45:354 INFO] Script event hhtest:where has been sent
+[2026-11-22 06:09:45:401 WARN] [Scripting] [hhtest] Steve at {"z":0,"y":-60,"x":0} hp=20
+
+[2026-11-22 06:09:45:401 WARN] [Scripting] [hhtest] where ok
+
+> stop
+[2026-11-22 06:09:45:659 INFO] Server stop requested.
+[2026-11-22 06:09:45:705 INFO] Stopping server...
+Quit correctly
