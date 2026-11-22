@@ -25,6 +25,7 @@ import { initPhone } from "./phone.js";
 import { initRescue, rescueCommand } from "./rescue.js";
 import { initFun } from "./fun.js";
 import { initCombat } from "./combat.js";
+import { initEndgame, endgameCommand } from "./endgame.js";
 import { initSelfTest } from "./selftest.js";
 
 // ===== ตั้งค่า (หน่วย tick: 20 tick = 1 วินาที, 1200 tick = 1 นาที) =====
@@ -795,6 +796,7 @@ initPhone();
 initRescue({ huntNow });
 initFun();
 initCombat({ ensureMeta, leaving });
+initEndgame({ huntNow });
 onBloodRise(() => { nextSpawnAt = Math.min(nextSpawnAt, system.currentTick + rand(40 * 20, 90 * 20)); });
 // blood moon / the rescue you missed: ghosts hit harder (the extra is dealt on top of the hit that landed)
 let extraHit = false;
@@ -859,6 +861,7 @@ try {
 //   /scriptevent hollow:story start|hold|auto|alert      /scriptevent hollow:bloodmoon on|off|random
 //   /scriptevent hollow:fog on|off                       /scriptevent hollow:thirst <0-20>      /scriptevent hollow:sanity <0-100>
 //   /scriptevent hollow:rescue now|invade|reset|status
+//   /scriptevent hollow:endgame skip|hunt|map|reset|status
 //   /scriptevent hollow:status
 function hollowCommand(ev) {
   const p = ev.sourceEntity && ev.sourceEntity.typeId === "minecraft:player" ? ev.sourceEntity : null;
@@ -877,6 +880,7 @@ function hollowCommand(ev) {
   } else if (what === "thirst") { for (const q of who) setThirst(q, Number(a)); tell("thirst " + a); }
   else if (what === "sanity") { for (const q of who) setSanity(q, Number(a)); tell("sanity " + a); }
   else if (what === "rescue") rescueCommand(a, p, tell);
+  else if (what === "endgame") endgameCommand(a, p, tell);
   else if (what === "status") {
     tell(`day ${day()} · haunting ${storyActive() ? "on" : "off"} · blood moon ${bloodMoon() ? "yes" : "no"}` + (p ? ` · thirst ${getThirst(p).toFixed(1)} · sanity ${getSanity(p).toFixed(0)}` : ""));
   }

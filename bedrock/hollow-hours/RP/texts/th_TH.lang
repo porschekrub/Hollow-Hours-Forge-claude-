@@ -112,3 +112,6 @@ item.ghost:hunter_chestplate.name=เสื้อเกราะนักล่�
 item.ghost:hunter_leggings.name=กางเกงนักล่าผี
 item.ghost:hunter_boots.name=รองเท้านักล่าผี
 entity.ghost:grenade_e.name=ระเบิดมือ
+entity.ghost:weeping.name=§4สิ่งที่ร้องไห้ใต้ภูเขา
+entity.ghost:rift.name=Rift
+item.ghost:old_map.name=§6Old map of Mist Hollow

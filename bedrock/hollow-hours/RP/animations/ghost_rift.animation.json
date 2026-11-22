@@ -1,0 +1,18 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "animation.ghost_rift.turn": {
+   "loop": true,
+   "bones": {
+    "plane": {
+     "rotation": [
+      0,
+      "query.life_time * 40",
+      0
+     ],
+     "scale": "1 + math.sin(query.life_time * 90) * 0.05"
+    }
+   }
+  }
+ }
+}

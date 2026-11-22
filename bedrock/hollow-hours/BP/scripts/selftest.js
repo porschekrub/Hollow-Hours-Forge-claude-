@@ -15,6 +15,7 @@ import { phase, inHaven, invaded, harshness, havenSpot, rescueCommand, safe, _re
 import { pget } from "./store.js";
 import { _fun } from "./fun.js";
 import { _combat, knockedOut, poiseHit, shoot } from "./combat.js";
+import { _end, endgameCommand } from "./endgame.js";
 import { getSanity as sanityOf } from "./survival.js";
 
 let api = {};
@@ -335,6 +336,62 @@ const TESTS = {
     _combat.explode(p.dimension.spawnEntity("ghost:grenade_e", { x: g.location.x, y: g.location.y + 0.3, z: g.location.z }), p);
     await wait(5);
     g.remove(); forceStory(0);
+  },
+  // the last chapter, start to finish
+  async endgame(p) {
+    const f = players().find((x) => x.id !== p.id);
+    endgameCommand("reset", null, () => {});
+    for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
+    world.setTimeOfDay(14000);
+    endgameCommand("skip", null, () => {});
+    for (let i = 0; i < 10 && _end.stage() !== 2; i++) await wait(20);
+    need(_end.stage() === 2, "the hunt did not start: stage " + _end.stage());
+    for (let i = 0; i < 25 && p.dimension.getEntities({ families: ["ghost"] }).length < 5; i++) await wait(20);
+    const gs = p.dimension.getEntities({ families: ["ghost"] }).filter((g) => String(g.typeId).startsWith("ghost:ghost_"));
+    need(gs.length >= 5, "only " + gs.length + " ghosts came");
+    for (const g of gs) { let n = 0; while (!knockedOut(g) && n < 40) { poiseHit(g, p, 25, false); n++; } }
+    for (let n = 1; n <= 5; n++) need(_end.isDown(n), "ghost " + n + " not down for good");
+    for (let i = 0; i < 25 && count(p, "ghost:old_map") === 0; i++) await wait(20);
+    need(_end.stage() === 3, "no map stage: " + _end.stage());
+    need(count(p, "ghost:old_map") === 1, "no map");
+    need(!storyActive(), "the haunting goes on after the five are free");
+    need(p.dimension.getEntities({ families: ["ghost"] }).length === 0, "the five did not fade");
+    const s = _end.site();
+    need(s && Math.hypot(s.x - p.location.x, s.z - p.location.z) > 400, "mountain site " + JSON.stringify(s));
+    // go there: it is built
+    p.teleport({ x: s.x + Math.cos(s.dir) * 70, y: 40, z: s.z + Math.sin(s.dir) * 70 });
+    p.addEffect("slow_falling", 600, { amplifier: 0 }); p.addEffect("resistance", 6000, { amplifier: 4 });
+    f.teleport({ x: s.x + Math.cos(s.dir) * 72, y: 40, z: s.z + Math.sin(s.dir) * 72 });
+    for (let i = 0; i < 90 && world.getDynamicProperty("hh:e_built") !== 2; i++) await wait(20);
+    need(world.getDynamicProperty("hh:e_built") === 2, "the mountain was not built (" + _end.queue.length + " left)");
+    const c = _end.center();
+    need(c, "no cavern");
+    const top = p.dimension.getTopmostBlock({ x: Math.floor(s.x), z: Math.floor(s.z) });
+    need(top && top.location.y > c.y + 15, "no mountain over the cavern: top " + (top && top.location.y) + " floor " + c.y);
+    need(p.dimension.getBlock({ x: Math.floor(c.x), y: c.y + 3, z: Math.floor(c.z) })?.isAir, "the cavern is not hollow");
+    log("mountain at " + JSON.stringify(s) + ", cavern floor " + c.y + ", top " + top.location.y);
+    // into the cavern: it wakes
+    p.teleport({ x: c.x + 8, y: c.y, z: c.z });
+    for (let i = 0; i < 10 && !(_end.boss.e && ok(_end.boss.e)); i++) await wait(20);
+    need(_end.boss.e && ok(_end.boss.e), "it did not wake");
+    await wait(140);   // it rises, then it fights
+    need(_end.boss.act && _end.boss.act !== "rise", "it never fought: " + _end.boss.act);
+    log("boss: " + _end.boss.act + " phase " + _end.boss.phase + " hp " + _end.boss.e.getComponent("minecraft:health").currentValue);
+    // beaten
+    _end.boss.e.applyDamage(320, { cause: "entityAttack", damagingEntity: p }); await wait(20);
+    need(_end.boss.phase >= 2, "no second phase: " + _end.boss.phase);
+    _end.boss.e.applyDamage(400, { cause: "entityAttack", damagingEntity: p });
+    for (let i = 0; i < 12 && _end.stage() !== 4; i++) await wait(20);
+    need(_end.stage() === 4, "no rift: stage " + _end.stage());
+    await wait(25);
+    const r = p.dimension.getEntities({ type: "ghost:rift" })[0];
+    need(r, "the rift is not there");
+    p.teleport(r.location); f.teleport(r.location); await wait(30);
+    need(pget(p, "hh:e_credits", false) === true, "no credits");
+    _end.finish(); await wait(5);
+    need(_end.stage() === 5 && !storyActive(), "not over");
+    endgameCommand("reset", null, () => {});
+    forceStory(0);
   },
   async canteen(p) {
     const inv = invOf(p);

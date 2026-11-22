@@ -54,6 +54,11 @@ scriptevent hollow:test playground
 expect 40 \[test\] PASS playground
 scriptevent hollow:test combat
 expect 60 \[test\] PASS combat
+scriptevent hollow:test endgame
+expect 320 \[test\] PASS endgame
+scriptevent hhtest:tp Steve 0.5 -60 0.5
+scriptevent hhtest:tp Alex 4.5 -60 2.5
+wait 5
 scriptevent hollow:test rescue1
 expect 150 \[test\] PASS rescue1
 scriptevent hollow:test rescue2

@@ -1,0 +1,47 @@
+{
+ "format_version": "1.20.80",
+ "minecraft:entity": {
+  "description": {
+   "identifier": "ghost:rift",
+   "is_spawnable": false,
+   "is_summonable": true,
+   "is_experimental": false
+  },
+  "components": {
+   "minecraft:type_family": {
+    "family": [
+     "ghost_rift",
+     "inanimate"
+    ]
+   },
+   "minecraft:collision_box": {
+    "width": 1.5,
+    "height": 4.5
+   },
+   "minecraft:health": {
+    "value": 10,
+    "max": 10
+   },
+   "minecraft:damage_sensor": {
+    "triggers": [
+     {
+      "cause": "all",
+      "deals_damage": false
+     }
+    ]
+   },
+   "minecraft:physics": {
+    "has_gravity": false,
+    "has_collision": false
+   },
+   "minecraft:pushable": {
+    "is_pushable": false,
+    "is_pushable_by_piston": false
+   },
+   "minecraft:persistent": {},
+   "minecraft:fire_immune": {},
+   "minecraft:conditional_bandwidth_optimization": {}
+  },
+  "events": {}
+ }
+}

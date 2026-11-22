@@ -1,0 +1,28 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:rift",
+   "materials": {
+    "default": "entity_beam_additive"
+   },
+   "textures": {
+    "default": "textures/entity/ghost_rift"
+   },
+   "geometry": {
+    "default": "geometry.ghost_rift"
+   },
+   "animations": {
+    "turn": "animation.ghost_rift.turn"
+   },
+   "scripts": {
+    "animate": [
+     "turn"
+    ]
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ]
+  }
+ }
+}

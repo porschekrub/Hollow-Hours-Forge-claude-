@@ -112,3 +112,6 @@ item.ghost:hunter_chestplate.name=Ghost Hunter Vest
 item.ghost:hunter_leggings.name=Ghost Hunter Pants
 item.ghost:hunter_boots.name=Ghost Hunter Boots
 entity.ghost:grenade_e.name=Hand Grenade
+entity.ghost:weeping.name=§4The Thing That Weeps Under the Mountain
+entity.ghost:rift.name=Rift
+item.ghost:old_map.name=§6Old map of Mist Hollow

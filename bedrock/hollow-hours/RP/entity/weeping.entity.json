@@ -1,0 +1,30 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:weeping",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "textures": {
+    "default": "textures/entity/ghost_weeping"
+   },
+   "geometry": {
+    "default": "geometry.ghost_weeping"
+   },
+   "animations": {
+    "idle": "animation.weeping.idle"
+   },
+   "scripts": {
+    "animate": [
+     {
+      "idle": "query.property('ghost:act') == 0"
+     }
+    ]
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ]
+  }
+ }
+}

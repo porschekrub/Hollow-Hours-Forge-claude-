@@ -1,0 +1,99 @@
+{
+ "format_version": "1.12.0",
+ "minecraft:geometry": [
+  {
+   "description": {
+    "identifier": "geometry.ghost_rift",
+    "texture_width": 128,
+    "texture_height": 128,
+    "visible_bounds_width": 5,
+    "visible_bounds_height": 7,
+    "visible_bounds_offset": [
+     0,
+     3,
+     0
+    ]
+   },
+   "bones": [
+    {
+     "name": "plane",
+     "pivot": [
+      0,
+      0,
+      0
+     ],
+     "cubes": [
+      {
+       "origin": [
+        -24,
+        0,
+        0
+       ],
+       "size": [
+        48,
+        72,
+        0
+       ],
+       "uv": {
+        "north": {
+         "uv": [
+          0,
+          0
+         ],
+         "uv_size": [
+          128,
+          128
+         ]
+        },
+        "south": {
+         "uv": [
+          0,
+          0
+         ],
+         "uv_size": [
+          128,
+          128
+         ]
+        }
+       }
+      },
+      {
+       "origin": [
+        0,
+        0,
+        -24
+       ],
+       "size": [
+        0,
+        72,
+        48
+       ],
+       "uv": {
+        "east": {
+         "uv": [
+          0,
+          0
+         ],
+         "uv_size": [
+          128,
+          128
+         ]
+        },
+        "west": {
+         "uv": [
+          0,
+          0
+         ],
+         "uv_size": [
+          128,
+          128
+         ]
+        }
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
