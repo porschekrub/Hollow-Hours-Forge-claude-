@@ -1,12 +1,12 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Helper Buddy v1.6.0 - ผู้ช่วยขุด ตัด สร้างบ้าน (BP)",
-    "description": "ผู้ช่วยขุดแร่ ตัดไม้ สร้างเหมือง สร้างบ้าน คุยสั่งงานได้ • เวอร์ชัน 1.6.0",
+    "name": "Helper Buddy v2.0.0 - ผู้ช่วยขุด ตัด สร้างบ้าน (BP)",
+    "description": "ผู้ช่วยขุดแร่ ตัดไม้ สร้างเหมือง สร้างบ้าน คุยสั่งงานได้ • เวอร์ชัน 2.0.0",
     "uuid": "ca46cd25-6887-4ba7-9d37-e86fb0a6a349",
     "version": [
-      1,
-      6,
+      2,
+      0,
       0
     ],
     "min_engine_version": [
@@ -20,8 +20,8 @@
       "type": "data",
       "uuid": "e730b917-d70e-4f3d-9294-bd0cf923cc7a",
       "version": [
-        1,
-        6,
+        2,
+        0,
         0
       ]
     },
@@ -30,8 +30,8 @@
       "language": "javascript",
       "uuid": "5edd4c3d-f24e-40fb-b855-393549552403",
       "version": [
-        1,
-        6,
+        2,
+        0,
         0
       ],
       "entry": "scripts/main.js"
@@ -49,8 +49,8 @@
     {
       "uuid": "1d5239c0-4b3a-4c0c-b611-27eef3c5c185",
       "version": [
-        1,
-        6,
+        2,
+        0,
         0
       ]
     }

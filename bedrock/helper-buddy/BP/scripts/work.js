@@ -3,6 +3,7 @@ import { DIG_SOFT, DIG_STONE, LEAF_LIKE, LOGS, ORES, PLANTABLE_SOIL, SAPLING_FOR
 import { hopToward, isStuck, resetProgress, face, steer, stopMoving } from "./move.js";
 import { scanNearest } from "./scan.js";
 import { getHome, getMode, getName, getOwner, getSettings, notifyOwner, oreEnabled, rt, setAi, setHome, setModeProp, setWorking, } from "./state.js";
+import { workMult } from "./state.js";
 import { countId, depositToContainers, getContainer, getTool, isStorageFull, nearbyContainers, storageAdd, storageTake, storeOrDrop, } from "./storage.js";
 import { applyMending, breakPlan, computeDrops, damageTool, equipBest, hasToolKind, toolInfo, } from "./tools.js";
 import { JUNK, toolKindFor } from "./data.js";
@@ -359,7 +360,7 @@ export function beginBreak(h, t, b, axeByHand = false) {
     t.breaking = b.location;
     t.breakingId = b.typeId;
     t.progress = 0;
-    t.need = plan.ticks;
+    t.need = Math.max(1, Math.round(plan.ticks / workMult(h)));
     setWorking(h, true);
     stopMoving(h);
     face(h, center(b.location));

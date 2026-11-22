@@ -1,8 +1,17 @@
-# baseline: the add-on must load and tick with a player in the world
-tickingarea add circle 0 -60 0 4 hh
+# Helper Buddy on a real Bedrock server, with a simulated player
+tickingarea add circle 0 -60 0 4 hb
+gamerule domobspawning false
 wait 2
-scriptevent hhtest:spawn Steve
+scriptevent hhtest:spawn Steve 0.5 -60 0.5
 expect 20 \[hhtest\] spawned Steve
-wait 45
+effect Steve resistance 99999 4 true
+wait 5
+scriptevent helper:test words
+expect 15 \[test\] PASS words
+scriptevent helper:test helper
+expect 30 \[test\] PASS helper
+scriptevent helper:test golem
+expect 40 \[test\] PASS golem
+wait 20
 scriptevent hhtest:where Steve
 expect 10 Steve at

@@ -1,4 +1,4 @@
-import { rt, setMoving } from "./state.js";
+import { rt, setMoving, moveMult } from "./state.js";
 import { isLava, isPassable, safeBlock, yawTo } from "./util.js";
 const WALK_SPEED = 0.17; // blocks per tick (~3.4 blocks/second)
 export function stopMoving(h) {
@@ -91,7 +91,7 @@ export function steer(h, goal, arriveDist) {
             }
         }
     }
-    const speed = Math.min(WALK_SPEED, Math.max(0.07, d * 0.25));
+    const speed = Math.min(WALK_SPEED * moveMult(h), Math.max(0.07, d * 0.25));
     try {
         const vel = h.getVelocity();
         const imp = { x: nx * speed - vel.x, y: 0, z: nz * speed - vel.z };

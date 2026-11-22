@@ -14,6 +14,7 @@ import { handleTalkCommand } from "./talk.js";
 import { openBook, openMenu } from "./ui.js";
 import { CONTRACT_ITEM, HELPER_ID, dist, isPassable, safeBlock, tellOwner } from "./util.js";
 import { VERSION } from "./version.js";
+import { ownerHit, ownerHurtBy } from "./attack.js";
 import { endTask, tickWork } from "./work.js";
 function greet(h, p) {
     tellOwner(p, getName(h), `สวัสดีครับ! ผมเป็นผู้ช่วยของคุณแล้ว §8(Helper Buddy v${VERSION})§r\n` +
@@ -106,12 +107,14 @@ function onAttack(attacker, victim) {
             return;
         }
         if (aType === "minecraft:player") {
+            ownerHit(attacker, victim);
             // the owner attacks a mob: its helpers join in
             for (const h of ownedHelpersNear(helpers.values(), attacker, 24))
                 setTarget(h, victim, true);
             return;
         }
         if (victim.typeId === "minecraft:player" && aType !== HELPER_ID) {
+            ownerHurtBy(victim, attacker);
             for (const h of ownedHelpersNear(helpers.values(), victim, 24))
                 setTarget(h, attacker, true);
         }
@@ -456,3 +459,4 @@ system.runInterval(() => {
         }
     }
 }, 1);
+import "./selftest.js";

@@ -12,6 +12,7 @@ import { world } from "@minecraft/server";
 import { VERSION } from "./version.js";
 import { ORDER_KEYS, fixTypos } from "./nlu.js";
 import { smallTalk } from "./chat.js";
+import { attackOf, speedOf, cmdAttack, cmdSpeed } from "./attack.js";
 // ------------------------------------------------------------------ text helpers
 const PARTICLES = /(?:^|(?<=\s))(?:ครับผม|ครับ|ค่ะ|คะ|นะครับ|นะคะ|นะจ๊ะ|นะจ้ะ|จ้า|จ้ะ|จ๊ะ|ด้วยนะ|หน่อยนะ|หน่อย|เถอะ|เถิด|ซิ|สิ(?!บ)|นะ|เลยนะ|ละ|ล่ะ)(?=\s|$)|(?:ครับผม|ครับ|ค่ะ|คะ|นะครับ|นะคะ|นะจ๊ะ|จ้า|จ้ะ|จ๊ะ|หน่อยนะ|หน่อย|เถอะ|ซิ|นะ|ล่ะ)$/g;
 export function norm(s) {
@@ -523,6 +524,13 @@ export function parseTalk(raw, noFix = false) {
         return { k: "resume" };
     if (has(t, "ไม่ต้องสู้", "อย่าสู้", "เลิกสู้", "หยุดสู้", "ไม่สู้", "ห้ามสู้", "อย่าตี", "ห้ามตี", "ไม่ต้องตี", "สันติ", "peace", "don't fight", "dont fight", "no fight", "stop fighting", "stop attacking"))
         return { k: "fight", on: false };
+    // 2.0: the work speed, and "go for that one" / a creature by name
+    const sp = speedOf(t);
+    if (sp)
+        return { k: "speed", sp };
+    const at = attackOf(t, extractQty(t).n);
+    if (at)
+        return { k: "attack", ...at };
     if (has(t, "ไม่ต้องตาม", "อย่าตาม", "don't follow", "dont follow"))
         return { k: "stay" };
     const nt = numify(t);
@@ -777,6 +785,12 @@ export async function handleTalk(p, h, raw) {
         }
         case "fight":
             cmdFight(p, h, it.on);
+            return;
+        case "attack":
+            cmdAttack(p, h, it);
+            return;
+        case "speed":
+            cmdSpeed(p, h, it.sp);
             return;
         case "level":
             say(p, h, `${levelText(h)}\n§f${describeHealth(h)}\n§7${LEVEL_HOWTO}`);

@@ -4,7 +4,7 @@ import { DIG_SOFT, DIG_STONE, LEAF_LIKE, LOGS, ORES } from "./data.js";
 import { billOfMaterials, generateHouse, isExtraType } from "./house_gen.js";
 import { face, isStuck, resetProgress, steer, stopMoving } from "./move.js";
 import { isNaturalTreeAt } from "./work.js";
-import { getName, getSettings, notifyOwner, rt, setAi, setModeProp, setWorking } from "./state.js";
+import { getName, getSettings, notifyOwner, rt, setAi, setModeProp, setWorking, workMult } from "./state.js";
 import { countId, nearbyContainers, playerContainer, pullFromContainers, storageAdd, storageTake, usedSlots } from "./storage.js";
 import { DIR_VEC, clamp, distXZ, facingOf, isPassable, isPassableId, itemName, leftOf, opposite, rightOf, safeBlock, tellOwner, } from "./util.js";
 const CACHE = new Map();
@@ -778,7 +778,7 @@ export function tickBuild(h, owner) {
     }
     // -------- stage 2: placing blocks (free by default; optional "need blocks" mode uses the helper's bag)
     const free = !getSettings(h).needBlocks && !needsRealItems(j.opts);
-    c.acc += SPEEDS[clamp(j.speed, 0, 2)];
+    c.acc += SPEEDS[clamp(j.speed, 0, 2)] * workMult(h);
     let guard = 0;
     while (c.acc >= 1 && guard++ < 40) {
         if (j.idx >= c.blocks.length) {

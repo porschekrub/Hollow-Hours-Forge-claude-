@@ -15,9 +15,9 @@
    "count": 1
   },
   "pattern": [
-   "  I",
-   " S ",
-   "S  "
+   "I",
+   "S",
+   "L"
   ],
   "key": {
    "I": {
@@ -25,6 +25,9 @@
    },
    "S": {
     "item": "minecraft:stick"
+   },
+   "L": {
+    "item": "minecraft:leather"
    }
   }
  }

@@ -184,3 +184,13 @@ export function refreshNameTag(h, extra) {
         /* ignore */
     }
 }
+
+// ---------- work speed (2.0, as in the Java edition): normal, fast, very fast, turbo
+export const SPEED_NAMES = [["ปกติ", "normal"], ["เร็ว", "fast"], ["เร็วมาก", "very fast"], ["เทอร์โบ", "turbo"]];
+export const WORK_MULT = [1, 2, 4, 10], MOVE_MULT = [1, 1.15, 1.3, 1.5];
+export function speedLevel(h) {
+    try { const v = h.getDynamicProperty("h:speed"); return typeof v === "number" ? Math.max(0, Math.min(3, v)) : 0; } catch { return 0; }
+}
+export function setSpeedLevel(h, v) { h.setDynamicProperty("h:speed", Math.max(0, Math.min(3, v))); }
+export const workMult = (h) => WORK_MULT[speedLevel(h)];
+export const moveMult = (h) => MOVE_MULT[speedLevel(h)];

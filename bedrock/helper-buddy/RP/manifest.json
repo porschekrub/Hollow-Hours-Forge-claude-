@@ -1,12 +1,12 @@
 {
   "format_version": 2,
   "header": {
-    "name": "Helper Buddy v1.6.0 - ผู้ช่วยขุด ตัด สร้างบ้าน (RP)",
-    "description": "หน้าตาและท่าทางของผู้ช่วย • เวอร์ชัน 1.6.0",
+    "name": "Helper Buddy v2.0.0 - ผู้ช่วยขุด ตัด สร้างบ้าน (RP)",
+    "description": "หน้าตาและท่าทางของผู้ช่วย • เวอร์ชัน 2.0.0",
     "uuid": "1d5239c0-4b3a-4c0c-b611-27eef3c5c185",
     "version": [
-      1,
-      6,
+      2,
+      0,
       0
     ],
     "min_engine_version": [
@@ -20,8 +20,8 @@
       "type": "resources",
       "uuid": "97530c40-0aca-4402-b818-f086419dd2af",
       "version": [
-        1,
-        6,
+        2,
+        0,
         0
       ]
     }
@@ -30,8 +30,8 @@
     {
       "uuid": "ca46cd25-6887-4ba7-9d37-e86fb0a6a349",
       "version": [
-        1,
-        6,
+        2,
+        0,
         0
       ]
     }

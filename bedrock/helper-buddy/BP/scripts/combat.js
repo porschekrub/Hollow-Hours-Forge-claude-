@@ -331,20 +331,27 @@ export function feedFrom(p, h, c, slot) {
     return true;
 }
 // ------------------------------------------------------------------ targeting
+// never: players, helpers, things lying around. Only when told to (or when its owner hits them): villagers, golems ...
 const NEVER = new Set([
-    "minecraft:player", "helper:helper", "minecraft:villager", "minecraft:villager_v2", "minecraft:wandering_trader",
-    "minecraft:iron_golem", "minecraft:snow_golem", "minecraft:armor_stand", "minecraft:item", "minecraft:xp_orb",
-    "minecraft:allay", "minecraft:npc", "minecraft:arrow", "minecraft:trident", "minecraft:painting", "minecraft:copper_golem",
+    "minecraft:player", "helper:helper", "minecraft:armor_stand", "minecraft:item", "minecraft:xp_orb", "minecraft:npc",
+    "minecraft:arrow", "minecraft:trident", "minecraft:painting", "minecraft:leash_knot", "minecraft:boat", "minecraft:chest_boat", "minecraft:minecart",
+]);
+const ONLY_IF_TOLD = new Set([
+    "minecraft:villager", "minecraft:villager_v2", "minecraft:wandering_trader", "minecraft:iron_golem", "minecraft:snow_golem",
+    "minecraft:allay", "minecraft:copper_golem",
 ]);
 function canTarget(h, e, explicit) {
     try {
-        if (!e.isValid || e.id === h.id || NEVER.has(e.typeId))
+        if (!e.isValid || e.id === h.id || NEVER.has(e.typeId) || e.typeId.startsWith("ghost:") && !e.typeId.startsWith("ghost:ghost_"))
+            return false;
+        if (!explicit && ONLY_IF_TOLD.has(e.typeId))
             return false;
         if (!e.getComponent("minecraft:health"))
             return false;
         const tame = e.getComponent("minecraft:tameable");
-        if (tame?.isTamed)
-            return false; // never fight pets
+        // never its owner's own pets and horses (somebody else's, only when told to)
+        if (tame?.isTamed && (!explicit || tame.tamedToPlayerId === getOwnerId(h)))
+            return false;
         if (!explicit) {
             // v1.6: creepers are fought too (the helper hits them from a longer reach, see tickCombat)
             return e.matches({ families: ["monster"] });
@@ -450,6 +457,9 @@ function equipWeapon(h) {
 }
 const swingUntil = new Map();
 /** Fights the current target. Returns true while busy fighting. */
+const killHooks = [];
+/** called with (helper, the one it just killed) */
+export function onKill(fn) { killHooks.push(fn); }
 export function tickCombat(h) {
     const r = rt(h);
     const now = system.currentTick;
@@ -528,6 +538,7 @@ export function tickCombat(h) {
     if (killed) {
         addXp(h, Math.max(3, Math.min(50, Math.round(maxH / 2)))); // zombie = 10 XP
         report(h, "kill", t.typeId);
+        for (const fn of killHooks) { try { fn(h, t); } catch { /* ignore */ } }
     }
     try {
         const dx = t.location.x - h.location.x;
