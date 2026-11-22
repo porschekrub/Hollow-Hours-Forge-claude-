@@ -110,8 +110,13 @@ function flightOf(e) {
 /** A helicopter flies in from far away and sets down on the pad. */
 export function arrive(dim, pad, kind, toward, waitTicks) {
   const ang = toward ? Math.atan2(pad.z - toward.z, pad.x - toward.x) + rand(-0.5, 0.5) : rand(0, Math.PI * 2);
-  const from = { x: pad.x + Math.cos(ang) * 90, y: pad.y + 45, z: pad.z + Math.sin(ang) * 90 };
-  const e = dim.spawnEntity(HELI, kind === DROP_OFF ? pad : from);
+  // it comes in from 48 blocks out: further away the world may not be loaded, and nothing can appear there
+  let from = { x: pad.x + Math.cos(ang) * 48, y: pad.y + 32, z: pad.z + Math.sin(ang) * 48 };
+  let e = null;
+  for (const at of kind === DROP_OFF ? [pad] : [from, { x: pad.x, y: pad.y + 30, z: pad.z }, pad]) {
+    try { e = dim.spawnEntity(HELI, at); from = at; break; } catch (_) { /* not loaded there: closer */ }
+  }
+  if (!e) throw new Error("no place to bring a helicopter in near " + JSON.stringify(pad));
   const yaw = Math.atan2(-(pad.x - from.x), pad.z - from.z) * 180 / Math.PI;
   const f = { e, kind, state: kind === DROP_OFF ? LANDED : ARRIVING, t: 0, pad, from, yaw, wait: waitTicks ?? -1 };
   helis.set(e.id, f); hset(e, f);
@@ -309,7 +314,7 @@ function havenTick(p, abs) {
   }
   if (aboard(p)) return;
   // the helicopter waits somewhere out there, for as long as it takes
-  if (!nearestHeli(p, EXTRACT)) arrive(dim, landing(dim, p.location, 35, 60), EXTRACT, p.location, -1);
+  if (!nearestHeli(p, EXTRACT)) arrive(dim, landing(dim, p.location, 28, 42), EXTRACT, p.location, -1);
   // and they hunt you all the way there
   if (system.currentTick % 200 < 20) {
     try {

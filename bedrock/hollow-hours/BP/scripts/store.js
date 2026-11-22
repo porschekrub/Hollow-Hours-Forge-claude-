@@ -49,7 +49,8 @@ export function oops(e) {
     const k = String(e) + line;
     if (seenErr.has(k) || seenErr.size > 200) return;
     seenErr.add(k);
-    if (/UnloadedChunk|OutOfWorldBoundaries|InvalidEntity|InvalidActor|not valid|no longer valid/i.test(String(e))) return;   // the world moved on: fine
+    // the world moved on (an unloaded place, someone who left): only a note, not a mistake
+    if (/UnloadedChunk|OutOfWorldBoundaries|InvalidEntity|InvalidActor|not valid|no longer valid/i.test(String(e))) { console.warn(`[hollow] note: ${e} ${line.trim()}`); return; }
     console.warn(`[hollow] error: ${e} ${line.trim()}`);
   } catch (_) {}
 }

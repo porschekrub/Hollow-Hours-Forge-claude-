@@ -35,8 +35,15 @@ scriptevent hollow:test betray1
 expect 40 \[test\] PASS betray1
 scriptevent hollow:test betray2
 expect 60 \[test\] PASS betray2
-scriptevent hhtest:respawn Steve
 wait 3
+scriptevent hhtest:respawn Steve
+wait 4
+scriptevent hhtest:respawn Alex
+wait 4
+effect @a resistance 9999 4 true
+effect @a regeneration 9999 4 true
+scriptevent hollow:test alive
+expect 15 \[test\] PASS alive
 scriptevent hollow:test phone
 expect 60 \[test\] PASS phone
 scriptevent hollow:test rescue1

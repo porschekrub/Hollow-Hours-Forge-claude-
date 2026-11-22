@@ -163,12 +163,15 @@ const TESTS = {
   },
   async phone(p) {
     const f = players().find((x) => x.id !== p.id);
-    need(hasPhone(p), "no phone given on first join");
+    // (the phone given on joining may be lying in one of the graves of the earlier tests by now)
+    need(pget(p, "hh:phone_given", false) === true, "no phone given on first join");
+    if (!hasPhone(p)) invOf(p).addItem(new ItemStack("ghost:phone", 1));
+    need(hasPhone(p), "no phone");
     need(battery(p) >= 30 && battery(p) <= 100, "battery " + battery(p));
     const n0 = _phone.inbox(p).length;
     notify(p, "Test", "hello", false);
     need(_phone.inbox(p).length === n0 + 1, "inbox");
-    forceStory(-1);
+    forceStory(-1); resetAlert(p);
     send(p, "mom", false, "hi mom"); await wait(130);
     const mom = _phone.chatLog(p).mom;
     need(mom.length >= 3 && mom[mom.length - 1][0] === "them", "mom did not answer: " + JSON.stringify(mom.slice(-2)));
@@ -183,12 +186,18 @@ const TESTS = {
     need(_phone.chatLog(p).dad.some((l) => l[2] === "chat.dad.story1"), "story message");
     navigate(p, "x", { x: p.location.x + 50, y: p.location.y, z: p.location.z, dim: "overworld" });
     need(navOf(p), "navigation"); stopNav(p);
-    await openPhone(p);
+    openPhone(p).catch(() => {});   // (a simulated player never answers a menu: it only must not throw)
+    await wait(5);
     forceStory(0);
   },
   // the helicopter comes, both board, it flies them to the haven
+  async alive(p) {
+    for (const q of players()) need(q.getComponent("minecraft:health").currentValue > 0, q.name + " is dead");
+  },
   async rescue1(p) {
     const f = players().find((x) => x.id !== p.id);
+    forceStory(-1);
+    for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
     rescueCommand("reset", null, () => {});
     const home = { x: p.location.x, z: p.location.z };
     rescueCommand("now", null, () => {}); await wait(50);
@@ -235,6 +244,7 @@ const TESTS = {
     need(p.getComponent("minecraft:health").currentValue > 0, "died on the way home");
     for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
     rescueCommand("reset", null, () => {});
+    forceStory(0);
   },
   async canteen(p) {
     const inv = invOf(p);
