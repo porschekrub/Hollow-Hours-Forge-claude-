@@ -84,6 +84,7 @@ function knockedDown(g) {
 }
 
 // ---------------------------------------------------------------- the map
+let fadedAt = -1e9;
 function pickSite() {
   let cx = 0, cz = 0, n = 0;
   for (const p of over().getPlayers()) { cx += p.location.x; cz += p.location.z; n++; }
@@ -93,6 +94,7 @@ function pickSite() {
 }
 export function toMap() {
   if (stage() >= MAP) return;
+  fadedAt = system.currentTick;
   if (!site()) wset("hh:e_site", JSON.stringify(pickSite()));
   setStage(MAP);
   // the five remember who they were, and fade
@@ -511,6 +513,10 @@ function tick() {
     case HUNT: huntTick(); break;
     case MAP: {
       for (const p of players()) giveMap(p);
+      // no ghost walks the world any more (one that was far away fades as soon as it is seen again)
+      if (system.currentTick - fadedAt > 400) {
+        for (const d of ["overworld", "nether", "the_end"]) { try { for (const g of world.getDimension(d).getEntities({ families: ["ghost"] })) { try { g.dimension.spawnParticle("minecraft:soul_particle", g.location); } catch (_) { oops(_); } g.remove(); } } catch (_) { oops(_); } }
+      }
       const c = center();
       if (c && wget("hh:e_built", 0) === 2 && !(boss.e && ok(boss.e)) && !over().getEntities({ type: "ghost:weeping" }).length) {
         // someone walked into the cavern: it wakes

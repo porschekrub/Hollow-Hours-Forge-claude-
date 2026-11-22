@@ -327,7 +327,7 @@ const TESTS = {
     need(_combat.ammoOf(mainHand(p)) === 5, "ammo after reload: " + _combat.ammoOf(mainHand(p)));
     g.teleport({ x: p.location.x + 8, y: p.location.y, z: p.location.z });
     await wait(5);
-    p.lookAtEntity(g); await wait(5);
+    p.teleport(p.location, { facingLocation: { x: g.location.x, y: g.location.y + 1.2, z: g.location.z } }); await wait(5);
     const before = _combat.poise.get(g.id);
     const hits = shoot(p);
     need(_combat.ammoOf(mainHand(p)) === 4, "a shot did not use a round");
@@ -355,7 +355,9 @@ const TESTS = {
     need(_end.stage() === 3, "no map stage: " + _end.stage());
     need(count(p, "ghost:old_map") === 1, "no map");
     need(!storyActive(), "the haunting goes on after the five are free");
-    need(p.dimension.getEntities({ families: ["ghost"] }).length === 0, "the five did not fade");
+    await wait(40);
+    const left = p.dimension.getEntities({ families: ["ghost"] });
+    need(left.length === 0, "the five did not fade: " + left.map((e) => e.typeId).join(", "));
     const s = _end.site();
     need(s && Math.hypot(s.x - p.location.x, s.z - p.location.z) > 400, "mountain site " + JSON.stringify(s));
     // go there: it is built
