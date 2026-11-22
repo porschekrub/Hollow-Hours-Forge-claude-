@@ -1,0 +1,37 @@
+errors: 0
+
+warnings: 5
+[2026-11-22 06:11:19:430 WARN] [Scripting] [hollow] note: InvalidEntityError: Failed to get property 'dimension' due to Entity being invalid (has the Entity been removed?). at <anonymous> (combat.js:268)
+[2026-11-22 06:12:16:977 WARN] [Scripting] [hollow] note: InvalidEntityError: Failed to call function 'remove' due to Entity being invalid (has the Entity been removed?). at <anonymous> (endgame.js:470)
+[2026-11-22 06:13:16:277 WARN] [Scripting] [hollow] day 3 · haunting on · blood moon no
+[2026-11-22 06:13:16:577 WARN] [Scripting] [hollow] rescue: nothing planned · helicopters 0 · haven {"x":-21836.5,"y":-60,"z":-20565.5}
+[2026-11-22 06:13:16:877 WARN] [Scripting] [hollow] story: start (day 3, haunting on)
+
+failed steps:
+
+tests:
+[2026-11-22 06:09:26:727 WARN] [Scripting] [test] PASS texts
+[2026-11-22 06:09:32:627 WARN] [Scripting] [test] PASS story
+[2026-11-22 06:09:38:027 WARN] [Scripting] [test] PASS bloodmoon
+[2026-11-22 06:09:41:277 WARN] [Scripting] [test] PASS fog
+[2026-11-22 06:09:46:027 WARN] [Scripting] [test] PASS thirst
+[2026-11-22 06:09:52:027 WARN] [Scripting] [test] PASS sanity
+[2026-11-22 06:09:53:127 WARN] [Scripting] [test] PASS blood
+[2026-11-22 06:09:57:227 WARN] [Scripting] [test] PASS grave1
+[2026-11-22 06:10:03:728 WARN] [Scripting] [test] PASS grave2
+[2026-11-22 06:10:14:177 WARN] [Scripting] [test] hunt: ghost state 2, player health 0.0
+[2026-11-22 06:10:14:177 WARN] [Scripting] [test] PASS hunt
+[2026-11-22 06:10:21:827 WARN] [Scripting] [test] PASS betray1
+[2026-11-22 06:10:34:627 WARN] [Scripting] [test] PASS betray2
+[2026-11-22 06:10:46:927 WARN] [Scripting] [test] PASS alive
+[2026-11-22 06:11:05:577 WARN] [Scripting] [test] PASS phone
+[2026-11-22 06:11:10:077 WARN] [Scripting] [test] PASS playground
+[2026-11-22 06:11:19:427 WARN] [Scripting] [test] aim {"z":0.00009553838026477024,"y":-0.052323367446660995,"x":0.9986302256584167} ghost {"z":1.0987842082977295,"y":-60,"x":13.97599983215332} me {"z":1.0987842082977295,"y":-58.47998809814453,"x":5.975999355316162}
+[2026-11-22 06:11:19:727 WARN] [Scripting] [test] PASS combat
+[2026-11-22 06:12:01:878 WARN] [Scripting] [test] cavern column: minecraft:air, minecraft:air, minecraft:air, minecraft:air, minecraft:air
+[2026-11-22 06:12:01:878 WARN] [Scripting] [test] mountain at {"x":511,"z":-77,"dir":0.8082494362192392}, cavern floor -60, top -31
+[2026-11-22 06:12:08:927 WARN] [Scripting] [test] boss: throw phase 1 hp 500
+[2026-11-22 06:12:20:477 WARN] [Scripting] [test] PASS endgame
+[2026-11-22 06:12:51:327 WARN] [Scripting] [test] haven at {"x":-21836.5,"y":-60,"z":-20565.5}, player at {"z":-20566.189453125,"y":-60,"x":-21835.87890625} hp 20
+[2026-11-22 06:12:51:327 WARN] [Scripting] [test] PASS rescue1
+[2026-11-22 06:13:16:077 WARN] [Scripting] [test] PASS rescue2

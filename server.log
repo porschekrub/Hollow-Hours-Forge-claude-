@@ -1,0 +1,247 @@
+NO LOG FILE! - setting up server logging...
+[2026-11-22 06:09:12:648 INFO] Starting Server
+[2026-11-22 06:09:12:648 INFO] Version: 1.26.66.1
+[2026-11-22 06:09:12:648 INFO] Session ID: a15a5aee-8898-4e16-bfb6-ddc9e901b800
+[2026-11-22 06:09:12:648 INFO] Build ID: 53696239
+[2026-11-22 06:09:12:648 INFO] Branch: r/26_u6
+[2026-11-22 06:09:12:648 INFO] Commit ID: cb39b93aee4586408851619d83ed05780bbd842b
+[2026-11-22 06:09:12:648 INFO] Configuration: Publish
+[2026-11-22 06:09:12:648 INFO] Contents of server.properties: {"allow-cheats":"true","allow-inbound-script-debugging":"false","allow-list":"false","allow-outbound-script-debugging":"false","block-network-ids-are-hashes":"true","chat-restriction":"None","client-side-chunk-generation-enabled":"true","compression-algorithm":"zlib","compression-threshold":"1","content-log-console-output-enabled":"true","content-log-file-enabled":"true","content-log-level":"info","default-player-permission-level":"operator","difficulty":"normal","disable-custom-skins":"false","disable-persona":"false","disable-player-interaction":"false","enable-lan-visibility":"true","force-gamemode":"false","gamemode":"survival","level-name":"test","level-type":"FLAT","max-players":"10","max-threads":"8","online-mode":"false","persistent-ticking-area-max-chunks":"100","persistent-ticking-area-max-count":"10","player-idle-timeout":"30","player-movement-action-direction-threshold":"0.85","player-position-acceptance-threshold":"0.5","script-debugger-auto-attach":"disabled","server-authoritative-block-breaking-pick-range-scalar":"1.5","server-authoritative-dismount-strict":"false","server-authoritative-entity-attack-range-tolerance":"0.5","server-authoritative-entity-attack-range-validation":"disabled","server-authoritative-entity-attack-request-validation":"disabled","server-authoritative-entity-interactions-strict":"false","server-authoritative-movement-strict":"false","server-build-radius-ratio":"Disabled","server-name":"Dedicated Server","server-port":"19132","server-portv6":"19133","server-udp-ports":"19132","texturepack-required":"false","tick-distance":"4","transient-ticking-area-max-chunks":"300","transport":"nethernet","view-distance":"8"}
+[2026-11-22 06:09:12:648 INFO] Level Name: test
+[2026-11-22 06:09:12:648 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-11-22 06:09:12:649 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-11-22 06:09:12:649 INFO] Game mode: 0 Survival
+[2026-11-22 06:09:12:649 INFO] Difficulty: 2 NORMAL
+[2026-11-22 06:09:12:650 INFO] Content logging to console is enabled.
+[2026-11-22 06:09:12:651 INFO] 
+
+#####################################################
+#                                                   #
+#              CREATING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-11-22 06:09:12:870 INFO] Content logging to disk is enabled. Writing log to: ./ContentLog2026-11-22_06-09-12.txt
+[2026-11-22 06:09:12:871 INFO] Opening level 'worlds/test/db'
+[2026-11-22 06:09:12:871 INFO] Accepting clients on [::]:19132
+[2026-11-22 06:09:12:900 INFO] Pack Stack - None
+[2026-11-22 06:09:13:014 INFO] Signed in to signaling service successfully
+[2026-11-22 06:09:13:334 INFO] Server started.
+[2026-11-22 06:09:13:334 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-11-22 06:09:13:334 INFO] Server Telemetry is currently not enabled. 
+[2026-11-22 06:09:13:334 INFO] Enabling this telemetry helps us improve the game.
+[2026-11-22 06:09:13:334 INFO] 
+[2026-11-22 06:09:13:334 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-11-22 06:09:13:334 INFO] to the server.properties file in the handheld/src-server directory
+[2026-11-22 06:09:13:334 INFO] ======================================================
+> stop
+[2026-11-22 06:09:13:541 INFO] Server stop requested.
+[2026-11-22 06:09:13:585 INFO] Stopping server...
+Quit correctly
+
+===== second start: with the packs =====
+NO LOG FILE! - setting up server logging...
+[2026-11-22 06:09:13:713 INFO] Starting Server
+[2026-11-22 06:09:13:713 INFO] Version: 1.26.66.1
+[2026-11-22 06:09:13:713 INFO] Session ID: b92bc16b-7cd1-4036-b93f-9215c2f7627f
+[2026-11-22 06:09:13:713 INFO] Build ID: 53696239
+[2026-11-22 06:09:13:713 INFO] Branch: r/26_u6
+[2026-11-22 06:09:13:713 INFO] Commit ID: cb39b93aee4586408851619d83ed05780bbd842b
+[2026-11-22 06:09:13:713 INFO] Configuration: Publish
+[2026-11-22 06:09:13:713 INFO] Contents of server.properties: {"allow-cheats":"true","allow-inbound-script-debugging":"false","allow-list":"false","allow-outbound-script-debugging":"false","block-network-ids-are-hashes":"true","chat-restriction":"None","client-side-chunk-generation-enabled":"true","compression-algorithm":"zlib","compression-threshold":"1","content-log-console-output-enabled":"true","content-log-file-enabled":"true","content-log-level":"info","default-player-permission-level":"operator","difficulty":"normal","disable-custom-skins":"false","disable-persona":"false","disable-player-interaction":"false","enable-lan-visibility":"true","force-gamemode":"false","gamemode":"survival","level-name":"test","level-type":"FLAT","max-players":"10","max-threads":"8","online-mode":"false","persistent-ticking-area-max-chunks":"100","persistent-ticking-area-max-count":"10","player-idle-timeout":"30","player-movement-action-direction-threshold":"0.85","player-position-acceptance-threshold":"0.5","script-debugger-auto-attach":"disabled","server-authoritative-block-breaking-pick-range-scalar":"1.5","server-authoritative-dismount-strict":"false","server-authoritative-entity-attack-range-tolerance":"0.5","server-authoritative-entity-attack-range-validation":"disabled","server-authoritative-entity-attack-request-validation":"disabled","server-authoritative-entity-interactions-strict":"false","server-authoritative-movement-strict":"false","server-build-radius-ratio":"Disabled","server-name":"Dedicated Server","server-port":"19132","server-portv6":"19133","server-udp-ports":"19132","texturepack-required":"false","tick-distance":"4","transient-ticking-area-max-chunks":"300","transport":"nethernet","view-distance":"8"}
+[2026-11-22 06:09:13:713 INFO] Level Name: test
+[2026-11-22 06:09:13:713 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-11-22 06:09:13:714 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-11-22 06:09:13:714 INFO] Game mode: 0 Survival
+[2026-11-22 06:09:13:714 INFO] Difficulty: 2 NORMAL
+[2026-11-22 06:09:13:715 INFO] Content logging to console is enabled.
+[2026-11-22 06:09:13:716 INFO] 
+
+#####################################################
+#                                                   #
+#               LOADING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-11-22 06:09:13:933 INFO] Content logging to disk is enabled. Writing log to: ./ContentLog2026-11-22_06-09-13.txt
+[2026-11-22 06:09:13:933 INFO] Experiment(s) active: gtst
+[2026-11-22 06:09:13:933 INFO] Opening level 'worlds/test/db'
+[2026-11-22 06:09:13:934 INFO] Accepting clients on [::]:19132
+[2026-11-22 06:09:13:962 INFO] Pack Stack - [00] §4§lHollow Hours §r§8[BP] (id: 98f2560a-278c-4d68-b50f-40cdf433f5ab, version: 2.0.0) @ development_behavior_packs/hollow-hours_BP
+[2026-11-22 06:09:13:962 INFO] Pack Stack - [01] CI test driver (id: 5b1c8e6e-0f0a-4a53-9a8e-2f3d0c4b7a11, version: 1.0.0) @ development_behavior_packs/testpack_BP
+[2026-11-22 06:09:14:101 INFO] Signed in to signaling service successfully
+[2026-11-22 06:09:14:427 INFO] Server started.
+[2026-11-22 06:09:14:427 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-11-22 06:09:14:427 INFO] Server Telemetry is currently not enabled. 
+[2026-11-22 06:09:14:427 INFO] Enabling this telemetry helps us improve the game.
+[2026-11-22 06:09:14:427 INFO] 
+[2026-11-22 06:09:14:427 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-11-22 06:09:14:427 INFO] to the server.properties file in the handheld/src-server directory
+[2026-11-22 06:09:14:427 INFO] ======================================================
+[2026-11-22 06:09:14:477 WARN] [Scripting] [hhtest] driver ready
+
+> tickingarea add circle 0 -60 0 4 hh
+[2026-11-22 06:09:14:586 INFO] Added ticking area centered at 8, 0, 8 with a radius of 4 chunks.
+1/10 ticking areas in use.
+> gamerule domobspawning false
+[2026-11-22 06:09:14:831 INFO] Game rule domobspawning has been updated to false
+> scriptevent hhtest:spawn Steve 0.5 -60 0.5
+[2026-11-22 06:09:17:131 INFO] Script event hhtest:spawn has been sent
+[2026-11-22 06:09:17:179 INFO] Player Spawned: Steve xuid: , pfid: 
+[2026-11-22 06:09:17:179 WARN] [Scripting] [hhtest] spawned Steve id=-8589934591 at {"z":0,"y":-60,"x":0}
+
+> scriptevent hhtest:spawn Alex 4.5 -60 2.5
+[2026-11-22 06:09:17:431 INFO] Script event hhtest:spawn has been sent
+[2026-11-22 06:09:17:478 INFO] Player Spawned: Alex xuid: , pfid: 
+[2026-11-22 06:09:17:478 WARN] [Scripting] [hhtest] spawned Alex id=-8589934590 at {"z":2,"y":-60,"x":4}
+
+> effect Alex resistance 99999 4 true
+[2026-11-22 06:09:17:736 INFO] Gave Resistance * 4 to Alex for 99999 seconds
+> effect Alex regeneration 99999 4 true
+[2026-11-22 06:09:18:036 INFO] Gave Regeneration * 4 to Alex for 99999 seconds
+> effect Alex saturation 99999 4 true
+[2026-11-22 06:09:18:336 INFO] Gave Saturation * 4 to Alex for 4999 seconds
+> scriptevent hollow:test texts
+[2026-11-22 06:09:26:646 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:26:727 WARN] [Scripting] [test] PASS texts
+
+> scriptevent hollow:test story
+[2026-11-22 06:09:26:946 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:32:627 WARN] [Scripting] [test] PASS story
+
+> scriptevent hollow:test bloodmoon
+[2026-11-22 06:09:32:856 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:38:027 WARN] [Scripting] [test] PASS bloodmoon
+
+> scriptevent hollow:test fog
+[2026-11-22 06:09:38:161 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:41:277 WARN] [Scripting] [test] PASS fog
+
+> scriptevent hollow:test thirst
+[2026-11-22 06:09:41:416 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:46:027 WARN] [Scripting] [test] PASS thirst
+
+> scriptevent hollow:test sanity
+[2026-11-22 06:09:46:121 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:52:027 WARN] [Scripting] [test] PASS sanity
+
+> scriptevent hollow:test blood
+[2026-11-22 06:09:52:231 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:53:127 WARN] [Scripting] [test] PASS blood
+
+> scriptevent hollow:test grave1
+[2026-11-22 06:09:53:336 INFO] Script event hollow:test has been sent
+[2026-11-22 06:09:57:227 WARN] [Scripting] [test] PASS grave1
+
+> scriptevent hhtest:respawn Steve
+[2026-11-22 06:09:57:441 INFO] Script event hhtest:respawn has been sent
+[2026-11-22 06:09:57:477 WARN] [Scripting] [hhtest] respawn ok
+
+> scriptevent hollow:test grave2
+[2026-11-22 06:10:00:746 INFO] Script event hollow:test has been sent
+[2026-11-22 06:10:03:728 WARN] [Scripting] [test] PASS grave2
+
+> scriptevent hollow:test hunt
+[2026-11-22 06:10:03:851 INFO] Script event hollow:test has been sent
+[2026-11-22 06:10:14:177 WARN] [Scripting] [test] hunt: ghost state 2, player health 0.0
+
+[2026-11-22 06:10:14:177 WARN] [Scripting] [test] PASS hunt
+
+> scriptevent hhtest:respawn Steve
+[2026-11-22 06:10:14:366 INFO] Script event hhtest:respawn has been sent
+[2026-11-22 06:10:14:378 WARN] [Scripting] [hhtest] respawn ok
+
+> scriptevent hollow:test betray1
+[2026-11-22 06:10:17:671 INFO] Script event hollow:test has been sent
+[2026-11-22 06:10:21:827 WARN] [Scripting] [test] PASS betray1
+
+> scriptevent hollow:test betray2
+[2026-11-22 06:10:21:977 INFO] Script event hollow:test has been sent
+[2026-11-22 06:10:34:627 WARN] [Scripting] [test] PASS betray2
+
+> scriptevent hhtest:respawn Steve
+[2026-11-22 06:10:37:651 INFO] Script event hhtest:respawn has been sent
+[2026-11-22 06:10:37:677 WARN] [Scripting] [hhtest] respawn ok
+
+> scriptevent hhtest:respawn Alex
+[2026-11-22 06:10:41:956 INFO] Script event hhtest:respawn has been sent
+[2026-11-22 06:10:41:977 WARN] [Scripting] [hhtest] respawn ok
+
+> effect @a resistance 9999 4 true
+[2026-11-22 06:10:46:261 INFO] Gave Resistance * 4 to Steve for 9999 seconds
+Gave Resistance * 4 to Alex for 9999 seconds
+> effect @a regeneration 9999 4 true
+[2026-11-22 06:10:46:561 INFO] Gave Regeneration * 4 to Steve for 9999 seconds
+Gave Regeneration * 4 to Alex for 9999 seconds
+> scriptevent hollow:test alive
+[2026-11-22 06:10:46:861 INFO] Script event hollow:test has been sent
+[2026-11-22 06:10:46:927 WARN] [Scripting] [test] PASS alive
+
+> scriptevent hollow:test phone
+[2026-11-22 06:10:47:161 INFO] Script event hollow:test has been sent
+[2026-11-22 06:11:05:577 WARN] [Scripting] [test] PASS phone
+
+> scriptevent hollow:test playground
+[2026-11-22 06:11:05:691 INFO] Script event hollow:test has been sent
+[2026-11-22 06:11:10:077 WARN] [Scripting] [test] PASS playground
+
+> scriptevent hollow:test combat
+[2026-11-22 06:11:10:146 INFO] Script event hollow:test has been sent
+[2026-11-22 06:11:18:877 WARN] [Scripting] [hhtest] look ok
+
+[2026-11-22 06:11:19:427 WARN] [Scripting] [test] aim {"z":0.00009553838026477024,"y":-0.052323367446660995,"x":0.9986302256584167} ghost {"z":1.0987842082977295,"y":-60,"x":13.97599983215332} me {"z":1.0987842082977295,"y":-58.47998809814453,"x":5.975999355316162}
+
+[2026-11-22 06:11:19:430 WARN] [Scripting] [hollow] note: InvalidEntityError: Failed to get property 'dimension' due to Entity being invalid (has the Entity been removed?). at <anonymous> (combat.js:268)
+
+[2026-11-22 06:11:19:727 WARN] [Scripting] [test] PASS combat
+
+> scriptevent hollow:test endgame
+[2026-11-22 06:11:19:861 INFO] Script event hollow:test has been sent
+[2026-11-22 06:12:01:878 WARN] [Scripting] [test] cavern column: minecraft:air, minecraft:air, minecraft:air, minecraft:air, minecraft:air
+
+[2026-11-22 06:12:01:878 WARN] [Scripting] [test] mountain at {"x":511,"z":-77,"dir":0.8082494362192392}, cavern floor -60, top -31
+
+[2026-11-22 06:12:08:927 WARN] [Scripting] [test] boss: throw phase 1 hp 500
+
+[2026-11-22 06:12:16:977 WARN] [Scripting] [hollow] note: InvalidEntityError: Failed to call function 'remove' due to Entity being invalid (has the Entity been removed?). at <anonymous> (endgame.js:470)
+
+[2026-11-22 06:12:20:477 WARN] [Scripting] [test] PASS endgame
+
+> scriptevent hhtest:tp Steve 0.5 -60 0.5
+[2026-11-22 06:12:20:597 INFO] Script event hhtest:tp has been sent
+[2026-11-22 06:12:20:627 WARN] [Scripting] [hhtest] tp ok
+
+> scriptevent hhtest:tp Alex 4.5 -60 2.5
+[2026-11-22 06:12:20:897 INFO] Script event hhtest:tp has been sent
+[2026-11-22 06:12:20:927 WARN] [Scripting] [hhtest] tp ok
+
+> scriptevent hollow:test rescue1
+[2026-11-22 06:12:26:207 INFO] Script event hollow:test has been sent
+[2026-11-22 06:12:51:327 WARN] [Scripting] [test] haven at {"x":-21836.5,"y":-60,"z":-20565.5}, player at {"z":-20566.189453125,"y":-60,"x":-21835.87890625} hp 20
+
+[2026-11-22 06:12:51:327 WARN] [Scripting] [test] PASS rescue1
+
+> scriptevent hollow:test rescue2
+[2026-11-22 06:12:51:492 INFO] Script event hollow:test has been sent
+[2026-11-22 06:13:16:077 WARN] [Scripting] [test] PASS rescue2
+
+> scriptevent hollow:status
+[2026-11-22 06:13:16:227 INFO] Script event hollow:status has been sent
+[2026-11-22 06:13:16:277 WARN] [Scripting] [hollow] day 3 · haunting on · blood moon no
+
+> scriptevent hollow:rescue status
+[2026-11-22 06:13:16:527 INFO] Script event hollow:rescue has been sent
+[2026-11-22 06:13:16:577 WARN] [Scripting] [hollow] rescue: nothing planned · helicopters 0 · haven {"x":-21836.5,"y":-60,"z":-20565.5}
+
+> scriptevent hollow:story start
+[2026-11-22 06:13:16:827 INFO] Script event hollow:story has been sent
+[2026-11-22 06:13:16:877 WARN] [Scripting] [hollow] story: start (day 3, haunting on)
+
+> scriptevent hhtest:where Steve
+[2026-11-22 06:13:57:132 INFO] Script event hhtest:where has been sent
+[2026-11-22 06:13:57:177 WARN] [Scripting] [hhtest] Steve at {"z":1.3188365697860718,"y":-60,"x":-5.872422695159912} hp=20
+
+[2026-11-22 06:13:57:177 WARN] [Scripting] [hhtest] where ok
+
+> stop
+[2026-11-22 06:13:57:431 INFO] Server stop requested.
+[2026-11-22 06:13:57:482 INFO] Stopping server...
+Quit correctly

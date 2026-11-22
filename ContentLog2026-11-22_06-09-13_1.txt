@@ -1,0 +1,84 @@
+06:09:14[Scripting][warning]-[hhtest] driver ready
+
+06:09:17[Scripting][warning]-[hhtest] spawned Steve id=-8589934591 at {"z":0,"y":-60,"x":0}
+
+06:09:17[Scripting][warning]-[hhtest] spawned Alex id=-8589934590 at {"z":2,"y":-60,"x":4}
+
+06:09:26[Scripting][warning]-[test] PASS texts
+
+06:09:32[Scripting][warning]-[test] PASS story
+
+06:09:38[Scripting][warning]-[test] PASS bloodmoon
+
+06:09:41[Scripting][warning]-[test] PASS fog
+
+06:09:46[Scripting][warning]-[test] PASS thirst
+
+06:09:52[Scripting][warning]-[test] PASS sanity
+
+06:09:53[Scripting][warning]-[test] PASS blood
+
+06:09:57[Scripting][warning]-[test] PASS grave1
+
+06:09:57[Scripting][warning]-[hhtest] respawn ok
+
+06:10:03[Scripting][warning]-[test] PASS grave2
+
+06:10:14[Scripting][warning]-[test] hunt: ghost state 2, player health 0.0
+
+06:10:14[Scripting][warning]-[test] PASS hunt
+
+06:10:14[Scripting][warning]-[hhtest] respawn ok
+
+06:10:21[Scripting][warning]-[test] PASS betray1
+
+06:10:34[Scripting][warning]-[test] PASS betray2
+
+06:10:37[Scripting][warning]-[hhtest] respawn ok
+
+06:10:41[Scripting][warning]-[hhtest] respawn ok
+
+06:10:46[Scripting][warning]-[test] PASS alive
+
+06:11:05[Scripting][warning]-[test] PASS phone
+
+06:11:10[Scripting][warning]-[test] PASS playground
+
+06:11:18[Scripting][warning]-[hhtest] look ok
+
+06:11:19[Scripting][warning]-[test] aim {"z":0.00009553838026477024,"y":-0.052323367446660995,"x":0.9986302256584167} ghost {"z":1.0987842082977295,"y":-60,"x":13.97599983215332} me {"z":1.0987842082977295,"y":-58.47998809814453,"x":5.975999355316162}
+
+06:11:19[Scripting][warning]-[hollow] note: InvalidEntityError: Failed to get property 'dimension' due to Entity being invalid (has the Entity been removed?). at <anonymous> (combat.js:268)
+
+06:11:19[Scripting][warning]-[test] PASS combat
+
+06:12:01[Scripting][warning]-[test] cavern column: minecraft:air, minecraft:air, minecraft:air, minecraft:air, minecraft:air
+
+06:12:01[Scripting][warning]-[test] mountain at {"x":511,"z":-77,"dir":0.8082494362192392}, cavern floor -60, top -31
+
+06:12:08[Scripting][warning]-[test] boss: throw phase 1 hp 500
+
+06:12:16[Scripting][warning]-[hollow] note: InvalidEntityError: Failed to call function 'remove' due to Entity being invalid (has the Entity been removed?). at <anonymous> (endgame.js:470)
+
+06:12:20[Scripting][warning]-[test] PASS endgame
+
+06:12:20[Scripting][warning]-[hhtest] tp ok
+
+06:12:20[Scripting][warning]-[hhtest] tp ok
+
+06:12:51[Scripting][warning]-[test] haven at {"x":-21836.5,"y":-60,"z":-20565.5}, player at {"z":-20566.189453125,"y":-60,"x":-21835.87890625} hp 20
+
+06:12:51[Scripting][warning]-[test] PASS rescue1
+
+06:13:16[Scripting][warning]-[test] PASS rescue2
+
+06:13:16[Scripting][warning]-[hollow] day 3 · haunting on · blood moon no
+
+06:13:16[Scripting][warning]-[hollow] rescue: nothing planned · helicopters 0 · haven {"x":-21836.5,"y":-60,"z":-20565.5}
+
+06:13:16[Scripting][warning]-[hollow] story: start (day 3, haunting on)
+
+06:13:57[Scripting][warning]-[hhtest] Steve at {"z":1.3188365697860718,"y":-60,"x":-5.872422695159912} hp=20
+
+06:13:57[Scripting][warning]-[hhtest] where ok
+
