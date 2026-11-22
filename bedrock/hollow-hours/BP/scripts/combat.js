@@ -160,6 +160,7 @@ function rot(v, deg) {
   const len = Math.hypot(x, y, z) || 1;
   return { x: x / len, y: y / len, z: z / len };
 }
+const lastHits = [];
 export function shoot(p) {
   const it = mainHand(p), spec = it && GUNS[it.typeId];
   if (!spec) return false;
@@ -172,6 +173,7 @@ export function shoot(p) {
   const dim = p.dimension, eye = p.getHeadLocation(), aim = p.getViewDirection();
   try { dim.playSound(spec.sound, eye, { volume: 3, pitch: 0.95 + Math.random() * 0.1 }); } catch (_) { oops(_); }
   const spread = p.isSneaking ? spec.spread * 0.4 : spec.spread;
+  lastHits.length = 0;
   let hits = 0;
   for (let k = 0; k < spec.pellets; k++) {
     const dir = rot(aim, spread);
@@ -184,8 +186,9 @@ export function shoot(p) {
     if (!target) continue;
     const e = target.entity;
     hits++;
+    lastHits.push(e.id);
     if (isGhost(e)) poiseHit(e, p, spec.poise, true);
-    else { try { e.applyDamage(spec.damage, { cause: "projectile", damagingEntity: p }); } catch (_) { oops(_); } }
+    else { try { e.applyDamage(spec.damage, { cause: "entityAttack", damagingEntity: p }); } catch (_) { oops(_); } }
   }
   // the kick
   try { p.runCommand(`camerashake add @s ${spec.pellets > 1 ? 0.25 : spec.damage > 20 ? 0.35 : 0.08} 0.12 rotational`); } catch (_) { oops(_); }
@@ -216,7 +219,7 @@ export function ghostCut(p) {
 }
 
 /** for tests */
-export const _combat = { poise, kos, maxPoise, reload, ammoOf, setAmmo, wake, explode, GUNS };
+export const _combat = { poise, kos, maxPoise, reload, ammoOf, setAmmo, wake, explode, GUNS, lastHits };
 
 export function initCombat(a) {
   api = a || {};

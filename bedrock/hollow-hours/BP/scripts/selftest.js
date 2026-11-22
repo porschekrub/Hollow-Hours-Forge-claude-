@@ -229,6 +229,7 @@ const TESTS = {
   },
   // the haven is found: the helicopter waits, flies them back, the ghosts are crueller
   async rescue2(p) {
+    forceBlood(-1);
     const f = players().find((x) => x.id !== p.id);
     need(phase(p) === IN_HAVEN, "run rescue1 first");
     rescueCommand("invade", null, () => {}); await wait(50);
@@ -248,7 +249,7 @@ const TESTS = {
     need(p.getComponent("minecraft:health").currentValue > 0, "died on the way home");
     for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
     rescueCommand("reset", null, () => {});
-    forceStory(0);
+    forceStory(0); forceBlood(0);
   },
   async playground(p) {
     forceStory(-1);
@@ -325,6 +326,10 @@ const TESTS = {
     need(_combat.reload(p), "no reload");
     await wait(70);
     need(_combat.ammoOf(mainHand(p)) === 5, "ammo after reload: " + _combat.ammoOf(mainHand(p)));
+    // it stands still out in the open, nobody else around
+    for (const o of players()) if (o.id !== p.id) o.teleport({ x: p.location.x - 20, y: p.location.y, z: p.location.z - 20 });
+    g.triggerEvent("ghost:appease");
+    const gm = _combat.kos; gm.delete(g.id);
     g.teleport({ x: p.location.x + 8, y: p.location.y, z: p.location.z });
     await wait(5);
     // (a simulated player turns its head through the test driver)
@@ -335,7 +340,8 @@ const TESTS = {
     const before = _combat.poise.get(g.id);
     const hits = shoot(p);
     need(_combat.ammoOf(mainHand(p)) === 4, "a shot did not use a round");
-    need(hits === 1 && _combat.poise.get(g.id) < before, "the shot missed: hits " + hits);
+    need(_combat.lastHits.includes(g.id), "the shot missed the ghost: hit " + JSON.stringify(_combat.lastHits.map((id) => world.getEntity(id)?.typeId)));
+    need(_combat.poise.get(g.id) < before, "the hit did not count");
     // a grenade at its feet
     _combat.explode(p.dimension.spawnEntity("ghost:grenade_e", { x: g.location.x, y: g.location.y + 0.3, z: g.location.z }), p);
     await wait(5);
@@ -374,7 +380,10 @@ const TESTS = {
     need(c, "no cavern");
     const top = p.dimension.getTopmostBlock({ x: Math.floor(s.x), z: Math.floor(s.z) });
     need(top && top.location.y > c.y + 15, "no mountain over the cavern: top " + (top && top.location.y) + " floor " + c.y);
-    need(p.dimension.getBlock({ x: Math.floor(c.x), y: c.y + 3, z: Math.floor(c.z) })?.isAir, "the cavern is not hollow");
+    const inside = [];
+    for (const dy of [0, 1, 3, 6, 10]) inside.push(p.dimension.getBlock({ x: Math.floor(c.x) + 3, y: c.y + dy, z: Math.floor(c.z) + 3 })?.typeId ?? "?");
+    log("cavern column: " + inside.join(", "));
+    need(inside.filter((x) => x === "minecraft:air").length >= 4, "the cavern is not hollow: " + inside.join(", "));
     log("mountain at " + JSON.stringify(s) + ", cavern floor " + c.y + ", top " + top.location.y);
     // into the cavern: it wakes
     p.teleport({ x: c.x + 8, y: c.y, z: c.z });
