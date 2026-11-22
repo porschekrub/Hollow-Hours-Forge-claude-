@@ -122,9 +122,12 @@ const TESTS = {
     const f = players().find((x) => x.id !== p.id);
     need(f, "needs a second player");
     forceStory(1);
+    // (a ghost of the hunt before may have made an offer of its own just now)
+    _betray.deals.clear();
+    for (let i = 0; i < 10 && p.getComponent("minecraft:health").currentValue <= 0; i++) await wait(10);
     const g = p.dimension.spawnEntity("ghost:ghost_3", { x: p.location.x + 3, y: p.location.y, z: p.location.z });
     await wait(10);
-    need(offer(p, g), "no offer");
+    need(offer(p, g), "no offer: " + players().map((x) => `${x.name} hp ${x.getComponent("minecraft:health").currentValue} ${x.dimension.id}`).join(", "));
     need(inDeal(p), "not in a deal");
     await wait(30);
     _betray.sell(p, f); await wait(40);
