@@ -469,7 +469,8 @@ function defeat() {
   later(LENGTH.defeat, () => {
     try { e.remove(); } catch (_) { oops(_); }
     setStage(RIFT);
-    const r = over().spawnEntity("ghost:rift", { x: l.x, y: l.y + 2.2, z: l.z });
+    const c = center();
+    const r = over().spawnEntity("ghost:rift", { x: l.x, y: c ? c.y : l.y, z: l.z });
     try { r.dimension.playSound("rift.hum", r.location, { volume: 2, pitch: 1 }); } catch (_) { oops(_); }
     for (const p of players()) say(p, "§f" + T("endgame.rift"));
   });
@@ -477,12 +478,17 @@ function defeat() {
 
 // ---------------------------------------------------------------- the rift and the credits
 function riftTick() {
+  const c0 = center();
+  if (c0 && !players().some((p) => p.dimension.id === "minecraft:overworld" && Math.hypot(p.location.x - c0.x, p.location.z - c0.z) < 64)) return;   // nobody there: nothing to do
   let r = null;
   try { r = over().getEntities({ type: "ghost:rift" })[0]; } catch (_) { oops(_); }
   if (!r) { const c = center(); if (c && stage() === RIFT) { try { r = over().spawnEntity("ghost:rift", { x: c.x, y: c.y, z: c.z }); } catch (_) { /* not loaded */ } } return; }
   if (system.currentTick % 40 === 0) { try { r.dimension.playSound("rift.hum", r.location, { volume: 1.5, pitch: 1 }); } catch (_) { oops(_); } }
   try { for (let k = 0; k < 3; k++) r.dimension.spawnParticle("minecraft:endrod", { x: r.location.x + rand(-1, 1), y: r.location.y + rand(0, 4), z: r.location.z + rand(-1, 1) }); } catch (_) { oops(_); }
-  for (const p of r.dimension.getPlayers({ location: r.location, maxDistance: 2 })) if (!pget(p, "hh:e_credits", false)) credits(p);
+  for (const p of r.dimension.getPlayers({ location: r.location, maxDistance: 6 })) {
+    const dy = p.location.y - r.location.y;
+    if (Math.hypot(p.location.x - r.location.x, p.location.z - r.location.z) < 1.6 && dy > -1 && dy < 4.5 && !pget(p, "hh:e_credits", false)) credits(p);
+  }
 }
 export function credits(p) {
   pset(p, "hh:e_credits", true);

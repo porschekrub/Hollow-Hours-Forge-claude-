@@ -201,7 +201,7 @@ export function shoot(p) {
 function explode(e, by) {
   const dim = e.dimension, l = { ...e.location };
   try { e.remove(); } catch (_) { oops(_); }
-  try { dim.createExplosion(l, 3, by && ok(by) ? { breaksBlocks: false, causesFire: false, source: by } : { breaksBlocks: false, causesFire: false }); } catch (_) { oops(_); }
+  try { dim.createExplosion(l, 3, { breaksBlocks: false, causesFire: false }); } catch (_) { oops(_); }
   try { dim.playSound("gun.grenade", l, { volume: 4, pitch: 1 }); } catch (_) { oops(_); }
   try { for (const g of dim.getEntities({ families: ["ghost"], location: l, maxDistance: 6 })) if (isGhost(g)) poiseHit(g, by, 40 * (1 - Math.hypot(g.location.x - l.x, g.location.z - l.z) / 7), true); } catch (_) { oops(_); }
   if (api.heard && by) { try { api.heard(by, 80); } catch (_) { oops(_); } }
