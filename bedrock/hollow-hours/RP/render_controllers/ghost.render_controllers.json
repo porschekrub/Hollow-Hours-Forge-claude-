@@ -72,6 +72,17 @@
      "gate_z": "query.property('ghost:shape') == 9"
     }
    ]
+  },
+  "controller.render.ghost_tv": {
+   "geometry": "Geometry.default",
+   "materials": [
+    {
+     "*": "Material.default"
+    }
+   ],
+   "textures": [
+    "query.property('ghost:on') ? Texture.on : Texture.default"
+   ]
   }
  }
 }

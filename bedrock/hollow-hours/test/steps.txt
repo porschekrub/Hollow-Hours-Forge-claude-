@@ -6,6 +6,10 @@ scriptevent hhtest:spawn Steve 0.5 -60 0.5
 expect 20 \[hhtest\] spawned Steve
 scriptevent hhtest:spawn Alex 4.5 -60 2.5
 expect 20 \[hhtest\] spawned Alex
+# Alex is the friend in the tests (sold out, messaged): he must stay alive through everything
+effect Alex resistance 99999 4 true
+effect Alex regeneration 99999 4 true
+effect Alex saturation 99999 4 true
 wait 8
 scriptevent hollow:test texts
 expect 15 \[test\] PASS texts
@@ -46,6 +50,8 @@ scriptevent hollow:test alive
 expect 15 \[test\] PASS alive
 scriptevent hollow:test phone
 expect 60 \[test\] PASS phone
+scriptevent hollow:test playground
+expect 40 \[test\] PASS playground
 scriptevent hollow:test rescue1
 expect 150 \[test\] PASS rescue1
 scriptevent hollow:test rescue2

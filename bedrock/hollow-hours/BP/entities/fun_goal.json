@@ -1,0 +1,51 @@
+{
+ "format_version": "1.20.80",
+ "minecraft:entity": {
+  "description": {
+   "identifier": "ghost:goal",
+   "is_spawnable": false,
+   "is_summonable": true,
+   "is_experimental": false
+  },
+  "components": {
+   "minecraft:type_family": {
+    "family": [
+     "ghost_fun",
+     "inanimate"
+    ]
+   },
+   "minecraft:collision_box": {
+    "width": 1.0,
+    "height": 0.9
+   },
+   "minecraft:health": {
+    "value": 30,
+    "max": 30
+   },
+   "minecraft:damage_sensor": {
+    "triggers": [
+     {
+      "cause": "all",
+      "deals_damage": false
+     }
+    ]
+   },
+   "minecraft:physics": {
+    "has_gravity": true,
+    "has_collision": true
+   },
+   "minecraft:pushable": {
+    "is_pushable": false,
+    "is_pushable_by_piston": false
+   },
+   "minecraft:knockback_resistance": {
+    "value": 1.0
+   },
+   "minecraft:persistent": {},
+   "minecraft:fire_immune": {},
+   "minecraft:is_collidable": {},
+   "minecraft:conditional_bandwidth_optimization": {}
+  },
+  "events": {}
+ }
+}

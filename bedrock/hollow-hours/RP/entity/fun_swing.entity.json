@@ -1,0 +1,30 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:swing",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ],
+   "textures": {
+    "default": "textures/entity/ghost_swing"
+   },
+   "geometry": {
+    "default": "geometry.ghost_swing"
+   },
+   "animations": {
+    "swing": "animation.ghost_swing.swing"
+   },
+   "scripts": {
+    "animate": [
+     {
+      "swing": "query.has_rider"
+     }
+    ]
+   }
+  }
+ }
+}

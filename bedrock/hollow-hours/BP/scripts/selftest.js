@@ -13,6 +13,8 @@ import { battery, setBattery, notify, send, openPhone, hasPhone, storyMessages, 
 import { navigate, navOf, stopNav } from "./nav.js";
 import { phase, inHaven, invaded, harshness, havenSpot, rescueCommand, safe, _rescue, IN_HAVEN, HOME, WAITING } from "./rescue.js";
 import { pget } from "./store.js";
+import { _fun } from "./fun.js";
+import { getSanity as sanityOf } from "./survival.js";
 
 let api = {};
 const log = (s) => console.warn("[test] " + s);
@@ -244,6 +246,54 @@ const TESTS = {
     need(p.getComponent("minecraft:health").currentValue > 0, "died on the way home");
     for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
     rescueCommand("reset", null, () => {});
+    forceStory(0);
+  },
+  async playground(p) {
+    forceStory(-1);
+    const base = { x: Math.floor(p.location.x) + 6, y: Math.floor(p.location.y), z: Math.floor(p.location.z) };
+    const dim = p.dimension, below = (dx, dz) => dim.getBlock({ x: base.x + dx, y: base.y - 1, z: base.z + dz });
+    const made = {};
+    let i = 0;
+    for (const n of ["swing", "slide", "trampoline", "hoop", "goal", "arcade", "tv"]) {
+      invOf(p).setItem(p.selectedSlotIndex, new ItemStack(`ghost:${n}_item`, 1));
+      const e = _fun.place(p, below(i * 3, 0), "Up", `ghost:${n}_item`);
+      need(e && ok(e), "could not place " + n);
+      made[n] = e; i++;
+    }
+    await wait(10);
+    // the TV turns on and calms
+    made.tv.setProperty("ghost:on", true);
+    // the swing: ride it
+    need(made.swing.getComponent("minecraft:rideable").addRider(p), "could not sit on the swing");
+    await wait(10);
+    made.swing.getComponent("minecraft:rideable").ejectRiders();
+    // the slide throws you forward
+    _fun.slide(p, made.slide); await wait(10);
+    // a ball dropped through the hoop's rim scores
+    const h = made.hoop, r = h.getRotation().y * Math.PI / 180, f = { x: -Math.sin(r), z: Math.cos(r) };
+    const ball = dim.spawnEntity("ghost:basketball_e", { x: h.location.x + f.x * 0.25, y: h.location.y + 2.6, z: h.location.z + f.z * 0.25 });
+    _fun.balls.set(ball.id, { last: p.id });
+    const s0 = sanityOf(p);
+    setSanity(p, 50);
+    await wait(30);
+    need(_fun.balls.get(ball.id)?.scoredAt, "no basket: ball at " + JSON.stringify(ball.location) + " hoop " + JSON.stringify(h.location));
+    need(sanityOf(p) > 50, "no reward for the basket");
+    // kicked balls move
+    const b2 = dim.spawnEntity("ghost:soccer_ball_e", { x: p.location.x + 1, y: p.location.y, z: p.location.z });
+    await wait(5);
+    const before = { ...b2.location };
+    _fun.kick(p, b2); await wait(10);
+    need(Math.hypot(b2.location.x - before.x, b2.location.z - before.z) > 0.5, "the kick did not move the ball");
+    _fun.pickUp(p, b2);
+    need(count(p, "ghost:soccer_ball") === 1, "ball not picked up");
+    // taking things back gives the item back
+    p.isSneaking = true;
+    _fun.takeBack(p, made.trampoline); await wait(5);
+    need(!ok(made.trampoline), "trampoline still there");
+    for (const e of Object.values(made)) { try { e.remove(); } catch (_) {} }
+    try { ball.remove(); } catch (_) {}
+    p.isSneaking = false;
+    setSanity(p, Math.max(s0, 60));
     forceStory(0);
   },
   async canteen(p) {

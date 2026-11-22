@@ -1,0 +1,20 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:basketball_e",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "textures": {
+    "default": "textures/entity/ghost_basketball"
+   },
+   "geometry": {
+    "default": "geometry.ghost_basketball"
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ]
+  }
+ }
+}

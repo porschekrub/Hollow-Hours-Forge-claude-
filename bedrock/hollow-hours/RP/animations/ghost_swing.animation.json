@@ -1,0 +1,17 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "animation.ghost_swing.swing": {
+   "loop": true,
+   "bones": {
+    "seat": {
+     "rotation": [
+      "math.sin(query.life_time * 150) * 28",
+      0,
+      0
+     ]
+    }
+   }
+  }
+ }
+}

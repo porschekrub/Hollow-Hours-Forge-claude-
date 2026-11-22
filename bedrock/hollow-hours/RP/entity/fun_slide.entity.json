@@ -1,0 +1,20 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:slide",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "render_controllers": [
+    "controller.render.ghost"
+   ],
+   "textures": {
+    "default": "textures/entity/ghost_slide"
+   },
+   "geometry": {
+    "default": "geometry.ghost_slide"
+   }
+  }
+ }
+}

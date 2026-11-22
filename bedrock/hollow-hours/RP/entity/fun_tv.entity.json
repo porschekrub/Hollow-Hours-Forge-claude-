@@ -1,0 +1,21 @@
+{
+ "format_version": "1.10.0",
+ "minecraft:client_entity": {
+  "description": {
+   "identifier": "ghost:tv",
+   "materials": {
+    "default": "entity_alphatest"
+   },
+   "render_controllers": [
+    "controller.render.ghost_tv"
+   ],
+   "textures": {
+    "default": "textures/entity/ghost_tv",
+    "on": "textures/entity/ghost_tv_on"
+   },
+   "geometry": {
+    "default": "geometry.ghost_tv"
+   }
+  }
+ }
+}

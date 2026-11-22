@@ -1,0 +1,31 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:slide"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "pattern": [
+   "L  ",
+   "LI ",
+   "LII"
+  ],
+  "key": {
+   "L": {
+    "item": "minecraft:ladder"
+   },
+   "I": {
+    "item": "minecraft:iron_ingot"
+   }
+  },
+  "result": {
+   "item": "ghost:slide_item",
+   "count": 1
+  }
+ }
+}

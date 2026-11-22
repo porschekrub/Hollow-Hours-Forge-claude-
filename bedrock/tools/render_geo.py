@@ -59,7 +59,7 @@ def quads(geo):
     return out
 
 
-def render(geo_path, tex_path, out_path, yaw=35, pitch=25, size=640):
+def render(geo_path, tex_path, out_path, yaw=35, pitch=25, size=640, icon=None):
     geo = json.load(open(geo_path))
     tex = np.array(Image.open(tex_path).convert("RGBA"))
     qs = quads(geo)
@@ -70,7 +70,7 @@ def render(geo_path, tex_path, out_path, yaw=35, pitch=25, size=640):
     sc = (size - 40) / max(mx[0] - mn[0], mx[1] - mn[1], 1e-6)
     img = np.zeros((size, size, 4), np.uint8)
     img[..., :3] = (58, 62, 70)
-    img[..., 3] = 255
+    img[..., 3] = 0 if icon else 255
     zb = np.full((size, size), -1e9)
     cx, cy = (mn[0] + mx[0]) / 2, (mn[1] + mx[1]) / 2
     for p, uv, uvs in qs:
@@ -103,7 +103,18 @@ def render(geo_path, tex_path, out_path, yaw=35, pitch=25, size=640):
         sub[ok] = z[ok]
         dst = img[y0:y1 + 1, x0:x1 + 1]
         dst[ok, :3] = (col[ok, :3] * shade).astype(np.uint8)
-    Image.fromarray(img).save(out_path)
+        dst[ok, 3] = 255
+    out = Image.fromarray(img)
+    if icon:   # a small item icon: crop to what was drawn, square, scaled down
+        bb = out.getbbox()
+        if bb:
+            out = out.crop(bb)
+            w, h = out.size
+            sq = Image.new("RGBA", (max(w, h), max(w, h)), (0, 0, 0, 0))
+            sq.paste(out, ((max(w, h) - w) // 2, (max(w, h) - h) // 2))
+            out = sq
+        out = out.resize((icon, icon), Image.LANCZOS)
+    out.save(out_path)
 
 
 if __name__ == "__main__":

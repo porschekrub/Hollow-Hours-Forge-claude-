@@ -24,6 +24,8 @@ const S = new Map();   // player.id -> { thirst, hyd, sanity, ex, last, jumping,
 let api = {};
 const extraHud = [];   // other systems add a line: (player) => string | ""
 export function addHudLine(fn) { extraHud.push(fn); }
+const cozyFns = [];   // other systems add comfort: (player) => sanity per second
+export function addCozy(fn) { cozyFns.push(fn); }
 
 function st(p) {
   let s = S.get(p.id);
@@ -218,7 +220,9 @@ function sanityTick(p, s, now) {
         if (t && t.isTamed && t.tamedToPlayerId === p.id) { d += 0.06; break; }
       }
     } catch (_) { oops(_); }
-    d += s.cozy ?? 0;
+    let c = s.cozy ?? 0;
+    for (const fn of cozyFns) { try { c = Math.max(c, fn(p) || 0); } catch (_) { oops(_); } }
+    d += c;
   }
   if (d !== 0) { s.sanity = clamp(s.sanity + d, 0, MAX_S); s.dirty = true; }
   // sleep

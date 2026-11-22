@@ -1,57 +1,84 @@
 {
-  "resource_pack_name": "ghost",
-  "texture_name": "atlas.items",
-  "texture_data": {
-    "ghost_guide": {
-      "textures": "textures/items/ghost_guide"
-    },
-    "ghost_repair_wood": {
-      "textures": "textures/items/repair_wood"
-    },
-    "ghost_repair_copper": {
-      "textures": "textures/items/repair_copper"
-    },
-    "ghost_repair_iron": {
-      "textures": "textures/items/repair_iron"
-    },
-    "ghost_repair_stone": {
-      "textures": "textures/items/repair_stone"
-    },
-    "ghost_repair_glass": {
-      "textures": "textures/items/repair_glass"
-    },
-    "ghost_closet_item": {
-      "textures": "textures/items/closet"
-    },
-    "ghost_board_wood": {
-      "textures": "textures/items/board_wood"
-    },
-    "ghost_board_stone": {
-      "textures": "textures/items/board_stone"
-    },
-    "ghost_board_iron": {
-      "textures": "textures/items/board_iron"
-    },
-    "ghost_flashlight": {
-      "textures": "textures/items/flashlight"
-    },
-    "ghost_battery": {
-      "textures": "textures/items/battery"
-    },
-    "ghost_canteen": {
-      "textures": "textures/items/canteen"
-    },
-    "ghost_canteen_empty": {
-      "textures": "textures/items/canteen_empty"
-    },
-    "ghost_restorer": {
-      "textures": "textures/items/restorer"
-    },
-    "ghost_phone": {
-      "textures": "textures/items/phone"
-    },
-    "ghost_charger": {
-      "textures": "textures/items/charger"
-    }
+ "resource_pack_name": "ghost",
+ "texture_name": "atlas.items",
+ "texture_data": {
+  "ghost_guide": {
+   "textures": "textures/items/ghost_guide"
+  },
+  "ghost_repair_wood": {
+   "textures": "textures/items/repair_wood"
+  },
+  "ghost_repair_copper": {
+   "textures": "textures/items/repair_copper"
+  },
+  "ghost_repair_iron": {
+   "textures": "textures/items/repair_iron"
+  },
+  "ghost_repair_stone": {
+   "textures": "textures/items/repair_stone"
+  },
+  "ghost_repair_glass": {
+   "textures": "textures/items/repair_glass"
+  },
+  "ghost_closet_item": {
+   "textures": "textures/items/closet"
+  },
+  "ghost_board_wood": {
+   "textures": "textures/items/board_wood"
+  },
+  "ghost_board_stone": {
+   "textures": "textures/items/board_stone"
+  },
+  "ghost_board_iron": {
+   "textures": "textures/items/board_iron"
+  },
+  "ghost_flashlight": {
+   "textures": "textures/items/flashlight"
+  },
+  "ghost_battery": {
+   "textures": "textures/items/battery"
+  },
+  "ghost_canteen": {
+   "textures": "textures/items/canteen"
+  },
+  "ghost_canteen_empty": {
+   "textures": "textures/items/canteen_empty"
+  },
+  "ghost_restorer": {
+   "textures": "textures/items/restorer"
+  },
+  "ghost_phone": {
+   "textures": "textures/items/phone"
+  },
+  "ghost_charger": {
+   "textures": "textures/items/charger"
+  },
+  "ghost_fun_swing": {
+   "textures": "textures/items/swing"
+  },
+  "ghost_fun_slide": {
+   "textures": "textures/items/slide"
+  },
+  "ghost_fun_trampoline": {
+   "textures": "textures/items/trampoline"
+  },
+  "ghost_fun_hoop": {
+   "textures": "textures/items/hoop"
+  },
+  "ghost_fun_goal": {
+   "textures": "textures/items/goal"
+  },
+  "ghost_fun_arcade": {
+   "textures": "textures/items/arcade"
+  },
+  "ghost_fun_tv": {
+   "textures": "textures/items/tv"
+  },
+  "ghost_fun_basketball": {
+   "textures": "textures/items/basketball"
+  },
+  "ghost_fun_soccer_ball": {
+   "textures": "textures/items/soccer_ball"
   }
+ }
 }

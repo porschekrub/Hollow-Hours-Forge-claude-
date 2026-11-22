@@ -239,20 +239,22 @@ async function appHealth(p) {
   const r = await show(p, new ActionFormData().title(T("phone.app.health")).body(body).button("§l←"));
   if (!r.canceled) openPhone(p);
 }
-/** Ghost Tap: eight rounds, tap the ghost before it hides (under two seconds). It calms you down and eats battery. */
-async function appTap(p) {
+/** Ghost Tap: eight rounds, tap the ghost before it hides (under two seconds). It calms you down and eats battery
+ * (not on an arcade machine). */
+export async function playTap(p, free) { return appTap(p, free); }
+async function appTap(p, free) {
   let score = 0;
   const best = Number(pget(p, "hh:tap_best", 0));
   for (let round = 0; round < 8; round++) {
-    if (battery(p) <= 0 || !ok(p)) break;
+    if ((!free && battery(p) <= 0) || !ok(p)) break;
     const at = Math.floor(Math.random() * 6), t0 = system.currentTick;
-    const f = new ActionFormData().title(`${T("phone.app.tap")}  ${round + 1}/8`).body(T("phone.score", score, best));
+    const f = new ActionFormData().title(`${free ? T("arcade.free") + " · " : ""}${T("phone.app.tap")}  ${round + 1}/8`).body(T("phone.score", score, best));
     for (let i = 0; i < 6; i++) { if (i === at) f.button("§l!!", `textures/ghost_ui/g${1 + Math.floor(Math.random() * 5)}`); else f.button("§8·"); }
     const r = await show(p, f);
     if (r.canceled) break;
     const quick = system.currentTick - t0 <= 40;
     if (r.selection === at && quick) { score++; playTo(p, "phone.game", 0.7, 1 + score * 0.05); } else playTo(p, "phone.click", 0.6, 0.6);
-    drain(p, 0.5);
+    if (!free) drain(p, 0.5);
   }
   if (score > best) pset(p, "hh:tap_best", score);
   addSanity(p, score * 1.2);

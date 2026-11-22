@@ -1,0 +1,31 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:soccer_goal"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "pattern": [
+   "III",
+   "S S",
+   "I I"
+  ],
+  "key": {
+   "I": {
+    "item": "minecraft:iron_ingot"
+   },
+   "S": {
+    "item": "minecraft:string"
+   }
+  },
+  "result": {
+   "item": "ghost:goal_item",
+   "count": 1
+  }
+ }
+}
