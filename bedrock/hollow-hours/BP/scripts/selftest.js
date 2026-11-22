@@ -380,13 +380,15 @@ const TESTS = {
     need(c, "no cavern");
     const top = p.dimension.getTopmostBlock({ x: Math.floor(s.x), z: Math.floor(s.z) });
     need(top && top.location.y > c.y + 15, "no mountain over the cavern: top " + (top && top.location.y) + " floor " + c.y);
+    // into the cavern: it wakes
+    p.teleport({ x: c.x + 8, y: c.y, z: c.z });
+    await wait(20);   // (the world over there has to be loaded to be looked at)
     const inside = [];
     for (const dy of [0, 1, 3, 6, 10]) inside.push(p.dimension.getBlock({ x: Math.floor(c.x) + 3, y: c.y + dy, z: Math.floor(c.z) + 3 })?.typeId ?? "?");
     log("cavern column: " + inside.join(", "));
     need(inside.filter((x) => x === "minecraft:air").length >= 4, "the cavern is not hollow: " + inside.join(", "));
     log("mountain at " + JSON.stringify(s) + ", cavern floor " + c.y + ", top " + top.location.y);
-    // into the cavern: it wakes
-    p.teleport({ x: c.x + 8, y: c.y, z: c.z });
+
     for (let i = 0; i < 10 && !(_end.boss.e && ok(_end.boss.e)); i++) await wait(20);
     need(_end.boss.e && ok(_end.boss.e), "it did not wake");
     await wait(140);   // it rises, then it fights
