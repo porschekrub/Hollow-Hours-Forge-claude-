@@ -1,0 +1,43 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:sniper"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "result": {
+   "item": "ghost:sniper",
+   "count": 1
+  },
+  "pattern": [
+   "  S",
+   "IBI",
+   "PRD"
+  ],
+  "key": {
+   "S": {
+    "item": "minecraft:spyglass"
+   },
+   "I": {
+    "item": "minecraft:iron_ingot"
+   },
+   "B": {
+    "item": "minecraft:iron_block"
+   },
+   "P": {
+    "tag": "minecraft:planks"
+   },
+   "R": {
+    "item": "minecraft:redstone"
+   },
+   "D": {
+    "item": "minecraft:diamond"
+   }
+  }
+ }
+}

@@ -52,6 +52,8 @@ scriptevent hollow:test phone
 expect 60 \[test\] PASS phone
 scriptevent hollow:test playground
 expect 40 \[test\] PASS playground
+scriptevent hollow:test combat
+expect 60 \[test\] PASS combat
 scriptevent hollow:test rescue1
 expect 150 \[test\] PASS rescue1
 scriptevent hollow:test rescue2

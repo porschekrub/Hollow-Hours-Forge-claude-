@@ -1,0 +1,33 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:heavy_chestplate",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_heavy_chestplate"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:heavy_chestplate.name"
+   },
+   "minecraft:wearable": {
+    "slot": "slot.armor.chest",
+    "protection": 8
+   },
+   "minecraft:durability": {
+    "max_durability": 528
+   },
+   "minecraft:enchantable": {
+    "slot": "armor_torso",
+    "value": 12
+   }
+  }
+ }
+}

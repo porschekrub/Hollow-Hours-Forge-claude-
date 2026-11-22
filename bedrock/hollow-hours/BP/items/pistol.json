@@ -1,0 +1,32 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:pistol",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_pistol"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:pistol.name"
+   },
+   "minecraft:hand_equipped": true,
+   "minecraft:use_modifiers": {
+    "use_duration": 3600,
+    "movement_modifier": 0.6
+   },
+   "minecraft:cooldown": {
+    "category": "ghost_gun",
+    "duration": 0.05
+   },
+   "minecraft:can_destroy_in_creative": false
+  }
+ }
+}

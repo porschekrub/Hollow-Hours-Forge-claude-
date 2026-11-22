@@ -1,0 +1,33 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:hunter_helmet",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_hunter_helmet"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:hunter_helmet.name"
+   },
+   "minecraft:wearable": {
+    "slot": "slot.armor.head",
+    "protection": 3
+   },
+   "minecraft:durability": {
+    "max_durability": 418
+   },
+   "minecraft:enchantable": {
+    "slot": "armor_head",
+    "value": 12
+   }
+  }
+ }
+}

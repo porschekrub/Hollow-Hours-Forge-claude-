@@ -1,0 +1,33 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:heavy_leggings",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_heavy_leggings"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:heavy_leggings.name"
+   },
+   "minecraft:wearable": {
+    "slot": "slot.armor.legs",
+    "protection": 6
+   },
+   "minecraft:durability": {
+    "max_durability": 495
+   },
+   "minecraft:enchantable": {
+    "slot": "armor_legs",
+    "value": 12
+   }
+  }
+ }
+}

@@ -4176,6 +4176,61 @@
      ]
     }
    }
+  },
+  "animation.ghost.ko": {
+   "loop": "hold_on_last_frame",
+   "animation_length": 0.6,
+   "bones": {
+    "root": {
+     "rotation": {
+      "0.0": [
+       0,
+       0,
+       0
+      ],
+      "0.35": [
+       -95,
+       0,
+       0
+      ],
+      "0.5": [
+       -86,
+       0,
+       0
+      ],
+      "0.6": [
+       -90,
+       0,
+       0
+      ]
+     },
+     "position": {
+      "0.0": [
+       0,
+       0,
+       0
+      ],
+      "0.6": [
+       0,
+       1,
+       0
+      ]
+     }
+    }
+   }
+  },
+  "animation.ghost.ko_end": {
+   "loop": false,
+   "animation_length": 0.05,
+   "bones": {
+    "root": {
+     "rotation": [
+      0,
+      0,
+      0
+     ]
+    }
+   }
   }
  }
 }

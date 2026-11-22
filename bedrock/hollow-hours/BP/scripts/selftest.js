@@ -14,6 +14,7 @@ import { navigate, navOf, stopNav } from "./nav.js";
 import { phase, inHaven, invaded, harshness, havenSpot, rescueCommand, safe, _rescue, IN_HAVEN, HOME, WAITING } from "./rescue.js";
 import { pget } from "./store.js";
 import { _fun } from "./fun.js";
+import { _combat, knockedOut, poiseHit, shoot } from "./combat.js";
 import { getSanity as sanityOf } from "./survival.js";
 
 let api = {};
@@ -295,6 +296,45 @@ const TESTS = {
     p.isSneaking = false;
     setSanity(p, Math.max(s0, 60));
     forceStory(0);
+  },
+  async combat(p) {
+    forceStory(1);
+    for (const g of p.dimension.getEntities({ families: ["ghost"] })) g.remove();
+    const g = p.dimension.spawnEntity("ghost:ghost_3", { x: p.location.x + 6, y: p.location.y, z: p.location.z });
+    await wait(10);
+    const max = _combat.maxPoise(g);
+    need(max >= 100, "poise " + max);
+    // melee: an axe wears it down until it drops
+    invOf(p).setItem(p.selectedSlotIndex, new ItemStack("ghost:battle_axe", 1));
+    let n = 0;
+    while (!knockedOut(g) && n < 30) { poiseHit(g, p, 13 * 1.7, false); n++; }
+    need(knockedOut(g), "not knocked out after " + n + " hits");
+    need(n >= 4 && n <= 6, "knocked out after " + n + " axe hits");
+    await wait(30);
+    need(ok(g) && g.getProperty("ghost:state") === 0, "a knocked-out ghost moved on: state " + g.getProperty("ghost:state"));
+    const at = { ...g.location };
+    await wait(40);
+    need(Math.hypot(g.location.x - at.x, g.location.z - at.z) < 0.5, "a knocked-out ghost walked");
+    _combat.wake(g); await wait(10);
+    need(!knockedOut(g), "did not wake");
+    // a gun: loaded, aimed, fired
+    invOf(p).setItem(p.selectedSlotIndex, new ItemStack("ghost:sniper", 1));
+    invOf(p).addItem(new ItemStack("ghost:sniper_ammo", 10));
+    await wait(2);
+    need(_combat.reload(p), "no reload");
+    await wait(70);
+    need(_combat.ammoOf(mainHand(p)) === 5, "ammo after reload: " + _combat.ammoOf(mainHand(p)));
+    g.teleport({ x: p.location.x + 8, y: p.location.y, z: p.location.z });
+    await wait(5);
+    p.lookAtEntity(g); await wait(5);
+    const before = _combat.poise.get(g.id);
+    const hits = shoot(p);
+    need(_combat.ammoOf(mainHand(p)) === 4, "a shot did not use a round");
+    need(hits === 1 && _combat.poise.get(g.id) < before, "the shot missed: hits " + hits);
+    // a grenade at its feet
+    _combat.explode(p.dimension.spawnEntity("ghost:grenade_e", { x: g.location.x, y: g.location.y + 0.3, z: g.location.z }), p);
+    await wait(5);
+    g.remove(); forceStory(0);
   },
   async canteen(p) {
     const inv = invOf(p);

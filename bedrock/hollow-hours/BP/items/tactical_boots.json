@@ -1,0 +1,33 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:tactical_boots",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_tactical_boots"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:tactical_boots.name"
+   },
+   "minecraft:wearable": {
+    "slot": "slot.armor.feet",
+    "protection": 2
+   },
+   "minecraft:durability": {
+    "max_durability": 286
+   },
+   "minecraft:enchantable": {
+    "slot": "armor_feet",
+    "value": 12
+   }
+  }
+ }
+}

@@ -1,0 +1,37 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:shotgun"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "result": {
+   "item": "ghost:shotgun",
+   "count": 1
+  },
+  "pattern": [
+   "III",
+   "PRG",
+   "P  "
+  ],
+  "key": {
+   "I": {
+    "item": "minecraft:iron_ingot"
+   },
+   "P": {
+    "tag": "minecraft:planks"
+   },
+   "R": {
+    "item": "minecraft:redstone"
+   },
+   "G": {
+    "item": "minecraft:gunpowder"
+   }
+  }
+ }
+}

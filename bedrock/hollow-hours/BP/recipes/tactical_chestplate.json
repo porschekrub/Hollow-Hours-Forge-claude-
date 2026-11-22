@@ -1,0 +1,31 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:tactical_chestplate"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "result": {
+   "item": "ghost:tactical_chestplate",
+   "count": 1
+  },
+  "pattern": [
+   "M M",
+   "MXM",
+   "MMM"
+  ],
+  "key": {
+   "M": {
+    "item": "minecraft:leather"
+   },
+   "X": {
+    "item": "minecraft:iron_ingot"
+   }
+  }
+ }
+}

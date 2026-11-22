@@ -79,6 +79,84 @@
   },
   "ghost_fun_soccer_ball": {
    "textures": "textures/items/soccer_ball"
+  },
+  "ghost_combat_knife": {
+   "textures": "textures/items/combat_knife"
+  },
+  "ghost_katana": {
+   "textures": "textures/items/katana"
+  },
+  "ghost_battle_axe": {
+   "textures": "textures/items/battle_axe"
+  },
+  "ghost_stun_baton": {
+   "textures": "textures/items/stun_baton"
+  },
+  "ghost_spear": {
+   "textures": "textures/items/spear"
+  },
+  "ghost_pistol": {
+   "textures": "textures/items/pistol"
+  },
+  "ghost_rifle": {
+   "textures": "textures/items/rifle"
+  },
+  "ghost_shotgun": {
+   "textures": "textures/items/shotgun"
+  },
+  "ghost_sniper": {
+   "textures": "textures/items/sniper"
+  },
+  "ghost_pistol_ammo": {
+   "textures": "textures/items/pistol_ammo"
+  },
+  "ghost_rifle_ammo": {
+   "textures": "textures/items/rifle_ammo"
+  },
+  "ghost_shotgun_shell": {
+   "textures": "textures/items/shotgun_shell"
+  },
+  "ghost_sniper_ammo": {
+   "textures": "textures/items/sniper_ammo"
+  },
+  "ghost_grenade": {
+   "textures": "textures/items/grenade"
+  },
+  "ghost_tactical_helmet": {
+   "textures": "textures/items/tactical_helmet"
+  },
+  "ghost_tactical_chestplate": {
+   "textures": "textures/items/tactical_chestplate"
+  },
+  "ghost_tactical_leggings": {
+   "textures": "textures/items/tactical_leggings"
+  },
+  "ghost_tactical_boots": {
+   "textures": "textures/items/tactical_boots"
+  },
+  "ghost_heavy_helmet": {
+   "textures": "textures/items/heavy_helmet"
+  },
+  "ghost_heavy_chestplate": {
+   "textures": "textures/items/heavy_chestplate"
+  },
+  "ghost_heavy_leggings": {
+   "textures": "textures/items/heavy_leggings"
+  },
+  "ghost_heavy_boots": {
+   "textures": "textures/items/heavy_boots"
+  },
+  "ghost_hunter_helmet": {
+   "textures": "textures/items/hunter_helmet"
+  },
+  "ghost_hunter_chestplate": {
+   "textures": "textures/items/hunter_chestplate"
+  },
+  "ghost_hunter_leggings": {
+   "textures": "textures/items/hunter_leggings"
+  },
+  "ghost_hunter_boots": {
+   "textures": "textures/items/hunter_boots"
   }
  }
 }

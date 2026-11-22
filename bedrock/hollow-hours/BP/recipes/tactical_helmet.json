@@ -1,0 +1,30 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:tactical_helmet"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "result": {
+   "item": "ghost:tactical_helmet",
+   "count": 1
+  },
+  "pattern": [
+   "MXM",
+   "M M"
+  ],
+  "key": {
+   "M": {
+    "item": "minecraft:leather"
+   },
+   "X": {
+    "item": "minecraft:iron_ingot"
+   }
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "format_version": "1.21.40",
+ "minecraft:item": {
+  "description": {
+   "identifier": "ghost:hunter_leggings",
+   "menu_category": {
+    "category": "equipment"
+   }
+  },
+  "components": {
+   "minecraft:icon": {
+    "textures": {
+     "default": "ghost_hunter_leggings"
+    }
+   },
+   "minecraft:max_stack_size": 1,
+   "minecraft:display_name": {
+    "value": "item.ghost:hunter_leggings.name"
+   },
+   "minecraft:wearable": {
+    "slot": "slot.armor.legs",
+    "protection": 6
+   },
+   "minecraft:durability": {
+    "max_durability": 570
+   },
+   "minecraft:enchantable": {
+    "slot": "armor_legs",
+    "value": 12
+   }
+  }
+ }
+}

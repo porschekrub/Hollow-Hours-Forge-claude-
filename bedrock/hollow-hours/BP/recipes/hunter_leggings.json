@@ -1,0 +1,31 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shaped": {
+  "description": {
+   "identifier": "ghost:hunter_leggings"
+  },
+  "tags": [
+   "crafting_table"
+  ],
+  "unlock": {
+   "context": "AlwaysUnlocked"
+  },
+  "result": {
+   "item": "ghost:hunter_leggings",
+   "count": 1
+  },
+  "pattern": [
+   "MXM",
+   "M M",
+   "M M"
+  ],
+  "key": {
+   "M": {
+    "item": "minecraft:amethyst_shard"
+   },
+   "X": {
+    "item": "minecraft:diamond"
+   }
+  }
+ }
+}

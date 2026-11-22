@@ -24,6 +24,7 @@ import { initNav } from "./nav.js";
 import { initPhone } from "./phone.js";
 import { initRescue, rescueCommand } from "./rescue.js";
 import { initFun } from "./fun.js";
+import { initCombat } from "./combat.js";
 import { initSelfTest } from "./selftest.js";
 
 // ===== ตั้งค่า (หน่วย tick: 20 tick = 1 วินาที, 1200 tick = 1 นาที) =====
@@ -793,6 +794,7 @@ initNav();
 initPhone();
 initRescue({ huntNow });
 initFun();
+initCombat({ ensureMeta, leaving });
 onBloodRise(() => { nextSpawnAt = Math.min(nextSpawnAt, system.currentTick + rand(40 * 20, 90 * 20)); });
 // blood moon / the rescue you missed: ghosts hit harder (the extra is dealt on top of the hit that landed)
 let extraHit = false;
